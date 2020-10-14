@@ -1,0 +1,5 @@
+$odm-black-primary: mat-palette($mat-grey, 700, 300, 900);
+$odm-black-accent: mat-palette($mat-blue-grey, 400);
+$odm-black-warn: mat-palette($mat-red, 500);
+
+$odm-black-theme: mat-dark-theme($odm-black-primary, $odm-black-accent, $odm-black-warn);

@@ -1,0 +1,5 @@
+$odm-nature-primary: mat-palette($mat-brown, 700, 300, 900);
+$odm-nature-accent: mat-palette($mat-deep-purple, 300);
+$odm-nature-warn: mat-palette($mat-red, 600);
+
+$odm-nature-theme: mat-light-theme($odm-nature-primary, $odm-nature-accent, $odm-nature-warn);

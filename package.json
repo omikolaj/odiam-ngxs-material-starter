@@ -1,5 +1,5 @@
 {
-  "name": "angular-ngrx-material-starter",
+  "name": "odiam-ngxs-material-starter",
   "version": "10.0.2",
   "license": "MIT",
   "scripts": {
@@ -13,11 +13,11 @@
     "watch": "ng test --configuration=test --browsers ChromeHeadless --watch --reporters dots",
     "e2e": "ng e2e",
     "e2e:ci": "ng e2e",
-    "ci": "npm run format:test && ng lint && ng test --configuration=test --browsers ChromeTravisCi --code-coverage && npm run build:prod -- --deploy-url /angular-ngrx-material-starter/ --base-href /angular-ngrx-material-starter",
+    "ci": "npm run format:test && ng lint && ng test --configuration=test --browsers ChromeTravisCi --code-coverage && npm run build:prod -- --deploy-url /odiam-ngxs-material-starter/ --base-href /odiam-ngxs-material-starter",
     "format:write": "prettier projects/**/*.{ts,json,md,scss} --write",
     "format:test": "prettier projects/**/*.{ts,json,md,scss} --list-different",
     "release": "standard-version && git push --follow-tags origin master",
-    "analyze": "npm run build:prod -- --stats-json && webpack-bundle-analyzer ./dist/angular-ngrx-material-starter/stats-es2015.json",
+    "analyze": "npm run build:prod -- --stats-json && webpack-bundle-analyzer ./dist/odiam-ngxs-material-starter/stats-es2015.json",
     "server": "node ./projects/server/server.js",
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate && node .all-contributors-html.js",

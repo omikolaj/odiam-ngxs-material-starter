@@ -1,0 +1,5 @@
+$odm-light-primary: mat-palette($mat-grey, 200, 500, 300);
+$odm-light-accent: mat-palette($mat-brown, 200);
+$odm-light-warn: mat-palette($mat-deep-orange, 200);
+
+$odm-light-theme: mat-light-theme($odm-light-primary, $odm-light-accent, $odm-light-warn);
