@@ -39,6 +39,8 @@ import { selectSettingsLanguage, selectEffectiveTheme, selectSettingsStickyHeade
 import { MatButtonModule } from '@angular/material/button';
 import { faCog, faBars, faRocket, faPowerOff, faUserCircle, faPlayCircle } from '@fortawesome/free-solid-svg-icons';
 import { faGithub, faMediumM, faTwitter, faInstagram, faYoutube } from '@fortawesome/free-brands-svg-icons';
+import { NgxsModule } from '@ngxs/store';
+import { SettingsState } from './store/state/settings.state';
 
 export {
   TitleService,
@@ -80,6 +82,18 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatTooltipModule,
     MatSnackBarModule,
     MatButtonModule,
+
+    // ngxs
+    NgxsModule.forRoot([SettingsState], {
+      developmentMode: !environment.production,
+      selectorOptions: {
+        suppressErrors: false,
+        injectContainerState: true
+      },
+      compatibility: {
+        strictContentSecurityPolicy: true
+      }
+    }),
 
     // ngrx
     StoreModule.forRoot(reducers, { metaReducers }),

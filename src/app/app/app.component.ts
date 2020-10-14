@@ -16,6 +16,9 @@ import {
   selectEffectiveTheme
 } from '../core/core.module';
 import { actionSettingsChangeAnimationsPageDisabled, actionSettingsChangeLanguage } from '../core/settings/settings.actions';
+import { Store as ngxsStore } from '@ngxs/store';
+import { SettingsState } from 'app/core/store/state/settings.state';
+import { Settings } from '../core/store/actions/settings.actions';
 
 @Component({
   selector: 'odm-root',
@@ -42,7 +45,7 @@ export class AppComponent implements OnInit {
   language$: Observable<string>;
   theme$: Observable<string>;
 
-  constructor(private store: Store, private storageService: LocalStorageService) {}
+  constructor(private store: Store, private storageService: LocalStorageService, private ngxsStore: ngxsStore) {}
 
   private static isIEorEdgeOrSafari() {
     return ['ie', 'edge', 'safari'].includes(browser().name);
@@ -60,7 +63,8 @@ export class AppComponent implements OnInit {
 
     this.isAuthenticated$ = this.store.pipe(select(selectIsAuthenticated));
     this.stickyHeader$ = this.store.pipe(select(selectSettingsStickyHeader));
-    this.language$ = this.store.pipe(select(selectSettingsLanguage));
+    // this.language$ = this.store.pipe(select(selectSettingsLanguage));
+    this.language$ = this.ngxsStore.select(SettingsState.selectLanguageSettings);
     this.theme$ = this.store.pipe(select(selectEffectiveTheme));
   }
 
@@ -73,6 +77,7 @@ export class AppComponent implements OnInit {
   }
 
   onLanguageSelect({ value: language }) {
-    this.store.dispatch(actionSettingsChangeLanguage({ language }));
+    this.ngxsStore.dispatch(new Settings.ChangeLanguage({ language }));
+    //this.store.dispatch(actionSettingsChangeLanguage({ language }));
   }
 }

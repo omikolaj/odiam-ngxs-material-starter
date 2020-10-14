@@ -1,9 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import { Observable } from 'rxjs';
-
 import { ROUTE_ANIMATIONS_ELEMENTS } from '../../../core/core.module';
-
 import {
   actionSettingsChangeAnimationsElements,
   actionSettingsChangeAnimationsPage,
@@ -14,6 +12,8 @@ import {
 } from '../../../core/settings/settings.actions';
 import { SettingsState, State } from '../../../core/settings/settings.model';
 import { selectSettings } from '../../../core/settings/settings.selectors';
+import { Store as ngxsStore } from '@ngxs/store';
+import { Settings } from '../../../core/store/actions/settings.actions';
 
 @Component({
   selector: 'odm-settings',
@@ -43,18 +43,20 @@ export class SettingsContainerComponent implements OnInit {
     { value: 'he', label: 'עברית' }
   ];
 
-  constructor(private store: Store<State>) {}
+  constructor(private store: Store<State>, private ngxsStore: ngxsStore) {}
 
   ngOnInit() {
     this.settings$ = this.store.pipe(select(selectSettings));
   }
 
   onLanguageSelect({ value: language }) {
-    this.store.dispatch(actionSettingsChangeLanguage({ language }));
+    //this.store.dispatch(actionSettingsChangeLanguage({ language }));
+    this.ngxsStore.dispatch(new Settings.ChangeLanguage({ language }));
   }
 
   onThemeSelect({ value: theme }) {
     this.store.dispatch(actionSettingsChangeTheme({ theme }));
+    //this.ngxsStore.dispatch(new Settings.ChangeTheme({ theme }))
   }
 
   onAutoNightModeToggle({ checked: autoNightMode }) {
