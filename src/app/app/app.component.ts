@@ -63,7 +63,8 @@ export class AppComponent implements OnInit {
     }
 
     this.isAuthenticated$ = this.store.pipe(select(selectIsAuthenticated));
-    this.stickyHeader$ = this.store.pipe(select(selectSettingsStickyHeader));
+    // this.stickyHeader$ = this.store.pipe(select(selectSettingsStickyHeader));
+    this.stickyHeader$ = this.ngxsStore.select(SettingsState.selectStickyHeaderSettings);
     this.language$ = this.ngxsStore.select(SettingsState.selectLanguageSettings);
     this.theme$ = this.store.pipe(select(selectEffectiveTheme));
   }

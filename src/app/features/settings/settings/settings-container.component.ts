@@ -68,7 +68,7 @@ export class SettingsContainerComponent implements OnInit {
   }
 
   onStickyHeaderToggle({ checked: stickyHeader }) {
-    //this.store.dispatch(actionSettingsChangeStickyHeader({ stickyHeader }));
+    //this.store.dispatch(actionSettingsChangeStickyHeader({ stickyHeader }))
     this.ngxsStore.dispatch(new Settings.ChangeStickyHeader({ stickyHeader }));
   }
 

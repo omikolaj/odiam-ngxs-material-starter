@@ -53,6 +53,11 @@ export class SettingsState implements NgxsAfterBootstrap {
     return state.settings.language;
   }
 
+  @Selector([SETTINGS_STATE_TOKEN])
+  static selectStickyHeaderSettings(state: SettingsStateModel): boolean {
+    return state.settings.stickyHeader;
+  }
+
   @Action(Settings.InitStateFromLocalStorage)
   initFromLocalStorage(ctx: StateContext<SettingsStateModel>) {
     ctx.setState(
@@ -146,6 +151,17 @@ export class SettingsState implements NgxsAfterBootstrap {
       produce((draft: SettingsStateModel) => {
         draft.settings = { ...draft.settings, ...action.payload };
         draft.settings.pageAnimations = false;
+      })
+    );
+    const settings = ctx.getState().settings;
+    return ctx.dispatch(new Settings.PersistSettings(settings));
+  }
+
+  @Action(Settings.ChangeStickyHeader)
+  changeStickyHeader(ctx: StateContext<SettingsStateModel>, action: Settings.ChangeStickyHeader) {
+    ctx.setState(
+      produce((draft: SettingsStateModel) => {
+        draft.settings = { ...draft.settings, ...action.payload };
       })
     );
     const settings = ctx.getState().settings;
