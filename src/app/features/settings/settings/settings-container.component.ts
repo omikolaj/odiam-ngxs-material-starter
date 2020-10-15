@@ -60,7 +60,7 @@ export class SettingsContainerComponent implements OnInit {
 
   onThemeSelect({ value: theme }) {
     this.store.dispatch(actionSettingsChangeTheme({ theme }));
-    //this.ngxsStore.dispatch(new Settings.ChangeTheme({ theme }))
+    this.ngxsStore.dispatch(new Settings.ChangeTheme({ theme }));
   }
 
   onAutoNightModeToggle({ checked: autoNightMode }) {

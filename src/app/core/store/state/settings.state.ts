@@ -12,7 +12,7 @@ export interface SettingsStateModel {
   settings: UserSettings;
 }
 
-export const SETTINGS_STATE_TOKEN = new StateToken<SettingsStateModel>('settings');
+const SETTINGS_STATE_TOKEN = new StateToken<SettingsStateModel>('settings');
 
 @State<SettingsStateModel>({
   name: SETTINGS_STATE_TOKEN,
@@ -56,6 +56,36 @@ export class SettingsState implements NgxsAfterBootstrap {
   @Selector([SETTINGS_STATE_TOKEN])
   static selectStickyHeaderSettings(state: SettingsStateModel): boolean {
     return state.settings.stickyHeader;
+  }
+
+  @Selector([SettingsState.selectTheme, SettingsState.selectTheme, SettingsState.selectIsNightHour])
+  static selectEffectiveTheme(state: SettingsState, theme: string, nightTheme: string, isNightHour: boolean): string {
+    return (isNightHour ? nightTheme : theme).toLowerCase();
+  }
+
+  @Selector([SETTINGS_STATE_TOKEN])
+  static selectTheme(state: SettingsStateModel): string {
+    return state.settings.theme;
+  }
+
+  @Selector([SETTINGS_STATE_TOKEN])
+  static selectNightTheme(state: SettingsStateModel): string {
+    return state.settings.nightTheme;
+  }
+
+  @Selector([SettingsState.selectAutoNightMode, SettingsState.selectHour])
+  static selectIsNightHour(state: SettingsState, autoNightMode: string, hour: number): boolean {
+    return autoNightMode && (hour >= 21 || hour <= 7);
+  }
+
+  @Selector([SETTINGS_STATE_TOKEN])
+  static selectAutoNightMode(state: SettingsStateModel): boolean {
+    return state.settings.autoNightMode;
+  }
+
+  @Selector([SETTINGS_STATE_TOKEN])
+  static selectHour(state: SettingsStateModel): number {
+    return state.settings.hour;
   }
 
   @Action(Settings.InitStateFromLocalStorage)

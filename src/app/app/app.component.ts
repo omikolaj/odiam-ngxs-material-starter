@@ -66,7 +66,8 @@ export class AppComponent implements OnInit {
     // this.stickyHeader$ = this.store.pipe(select(selectSettingsStickyHeader));
     this.stickyHeader$ = this.ngxsStore.select(SettingsState.selectStickyHeaderSettings);
     this.language$ = this.ngxsStore.select(SettingsState.selectLanguageSettings);
-    this.theme$ = this.store.pipe(select(selectEffectiveTheme));
+    //this.theme$ = this.store.pipe(select(selectEffectiveTheme), tap(theme => console.log('theme is', theme)));
+    this.theme$ = this.ngxsStore.select(SettingsState.selectEffectiveTheme).pipe(tap((theme) => console.log('theme: ', theme)));
   }
 
   onLoginClick() {
