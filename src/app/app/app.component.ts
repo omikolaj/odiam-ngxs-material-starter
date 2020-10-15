@@ -17,9 +17,9 @@ import {
 } from '../core/core.module';
 import { actionSettingsChangeAnimationsPageDisabled, actionSettingsChangeLanguage } from '../core/settings/settings.actions';
 import { Store as ngxsStore } from '@ngxs/store';
-import { SettingsState } from 'app/core/store/state/settings.state';
-import { Settings } from '../core/store/actions/settings.actions';
+import { SettingsState } from 'app/core/settings/settings.store.state';
 import { tap } from 'rxjs/operators';
+import { Settings } from 'app/core/settings/settings.store.actions';
 
 @Component({
   selector: 'odm-root',

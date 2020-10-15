@@ -23,7 +23,7 @@ import {
   actionSettingsChangeHour
 } from './settings.actions';
 import { selectEffectiveTheme, selectSettingsLanguage, selectPageAnimations, selectElementsAnimations } from './settings.selectors';
-import { State } from './settings.model';
+import { State } from './settings_1.model';
 
 export const SETTINGS_KEY = 'SETTINGS';
 

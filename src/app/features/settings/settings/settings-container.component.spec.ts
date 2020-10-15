@@ -19,7 +19,7 @@ import {
   actionSettingsChangeStickyHeader
 } from '../../../core/settings/settings.actions';
 import { selectSettings } from '../../../core/settings/settings.selectors';
-import { SettingsState } from '../../../core/settings/settings.model';
+import { SettingsState } from '../../../core/settings/settings_1.model';
 
 describe('SettingsComponent', () => {
   let component: SettingsContainerComponent;

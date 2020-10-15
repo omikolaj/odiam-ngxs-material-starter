@@ -2,10 +2,10 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ROUTE_ANIMATIONS_ELEMENTS } from '../../../core/core.module';
 import { Store } from '@ngxs/store';
-import { Settings } from '../../../core/store/actions/settings.actions';
-import { UserSettings } from 'app/core/store/state/settings.model';
+import { UserSettings } from 'app/core/settings/settings.model';
 import { tap } from 'rxjs/operators';
-import { SettingsState } from 'app/core/store/state/settings.state';
+import { SettingsState } from 'app/core/settings/settings.store.state';
+import { Settings } from 'app/core/settings/settings.store.actions';
 
 @Component({
   selector: 'odm-settings',

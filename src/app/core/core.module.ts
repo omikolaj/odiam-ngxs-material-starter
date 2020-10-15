@@ -40,7 +40,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { faCog, faBars, faRocket, faPowerOff, faUserCircle, faPlayCircle } from '@fortawesome/free-solid-svg-icons';
 import { faGithub, faMediumM, faTwitter, faInstagram, faYoutube } from '@fortawesome/free-brands-svg-icons';
 import { NgxsModule } from '@ngxs/store';
-import { SettingsState } from './store/state/settings.state';
+import { SettingsState } from './settings/settings.store.state';
 
 export {
   TitleService,

@@ -9,7 +9,7 @@ import { AuthState } from './auth/auth.models';
 import { authReducer } from './auth/auth.reducer';
 import { RouterStateUrl } from './router/router.state';
 import { settingsReducer } from './settings/settings.reducer';
-import { SettingsState } from './settings/settings.model';
+import { SettingsState } from './settings/settings_1.model';
 
 export const reducers: ActionReducerMap<AppState> = {
   auth: authReducer,

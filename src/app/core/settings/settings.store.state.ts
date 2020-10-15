@@ -1,12 +1,12 @@
 import { ActivationEnd, Router } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { Action, Actions, NgxsAfterBootstrap, NgxsOnInit, ofAction, Selector, State, StateContext, StateToken } from '@ngxs/store';
-import { Settings } from '../actions/settings.actions';
-import { LocalStorageService } from '../../../core/local-storage/local-storage.service';
+import { LocalStorageService } from '../local-storage/local-storage.service';
 import produce from 'immer';
 import { DEFAULT_THEME, NIGHT_MODE_THEME, SETTINGS_KEY, UserSettings } from './settings.model';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleService } from 'app/core/title/title.service';
+import { Settings } from './settings.store.actions';
 
 export interface SettingsStateModel {
   settings: UserSettings;

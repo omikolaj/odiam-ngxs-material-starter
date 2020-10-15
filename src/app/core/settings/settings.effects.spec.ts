@@ -10,7 +10,7 @@ import { NgZone } from '@angular/core';
 import { AnimationsService, AppState, LocalStorageService, TitleService } from '../core.module';
 
 import { SettingsEffects, SETTINGS_KEY } from './settings.effects';
-import { SettingsState } from './settings.model';
+import { SettingsState } from './settings_1.model';
 import { actionSettingsChangeTheme } from './settings.actions';
 
 const scheduler = new TestScheduler((actual, expected) => assert.deepStrictEqual(actual, expected));

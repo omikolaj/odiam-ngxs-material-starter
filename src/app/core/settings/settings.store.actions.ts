@@ -1,5 +1,5 @@
-import { Language } from 'app/core/settings/settings.model';
-import { UserSettings } from '../state/settings.model';
+import { Language } from 'app/core/settings/settings_1.model';
+import { UserSettings } from './settings.model';
 
 export namespace Settings {
   export class InitStateFromLocalStorage {

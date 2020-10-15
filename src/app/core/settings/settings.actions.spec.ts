@@ -8,7 +8,7 @@ import {
   actionSettingsChangeStickyHeader,
   actionSettingsChangeTheme
 } from './settings.actions';
-import { NIGHT_MODE_THEME } from './settings.model';
+import { NIGHT_MODE_THEME } from './settings_1.model';
 
 describe('Settings Actions', () => {
   it('should create ActionSettingsChangeTheme action', () => {

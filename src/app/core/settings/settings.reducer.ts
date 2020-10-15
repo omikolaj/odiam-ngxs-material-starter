@@ -1,4 +1,4 @@
-import { SettingsState, NIGHT_MODE_THEME } from './settings.model';
+import { SettingsState, NIGHT_MODE_THEME } from './settings_1.model';
 import {
   actionSettingsChangeAnimationsElements,
   actionSettingsChangeAnimationsPage,
