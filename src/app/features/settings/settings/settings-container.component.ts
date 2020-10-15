@@ -59,12 +59,13 @@ export class SettingsContainerComponent implements OnInit {
   }
 
   onThemeSelect({ value: theme }) {
-    this.store.dispatch(actionSettingsChangeTheme({ theme }));
+    //this.store.dispatch(actionSettingsChangeTheme({ theme }));
     this.ngxsStore.dispatch(new Settings.ChangeTheme({ theme }));
   }
 
   onAutoNightModeToggle({ checked: autoNightMode }) {
-    this.store.dispatch(actionSettingsChangeAutoNightMode({ autoNightMode }));
+    //this.store.dispatch(actionSettingsChangeAutoNightMode({ autoNightMode }));
+    this.ngxsStore.dispatch(new Settings.ChangeAutoNightMode({ autoNightMode }));
   }
 
   onStickyHeaderToggle({ checked: stickyHeader }) {
@@ -73,10 +74,12 @@ export class SettingsContainerComponent implements OnInit {
   }
 
   onPageAnimationsToggle({ checked: pageAnimations }) {
-    this.store.dispatch(actionSettingsChangeAnimationsPage({ pageAnimations }));
+    // this.store.dispatch(actionSettingsChangeAnimationsPage({ pageAnimations }));
+    this.ngxsStore.dispatch(new Settings.ChangeAnimationsPage({ pageAnimations }));
   }
 
   onElementsAnimationsToggle({ checked: elementsAnimations }) {
-    this.store.dispatch(actionSettingsChangeAnimationsElements({ elementsAnimations }));
+    // this.store.dispatch(actionSettingsChangeAnimationsElements({ elementsAnimations }));
+    this.ngxsStore.dispatch(new Settings.ChangeAnimationsElements({ elementsAnimations }));
   }
 }
