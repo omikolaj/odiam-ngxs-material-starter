@@ -10,10 +10,13 @@ import {
   actionSettingsChangeTheme,
   actionSettingsChangeStickyHeader
 } from '../../../core/settings/settings.actions';
-import { SettingsState, State } from '../../../core/settings/settings.model';
-import { selectSettings } from '../../../core/settings/settings.selectors';
 import { Store as ngxsStore } from '@ngxs/store';
 import { Settings } from '../../../core/store/actions/settings.actions';
+import { UserSettings } from 'app/core/store/state/settings.model';
+import { SettingsState, State } from '../../../core/settings/settings.model';
+import { tap } from 'rxjs/operators';
+import { selectSettings } from 'app/core/settings/settings.selectors';
+import { SettingsState as ngxsSettingsState } from 'app/core/store/state/settings.state';
 
 @Component({
   selector: 'odm-settings',
@@ -46,7 +49,8 @@ export class SettingsContainerComponent implements OnInit {
   constructor(private store: Store<State>, private ngxsStore: ngxsStore) {}
 
   ngOnInit() {
-    this.settings$ = this.store.pipe(select(selectSettings));
+    //this.settings$ = this.store.pipe(select(selectSettings), tap(settings => console.log('[NGRX] settings: ', settings)));
+    this.settings$ = this.ngxsStore.select(ngxsSettingsState.selectSettings);
   }
 
   onLanguageSelect({ value: language }) {
@@ -64,7 +68,8 @@ export class SettingsContainerComponent implements OnInit {
   }
 
   onStickyHeaderToggle({ checked: stickyHeader }) {
-    this.store.dispatch(actionSettingsChangeStickyHeader({ stickyHeader }));
+    //this.store.dispatch(actionSettingsChangeStickyHeader({ stickyHeader }));
+    this.ngxsStore.dispatch(new Settings.ChangeStickyHeader({ stickyHeader }));
   }
 
   onPageAnimationsToggle({ checked: pageAnimations }) {

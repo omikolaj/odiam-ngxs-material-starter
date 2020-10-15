@@ -1,9 +1,12 @@
+import { ActivationEnd, Router } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { Action, Actions, NgxsAfterBootstrap, NgxsOnInit, ofAction, Selector, State, StateContext, StateToken } from '@ngxs/store';
 import { Settings } from '../actions/settings.actions';
 import { LocalStorageService } from '../../../core/local-storage/local-storage.service';
 import produce from 'immer';
-import { DEFAULT_THEME, NIGHT_MODE_THEME, SETTINGS_KEY, UserSettings } from './user-settings.model';
+import { DEFAULT_THEME, NIGHT_MODE_THEME, SETTINGS_KEY, UserSettings } from './settings.model';
+import { TranslateService } from '@ngx-translate/core';
+import { TitleService } from 'app/core/title/title.service';
 
 export interface SettingsStateModel {
   settings: UserSettings;
@@ -29,10 +32,20 @@ export const SETTINGS_STATE_TOKEN = new StateToken<SettingsStateModel>('settings
 })
 @Injectable()
 export class SettingsState implements NgxsAfterBootstrap {
-  constructor(private localStorageService: LocalStorageService) {}
+  constructor(
+    private localStorageService: LocalStorageService,
+    private translateService: TranslateService,
+    private titleService: TitleService,
+    private router: Router
+  ) {}
 
   ngxsAfterBootstrap(ctx: StateContext<SettingsStateModel>) {
-    ctx.dispatch(new Settings.InitStateFromLocalStorage());
+    ctx.dispatch([new Settings.InitStateFromLocalStorage(), new Settings.SetTranslateLanguage()]);
+  }
+
+  @Selector([SETTINGS_STATE_TOKEN])
+  static selectSettings(state: SettingsStateModel): UserSettings {
+    return state.settings;
   }
 
   @Selector([SETTINGS_STATE_TOKEN])
@@ -49,6 +62,18 @@ export class SettingsState implements NgxsAfterBootstrap {
     );
   }
 
+  @Action(Settings.SetTranslateLanguage)
+  setTranslateLanguage(ctx: StateContext<SettingsStateModel>) {
+    const language = ctx.getState().settings.language;
+    this.translateService.use(language);
+    return ctx.dispatch(new Settings.SetTitle());
+  }
+
+  @Action(Settings.SetTitle)
+  setTitle() {
+    this.titleService.setTitle(this.router.routerState.snapshot.root, this.translateService);
+  }
+
   @Action(Settings.ChangeLanguage)
   changeLanguage(ctx: StateContext<SettingsStateModel>, action: Settings.ChangeLanguage) {
     ctx.setState(
@@ -57,8 +82,7 @@ export class SettingsState implements NgxsAfterBootstrap {
       })
     );
     const settings = ctx.getState().settings;
-    console.log('change language dispatched', settings);
-    return ctx.dispatch(new Settings.PersistSettings(settings));
+    return ctx.dispatch([new Settings.PersistSettings(settings), new Settings.SetTranslateLanguage()]);
   }
 
   @Action(Settings.ChangeTheme)

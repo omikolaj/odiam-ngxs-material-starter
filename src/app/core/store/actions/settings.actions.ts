@@ -1,5 +1,5 @@
 import { Language } from 'app/core/settings/settings.model';
-import { UserSettings } from '../state/user-settings.model';
+import { UserSettings } from '../state/settings.model';
 
 export namespace Settings {
   export class InitStateFromLocalStorage {
@@ -50,5 +50,15 @@ export namespace Settings {
   export class PersistSettings {
     static readonly type = '[Settings] Persist Settings';
     constructor(public payload: UserSettings) {}
+  }
+
+  export class SetTranslateLanguage {
+    static readonly type = '[Settings] Set Transalte Langauge';
+    constructor() {}
+  }
+
+  export class SetTitle {
+    static readonly type = '[Settings] Set Title';
+    constructor() {}
   }
 }
