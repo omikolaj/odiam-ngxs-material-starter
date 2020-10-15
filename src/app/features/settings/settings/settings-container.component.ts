@@ -1,22 +1,11 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { Store, select } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { ROUTE_ANIMATIONS_ELEMENTS } from '../../../core/core.module';
-import {
-  actionSettingsChangeAnimationsElements,
-  actionSettingsChangeAnimationsPage,
-  actionSettingsChangeAutoNightMode,
-  actionSettingsChangeLanguage,
-  actionSettingsChangeTheme,
-  actionSettingsChangeStickyHeader
-} from '../../../core/settings/settings.actions';
-import { Store as ngxsStore } from '@ngxs/store';
+import { Store } from '@ngxs/store';
 import { Settings } from '../../../core/store/actions/settings.actions';
 import { UserSettings } from 'app/core/store/state/settings.model';
-import { SettingsState, State } from '../../../core/settings/settings.model';
 import { tap } from 'rxjs/operators';
-import { selectSettings } from 'app/core/settings/settings.selectors';
-import { SettingsState as ngxsSettingsState } from 'app/core/store/state/settings.state';
+import { SettingsState } from 'app/core/store/state/settings.state';
 
 @Component({
   selector: 'odm-settings',
@@ -26,7 +15,7 @@ import { SettingsState as ngxsSettingsState } from 'app/core/store/state/setting
 })
 export class SettingsContainerComponent implements OnInit {
   routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
-  settings$: Observable<SettingsState>;
+  settings$: Observable<UserSettings>;
 
   themes = [
     { value: 'DEFAULT-THEME', label: 'blue' },
@@ -46,40 +35,33 @@ export class SettingsContainerComponent implements OnInit {
     { value: 'he', label: 'עברית' }
   ];
 
-  constructor(private store: Store<State>, private ngxsStore: ngxsStore) {}
+  constructor(private store: Store) {}
 
   ngOnInit() {
-    //this.settings$ = this.store.pipe(select(selectSettings), tap(settings => console.log('[NGRX] settings: ', settings)));
-    this.settings$ = this.ngxsStore.select(ngxsSettingsState.selectSettings);
+    this.settings$ = this.store.select(SettingsState.selectSettings);
   }
 
   onLanguageSelect({ value: language }) {
-    //this.store.dispatch(actionSettingsChangeLanguage({ language }));
-    this.ngxsStore.dispatch(new Settings.ChangeLanguage({ language }));
+    this.store.dispatch(new Settings.ChangeLanguage({ language }));
   }
 
   onThemeSelect({ value: theme }) {
-    //this.store.dispatch(actionSettingsChangeTheme({ theme }));
-    this.ngxsStore.dispatch(new Settings.ChangeTheme({ theme }));
+    this.store.dispatch(new Settings.ChangeTheme({ theme }));
   }
 
   onAutoNightModeToggle({ checked: autoNightMode }) {
-    //this.store.dispatch(actionSettingsChangeAutoNightMode({ autoNightMode }));
-    this.ngxsStore.dispatch(new Settings.ChangeAutoNightMode({ autoNightMode }));
+    this.store.dispatch(new Settings.ChangeAutoNightMode({ autoNightMode }));
   }
 
   onStickyHeaderToggle({ checked: stickyHeader }) {
-    //this.store.dispatch(actionSettingsChangeStickyHeader({ stickyHeader }))
-    this.ngxsStore.dispatch(new Settings.ChangeStickyHeader({ stickyHeader }));
+    this.store.dispatch(new Settings.ChangeStickyHeader({ stickyHeader }));
   }
 
   onPageAnimationsToggle({ checked: pageAnimations }) {
-    // this.store.dispatch(actionSettingsChangeAnimationsPage({ pageAnimations }));
-    this.ngxsStore.dispatch(new Settings.ChangeAnimationsPage({ pageAnimations }));
+    this.store.dispatch(new Settings.ChangeAnimationsPage({ pageAnimations }));
   }
 
   onElementsAnimationsToggle({ checked: elementsAnimations }) {
-    // this.store.dispatch(actionSettingsChangeAnimationsElements({ elementsAnimations }));
-    this.ngxsStore.dispatch(new Settings.ChangeAnimationsElements({ elementsAnimations }));
+    this.store.dispatch(new Settings.ChangeAnimationsElements({ elementsAnimations }));
   }
 }
