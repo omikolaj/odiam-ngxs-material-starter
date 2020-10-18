@@ -41,6 +41,7 @@ import { faCog, faBars, faRocket, faPowerOff, faUserCircle, faPlayCircle } from 
 import { faGithub, faMediumM, faTwitter, faInstagram, faYoutube } from '@fortawesome/free-brands-svg-icons';
 import { NgxsModule } from '@ngxs/store';
 import { SettingsState } from './settings/settings.store.state';
+import { LogService } from './logger/log.service';
 
 export {
   TitleService,

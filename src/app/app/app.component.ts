@@ -20,6 +20,7 @@ import { Store as ngxsStore } from '@ngxs/store';
 import { SettingsState } from 'app/core/settings/settings.store.state';
 import { tap } from 'rxjs/operators';
 import { Settings } from 'app/core/settings/settings.store.actions';
+import { LogService } from 'app/core/logger/log.service';
 
 @Component({
   selector: 'odm-root',
@@ -46,7 +47,7 @@ export class AppComponent implements OnInit {
   language$: Observable<string>;
   theme$: Observable<string>;
 
-  constructor(private store: Store, private storageService: LocalStorageService, private ngxsStore: ngxsStore) {}
+  constructor(private store: Store, private storageService: LocalStorageService, private ngxsStore: ngxsStore, private logger: LogService) {}
 
   private static isIEorEdgeOrSafari() {
     return ['ie', 'edge', 'safari'].includes(browser().name);
@@ -61,6 +62,8 @@ export class AppComponent implements OnInit {
         })
       );
     }
+
+    this.logger.log('initialized app');
 
     this.isAuthenticated$ = this.store.pipe(select(selectIsAuthenticated));
     // this.stickyHeader$ = this.store.pipe(select(selectSettingsStickyHeader));
