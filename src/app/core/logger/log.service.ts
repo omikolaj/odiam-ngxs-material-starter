@@ -6,7 +6,7 @@ import { LogLevel } from './log-level';
 
 @Injectable()
 export class LogService {
-  level: LogLevel = LogLevel.Fatal;
+  level: LogLevel = LogLevel.Trace;
   logWithDate: boolean = true;
   publishers: LogPublisher[] = [];
 
@@ -35,7 +35,7 @@ export class LogService {
   }
 
   log(msg: string, ...optionalParams: any[]) {
-    this.writeToLog(msg, LogLevel.All, optionalParams);
+    this.writeToLog(msg, LogLevel.Trace, optionalParams);
   }
 
   private writeToLog(msg: string, level: LogLevel, params: any[]) {
@@ -54,7 +54,7 @@ export class LogService {
 
   private shouldLog(level: LogLevel): boolean {
     let ret: boolean = false;
-    if ((level >= this.level && level !== LogLevel.Off) || this.level === LogLevel.All) {
+    if ((level >= this.level && level !== LogLevel.Off) || this.level === LogLevel.Trace) {
       ret = true;
     }
     return ret;

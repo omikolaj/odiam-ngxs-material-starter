@@ -7,7 +7,7 @@ export class LogConsole extends LogPublisher {
   log(record: LogEntry): Observable<boolean> {
     const log = record.buildLogString();
     switch (record.level) {
-      case LogLevel.All:
+      case LogLevel.Trace:
       default:
         console.log(log);
         break;
