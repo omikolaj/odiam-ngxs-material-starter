@@ -4,13 +4,11 @@ import { LogPublisher } from './log-publisher';
 import { LogPublishersService } from './log-publishers.service';
 import { LogLevel } from './log-level';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class LogService {
-  level: LogLevel = LogLevel.All;
+  level: LogLevel = LogLevel.Fatal;
   logWithDate: boolean = true;
-  publishers: LogPublisher[];
+  publishers: LogPublisher[] = [];
 
   constructor(publishersService: LogPublishersService) {
     this.publishers = publishersService.publishers;
@@ -49,7 +47,7 @@ export class LogService {
       entry.logWithDate = this.logWithDate;
 
       for (let logger of this.publishers) {
-        logger.log(entry).subscribe((response) => console.log(response));
+        logger.log(entry).subscribe();
       }
     }
   }

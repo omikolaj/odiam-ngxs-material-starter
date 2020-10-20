@@ -26,6 +26,7 @@ import { LogService } from 'app/core/logger/log.service';
   selector: 'odm-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
+  providers: [LogService],
   animations: [routeAnimations]
 })
 export class AppComponent implements OnInit {
@@ -63,7 +64,11 @@ export class AppComponent implements OnInit {
       );
     }
 
-    this.logger.log('initialized app');
+    this.logger.log('log');
+    this.logger.debug('debug');
+    this.logger.error('error');
+    this.logger.warn('warn');
+    this.logger.fatal('fatal');
 
     this.isAuthenticated$ = this.store.pipe(select(selectIsAuthenticated));
     // this.stickyHeader$ = this.store.pipe(select(selectSettingsStickyHeader));

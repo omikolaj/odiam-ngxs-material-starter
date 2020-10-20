@@ -20,11 +20,11 @@ export class LogEntry {
           .padStart(4, '0')} ${date.getHours().toString().padStart(2, '0')}:${date
           .getMinutes()
           .toString()
-          .padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}` + ' - ';
+          .padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}` + ' ';
     }
 
-    ret += '[Type]: ' + LogLevel[this.level];
-    ret += ' - [Message]: ' + this.message;
+    ret += '[Level]: ' + LogLevel[this.level];
+    ret += ' | [Log]: ' + this.message;
     if (this.extraInfo.length) {
       ret += ' - [Extra Info]: ' + this.formatParams(this.extraInfo);
     }
@@ -41,7 +41,7 @@ export class LogEntry {
 
       // Build comma-delimited string
       for (let item of params) {
-        ret += JSON.stringify(item) + ',';
+        ret += JSON.stringify(item) + ', ';
       }
     }
 
