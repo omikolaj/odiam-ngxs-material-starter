@@ -15,72 +15,72 @@ import { UserComponent } from './simple-state-management/components/user.compone
 import { ElementsComponent } from './elements/elements.component';
 
 const routes: Routes = [
-  {
-    path: '',
-    component: ExamplesComponent,
-    children: [
-      {
-        path: '',
-        redirectTo: 'todos',
-        pathMatch: 'full'
-      },
-      {
-        path: 'todos',
-        component: TodosContainerComponent,
-        data: { title: 'odm.examples.menu.todos' }
-      },
-      {
-        path: 'stock-market',
-        component: StockMarketContainerComponent,
-        data: { title: 'odm.examples.menu.stocks' }
-      },
-      {
-        path: 'theming',
-        component: ParentComponent,
-        data: { title: 'odm.examples.menu.theming' }
-      },
-      {
-        path: 'crud',
-        redirectTo: 'crud/',
-        pathMatch: 'full'
-      },
-      {
-        path: 'crud/:id',
-        component: CrudComponent,
-        data: { title: 'odm.examples.menu.crud' }
-      },
-      {
-        path: 'simple-state-management',
-        component: UserComponent,
-        data: { title: 'odm.examples.menu.simple-state-management' }
-      },
-      {
-        path: 'form',
-        component: FormComponent,
-        data: { title: 'odm.examples.menu.form' }
-      },
-      {
-        path: 'notifications',
-        component: NotificationsComponent,
-        data: { title: 'odm.examples.menu.notifications' }
-      },
-      {
-        path: 'elements',
-        component: ElementsComponent,
-        data: { title: 'odm.examples.menu.elements' }
-      },
-      {
-        path: 'authenticated',
-        component: AuthenticatedComponent,
-        canActivate: [AuthGuardService],
-        data: { title: 'odm.examples.menu.auth' }
-      }
-    ]
-  }
+	{
+		path: '',
+		component: ExamplesComponent,
+		children: [
+			{
+				path: '',
+				redirectTo: 'todos',
+				pathMatch: 'full'
+			},
+			{
+				path: 'todos',
+				component: TodosContainerComponent,
+				data: { title: 'odm.examples.menu.todos' }
+			},
+			{
+				path: 'stock-market',
+				component: StockMarketContainerComponent,
+				data: { title: 'odm.examples.menu.stocks' }
+			},
+			{
+				path: 'theming',
+				component: ParentComponent,
+				data: { title: 'odm.examples.menu.theming' }
+			},
+			{
+				path: 'crud',
+				redirectTo: 'crud/',
+				pathMatch: 'full'
+			},
+			{
+				path: 'crud/:id',
+				component: CrudComponent,
+				data: { title: 'odm.examples.menu.crud' }
+			},
+			{
+				path: 'simple-state-management',
+				component: UserComponent,
+				data: { title: 'odm.examples.menu.simple-state-management' }
+			},
+			{
+				path: 'form',
+				component: FormComponent,
+				data: { title: 'odm.examples.menu.form' }
+			},
+			{
+				path: 'notifications',
+				component: NotificationsComponent,
+				data: { title: 'odm.examples.menu.notifications' }
+			},
+			{
+				path: 'elements',
+				component: ElementsComponent,
+				data: { title: 'odm.examples.menu.elements' }
+			},
+			{
+				path: 'authenticated',
+				component: AuthenticatedComponent,
+				canActivate: [AuthGuardService],
+				data: { title: 'odm.examples.menu.auth' }
+			}
+		]
+	}
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+	imports: [RouterModule.forChild(routes)],
+	exports: [RouterModule]
 })
 export class ExamplesRoutingModule {}

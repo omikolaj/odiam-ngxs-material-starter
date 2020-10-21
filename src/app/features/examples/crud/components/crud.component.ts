@@ -13,68 +13,68 @@ import { actionBooksDeleteOne, actionBooksUpsertOne } from '../books.actions';
 import { selectSelectedBook, selectAllBooks } from '../books.selectors';
 
 @Component({
-  selector: 'odm-crud',
-  templateUrl: './crud.component.html',
-  styleUrls: ['./crud.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+	selector: 'odm-crud',
+	templateUrl: './crud.component.html',
+	styleUrls: ['./crud.component.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CrudComponent {
-  routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
+	routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
 
-  bookFormGroup = this.fb.group(CrudComponent.createBook());
-  books$: Observable<Book[]> = this.store.pipe(select(selectAllBooks));
-  selectedBook$: Observable<Book> = this.store.pipe(select(selectSelectedBook));
+	bookFormGroup = this.fb.group(CrudComponent.createBook());
+	books$: Observable<Book[]> = this.store.pipe(select(selectAllBooks));
+	selectedBook$: Observable<Book> = this.store.pipe(select(selectSelectedBook));
 
-  isEditing: boolean;
+	isEditing: boolean;
 
-  static createBook(): Book {
-    return {
-      id: uuid(),
-      title: '',
-      author: '',
-      description: ''
-    };
-  }
+	static createBook(): Book {
+		return {
+			id: uuid(),
+			title: '',
+			author: '',
+			description: ''
+		};
+	}
 
-  constructor(public store: Store<State>, public fb: FormBuilder, private router: Router) {}
+	constructor(public store: Store<State>, public fb: FormBuilder, private router: Router) {}
 
-  select(book: Book) {
-    this.isEditing = false;
-    this.router.navigate(['examples/crud', book.id]);
-  }
+	select(book: Book) {
+		this.isEditing = false;
+		this.router.navigate(['examples/crud', book.id]);
+	}
 
-  deselect() {
-    this.isEditing = false;
-    this.router.navigate(['examples/crud']);
-  }
+	deselect() {
+		this.isEditing = false;
+		this.router.navigate(['examples/crud']);
+	}
 
-  edit(book: Book) {
-    this.isEditing = true;
-    this.bookFormGroup.setValue(book);
-  }
+	edit(book: Book) {
+		this.isEditing = true;
+		this.bookFormGroup.setValue(book);
+	}
 
-  addNew() {
-    this.bookFormGroup.reset();
-    this.bookFormGroup.setValue(CrudComponent.createBook());
-    this.isEditing = true;
-  }
+	addNew() {
+		this.bookFormGroup.reset();
+		this.bookFormGroup.setValue(CrudComponent.createBook());
+		this.isEditing = true;
+	}
 
-  cancelEditing() {
-    this.isEditing = false;
-  }
+	cancelEditing() {
+		this.isEditing = false;
+	}
 
-  delete(book: Book) {
-    this.store.dispatch(actionBooksDeleteOne({ id: book.id }));
-    this.isEditing = false;
-    this.router.navigate(['examples/crud']);
-  }
+	delete(book: Book) {
+		this.store.dispatch(actionBooksDeleteOne({ id: book.id }));
+		this.isEditing = false;
+		this.router.navigate(['examples/crud']);
+	}
 
-  save() {
-    if (this.bookFormGroup.valid) {
-      const book = this.bookFormGroup.value;
-      this.store.dispatch(actionBooksUpsertOne({ book }));
-      this.isEditing = false;
-      this.router.navigate(['examples/crud', book.id]);
-    }
-  }
+	save() {
+		if (this.bookFormGroup.valid) {
+			const book = this.bookFormGroup.value;
+			this.store.dispatch(actionBooksUpsertOne({ book }));
+			this.isEditing = false;
+			this.router.navigate(['examples/crud', book.id]);
+		}
+	}
 }

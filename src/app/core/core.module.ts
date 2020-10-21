@@ -41,117 +41,116 @@ import { faCog, faBars, faRocket, faPowerOff, faUserCircle, faPlayCircle } from 
 import { faGithub, faMediumM, faTwitter, faInstagram, faYoutube } from '@fortawesome/free-brands-svg-icons';
 import { NgxsModule } from '@ngxs/store';
 import { SettingsState } from './settings/settings.store.state';
-import { LogService } from './logger/log.service';
 
 export {
-  TitleService,
-  selectAuth,
-  authLogin,
-  authLogout,
-  routeAnimations,
-  AppState,
-  LocalStorageService,
-  selectIsAuthenticated,
-  ROUTE_ANIMATIONS_ELEMENTS,
-  AnimationsService,
-  AuthGuardService,
-  selectRouterState,
-  NotificationService,
-  selectEffectiveTheme,
-  selectSettingsLanguage,
-  selectSettingsStickyHeader
+	TitleService,
+	selectAuth,
+	authLogin,
+	authLogout,
+	routeAnimations,
+	AppState,
+	LocalStorageService,
+	selectIsAuthenticated,
+	ROUTE_ANIMATIONS_ELEMENTS,
+	AnimationsService,
+	AuthGuardService,
+	selectRouterState,
+	NotificationService,
+	selectEffectiveTheme,
+	selectSettingsLanguage,
+	selectSettingsStickyHeader
 };
 
 export function HttpLoaderFactory(http: HttpClient) {
-  return new TranslateHttpLoader(http, `${environment.i18nPrefix}/assets/i18n/`, '.json');
+	return new TranslateHttpLoader(http, `${environment.i18nPrefix}/assets/i18n/`, '.json');
 }
 
 @NgModule({
-  imports: [
-    // angular
-    CommonModule,
-    HttpClientModule,
-    FormsModule,
+	imports: [
+		// angular
+		CommonModule,
+		HttpClientModule,
+		FormsModule,
 
-    // material
-    MatSidenavModule,
-    MatToolbarModule,
-    MatListModule,
-    MatMenuModule,
-    MatIconModule,
-    MatSelectModule,
-    MatTooltipModule,
-    MatSnackBarModule,
-    MatButtonModule,
+		// material
+		MatSidenavModule,
+		MatToolbarModule,
+		MatListModule,
+		MatMenuModule,
+		MatIconModule,
+		MatSelectModule,
+		MatTooltipModule,
+		MatSnackBarModule,
+		MatButtonModule,
 
-    // ngxs
-    NgxsModule.forRoot([SettingsState], {
-      developmentMode: !environment.production,
-      selectorOptions: {
-        suppressErrors: false,
-        injectContainerState: true
-      },
-      compatibility: {
-        strictContentSecurityPolicy: true
-      }
-    }),
+		// ngxs
+		NgxsModule.forRoot([SettingsState], {
+			developmentMode: !environment.production,
+			selectorOptions: {
+				suppressErrors: false,
+				injectContainerState: true
+			},
+			compatibility: {
+				strictContentSecurityPolicy: true
+			}
+		}),
 
-    // ngrx
-    StoreModule.forRoot(reducers, { metaReducers }),
-    StoreRouterConnectingModule.forRoot(),
-    EffectsModule.forRoot([AuthEffects, SettingsEffects, GoogleAnalyticsEffects]),
-    environment.production
-      ? []
-      : StoreDevtoolsModule.instrument({
-          name: 'Odiam Ngxs Material Starter'
-        }),
+		// ngrx
+		StoreModule.forRoot(reducers, { metaReducers }),
+		StoreRouterConnectingModule.forRoot(),
+		EffectsModule.forRoot([AuthEffects, SettingsEffects, GoogleAnalyticsEffects]),
+		environment.production
+			? []
+			: StoreDevtoolsModule.instrument({
+					name: 'Odiam Ngxs Material Starter'
+			  }),
 
-    // 3rd party
-    FontAwesomeModule,
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
-        deps: [HttpClient]
-      }
-    })
-  ],
-  declarations: [],
-  providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
-    { provide: ErrorHandler, useClass: AppErrorHandler },
-    { provide: RouterStateSerializer, useClass: CustomSerializer }
-  ],
-  exports: [
-    // angular
-    FormsModule,
+		// 3rd party
+		FontAwesomeModule,
+		TranslateModule.forRoot({
+			loader: {
+				provide: TranslateLoader,
+				useFactory: HttpLoaderFactory,
+				deps: [HttpClient]
+			}
+		})
+	],
+	declarations: [],
+	providers: [
+		{ provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
+		{ provide: ErrorHandler, useClass: AppErrorHandler },
+		{ provide: RouterStateSerializer, useClass: CustomSerializer }
+	],
+	exports: [
+		// angular
+		FormsModule,
 
-    // material
-    MatSidenavModule,
-    MatToolbarModule,
-    MatListModule,
-    MatMenuModule,
-    MatIconModule,
-    MatSelectModule,
-    MatTooltipModule,
-    MatSnackBarModule,
-    MatButtonModule,
+		// material
+		MatSidenavModule,
+		MatToolbarModule,
+		MatListModule,
+		MatMenuModule,
+		MatIconModule,
+		MatSelectModule,
+		MatTooltipModule,
+		MatSnackBarModule,
+		MatButtonModule,
 
-    // 3rd party
-    FontAwesomeModule,
-    TranslateModule
-  ]
+		// 3rd party
+		FontAwesomeModule,
+		TranslateModule
+	]
 })
 export class CoreModule {
-  constructor(
-    @Optional()
-    @SkipSelf()
-    parentModule: CoreModule,
-    faIconLibrary: FaIconLibrary
-  ) {
-    if (parentModule) {
-      throw new Error('CoreModule is already loaded. Import only in AppModule');
-    }
-    faIconLibrary.addIcons(faCog, faBars, faRocket, faPowerOff, faUserCircle, faPlayCircle, faGithub, faMediumM, faTwitter, faInstagram, faYoutube);
-  }
+	constructor(
+		@Optional()
+		@SkipSelf()
+		parentModule: CoreModule,
+		faIconLibrary: FaIconLibrary
+	) {
+		if (parentModule) {
+			throw new Error('CoreModule is already loaded. Import only in AppModule');
+		}
+		faIconLibrary.addIcons(faCog, faBars, faRocket, faPowerOff, faUserCircle, faPlayCircle, faGithub, faMediumM, faTwitter, faInstagram, faYoutube);
+	}
 }

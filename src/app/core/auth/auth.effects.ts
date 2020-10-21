@@ -11,28 +11,28 @@ export const AUTH_KEY = 'AUTH';
 
 @Injectable()
 export class AuthEffects {
-  constructor(private actions$: Actions, private localStorageService: LocalStorageService, private router: Router) {}
+	constructor(private actions$: Actions, private localStorageService: LocalStorageService, private router: Router) {}
 
-  login = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(authLogin),
-        tap(() => this.localStorageService.setItem(AUTH_KEY, { isAuthenticated: true }))
-      ),
-    { dispatch: false }
-  );
+	login = createEffect(
+		() =>
+			this.actions$.pipe(
+				ofType(authLogin),
+				tap(() => this.localStorageService.setItem(AUTH_KEY, { isAuthenticated: true }))
+			),
+		{ dispatch: false }
+	);
 
-  logout = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(authLogout),
-        tap(() => {
-          this.router.navigate(['']);
-          this.localStorageService.setItem(AUTH_KEY, {
-            isAuthenticated: false
-          });
-        })
-      ),
-    { dispatch: false }
-  );
+	logout = createEffect(
+		() =>
+			this.actions$.pipe(
+				ofType(authLogout),
+				tap(() => {
+					this.router.navigate(['']);
+					this.localStorageService.setItem(AUTH_KEY, {
+						isAuthenticated: false
+					});
+				})
+			),
+		{ dispatch: false }
+	);
 }

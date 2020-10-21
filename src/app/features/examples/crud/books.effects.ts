@@ -13,15 +13,15 @@ export const BOOKS_KEY = 'EXAMPLES.BOOKS';
 
 @Injectable()
 export class BooksEffects {
-  constructor(private actions$: Actions, private store: Store<State>, private localStorageService: LocalStorageService) {}
+	constructor(private actions$: Actions, private store: Store<State>, private localStorageService: LocalStorageService) {}
 
-  persistBooks = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(actionBooksUpsertOne, actionBooksDeleteOne),
-        withLatestFrom(this.store.pipe(select(selectBooks))),
-        tap(([actions, booksState]) => this.localStorageService.setItem(BOOKS_KEY, booksState))
-      ),
-    { dispatch: false }
-  );
+	persistBooks = createEffect(
+		() =>
+			this.actions$.pipe(
+				ofType(actionBooksUpsertOne, actionBooksDeleteOne),
+				withLatestFrom(this.store.pipe(select(selectBooks))),
+				tap(([actions, booksState]) => this.localStorageService.setItem(BOOKS_KEY, booksState))
+			),
+		{ dispatch: false }
+	);
 }

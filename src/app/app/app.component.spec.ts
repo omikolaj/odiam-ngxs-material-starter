@@ -10,25 +10,25 @@ import { SharedModule } from '../shared/shared.module';
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
-  let store: MockStore;
+	let store: MockStore;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      imports: [SharedModule, RouterTestingModule, NoopAnimationsModule, TranslateModule.forRoot()],
-      providers: [provideMockStore()],
-      declarations: [AppComponent]
-    }).compileComponents();
+	beforeEach(async(() => {
+		TestBed.configureTestingModule({
+			imports: [SharedModule, RouterTestingModule, NoopAnimationsModule, TranslateModule.forRoot()],
+			providers: [provideMockStore()],
+			declarations: [AppComponent]
+		}).compileComponents();
 
-    store = TestBed.inject(MockStore);
-    store.overrideSelector(selectIsAuthenticated, false);
-    store.overrideSelector(selectSettingsStickyHeader, true);
-    store.overrideSelector(selectSettingsLanguage, 'en');
-    store.overrideSelector(selectEffectiveTheme, 'default');
-  }));
+		store = TestBed.inject(MockStore);
+		store.overrideSelector(selectIsAuthenticated, false);
+		store.overrideSelector(selectSettingsStickyHeader, true);
+		store.overrideSelector(selectSettingsLanguage, 'en');
+		store.overrideSelector(selectEffectiveTheme, 'default');
+	}));
 
-  it('should create the app', async(() => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
-    expect(app).toBeTruthy();
-  }));
+	it('should create the app', async(() => {
+		const fixture = TestBed.createComponent(AppComponent);
+		const app = fixture.debugElement.componentInstance;
+		expect(app).toBeTruthy();
+	}));
 });

@@ -12,118 +12,118 @@ import { SharedModule } from '../../../shared/shared.module';
 
 import { SettingsContainerComponent } from './settings-container.component';
 import {
-  actionSettingsChangeAnimationsElements,
-  actionSettingsChangeAnimationsPage,
-  actionSettingsChangeAutoNightMode,
-  actionSettingsChangeTheme,
-  actionSettingsChangeStickyHeader
+	actionSettingsChangeAnimationsElements,
+	actionSettingsChangeAnimationsPage,
+	actionSettingsChangeAutoNightMode,
+	actionSettingsChangeTheme,
+	actionSettingsChangeStickyHeader
 } from '../../../core/settings/settings.actions';
 import { selectSettings } from '../../../core/settings/settings.selectors';
 import { SettingsState } from '../../../core/settings/settings_1.model';
 
 describe('SettingsComponent', () => {
-  let component: SettingsContainerComponent;
-  let fixture: ComponentFixture<SettingsContainerComponent>;
-  let store: MockStore;
-  let dispatchSpy;
-  let mockSelectSettings: MemoizedSelector<{}, SettingsState>;
+	let component: SettingsContainerComponent;
+	let fixture: ComponentFixture<SettingsContainerComponent>;
+	let store: MockStore;
+	let dispatchSpy;
+	let mockSelectSettings: MemoizedSelector<{}, SettingsState>;
 
-  const getThemeSelectArrow = () => fixture.debugElement.queryAll(By.css('.mat-select-trigger'))[1];
-  const getSelectOptions = () => fixture.debugElement.queryAll(By.css('mat-option'));
+	const getThemeSelectArrow = () => fixture.debugElement.queryAll(By.css('.mat-select-trigger'))[1];
+	const getSelectOptions = () => fixture.debugElement.queryAll(By.css('mat-option'));
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      imports: [FontAwesomeModule, SharedModule, NoopAnimationsModule, TranslateModule.forRoot()],
-      providers: [provideMockStore()],
-      declarations: [SettingsContainerComponent]
-    }).compileComponents();
+	beforeEach(async(() => {
+		TestBed.configureTestingModule({
+			imports: [FontAwesomeModule, SharedModule, NoopAnimationsModule, TranslateModule.forRoot()],
+			providers: [provideMockStore()],
+			declarations: [SettingsContainerComponent]
+		}).compileComponents();
 
-    TestBed.inject(FaIconLibrary).addIcons(faBars);
+		TestBed.inject(FaIconLibrary).addIcons(faBars);
 
-    store = TestBed.inject(MockStore);
-    mockSelectSettings = store.overrideSelector(selectSettings, {} as SettingsState);
-    fixture = TestBed.createComponent(SettingsContainerComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  }));
+		store = TestBed.inject(MockStore);
+		mockSelectSettings = store.overrideSelector(selectSettings, {} as SettingsState);
+		fixture = TestBed.createComponent(SettingsContainerComponent);
+		component = fixture.componentInstance;
+		fixture.detectChanges();
+	}));
 
-  it('should dispatch change sticky header on sticky header toggle', () => {
-    dispatchSpy = spyOn(store, 'dispatch');
-    const componentDebug = fixture.debugElement;
-    const slider = componentDebug.queryAll(By.directive(MatSlideToggle))[0];
+	it('should dispatch change sticky header on sticky header toggle', () => {
+		dispatchSpy = spyOn(store, 'dispatch');
+		const componentDebug = fixture.debugElement;
+		const slider = componentDebug.queryAll(By.directive(MatSlideToggle))[0];
 
-    slider.triggerEventHandler('change', { checked: false });
-    fixture.detectChanges();
+		slider.triggerEventHandler('change', { checked: false });
+		fixture.detectChanges();
 
-    expect(dispatchSpy).toHaveBeenCalledTimes(1);
-    expect(dispatchSpy).toHaveBeenCalledWith(actionSettingsChangeStickyHeader({ stickyHeader: false }));
-  });
+		expect(dispatchSpy).toHaveBeenCalledTimes(1);
+		expect(dispatchSpy).toHaveBeenCalledWith(actionSettingsChangeStickyHeader({ stickyHeader: false }));
+	});
 
-  it('should dispatch change theme action on theme selection', () => {
-    dispatchSpy = spyOn(store, 'dispatch');
-    getThemeSelectArrow().triggerEventHandler('click', {});
+	it('should dispatch change theme action on theme selection', () => {
+		dispatchSpy = spyOn(store, 'dispatch');
+		getThemeSelectArrow().triggerEventHandler('click', {});
 
-    fixture.detectChanges();
+		fixture.detectChanges();
 
-    getSelectOptions()[1].triggerEventHandler('click', {});
+		getSelectOptions()[1].triggerEventHandler('click', {});
 
-    fixture.detectChanges();
+		fixture.detectChanges();
 
-    expect(dispatchSpy).toHaveBeenCalledTimes(1);
-    expect(dispatchSpy).toHaveBeenCalledWith(actionSettingsChangeTheme({ theme: 'LIGHT-THEME' }));
-  });
+		expect(dispatchSpy).toHaveBeenCalledTimes(1);
+		expect(dispatchSpy).toHaveBeenCalledWith(actionSettingsChangeTheme({ theme: 'LIGHT-THEME' }));
+	});
 
-  it('should dispatch change auto night mode on night mode toggle', () => {
-    dispatchSpy = spyOn(store, 'dispatch');
-    const componentDebug = fixture.debugElement;
-    const slider = componentDebug.queryAll(By.directive(MatSlideToggle))[1];
+	it('should dispatch change auto night mode on night mode toggle', () => {
+		dispatchSpy = spyOn(store, 'dispatch');
+		const componentDebug = fixture.debugElement;
+		const slider = componentDebug.queryAll(By.directive(MatSlideToggle))[1];
 
-    slider.triggerEventHandler('change', { checked: false });
-    fixture.detectChanges();
+		slider.triggerEventHandler('change', { checked: false });
+		fixture.detectChanges();
 
-    expect(dispatchSpy).toHaveBeenCalledTimes(1);
-    expect(dispatchSpy).toHaveBeenCalledWith(actionSettingsChangeAutoNightMode({ autoNightMode: false }));
-  });
+		expect(dispatchSpy).toHaveBeenCalledTimes(1);
+		expect(dispatchSpy).toHaveBeenCalledWith(actionSettingsChangeAutoNightMode({ autoNightMode: false }));
+	});
 
-  it('should dispatch change animations page', () => {
-    dispatchSpy = spyOn(store, 'dispatch');
-    const componentDebug = fixture.debugElement;
-    const slider = componentDebug.queryAll(By.directive(MatSlideToggle))[2];
+	it('should dispatch change animations page', () => {
+		dispatchSpy = spyOn(store, 'dispatch');
+		const componentDebug = fixture.debugElement;
+		const slider = componentDebug.queryAll(By.directive(MatSlideToggle))[2];
 
-    slider.triggerEventHandler('change', { checked: false });
-    fixture.detectChanges();
+		slider.triggerEventHandler('change', { checked: false });
+		fixture.detectChanges();
 
-    expect(dispatchSpy).toHaveBeenCalledTimes(1);
-    expect(dispatchSpy).toHaveBeenCalledWith(actionSettingsChangeAnimationsPage({ pageAnimations: false }));
-  });
+		expect(dispatchSpy).toHaveBeenCalledTimes(1);
+		expect(dispatchSpy).toHaveBeenCalledWith(actionSettingsChangeAnimationsPage({ pageAnimations: false }));
+	});
 
-  it('should dispatch change animations elements', () => {
-    dispatchSpy = spyOn(store, 'dispatch');
-    const componentDebug = fixture.debugElement;
-    const slider = componentDebug.queryAll(By.directive(MatSlideToggle))[3];
+	it('should dispatch change animations elements', () => {
+		dispatchSpy = spyOn(store, 'dispatch');
+		const componentDebug = fixture.debugElement;
+		const slider = componentDebug.queryAll(By.directive(MatSlideToggle))[3];
 
-    slider.triggerEventHandler('change', { checked: false });
-    fixture.detectChanges();
+		slider.triggerEventHandler('change', { checked: false });
+		fixture.detectChanges();
 
-    expect(dispatchSpy).toHaveBeenCalledTimes(1);
-    expect(dispatchSpy).toHaveBeenCalledWith(actionSettingsChangeAnimationsElements({ elementsAnimations: false }));
-  });
+		expect(dispatchSpy).toHaveBeenCalledTimes(1);
+		expect(dispatchSpy).toHaveBeenCalledWith(actionSettingsChangeAnimationsElements({ elementsAnimations: false }));
+	});
 
-  it('should disable change animations page when disabled is set in state', () => {
-    mockSelectSettings.setResult({
-      pageAnimationsDisabled: true
-    } as SettingsState);
-    store.refreshState();
-    fixture.detectChanges();
+	it('should disable change animations page when disabled is set in state', () => {
+		mockSelectSettings.setResult({
+			pageAnimationsDisabled: true
+		} as SettingsState);
+		store.refreshState();
+		fixture.detectChanges();
 
-    dispatchSpy = spyOn(store, 'dispatch');
-    const componentDebug = fixture.debugElement;
-    const slider = componentDebug.queryAll(By.directive(MatSlideToggle))[2];
+		dispatchSpy = spyOn(store, 'dispatch');
+		const componentDebug = fixture.debugElement;
+		const slider = componentDebug.queryAll(By.directive(MatSlideToggle))[2];
 
-    console.log(slider);
-    slider.triggerEventHandler('change', { checked: false });
-    fixture.detectChanges();
+		console.log(slider);
+		slider.triggerEventHandler('change', { checked: false });
+		fixture.detectChanges();
 
-    expect(dispatchSpy).toHaveBeenCalledTimes(0);
-  });
+		expect(dispatchSpy).toHaveBeenCalledTimes(0);
+	});
 });

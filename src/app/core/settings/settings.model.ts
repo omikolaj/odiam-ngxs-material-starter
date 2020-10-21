@@ -6,13 +6,13 @@ export type Language = 'en' | 'sk' | 'de' | 'fr' | 'es' | 'pt-br' | 'he';
 export const SETTINGS_KEY = 'SETTINGS';
 
 export interface UserSettings {
-  language: string;
-  theme: string;
-  autoNightMode: boolean;
-  nightTheme: string;
-  stickyHeader: boolean;
-  pageAnimations: boolean;
-  pageAnimationsDisabled: boolean;
-  elementsAnimations: boolean;
-  hour: number;
+	language: string;
+	theme: string;
+	autoNightMode: boolean;
+	nightTheme: string;
+	stickyHeader: boolean;
+	pageAnimations: boolean;
+	pageAnimationsDisabled: boolean;
+	elementsAnimations: boolean;
+	hour: number;
 }

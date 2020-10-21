@@ -16,150 +16,150 @@ import { selectStockMarket } from '../stock-market.selectors';
 import { StockMarketState } from '../stock-market.model';
 
 describe('StockMarketContainerComponent', () => {
-  let retrieveStockSpy: jasmine.Spy;
+	let retrieveStockSpy: jasmine.Spy;
 
-  let component: StockMarketContainerComponent;
-  let fixture: ComponentFixture<StockMarketContainerComponent>;
-  let store: MockStore;
-  let mockSelectStockMarket: MemoizedSelector<any, StockMarketState>;
+	let component: StockMarketContainerComponent;
+	let fixture: ComponentFixture<StockMarketContainerComponent>;
+	let store: MockStore;
+	let mockSelectStockMarket: MemoizedSelector<any, StockMarketState>;
 
-  const getSpinner = () => fixture.debugElement.query(By.css('mat-spinner'));
+	const getSpinner = () => fixture.debugElement.query(By.css('mat-spinner'));
 
-  const getError = () => fixture.debugElement.query(By.css('.error-state'));
+	const getError = () => fixture.debugElement.query(By.css('.error-state'));
 
-  const getStocks = () => fixture.debugElement.query(By.css('mat-card mat-card-title'));
+	const getStocks = () => fixture.debugElement.query(By.css('mat-card mat-card-title'));
 
-  const getInput = () => fixture.debugElement.query(By.css('input'));
+	const getInput = () => fixture.debugElement.query(By.css('input'));
 
-  const getExchange = () => fixture.debugElement.query(By.css('mat-card mat-card-content'));
+	const getExchange = () => fixture.debugElement.query(By.css('mat-card mat-card-content'));
 
-  const getChange = () => fixture.debugElement.query(By.css('mat-card mat-card-subtitle'));
+	const getChange = () => fixture.debugElement.query(By.css('mat-card mat-card-subtitle'));
 
-  const getCaretUpDownItem = () => fixture.debugElement.query(By.css('mat-card fa-icon[icon="caret-down"]'));
+	const getCaretUpDownItem = () => fixture.debugElement.query(By.css('mat-card fa-icon[icon="caret-down"]'));
 
-  describe('given component booted', () => {
-    beforeEach(async(() => {
-      TestBed.configureTestingModule({
-        imports: [SharedModule, NoopAnimationsModule, TranslateModule.forRoot()],
-        providers: [StockMarketService, provideMockStore()],
-        declarations: [StockMarketContainerComponent]
-      }).compileComponents();
+	describe('given component booted', () => {
+		beforeEach(async(() => {
+			TestBed.configureTestingModule({
+				imports: [SharedModule, NoopAnimationsModule, TranslateModule.forRoot()],
+				providers: [StockMarketService, provideMockStore()],
+				declarations: [StockMarketContainerComponent]
+			}).compileComponents();
 
-      const stockMarketService = TestBed.inject<StockMarketService>(StockMarketService);
-      retrieveStockSpy = spyOn(stockMarketService, 'retrieveStock').and.returnValue(EMPTY);
+			const stockMarketService = TestBed.inject<StockMarketService>(StockMarketService);
+			retrieveStockSpy = spyOn(stockMarketService, 'retrieveStock').and.returnValue(EMPTY);
 
-      store = TestBed.inject(MockStore);
-      mockSelectStockMarket = store.overrideSelector(selectStockMarket, {
-        symbol: 'AAPL',
-        loading: false
-      });
-      fixture = TestBed.createComponent(StockMarketContainerComponent);
-      component = fixture.componentInstance;
-      fixture.detectChanges();
-    }));
+			store = TestBed.inject(MockStore);
+			mockSelectStockMarket = store.overrideSelector(selectStockMarket, {
+				symbol: 'AAPL',
+				loading: false
+			});
+			fixture = TestBed.createComponent(StockMarketContainerComponent);
+			component = fixture.componentInstance;
+			fixture.detectChanges();
+		}));
 
-    it('should be created', () => {
-      expect(component).toBeTruthy();
-    });
+		it('should be created', () => {
+			expect(component).toBeTruthy();
+		});
 
-    describe('and input changed', () => {
-      let dispatchSpy: jasmine.Spy;
+		describe('and input changed', () => {
+			let dispatchSpy: jasmine.Spy;
 
-      beforeEach(() => {
-        dispatchSpy = spyOn(store, 'dispatch');
-        getInput().triggerEventHandler('keyup', { target: { value: 'A' } });
-        fixture.detectChanges();
-      });
+			beforeEach(() => {
+				dispatchSpy = spyOn(store, 'dispatch');
+				getInput().triggerEventHandler('keyup', { target: { value: 'A' } });
+				fixture.detectChanges();
+			});
 
-      it('should trigger dispatch with correct input', () => {
-        expect(dispatchSpy).toHaveBeenCalledTimes(1);
-        expect(dispatchSpy).toHaveBeenCalledWith(actionStockMarketRetrieve({ symbol: 'A' }));
-        expect(true).toBeTruthy();
-      });
-    });
+			it('should trigger dispatch with correct input', () => {
+				expect(dispatchSpy).toHaveBeenCalledTimes(1);
+				expect(dispatchSpy).toHaveBeenCalledWith(actionStockMarketRetrieve({ symbol: 'A' }));
+				expect(true).toBeTruthy();
+			});
+		});
 
-    describe('and stocks are loading', () => {
-      beforeEach(() => {
-        mockSelectStockMarket.setResult({ symbol: 'TDD', loading: true });
-        store.refreshState();
-        fixture.detectChanges();
-      });
+		describe('and stocks are loading', () => {
+			beforeEach(() => {
+				mockSelectStockMarket.setResult({ symbol: 'TDD', loading: true });
+				store.refreshState();
+				fixture.detectChanges();
+			});
 
-      it('should show spinner', () => {
-        expect(getSpinner()).toBeTruthy();
-      });
-    });
+			it('should show spinner', () => {
+				expect(getSpinner()).toBeTruthy();
+			});
+		});
 
-    describe('and stocks are not loading', () => {
-      beforeEach(() => {
-        mockSelectStockMarket.setResult({ symbol: 'TDD', loading: false });
-        store.refreshState();
-        fixture.detectChanges();
-      });
+		describe('and stocks are not loading', () => {
+			beforeEach(() => {
+				mockSelectStockMarket.setResult({ symbol: 'TDD', loading: false });
+				store.refreshState();
+				fixture.detectChanges();
+			});
 
-      it('should not show spinner', () => {
-        expect(getSpinner()).toBeFalsy();
-      });
-    });
+			it('should not show spinner', () => {
+				expect(getSpinner()).toBeFalsy();
+			});
+		});
 
-    describe('and the error happened on stock retrieval', () => {
-      beforeEach(() => {
-        mockSelectStockMarket.setResult({
-          symbol: 'TDD',
-          loading: false,
-          error: new HttpErrorResponse({})
-        });
-        store.refreshState();
-        fixture.detectChanges();
-      });
+		describe('and the error happened on stock retrieval', () => {
+			beforeEach(() => {
+				mockSelectStockMarket.setResult({
+					symbol: 'TDD',
+					loading: false,
+					error: new HttpErrorResponse({})
+				});
+				store.refreshState();
+				fixture.detectChanges();
+			});
 
-      it('should show error', () => {
-        expect(getError()).toBeTruthy();
-      });
-    });
+			it('should show error', () => {
+				expect(getError()).toBeTruthy();
+			});
+		});
 
-    describe('and stock details are loaded', () => {
-      const symbol = 'TDD';
-      const exchange = 'TESTAQ';
-      const last = '123';
-      const ccy = 'USD';
-      const change = '100';
-      const changePercent = '11';
+		describe('and stock details are loaded', () => {
+			const symbol = 'TDD';
+			const exchange = 'TESTAQ';
+			const last = '123';
+			const ccy = 'USD';
+			const change = '100';
+			const changePercent = '11';
 
-      beforeEach(() => {
-        mockSelectStockMarket.setResult({
-          symbol,
-          loading: false,
-          stock: {
-            symbol,
-            exchange,
-            last,
-            ccy,
-            change,
-            changePercent,
-            changeNegative: true,
-            changePositive: false
-          }
-        });
-        store.refreshState();
-        fixture.detectChanges();
-      });
+			beforeEach(() => {
+				mockSelectStockMarket.setResult({
+					symbol,
+					loading: false,
+					stock: {
+						symbol,
+						exchange,
+						last,
+						ccy,
+						change,
+						changePercent,
+						changeNegative: true,
+						changePositive: false
+					}
+				});
+				store.refreshState();
+				fixture.detectChanges();
+			});
 
-      it('should display the relevant caret item', () => {
-        expect(getCaretUpDownItem()).toBeTruthy();
-      });
+			it('should display the relevant caret item', () => {
+				expect(getCaretUpDownItem()).toBeTruthy();
+			});
 
-      it('should display correct stock name, price, currency', () => {
-        expect(getStocks().nativeElement.textContent.trim()).toEqual(`${symbol} ${last} ${ccy}`);
-      });
+			it('should display correct stock name, price, currency', () => {
+				expect(getStocks().nativeElement.textContent.trim()).toEqual(`${symbol} ${last} ${ccy}`);
+			});
 
-      it('should display correct exchange', () => {
-        expect(getExchange().nativeElement.textContent.trim()).toEqual(exchange);
-      });
+			it('should display correct exchange', () => {
+				expect(getExchange().nativeElement.textContent.trim()).toEqual(exchange);
+			});
 
-      it('should display correct change', () => {
-        expect(getChange().nativeElement.textContent.trim()).toEqual(`${change} (${changePercent}%)`);
-      });
-    });
-  });
+			it('should display correct change', () => {
+				expect(getChange().nativeElement.textContent.trim()).toEqual(`${change} (${changePercent}%)`);
+			});
+		});
+	});
 });

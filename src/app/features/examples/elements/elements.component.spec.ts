@@ -9,24 +9,24 @@ import { SharedModule } from '../../../shared/shared.module';
 import { ElementsComponent } from './elements.component';
 
 describe('ElementsComponent', () => {
-  let component: ElementsComponent;
-  let fixture: ComponentFixture<ElementsComponent>;
+	let component: ElementsComponent;
+	let fixture: ComponentFixture<ElementsComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      imports: [SharedModule, NoopAnimationsModule, TranslateModule.forRoot(), LazyElementsModule],
-      declarations: [ElementsComponent]
-    }).compileComponents();
-  }));
+	beforeEach(async(() => {
+		TestBed.configureTestingModule({
+			schemas: [CUSTOM_ELEMENTS_SCHEMA],
+			imports: [SharedModule, NoopAnimationsModule, TranslateModule.forRoot(), LazyElementsModule],
+			declarations: [ElementsComponent]
+		}).compileComponents();
+	}));
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(ElementsComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+	beforeEach(() => {
+		fixture = TestBed.createComponent(ElementsComponent);
+		component = fixture.componentInstance;
+		fixture.detectChanges();
+	});
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+	it('should create', () => {
+		expect(component).toBeTruthy();
+	});
 });

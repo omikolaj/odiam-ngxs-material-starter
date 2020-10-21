@@ -25,34 +25,34 @@
 @import './app/features/examples/examples/examples.component.scss-theme';
 
 @mixin custom-components-theme($theme) {
-  @include odm-styles-reset-theme($theme);
-  @include odm-app-component-theme($theme);
-  @include odm-about-component-theme($theme);
-  @include odm-big-input-component-theme($theme);
-  @include odm-notifications-component-theme($theme);
-  @include odm-todos-container-component-theme($theme);
-  @include odm-stock-market-container-component-theme($theme);
-  @include odm-parent-component-theme($theme);
-  @include odm-child-component-theme($theme);
-  @include odm-examples-component-theme($theme);
+	@include odm-styles-reset-theme($theme);
+	@include odm-app-component-theme($theme);
+	@include odm-about-component-theme($theme);
+	@include odm-big-input-component-theme($theme);
+	@include odm-notifications-component-theme($theme);
+	@include odm-todos-container-component-theme($theme);
+	@include odm-stock-market-container-component-theme($theme);
+	@include odm-parent-component-theme($theme);
+	@include odm-child-component-theme($theme);
+	@include odm-examples-component-theme($theme);
 }
 
 .default-theme {
-  @include angular-material-theme($odm-theme);
-  @include custom-components-theme($odm-theme);
+	@include angular-material-theme($odm-theme);
+	@include custom-components-theme($odm-theme);
 }
 
 .light-theme {
-  @include angular-material-theme($odm-light-theme);
-  @include custom-components-theme($odm-light-theme);
+	@include angular-material-theme($odm-light-theme);
+	@include custom-components-theme($odm-light-theme);
 }
 
 .black-theme {
-  @include angular-material-theme($odm-black-theme);
-  @include custom-components-theme($odm-black-theme);
+	@include angular-material-theme($odm-black-theme);
+	@include custom-components-theme($odm-black-theme);
 }
 
 .nature-theme {
-  @include angular-material-theme($odm-nature-theme);
-  @include custom-components-theme($odm-nature-theme);
+	@include angular-material-theme($odm-nature-theme);
+	@include custom-components-theme($odm-nature-theme);
 }

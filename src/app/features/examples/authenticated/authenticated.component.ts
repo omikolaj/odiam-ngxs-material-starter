@@ -3,15 +3,15 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ROUTE_ANIMATIONS_ELEMENTS } from '../../../core/core.module';
 
 @Component({
-  selector: 'odm-authenticated',
-  templateUrl: './authenticated.component.html',
-  styleUrls: ['./authenticated.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+	selector: 'odm-authenticated',
+	templateUrl: './authenticated.component.html',
+	styleUrls: ['./authenticated.component.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AuthenticatedComponent implements OnInit {
-  routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
+	routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
 
-  constructor() {}
+	constructor() {}
 
-  ngOnInit() {}
+	ngOnInit() {}
 }

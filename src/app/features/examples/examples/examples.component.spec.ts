@@ -10,32 +10,32 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { TranslateModule } from '@ngx-translate/core';
 
 describe('ExamplesComponent', () => {
-  let component: ExamplesComponent;
-  let fixture: ComponentFixture<ExamplesComponent>;
+	let component: ExamplesComponent;
+	let fixture: ComponentFixture<ExamplesComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, SharedModule, NoopAnimationsModule, RouterTestingModule, TranslateModule.forRoot()],
-      providers: [
-        provideMockStore({
-          initialState: {
-            auth: {
-              isAuthenticated: false
-            }
-          }
-        })
-      ],
-      declarations: [ExamplesComponent]
-    }).compileComponents();
-  }));
+	beforeEach(async(() => {
+		TestBed.configureTestingModule({
+			imports: [HttpClientTestingModule, SharedModule, NoopAnimationsModule, RouterTestingModule, TranslateModule.forRoot()],
+			providers: [
+				provideMockStore({
+					initialState: {
+						auth: {
+							isAuthenticated: false
+						}
+					}
+				})
+			],
+			declarations: [ExamplesComponent]
+		}).compileComponents();
+	}));
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(ExamplesComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+	beforeEach(() => {
+		fixture = TestBed.createComponent(ExamplesComponent);
+		component = fixture.componentInstance;
+		fixture.detectChanges();
+	});
 
-  it('should be created', () => {
-    expect(component).toBeTruthy();
-  });
+	it('should be created', () => {
+		expect(component).toBeTruthy();
+	});
 });

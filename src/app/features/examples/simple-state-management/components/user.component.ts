@@ -8,57 +8,57 @@ import { ROUTE_ANIMATIONS_ELEMENTS } from '../../../../core/animations/route.ani
 import { User, UserService } from '../user.service';
 
 @Component({
-  selector: 'odm-user',
-  templateUrl: './user.component.html',
-  styleUrls: ['./user.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+	selector: 'odm-user',
+	templateUrl: './user.component.html',
+	styleUrls: ['./user.component.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserComponent implements OnInit {
-  routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
-  userForm: FormGroup;
-  users$: Observable<User[]>;
-  isEdit$: Observable<{ value: boolean }>;
+	routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
+	userForm: FormGroup;
+	users$: Observable<User[]>;
+	isEdit$: Observable<{ value: boolean }>;
 
-  constructor(private fb: FormBuilder, private userService: UserService) {}
+	constructor(private fb: FormBuilder, private userService: UserService) {}
 
-  ngOnInit() {
-    this.users$ = this.userService.users$;
+	ngOnInit() {
+		this.users$ = this.userService.users$;
 
-    this.userForm = this.fb.group({
-      id: '',
-      username: ['', [Validators.required, Validators.minLength(5)]],
-      name: ['', [Validators.required, Validators.minLength(5)]],
-      surname: ['', [Validators.required, Validators.minLength(5)]]
-    });
+		this.userForm = this.fb.group({
+			id: '',
+			username: ['', [Validators.required, Validators.minLength(5)]],
+			name: ['', [Validators.required, Validators.minLength(5)]],
+			surname: ['', [Validators.required, Validators.minLength(5)]]
+		});
 
-    this.isEdit$ = this.userForm.get('id').valueChanges.pipe(
-      startWith(''),
-      map((id) => ({ value: (id || '').length > 0 }))
-    );
-  }
+		this.isEdit$ = this.userForm.get('id').valueChanges.pipe(
+			startWith(''),
+			map((id) => ({ value: (id || '').length > 0 }))
+		);
+	}
 
-  removeUser(id: string) {
-    this.userService.removeUser(id);
-  }
+	removeUser(id: string) {
+		this.userService.removeUser(id);
+	}
 
-  editUser(user: User) {
-    this.userForm.patchValue({ ...user });
-  }
+	editUser(user: User) {
+		this.userForm.patchValue({ ...user });
+	}
 
-  onSubmit(userFormRef: FormGroupDirective) {
-    if (this.userForm.valid) {
-      const data = this.userForm.getRawValue();
-      if (data.id && data.id.length) {
-        this.userService.updateUser(data);
-      } else {
-        this.userService.addUser({ ...data });
-      }
-      userFormRef.resetForm();
-      this.userForm.reset();
-    }
-  }
+	onSubmit(userFormRef: FormGroupDirective) {
+		if (this.userForm.valid) {
+			const data = this.userForm.getRawValue();
+			if (data.id && data.id.length) {
+				this.userService.updateUser(data);
+			} else {
+				this.userService.addUser({ ...data });
+			}
+			userFormRef.resetForm();
+			this.userForm.reset();
+		}
+	}
 
-  trackByUserId(index: number, user: User): string {
-    return user.id;
-  }
+	trackByUserId(index: number, user: User): string {
+		return user.id;
+	}
 }

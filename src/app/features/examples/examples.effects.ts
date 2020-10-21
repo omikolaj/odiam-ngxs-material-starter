@@ -11,34 +11,34 @@ import { actionSettingsChangeLanguage } from '../../core/settings/settings.actio
 
 @Injectable()
 export class ExamplesEffects {
-  constructor(
-    private actions$: Actions,
-    private store: Store<AppState>,
-    private translateService: TranslateService,
-    private router: Router,
-    private titleService: TitleService
-  ) {}
+	constructor(
+		private actions$: Actions,
+		private store: Store<AppState>,
+		private translateService: TranslateService,
+		private router: Router,
+		private titleService: TitleService
+	) {}
 
-  setTranslateServiceLanguage = createEffect(
-    () => () =>
-      this.store.pipe(
-        select(selectSettingsLanguage),
-        distinctUntilChanged(),
-        tap((language) => this.translateService.use(language))
-      ),
-    { dispatch: false }
-  );
+	setTranslateServiceLanguage = createEffect(
+		() => () =>
+			this.store.pipe(
+				select(selectSettingsLanguage),
+				distinctUntilChanged(),
+				tap((language) => this.translateService.use(language))
+			),
+		{ dispatch: false }
+	);
 
-  setTitle = createEffect(
-    () =>
-      merge(
-        this.actions$.pipe(ofType(actionSettingsChangeLanguage)),
-        this.router.events.pipe(filter((event) => event instanceof ActivationEnd))
-      ).pipe(
-        tap(() => {
-          this.titleService.setTitle(this.router.routerState.snapshot.root, this.translateService);
-        })
-      ),
-    { dispatch: false }
-  );
+	setTitle = createEffect(
+		() =>
+			merge(
+				this.actions$.pipe(ofType(actionSettingsChangeLanguage)),
+				this.router.events.pipe(filter((event) => event instanceof ActivationEnd))
+			).pipe(
+				tap(() => {
+					this.titleService.setTitle(this.router.routerState.snapshot.root, this.translateService);
+				})
+			),
+		{ dispatch: false }
+	);
 }

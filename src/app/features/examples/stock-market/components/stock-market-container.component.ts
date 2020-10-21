@@ -11,23 +11,23 @@ import { StockMarketState } from '../stock-market.model';
 import { State } from '../../examples.state';
 
 @Component({
-  selector: 'odm-stock-market',
-  templateUrl: './stock-market-container.component.html',
-  styleUrls: ['./stock-market-container.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+	selector: 'odm-stock-market',
+	templateUrl: './stock-market-container.component.html',
+	styleUrls: ['./stock-market-container.component.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StockMarketContainerComponent implements OnInit {
-  routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
-  stocks$: Observable<StockMarketState>;
+	routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
+	stocks$: Observable<StockMarketState>;
 
-  constructor(public store: Store<State>) {}
+	constructor(public store: Store<State>) {}
 
-  ngOnInit() {
-    this.stocks$ = this.store.pipe(select(selectStockMarket));
-    this.stocks$.pipe(take(1)).subscribe((stocks) => this.onSymbolChange(stocks.symbol));
-  }
+	ngOnInit() {
+		this.stocks$ = this.store.pipe(select(selectStockMarket));
+		this.stocks$.pipe(take(1)).subscribe((stocks) => this.onSymbolChange(stocks.symbol));
+	}
 
-  onSymbolChange(symbol: string) {
-    this.store.dispatch(actionStockMarketRetrieve({ symbol }));
-  }
+	onSymbolChange(symbol: string) {
+		this.store.dispatch(actionStockMarketRetrieve({ symbol }));
+	}
 }

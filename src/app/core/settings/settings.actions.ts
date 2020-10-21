@@ -12,8 +12,8 @@ export const actionSettingsChangeStickyHeader = createAction('[Settings] Change 
 export const actionSettingsChangeAnimationsPage = createAction('[Settings] Change Animations Page', props<{ pageAnimations: boolean }>());
 
 export const actionSettingsChangeAnimationsPageDisabled = createAction(
-  '[Settings] Change Animations Page Disabled',
-  props<{ pageAnimationsDisabled: boolean }>()
+	'[Settings] Change Animations Page Disabled',
+	props<{ pageAnimationsDisabled: boolean }>()
 );
 
 export const actionSettingsChangeAnimationsElements = createAction('[Settings] Change Animations Elements', props<{ elementsAnimations: boolean }>());

@@ -13,7 +13,7 @@ export const selectAllBooks = createSelector(selectBooks, selectAll);
 export const selectBooksEntities = createSelector(selectBooks, selectEntities);
 
 export const selectSelectedBook = createSelector(
-  selectBooksEntities,
-  selectRouterState,
-  (entities, params) => params && entities[params.state.params.id]
+	selectBooksEntities,
+	selectRouterState,
+	(entities, params) => params && entities[params.state.params.id]
 );

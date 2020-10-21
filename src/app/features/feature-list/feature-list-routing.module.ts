@@ -4,15 +4,15 @@ import { Routes, RouterModule } from '@angular/router';
 import { FeatureListComponent } from './feature-list/feature-list.component';
 
 const routes: Routes = [
-  {
-    path: '',
-    component: FeatureListComponent,
-    data: { title: 'odm.menu.features' }
-  }
+	{
+		path: '',
+		component: FeatureListComponent,
+		data: { title: 'odm.menu.features' }
+	}
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+	imports: [RouterModule.forChild(routes)],
+	exports: [RouterModule]
 })
 export class FeatureListRoutingModule {}

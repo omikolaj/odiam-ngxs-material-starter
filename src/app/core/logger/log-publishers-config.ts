@@ -1,5 +1,5 @@
 export class LogPublishersConfig {
-  loggerName: string;
-  loggerLocation: string;
-  isActive: boolean;
+	loggerName: string;
+	loggerLocation: string;
+	isActive: boolean;
 }

@@ -1,4 +1,3 @@
-import { By } from '@angular/platform-browser';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { TranslateModule } from '@ngx-translate/core';
@@ -17,66 +16,66 @@ import { MatInputHarness } from '@angular/material/input/testing';
 import { MatButtonHarness } from '@angular/material/button/testing';
 
 describe('FormComponent', () => {
-  let store: MockStore;
-  let component: FormComponent;
-  let fixture: ComponentFixture<FormComponent>;
-  let dispatchSpy: jasmine.Spy;
-  let loader: HarnessLoader;
+	let store: MockStore;
+	let component: FormComponent;
+	let fixture: ComponentFixture<FormComponent>;
+	let dispatchSpy: jasmine.Spy;
+	let loader: HarnessLoader;
 
-  const getInput = (fieldName: string) => loader.getHarness(MatInputHarness.with({ selector: `[formControlName="${fieldName}"]` }));
+	const getInput = (fieldName: string) => loader.getHarness(MatInputHarness.with({ selector: `[formControlName="${fieldName}"]` }));
 
-  const getSaveButton = () => loader.getHarness(MatButtonHarness.with({ text: 'odm.examples.form.save' }));
+	const getSaveButton = () => loader.getHarness(MatButtonHarness.with({ text: 'odm.examples.form.save' }));
 
-  const getResetButton = async () => loader.getHarness(MatButtonHarness.with({ text: 'odm.examples.form.reset' }));
+	const getResetButton = async () => loader.getHarness(MatButtonHarness.with({ text: 'odm.examples.form.reset' }));
 
-  beforeEach(async () => {
-    TestBed.configureTestingModule({
-      imports: [SharedModule, NoopAnimationsModule, TranslateModule.forRoot()],
-      declarations: [FormComponent],
-      providers: [provideMockStore(), NotificationService]
-    });
+	beforeEach(async () => {
+		TestBed.configureTestingModule({
+			imports: [SharedModule, NoopAnimationsModule, TranslateModule.forRoot()],
+			declarations: [FormComponent],
+			providers: [provideMockStore(), NotificationService]
+		});
 
-    store = TestBed.inject(MockStore);
-    store.overrideSelector(selectFormState, { form: {} as Form });
-    fixture = TestBed.createComponent(FormComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-    loader = TestbedHarnessEnvironment.loader(fixture);
+		store = TestBed.inject(MockStore);
+		store.overrideSelector(selectFormState, { form: {} as Form });
+		fixture = TestBed.createComponent(FormComponent);
+		component = fixture.componentInstance;
+		fixture.detectChanges();
+		loader = TestbedHarnessEnvironment.loader(fixture);
 
-    dispatchSpy = spyOn(store, 'dispatch');
-  });
+		dispatchSpy = spyOn(store, 'dispatch');
+	});
 
-  it('should save form', async () => {
-    const usernameInput = await getInput('username');
-    const saveButton = await getSaveButton();
+	it('should save form', async () => {
+		const usernameInput = await getInput('username');
+		const saveButton = await getSaveButton();
 
-    await usernameInput.setValue('tomastrajan');
-    await saveButton.click();
+		await usernameInput.setValue('tomastrajan');
+		await saveButton.click();
 
-    expect(dispatchSpy).toHaveBeenCalledTimes(1);
-    expect(dispatchSpy.calls.mostRecent().args[0].type).toBe('[Form] Update');
-    expect(dispatchSpy.calls.mostRecent().args[0].form).toEqual({
-      autosave: false,
-      username: 'tomastrajan',
-      password: '',
-      email: '',
-      description: '',
-      requestGift: '',
-      birthday: '',
-      rating: 0
-    });
-  });
+		expect(dispatchSpy).toHaveBeenCalledTimes(1);
+		expect(dispatchSpy.calls.mostRecent().args[0].type).toBe('[Form] Update');
+		expect(dispatchSpy.calls.mostRecent().args[0].form).toEqual({
+			autosave: false,
+			username: 'tomastrajan',
+			password: '',
+			email: '',
+			description: '',
+			requestGift: '',
+			birthday: '',
+			rating: 0
+		});
+	});
 
-  it('should reset form', async () => {
-    const usernameInput = await getInput('username');
-    const resetButton = await getResetButton();
+	it('should reset form', async () => {
+		const usernameInput = await getInput('username');
+		const resetButton = await getResetButton();
 
-    await usernameInput.setValue('tomastrajan');
-    await resetButton.click();
-    const usernameValue = await usernameInput.getValue();
+		await usernameInput.setValue('tomastrajan');
+		await resetButton.click();
+		const usernameValue = await usernameInput.getValue();
 
-    expect(dispatchSpy).toHaveBeenCalledTimes(1);
-    expect(dispatchSpy.calls.mostRecent().args[0].type).toBe('[Form] Reset');
-    expect(usernameValue).toBe('');
-  });
+		expect(dispatchSpy).toHaveBeenCalledTimes(1);
+		expect(dispatchSpy.calls.mostRecent().args[0].type).toBe('[Form] Reset');
+		expect(usernameValue).toBe('');
+	});
 });

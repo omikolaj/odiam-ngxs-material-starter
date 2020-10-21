@@ -5,17 +5,17 @@ import { tap, filter } from 'rxjs/operators';
 
 @Injectable()
 export class GoogleAnalyticsEffects {
-  constructor(private router: Router) {}
+	constructor(private router: Router) {}
 
-  pageView = createEffect(
-    () => () =>
-      this.router.events.pipe(
-        filter((event) => event instanceof NavigationEnd),
-        tap((event: NavigationEnd) => {
-          (<any>window).ga('set', 'page', event.urlAfterRedirects);
-          (<any>window).ga('send', 'pageview');
-        })
-      ),
-    { dispatch: false }
-  );
+	pageView = createEffect(
+		() => () =>
+			this.router.events.pipe(
+				filter((event) => event instanceof NavigationEnd),
+				tap((event: NavigationEnd) => {
+					(<any>window).ga('set', 'page', event.urlAfterRedirects);
+					(<any>window).ga('send', 'pageview');
+				})
+			),
+		{ dispatch: false }
+	);
 }

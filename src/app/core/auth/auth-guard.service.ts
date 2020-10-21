@@ -7,12 +7,12 @@ import { selectIsAuthenticated } from './auth.selectors';
 import { AppState } from '../core.state';
 
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root'
 })
 export class AuthGuardService implements CanActivate {
-  constructor(private store: Store<AppState>) {}
+	constructor(private store: Store<AppState>) {}
 
-  canActivate(): Observable<boolean> {
-    return this.store.pipe(select(selectIsAuthenticated));
-  }
+	canActivate(): Observable<boolean> {
+		return this.store.pipe(select(selectIsAuthenticated));
+	}
 }

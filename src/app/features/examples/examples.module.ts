@@ -31,41 +31,41 @@ import { UserService } from './simple-state-management/user.service';
 import { ElementsComponent } from './elements/elements.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
-  return new TranslateHttpLoader(http, `${environment.i18nPrefix}/assets/i18n/examples/`, '.json');
+	return new TranslateHttpLoader(http, `${environment.i18nPrefix}/assets/i18n/examples/`, '.json');
 }
 
 @NgModule({
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [
-    LazyElementsModule,
-    SharedModule,
-    ExamplesRoutingModule,
-    StoreModule.forFeature(FEATURE_NAME, reducers),
-    TranslateModule.forChild({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
-        deps: [HttpClient]
-      },
-      isolate: true
-    }),
-    EffectsModule.forFeature([ExamplesEffects, TodosEffects, StockMarketEffects, BooksEffects, FormEffects])
-  ],
-  declarations: [
-    ExamplesComponent,
-    TodosContainerComponent,
-    StockMarketContainerComponent,
-    ParentComponent,
-    ChildComponent,
-    AuthenticatedComponent,
-    CrudComponent,
-    FormComponent,
-    NotificationsComponent,
-    UserComponent,
-    ElementsComponent
-  ],
-  providers: [StockMarketService, UserService]
+	schemas: [CUSTOM_ELEMENTS_SCHEMA],
+	imports: [
+		LazyElementsModule,
+		SharedModule,
+		ExamplesRoutingModule,
+		StoreModule.forFeature(FEATURE_NAME, reducers),
+		TranslateModule.forChild({
+			loader: {
+				provide: TranslateLoader,
+				useFactory: HttpLoaderFactory,
+				deps: [HttpClient]
+			},
+			isolate: true
+		}),
+		EffectsModule.forFeature([ExamplesEffects, TodosEffects, StockMarketEffects, BooksEffects, FormEffects])
+	],
+	declarations: [
+		ExamplesComponent,
+		TodosContainerComponent,
+		StockMarketContainerComponent,
+		ParentComponent,
+		ChildComponent,
+		AuthenticatedComponent,
+		CrudComponent,
+		FormComponent,
+		NotificationsComponent,
+		UserComponent,
+		ElementsComponent
+	],
+	providers: [StockMarketService, UserService]
 })
 export class ExamplesModule {
-  constructor() {}
+	constructor() {}
 }

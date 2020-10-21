@@ -10,24 +10,24 @@ import { CrudComponent } from './crud.component';
 import { selectAllBooks, selectSelectedBook } from '../books.selectors';
 
 describe('CrudComponent', () => {
-  let component: CrudComponent;
-  let fixture: ComponentFixture<CrudComponent>;
-  let store: MockStore;
+	let component: CrudComponent;
+	let fixture: ComponentFixture<CrudComponent>;
+	let store: MockStore;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      imports: [SharedModule, NoopAnimationsModule, RouterTestingModule, TranslateModule.forRoot()],
-      providers: [provideMockStore()],
-      declarations: [CrudComponent]
-    }).compileComponents();
-    store = TestBed.inject(MockStore);
-    store.overrideSelector(selectAllBooks, []);
-    store.overrideSelector(selectSelectedBook, null);
-    fixture = TestBed.createComponent(CrudComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  }));
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+	beforeEach(async(() => {
+		TestBed.configureTestingModule({
+			imports: [SharedModule, NoopAnimationsModule, RouterTestingModule, TranslateModule.forRoot()],
+			providers: [provideMockStore()],
+			declarations: [CrudComponent]
+		}).compileComponents();
+		store = TestBed.inject(MockStore);
+		store.overrideSelector(selectAllBooks, []);
+		store.overrideSelector(selectSelectedBook, null);
+		fixture = TestBed.createComponent(CrudComponent);
+		component = fixture.componentInstance;
+		fixture.detectChanges();
+	}));
+	it('should create', () => {
+		expect(component).toBeTruthy();
+	});
 });
