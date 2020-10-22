@@ -33,7 +33,8 @@ module.exports = {
 					FunctionDeclaration: true,
 					FunctionExpression: false,
 					MethodDefinition: true
-				}
+				},
+				contexts: ['TSMethodSignature', 'TSInterfaceDeclaration', 'TSTypeAliasDeclaration', 'TSEnumDeclaration']
 			}
 		],
 		'@angular-eslint/directive-selector': ['error', { type: 'attribute', prefix: 'ourprefix', style: 'camelCase' }],
