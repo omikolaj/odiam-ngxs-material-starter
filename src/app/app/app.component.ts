@@ -76,11 +76,11 @@ export class AppComponent implements OnInit {
 		this.theme$ = this.ngxsStore.select(SettingsState.selectEffectiveTheme).pipe(tap((theme) => console.log('theme: ', theme)));
 	}
 
-	onLoginClick() {
+	onLoginClick(): void {
 		this.store.dispatch(authLogin());
 	}
 
-	onLogoutClick() {
+	onLogoutClick(): void {
 		this.store.dispatch(authLogout());
 	}
 

@@ -1,12 +1,28 @@
 import { LogLevel } from './log-level';
 
+/**
+ * Log entry class responsible for building string that will be logged
+ */
 export class LogEntry {
+	/**	Log entry date */
 	entryDate: Date = new Date();
+
+	/**	Message that should be logged */
 	message = '';
-	level: LogLevel = LogLevel.Debug;
+
+	/**	Level of this log message. Defaults to LogLevel.Trace */
+	level: LogLevel = LogLevel.Trace;
+
+	/**	Extra objects to be included with the log */
 	extraInfo: any[] = [];
+
+	/**	Whether date should be inlcuded in the log */
 	logWithDate = true;
 
+	/**
+	 * Builds log string
+	 * @returns log string
+	 */
 	buildLogString(): string {
 		let ret = '';
 
@@ -32,6 +48,11 @@ export class LogEntry {
 		return ret;
 	}
 
+	/**
+	 * Formats extra info parameters
+	 * @param params list of additional items to be logged
+	 * @returns string
+	 */
 	private formatParams(params: any[]): string {
 		let ret: string = params.join(',');
 
@@ -40,9 +61,9 @@ export class LogEntry {
 			ret = '';
 
 			// Build comma-delimited string
-			for (const item of params) {
+			params.forEach((item: any) => {
 				ret += JSON.stringify(item) + ', ';
-			}
+			});
 		}
 
 		return ret;

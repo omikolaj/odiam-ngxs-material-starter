@@ -5,20 +5,30 @@ import { LogLocalStorage } from './types/log-local-storage';
 import { LogWebApi } from './types/log-web-api';
 import { HttpClient } from '@angular/common/http';
 import LoggersConfig from '../../../assets/log-publishers.json';
+import { LogPublishersConfig } from './log-publishers-config';
 
+/**
+ * Service responsible for building a list of active loggers
+ */
 @Injectable({
 	providedIn: 'root'
 })
 export class LogPublishersService {
 	publishers: LogPublisher[] = [];
 
+	/**
+	 * Initializes the publishers list from JSON file
+	 */
 	constructor(private http: HttpClient) {
 		this.buildPublishers();
 	}
 
+	/**
+	 * Builds a list of publishers
+	 */
 	private buildPublishers(): void {
 		let logPub: LogPublisher;
-		for (const pub of LoggersConfig.filter((p) => p.isActive)) {
+		LoggersConfig.filter((p) => p.isActive).forEach((pub: LogPublishersConfig) => {
 			switch (pub.loggerName.toLowerCase()) {
 				case 'console':
 					logPub = new LogConsole();
@@ -36,6 +46,6 @@ export class LogPublishersService {
 
 			// Add publisher to array
 			this.publishers.push(logPub);
-		}
+		});
 	}
 }

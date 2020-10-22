@@ -4,10 +4,13 @@ import { LogPublisher } from './log-publisher';
 import { LogPublishersService } from './log-publishers.service';
 import { LogLevel } from './log-level';
 
+/**
+ * Logging service that performs the logging
+ */
 @Injectable()
 export class LogService {
 	/**
-	 * Level of logging enabled
+	 * Level of logging enabled for this log service
 	 */
 	level: LogLevel = LogLevel.Trace;
 
@@ -21,6 +24,10 @@ export class LogService {
 	 */
 	publishers: LogPublisher[] = [];
 
+	/**
+	 * Initializes list of active publishers
+	 * @param publishersService
+	 */
 	constructor(publishersService: LogPublishersService) {
 		this.publishers = publishersService.publishers;
 	}
@@ -30,7 +37,7 @@ export class LogService {
 	 * @param msg
 	 * @param optionalParams
 	 */
-	debug(msg: string, ...optionalParams: any[]) {
+	debug(msg: string, ...optionalParams: any[]): void {
 		this.writeToLog(msg, LogLevel.Debug, optionalParams);
 	}
 
@@ -39,7 +46,7 @@ export class LogService {
 	 * @param msg
 	 * @param optionalParams
 	 */
-	info(msg: string, ...optionalParams: any[]) {
+	info(msg: string, ...optionalParams: any[]): void {
 		this.writeToLog(msg, LogLevel.Info, optionalParams);
 	}
 
@@ -48,7 +55,7 @@ export class LogService {
 	 * @param msg
 	 * @param optionalParams
 	 */
-	warn(msg: string, ...optionalParams: any[]) {
+	warn(msg: string, ...optionalParams: any[]): void {
 		this.writeToLog(msg, LogLevel.Warn, optionalParams);
 	}
 
@@ -57,7 +64,7 @@ export class LogService {
 	 * @param msg
 	 * @param optionalParams
 	 */
-	error(msg: string, ...optionalParams: any[]) {
+	error(msg: string, ...optionalParams: any[]): void {
 		this.writeToLog(msg, LogLevel.Error, optionalParams);
 	}
 
@@ -66,7 +73,7 @@ export class LogService {
 	 * @param msg
 	 * @param optionalParams
 	 */
-	fatal(msg: string, ...optionalParams: any[]) {
+	fatal(msg: string, ...optionalParams: any[]): void {
 		this.writeToLog(msg, LogLevel.Fatal, optionalParams);
 	}
 
@@ -75,7 +82,7 @@ export class LogService {
 	 * @param msg
 	 * @param optionalParams
 	 */
-	log(msg: string, ...optionalParams: any[]) {
+	log(msg: string, ...optionalParams: any[]): void {
 		this.writeToLog(msg, LogLevel.Trace, optionalParams);
 	}
 
@@ -85,7 +92,7 @@ export class LogService {
 	 * @param level
 	 * @param params
 	 */
-	private writeToLog(msg: string, level: LogLevel, params: any[]) {
+	private writeToLog(msg: string, level: LogLevel, params: any[]): void {
 		if (this.shouldLog(level)) {
 			const entry: LogEntry = new LogEntry();
 			entry.message = msg;
@@ -93,16 +100,16 @@ export class LogService {
 			entry.extraInfo = params;
 			entry.logWithDate = this.logWithDate;
 
-			for (const logger of this.publishers) {
+			this.publishers.forEach((logger: LogPublisher) => {
 				logger.log(entry).subscribe();
-			}
+			});
 		}
 	}
 
 	/**
 	 * Determines if logging will occur
 	 * @param level
-	 * @returns true or false if logs will be published
+	 * @returns whether logs will be published
 	 */
 	private shouldLog(level: LogLevel): boolean {
 		let ret = false;
