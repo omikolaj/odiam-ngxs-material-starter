@@ -5,11 +5,11 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 import { catchError } from 'rxjs/operators';
 
 /**
- * Log class for logging messages to a rest api
+ * Log class for logging messages to a rest api.
  */
 export class LogWebApi extends LogPublisher {
 	/**
-	 * Creates an instance of LogWebApi and initializes location property
+	 * Creates an instance of LogWebApi and initializes location property.
 	 */
 	constructor(private http: HttpClient) {
 		super();
@@ -17,9 +17,9 @@ export class LogWebApi extends LogPublisher {
 	}
 
 	/**
-	 * Logs given record to a rest api
-	 * @param record to log
-	 * @returns result of logging as an Observable<boolean>
+	 * Logs given record to a rest api.
+	 * @param record to log.
+	 * @returns result of logging as an Observable<boolean>.
 	 */
 	log(record: LogEntry): Observable<boolean> {
 		const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
@@ -28,18 +28,18 @@ export class LogWebApi extends LogPublisher {
 	}
 
 	/**
-	 * Clears all logs from a rest api
-	 * @returns result of operation Observable<boolean>
+	 * Clears all logs from a rest api.
+	 * @returns result of operation Observable<boolean>.
 	 */
 	clear(): Observable<boolean> {
-		// TODO: Call Web API to clear all values
+		// TODO: Call Web API to clear all values.
 		return of(true);
 	}
 
 	/**
-	 * Handles errors returned by rest api
-	 * @param error HttpErrorResponse
-	 * @returns Observable<never>
+	 * Handles errors returned by rest api.
+	 * @param error HttpErrorResponse.
+	 * @returns Observable<never>.
 	 */
 	private handleErrors(error: HttpErrorResponse): Observable<never> {
 		const errors: string[] = [];

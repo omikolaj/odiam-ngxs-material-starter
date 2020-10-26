@@ -1,14 +1,22 @@
 import { Injectable } from '@angular/core';
 
+/** Prefix for all local storage values for this application */
 const APP_PREFIX = 'odm-';
 
+/**
+ * Handles setting, removing and loading state from local storage
+ */
 @Injectable({
 	providedIn: 'root'
 })
 export class LocalStorageService {
 	constructor() {}
 
-	static loadInitialState() {
+	/**
+	 * Loads initial state from local storage
+	 * @returns initial state
+	 */
+	static loadInitialState(): any {
 		return Object.keys(localStorage).reduce((state: any, storageKey) => {
 			if (storageKey.includes(APP_PREFIX)) {
 				const stateKeys = storageKey
@@ -35,27 +43,42 @@ export class LocalStorageService {
 		}, {});
 	}
 
-	setItem(key: string, value: any) {
+	/**
+	 * Sets an item in local storage
+	 * @param key
+	 * @param value
+	 */
+	setItem(key: string, value: any): void {
 		localStorage.setItem(`${APP_PREFIX}${key}`, JSON.stringify(value));
 	}
 
-	getItem(key: string) {
+	/**
+	 * Gets an item from local storage
+	 * @param key
+	 * @returns item
+	 */
+	getItem(key: string): any {
 		return JSON.parse(localStorage.getItem(`${APP_PREFIX}${key}`));
 	}
 
-	removeItem(key: string) {
+	/**
+	 * Removes item from local storage by the given key
+	 * @param key by which to remove the item
+	 */
+	removeItem(key: string): void {
 		localStorage.removeItem(`${APP_PREFIX}${key}`);
 	}
 
-	/** Tests that localStorage exists, can be written to, and read from. */
-	testLocalStorage() {
+	/**
+	 * Tests that localStorage exists, can be written to, and read from
+	 */
+	testLocalStorage(): void {
 		const testValue = 'testValue';
 		const testKey = 'testKey';
-		let retrievedValue: string;
 		const errorMessage = 'localStorage did not return expected value';
 
 		this.setItem(testKey, testValue);
-		retrievedValue = this.getItem(testKey);
+		const retrievedValue = this.getItem(testKey) as string;
 		this.removeItem(testKey);
 
 		if (retrievedValue !== testValue) {

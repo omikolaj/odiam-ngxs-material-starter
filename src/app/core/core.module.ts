@@ -41,6 +41,7 @@ import { faCog, faBars, faRocket, faPowerOff, faUserCircle, faPlayCircle } from 
 import { faGithub, faMediumM, faTwitter, faInstagram, faYoutube } from '@fortawesome/free-brands-svg-icons';
 import { NgxsModule } from '@ngxs/store';
 import { SettingsState } from './settings/settings.store.state';
+import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
 
 export {
 	TitleService,
@@ -83,6 +84,16 @@ export function HttpLoaderFactory(http: HttpClient) {
 		MatSnackBarModule,
 		MatButtonModule,
 
+		// ngrx
+		StoreModule.forRoot(reducers, { metaReducers }),
+		StoreRouterConnectingModule.forRoot(),
+		EffectsModule.forRoot([AuthEffects, SettingsEffects, GoogleAnalyticsEffects]),
+		environment.production
+			? []
+			: StoreDevtoolsModule.instrument({
+					name: 'Odiam Ngxs Material Starter'
+			  }),
+
 		// ngxs
 		NgxsModule.forRoot([SettingsState], {
 			developmentMode: !environment.production,
@@ -95,15 +106,10 @@ export function HttpLoaderFactory(http: HttpClient) {
 			}
 		}),
 
-		// ngrx
-		StoreModule.forRoot(reducers, { metaReducers }),
-		StoreRouterConnectingModule.forRoot(),
-		EffectsModule.forRoot([AuthEffects, SettingsEffects, GoogleAnalyticsEffects]),
-		environment.production
-			? []
-			: StoreDevtoolsModule.instrument({
-					name: 'Odiam Ngxs Material Starter'
-			  }),
+		NgxsLoggerPluginModule.forRoot({
+			collapsed: true,
+			disabled: environment.production
+		}),
 
 		// 3rd party
 		FontAwesomeModule,

@@ -4,13 +4,13 @@ import { Observable, of } from 'rxjs';
 import { LogLevel } from '../log-level';
 
 /**
- * Log class for logging messages to the console
+ * Log class for logging messages to the console.
  */
 export class LogConsole extends LogPublisher {
 	/**
-	 * Logs given record to the console
-	 * @param record to log
-	 * @returns result of logging as an Observable<boolean>
+	 * Logs given record to the console.
+	 * @param record to log.
+	 * @returns result of logging as an Observable<boolean>.
 	 */
 	log(record: LogEntry): Observable<boolean> {
 		const log = record.buildLogString();
@@ -35,8 +35,8 @@ export class LogConsole extends LogPublisher {
 	}
 
 	/**
-	 * Clears all logs from the console
-	 * @returns result of operation Observable<boolean>, which is always true
+	 * Clears all logs from the console.
+	 * @returns result of operation Observable<boolean>, which is always true.
 	 */
 	clear(): Observable<boolean> {
 		console.clear();

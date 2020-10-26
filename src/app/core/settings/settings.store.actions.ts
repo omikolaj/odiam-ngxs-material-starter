@@ -1,64 +1,143 @@
 import { Language } from 'app/core/settings/settings_1.model';
 import { UserSettings } from './settings.model';
 
-export namespace Settings {
-	export class InitStateFromLocalStorage {
-		static readonly type = '[Settings] Init Settings from Local Storage';
-		constructor() {}
-	}
+/**
+ * Init settings state from local storage.
+ */
+export class InitStateFromLocalStorage {
+	static readonly type = '[Settings] Init Settings from Local Storage';
+	constructor() {}
+}
 
-	export class ChangeLanguage {
-		static readonly type = '[Settings] Change Language';
-		constructor(public payload: { language: Language }) {}
-	}
+/**
+ * Change language setting.
+ */
+export class ChangeLanguage {
+	static readonly type = '[Settings] Change Language';
 
-	export class ChangeTheme {
-		static readonly type = '[Settings] Change Theme';
-		constructor(public payload: { theme: string }) {}
-	}
+	/**
+	 * Creates an instance of change language action.
+	 * @param payload
+	 */
+	constructor(public payload: { language: Language }) {}
+}
 
-	export class ChangeAutoNightMode {
-		static readonly type = '[Settings] Change Auto Night Mode';
-		constructor(public payload: { autoNightMode: boolean }) {}
-	}
+/**
+ * Change theme setting.
+ */
+export class ChangeTheme {
+	static readonly type = '[Settings] Change Theme';
 
-	export class ChangeStickyHeader {
-		static readonly type = '[Settings] Change Sticky Header';
-		constructor(public payload: { stickyHeader: boolean }) {}
-	}
+	/**
+	 * Creates an instance of change theme action.
+	 * @param payload
+	 */
+	constructor(public payload: { theme: string }) {}
+}
 
-	export class ChangeAnimationsPage {
-		static readonly type = '[Settings] Change Animations Page';
-		constructor(public payload: { pageAnimations: boolean }) {}
-	}
+/**
+ * Change auto night mode setting.
+ */
+export class ChangeAutoNightMode {
+	static readonly type = '[Settings] Change Auto Night Mode';
 
-	export class ChangeAnimationsPageDisabled {
-		static readonly type = '[Settings] Change Animations Page Disabled';
-		constructor(public payload: { pageAnimationsDisabled: boolean }) {}
-	}
+	/**
+	 * Creates an instance of change auto night mode action.
+	 * @param payload
+	 */
+	constructor(public payload: { autoNightMode: boolean }) {}
+}
 
-	export class ChangeAnimationsElements {
-		static readonly type = '[Settings] Change Animations Elements';
-		constructor(public payload: { elementsAnimations: boolean }) {}
-	}
+/**
+ * Change sticky header setting.
+ */
+export class ChangeStickyHeader {
+	static readonly type = '[Settings] Change Sticky Header';
 
-	export class ChangeHour {
-		static readonly type = '[Settings] Change Hours';
-		constructor(public payload: { hour: number }) {}
-	}
+	/**
+	 * Creates an instance of change sticky header action.
+	 * @param payload
+	 */
+	constructor(public payload: { stickyHeader: boolean }) {}
+}
 
-	export class PersistSettings {
-		static readonly type = '[Settings] Persist Settings';
-		constructor(public payload: UserSettings) {}
-	}
+/**
+ * Change animations page setting.
+ */
+export class ChangeAnimationsPage {
+	static readonly type = '[Settings] Change Animations Page';
 
-	export class SetTranslateLanguage {
-		static readonly type = '[Settings] Set Transalte Langauge';
-		constructor() {}
-	}
+	/**
+	 * Creates an instance of change animations page action.
+	 * @param payload
+	 */
+	constructor(public payload: { pageAnimations: boolean }) {}
+}
 
-	export class SetTitle {
-		static readonly type = '[Settings] Set Title';
-		constructor() {}
-	}
+/**
+ * Change animations page disabled setting.
+ */
+export class ChangeAnimationsPageDisabled {
+	static readonly type = '[Settings] Change Animations Page Disabled';
+
+	/**
+	 * Creates an instance of change animations page disabled action.
+	 * @param payload
+	 */
+	constructor(public payload: { pageAnimationsDisabled: boolean }) {}
+}
+
+/**
+ * Change animations elements setting.
+ */
+export class ChangeAnimationsElements {
+	static readonly type = '[Settings] Change Animations Elements';
+
+	/**
+	 * Creates an instance of change animations elements action.
+	 * @param payload
+	 */
+	constructor(public payload: { elementsAnimations: boolean }) {}
+}
+
+/**
+ * Change hour setting.
+ */
+export class ChangeHour {
+	static readonly type = '[Settings] Change Hours';
+
+	/**
+	 * Creates an instance of change hour action.
+	 * @param payload
+	 */
+	constructor(public payload: { hour: number }) {}
+}
+
+/**
+ * Persist settings action.
+ */
+export class PersistSettings {
+	static readonly type = '[Settings] Persist Settings';
+
+	/**
+	 * Creates an instance of persist settings action.
+	 * @param payload
+	 */
+	constructor(public payload: UserSettings) {}
+}
+
+/**
+ * Set default translation language.
+ */
+export class SetTranslateLanguage {
+	static readonly type = '[Settings] Set Transalte Langauge';
+	constructor() {}
+}
+
+/**
+ * Set default page title.
+ */
+export class SetTitle {
+	static readonly type = '[Settings] Set Title';
+	constructor() {}
 }

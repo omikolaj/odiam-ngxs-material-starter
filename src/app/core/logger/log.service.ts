@@ -3,98 +3,149 @@ import { LogEntry } from './log-entry';
 import { LogPublisher } from './log-publisher';
 import { LogPublishersService } from './log-publishers.service';
 import { LogLevel } from './log-level';
+import { ComponentType } from '@angular/cdk/portal';
 
 /**
- * Logging service that performs the logging
+ * Logging service that performs the logging.
  */
-@Injectable()
+@Injectable({
+	providedIn: 'root'
+})
 export class LogService {
 	/**
-	 * Level of logging enabled for this log service
+	 * Level of logging enabled for this log service.
 	 */
-	level: LogLevel = LogLevel.Trace;
+
+	level: LogLevel;
 
 	/**
-	 * Determines if logs should include date and time
+	 * Determines if logs should include date and time.
 	 */
 	logWithDate = true;
 
 	/**
-	 * List of log publishers
+	 * List of log publishers.
 	 */
 	publishers: LogPublisher[] = [];
 
 	/**
-	 * Initializes list of active publishers
+	 * Initializes list of active publishers.
 	 * @param publishersService
 	 */
 	constructor(publishersService: LogPublishersService) {
 		this.publishers = publishersService.publishers;
+		this.level = publishersService.level;
 	}
 
 	/**
-	 * Creates logs for LogLevel.Debug = 1
+	 * Looks for name of the passed in object.
+	 * @template T
+	 * @param from
+	 * @returns from
+	 */
+	private from<T>(from: string | unknown | ComponentType<T>): string {
+		let fromLog = '';
+		if (typeof from === 'string') {
+			fromLog = from;
+		} else if (this.isComponent(from)) {
+			fromLog = from.name;
+		} else if (from) {
+			fromLog = from.constructor.name;
+		}
+
+		return fromLog;
+	}
+
+	/**
+	 * Determines whether passed in object is an Angular component class.
+	 * @template T
+	 * @param from
+	 * @returns rather from is an Angular component.
+	 */
+	private isComponent<T>(from: string | ComponentType<T> | unknown): from is ComponentType<T> {
+		return (from as ComponentType<T>)?.name !== undefined;
+	}
+
+	/**
+	 * Adds from string to the log.
+	 * @template T
+	 * @param msg log to be logged.
+	 * @param from where the log is coming from.
+	 * @returns formatted log with from parameter if applicable.
+	 */
+	private addFrom<T>(msg: string, from: string | unknown | ComponentType<T>): string {
+		const fromLog = this.from<T>(from);
+		if (fromLog !== '') {
+			const log = `[${fromLog}] ${msg}`;
+			return log;
+		}
+		return msg;
+	}
+
+	/**
+	 * Creates logs for LogLevel.Debug = 1.
 	 * @param msg
 	 * @param optionalParams
 	 */
-	debug(msg: string, ...optionalParams: any[]): void {
-		this.writeToLog(msg, LogLevel.Debug, optionalParams);
+	debug<T>(msg: string, from?: string | unknown | ComponentType<T>, ...optionalParams: any[]): void {
+		this.writeToLog<T>(msg, from, LogLevel.Debug, optionalParams);
 	}
 
 	/**
-	 * Creates logs for LogLevel.Info = 2
+	 * Creates logs for LogLevel.Info = 2.
 	 * @param msg
 	 * @param optionalParams
 	 */
-	info(msg: string, ...optionalParams: any[]): void {
-		this.writeToLog(msg, LogLevel.Info, optionalParams);
+	info<T>(msg: string, from?: string | unknown | ComponentType<T>, ...optionalParams: any[]): void {
+		this.writeToLog<T>(msg, from, LogLevel.Info, optionalParams);
 	}
 
 	/**
-	 * Creates logs for LogLevel.Warn = 3
+	 * Creates logs for LogLevel.Warn = 3.
 	 * @param msg
 	 * @param optionalParams
 	 */
-	warn(msg: string, ...optionalParams: any[]): void {
-		this.writeToLog(msg, LogLevel.Warn, optionalParams);
+	warn<T>(msg: string, from?: string | unknown | ComponentType<T>, ...optionalParams: any[]): void {
+		this.writeToLog<T>(msg, from, LogLevel.Warn, optionalParams);
 	}
 
 	/**
-	 * Creates logs for LogLevel.Error = 4
+	 * Creates logs for LogLevel.Error = 4.
 	 * @param msg
 	 * @param optionalParams
 	 */
-	error(msg: string, ...optionalParams: any[]): void {
-		this.writeToLog(msg, LogLevel.Error, optionalParams);
+	error<T>(msg: string, from?: string | unknown | ComponentType<T>, ...optionalParams: any[]): void {
+		this.writeToLog<T>(msg, from, LogLevel.Error, optionalParams);
 	}
 
 	/**
-	 * Creates logs for LogLevel.Fatal = 5
+	 * Creates logs for LogLevel.Fatal = 5.
 	 * @param msg
 	 * @param optionalParams
 	 */
-	fatal(msg: string, ...optionalParams: any[]): void {
-		this.writeToLog(msg, LogLevel.Fatal, optionalParams);
+	fatal<T>(msg: string, from?: string | unknown | ComponentType<T>, ...optionalParams: any[]): void {
+		this.writeToLog<T>(msg, from, LogLevel.Fatal, optionalParams);
 	}
 
 	/**
-	 * Creates logs for LogLevel.Trace = 6
+	 * Creates logs for LogLevel.Trace = 6.
 	 * @param msg
 	 * @param optionalParams
 	 */
-	log(msg: string, ...optionalParams: any[]): void {
-		this.writeToLog(msg, LogLevel.Trace, optionalParams);
+	trace<T>(msg: string, from?: string | unknown | ComponentType<T>, ...optionalParams: any[]): void {
+		this.writeToLog<T>(msg, from, LogLevel.Trace, optionalParams);
 	}
 
 	/**
-	 * Writes logs to all active publishers
+	 * Writes logs to all active publishers.
 	 * @param msg
 	 * @param level
 	 * @param params
 	 */
-	private writeToLog(msg: string, level: LogLevel, params: any[]): void {
+	private writeToLog<T>(msg: string, from: string | unknown | ComponentType<T>, level: LogLevel, params: any[]): void {
 		if (this.shouldLog(level)) {
 			const entry: LogEntry = new LogEntry();
+			msg = this.addFrom<T>(msg, from);
 			entry.message = msg;
 			entry.level = level;
 			entry.extraInfo = params;
@@ -107,9 +158,9 @@ export class LogService {
 	}
 
 	/**
-	 * Determines if logging will occur
+	 * Determines if logging will occur.
 	 * @param level
-	 * @returns whether logs will be published
+	 * @returns whether logs will be published.
 	 */
 	private shouldLog(level: LogLevel): boolean {
 		let ret = false;

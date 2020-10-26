@@ -6,46 +6,54 @@ import { LogWebApi } from './types/log-web-api';
 import { HttpClient } from '@angular/common/http';
 import LoggersConfig from '../../../assets/log-publishers.json';
 import { LogPublishersConfig } from './log-publishers-config';
+import { LogLevel } from './log-level';
+import { LoggerConfig } from './logger-config';
 
 /**
- * Service responsible for building a list of active loggers
+ * Service responsible for building a list of active loggers.
  */
 @Injectable({
 	providedIn: 'root'
 })
 export class LogPublishersService {
 	publishers: LogPublisher[] = [];
+	level: LogLevel = LogLevel.Fatal;
 
 	/**
-	 * Initializes the publishers list from JSON file
+	 * Initializes the publishers list from JSON file.
 	 */
 	constructor(private http: HttpClient) {
 		this.buildPublishers();
 	}
 
 	/**
-	 * Builds a list of publishers
+	 * Builds a list of publishers.
 	 */
 	private buildPublishers(): void {
 		let logPub: LogPublisher;
-		LoggersConfig.filter((p) => p.isActive).forEach((pub: LogPublishersConfig) => {
-			switch (pub.loggerName.toLowerCase()) {
-				case 'console':
-					logPub = new LogConsole();
-					break;
-				case 'localstorage':
-					logPub = new LogLocalStorage();
-					break;
-				case 'webapi':
-					logPub = new LogWebApi(this.http);
-					break;
-			}
+		const loggerConfig = LoggersConfig as LoggerConfig;
+		this.level = LogLevel[loggerConfig.level] as LogLevel;
 
-			// Set location of logging
-			logPub.location = pub.loggerLocation;
+		loggerConfig.loggers
+			.filter((p) => p.isActive)
+			.forEach((pub: LogPublishersConfig) => {
+				switch (pub.loggerName.toLowerCase()) {
+					case 'console':
+						logPub = new LogConsole();
+						break;
+					case 'localstorage':
+						logPub = new LogLocalStorage();
+						break;
+					case 'webapi':
+						logPub = new LogWebApi(this.http);
+						break;
+				}
 
-			// Add publisher to array
-			this.publishers.push(logPub);
-		});
+				// Set location of logging.
+				logPub.location = pub.loggerLocation;
+
+				// Add publisher to array.
+				this.publishers.push(logPub);
+			});
 	}
 }

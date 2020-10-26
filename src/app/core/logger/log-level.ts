@@ -1,5 +1,5 @@
 /**
- * Log level enum
+ * Log level enum.
  */
 export enum LogLevel {
 	Trace = 0,

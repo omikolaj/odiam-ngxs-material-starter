@@ -21,7 +21,7 @@ module.exports = {
 	rules: {
 		'no-restricted-syntax': ['error', 'ForOfStatement', 'ForInStatement', 'LabeledStatement', 'WithStatement'],
 		'no-console': 'off',
-		'lines-around-comment': [2, { beforeLineComment: true, allowBlockStart: true }],
+		'lines-around-comment': ['error', { beforeLineComment: true, beforeBlockComment: false, allowBlockStart: true }],
 		'line-comment-position': ['error', { position: 'above' }],
 		'jsdoc/require-jsdoc': [
 			'warn',
@@ -34,17 +34,18 @@ module.exports = {
 					FunctionExpression: false,
 					MethodDefinition: true
 				},
-				contexts: ['TSMethodSignature', 'TSInterfaceDeclaration', 'TSTypeAliasDeclaration', 'TSEnumDeclaration']
+				contexts: ['TSMethodSignature', 'TSInterfaceDeclaration', 'TSTypeAliasDeclaration', 'TSEnumDeclaration'],
+				exemptEmptyConstructors: true
 			}
 		],
-		'@angular-eslint/directive-selector': ['error', { type: 'attribute', prefix: 'ourprefix', style: 'camelCase' }],
-		'@angular-eslint/component-selector': ['error', { type: 'element', prefix: 'ourcomponent', style: 'kebab-case' }],
+		'@angular-eslint/directive-selector': ['error', { type: 'attribute', prefix: 'odm', style: 'camelCase' }],
+		'@angular-eslint/component-selector': ['error', { type: 'element', prefix: 'odm', style: 'kebab-case' }],
 		'@typescript-eslint/no-var-requires': 0,
 		'object-curly-spacing': [2, 'always'],
 		'no-unused-vars': 'off',
 		'unused-imports/no-unused-imports': 'error',
 		'unused-imports/no-unused-vars': ['warn', { vars: 'all', varsIgnorePattern: '^_', args: 'after-used', argsIgnorePattern: '^_' }],
-		'prettier/prettier': 'error',
+		'prettier/prettier': ['error', { endOfLine: 'auto' }],
 		'@typescript-eslint/unbound-method': ['error', { ignoreStatic: true }],
 		'object-curly-spacing': ['error', 'always'],
 		'spaced-comment': ['error', 'always'],

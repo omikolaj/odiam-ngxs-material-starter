@@ -7,41 +7,40 @@ import { authLogin, authLogout, routeAnimations, LocalStorageService, selectIsAu
 import { actionSettingsChangeAnimationsPageDisabled } from '../core/settings/settings.actions';
 import { Store as ngxsStore } from '@ngxs/store';
 import { SettingsState } from 'app/core/settings/settings.store.state';
-import { tap } from 'rxjs/operators';
-import { Settings } from 'app/core/settings/settings.store.actions';
+import * as Settings from 'app/core/settings/settings.store.actions';
 import { LogService } from 'app/core/logger/log.service';
+import { Language } from 'app/core/settings/settings.model';
+import { MatSelectChange } from '@angular/material/select';
 
+/**
+ * AppComponent displays navbar, footer and named router-outlet '#o=outlet'.
+ */
 @Component({
 	selector: 'odm-root',
 	templateUrl: './app.component.html',
 	styleUrls: ['./app.component.scss'],
-	providers: [LogService],
 	animations: [routeAnimations]
 })
 export class AppComponent implements OnInit {
-	isProd = env.production;
-	envName = env.envName;
-	version = env.versions.app;
-	year = new Date().getFullYear();
-	logo = require('../../assets/logo.png').default;
-	languages = ['en', 'de', 'sk', 'fr', 'es', 'pt-br', 'zh-cn', 'he'];
-	navigation = [
+	_isProd = env.production;
+	_envName = env.envName;
+	_version = env.versions.app as string;
+	_year = new Date().getFullYear();
+	_logo = (require('../../assets/logo.png') as { default: string }).default;
+	_languages = ['en', 'de', 'sk', 'fr', 'es', 'pt-br', 'zh-cn', 'he'];
+	_navigation = [
 		{ link: 'about', label: 'odm.menu.about' },
 		{ link: 'feature-list', label: 'odm.menu.features' },
 		{ link: 'examples', label: 'odm.menu.examples' }
 	];
+	_navigationSideMenu = [...this._navigation, { link: 'settings', label: 'odm.menu.settings' }];
 
-	navigationSideMenu = [...this.navigation, { link: 'settings', label: 'odm.menu.settings' }];
+	_isAuthenticated$: Observable<boolean>;
+	_stickyHeader$: Observable<boolean>;
+	_language$: Observable<string>;
+	_theme$: Observable<string>;
 
-	isAuthenticated$: Observable<boolean>;
-
-	stickyHeader$: Observable<boolean>;
-
-	language$: Observable<string>;
-
-	theme$: Observable<string>;
-
-	constructor(private store: Store, private storageService: LocalStorageService, private ngxsStore: ngxsStore, private logger: LogService) {}
+	constructor(private store: Store, private storageService: LocalStorageService, private ngxsStore: ngxsStore, private log: LogService) {}
 
 	private static isIEorEdgeOrSafari() {
 		return ['ie', 'edge', 'safari'].includes(browser().name);
@@ -58,22 +57,10 @@ export class AppComponent implements OnInit {
 			);
 		}
 
-		this.logger.log('log');
-
-		this.logger.debug('debug');
-
-		this.logger.error('error');
-
-		this.logger.warn('warn');
-
-		this.logger.fatal('fatal');
-
-		this.isAuthenticated$ = this.store.pipe(select(selectIsAuthenticated));
-		// this.stickyHeader$ = this.store.pipe(select(selectSettingsStickyHeader));
-		this.stickyHeader$ = this.ngxsStore.select(SettingsState.selectStickyHeaderSettings);
-		this.language$ = this.ngxsStore.select(SettingsState.selectLanguageSettings);
-		// this.theme$ = this.store.pipe(select(selectEffectiveTheme), tap(theme => console.log('theme is', theme)));
-		this.theme$ = this.ngxsStore.select(SettingsState.selectEffectiveTheme).pipe(tap((theme) => console.log('theme: ', theme)));
+		this._isAuthenticated$ = this.store.pipe(select(selectIsAuthenticated));
+		this._stickyHeader$ = this.ngxsStore.select(SettingsState.selectStickyHeaderSettings);
+		this._language$ = this.ngxsStore.select(SettingsState.selectLanguageSettings);
+		this._theme$ = this.ngxsStore.select(SettingsState.selectEffectiveTheme);
 	}
 
 	onLoginClick(): void {
@@ -84,9 +71,13 @@ export class AppComponent implements OnInit {
 		this.store.dispatch(authLogout());
 	}
 
-	onLanguageSelect({ value: language }) {
-		this.ngxsStore.dispatch(new Settings.ChangeLanguage({ language }));
-
-		// this.store.dispatch(actionSettingsChangeLanguage({ language }));
+	/**
+	 * Language select handler for nav bar language selection.
+	 * @param MatSelectChange
+	 */
+	onLanguageSelect(event: MatSelectChange): void {
+		this.log.debug(`onLanguageSelect handler fired with: ${event.value as Language}.`, this);
+		const languageSelected = { language: event.value as Language };
+		this.ngxsStore.dispatch(new Settings.ChangeLanguage(languageSelected));
 	}
 }

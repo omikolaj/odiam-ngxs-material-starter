@@ -1,12 +1,21 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ROUTE_ANIMATIONS_ELEMENTS } from '../../../core/core.module';
 import { Store } from '@ngxs/store';
 import { UserSettings } from 'app/core/settings/settings.model';
 
+import * as Settings from 'app/core/settings/settings.store.actions';
+import { LogService } from 'app/core/logger/log.service';
 import { SettingsState } from 'app/core/settings/settings.store.state';
-import { Settings } from 'app/core/settings/settings.store.actions';
+import { tap } from 'rxjs/operators';
+import { MatSelectChange } from '@angular/material/select';
+import { Language } from 'app/core/settings/settings_1.model';
 
+import { MatSlideToggle } from '@angular/material/slide-toggle';
+
+/**
+ * Component that contains the settings view.
+ */
 @Component({
 	selector: 'odm-settings',
 	templateUrl: './settings-container.component.html',
@@ -14,17 +23,15 @@ import { Settings } from 'app/core/settings/settings.store.actions';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SettingsContainerComponent implements OnInit {
-	routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
-	settings$: Observable<UserSettings>;
-
-	themes = [
+	_routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
+	_settings$: Observable<UserSettings>;
+	_themes = [
 		{ value: 'DEFAULT-THEME', label: 'blue' },
 		{ value: 'LIGHT-THEME', label: 'light' },
 		{ value: 'NATURE-THEME', label: 'nature' },
 		{ value: 'BLACK-THEME', label: 'dark' }
 	];
-
-	languages = [
+	_languages = [
 		{ value: 'en', label: 'English' },
 		{ value: 'de', label: 'Deutsch' },
 		{ value: 'sk', label: 'Slovenčina' },
@@ -35,33 +42,79 @@ export class SettingsContainerComponent implements OnInit {
 		{ value: 'he', label: 'עברית' }
 	];
 
-	constructor(private store: Store) {}
+	/**
+	 * Creates an instance of settings container component.
+	 * @param store
+	 * @param log
+	 */
+	constructor(private store: Store, private log: LogService) {}
 
-	ngOnInit() {
-		this.settings$ = this.store.select(SettingsState.selectSettings);
+	/**
+	 * Sets the settings state
+	 */
+	ngOnInit(): void {
+		this._settings$ = this.store
+			.select(SettingsState.selectSettings)
+			.pipe(tap((settings) => this.log.trace('Initialized with settings data.', this, settings)));
 	}
 
-	onLanguageSelect({ value: language }) {
-		this.store.dispatch(new Settings.ChangeLanguage({ language }));
+	/**
+	 * Event handler for language selection change
+	 * @param event
+	 */
+	onLanguageSelect(event: MatSelectChange): void {
+		this.log.debug(`onLanguageSelect handler fired with: ${event.value as Language}`, this);
+		const languageSelected = { language: event.value as Language };
+		this.store.dispatch(new Settings.ChangeLanguage(languageSelected));
 	}
 
-	onThemeSelect({ value: theme }) {
-		this.store.dispatch(new Settings.ChangeTheme({ theme }));
+	/**
+	 * Event handler for theme selection change
+	 * @param event
+	 */
+	onThemeSelect(event: MatSelectChange): void {
+		this.log.debug(`onThemeSelect handler fired with: ${event.value as string}`, this);
+		const themeSelected = { theme: event.value as string };
+		this.store.dispatch(new Settings.ChangeTheme(themeSelected));
 	}
 
-	onAutoNightModeToggle({ checked: autoNightMode }) {
-		this.store.dispatch(new Settings.ChangeAutoNightMode({ autoNightMode }));
+	/**
+	 * Event handler for auto night mode toggle
+	 * @param event
+	 */
+	onAutoNightModeToggle(event: MatSlideToggle): void {
+		this.log.debug(`onAutoNightModeToggle handler fired with: ${String(event.checked)}`, this);
+		const autoNightModeToggle = { autoNightMode: event.checked };
+		this.store.dispatch(new Settings.ChangeAutoNightMode(autoNightModeToggle));
 	}
 
-	onStickyHeaderToggle({ checked: stickyHeader }) {
-		this.store.dispatch(new Settings.ChangeStickyHeader({ stickyHeader }));
+	/**
+	 * Event handler for sticky header toggle
+	 * @param event
+	 */
+	onStickyHeaderToggle(event: MatSlideToggle): void {
+		this.log.debug(`onStickyHeaderToggle handler fired with: ${String(event.checked)}`, this);
+		const stickyHeaderToggle = { stickyHeader: event.checked };
+		this.store.dispatch(new Settings.ChangeStickyHeader(stickyHeaderToggle));
 	}
 
-	onPageAnimationsToggle({ checked: pageAnimations }) {
-		this.store.dispatch(new Settings.ChangeAnimationsPage({ pageAnimations }));
+	/**
+	 * Event handler for page animations toggle
+	 * @param event
+	 */
+	onPageAnimationsToggle(event: MatSlideToggle): void {
+		this.log.debug(`onPageAnimationsToggle handler fired with: ${String(event.checked)}`, this);
+		const pageAnimationToggle = { pageAnimations: event.checked };
+		this.store.dispatch(new Settings.ChangeAnimationsPage(pageAnimationToggle));
 	}
 
-	onElementsAnimationsToggle({ checked: elementsAnimations }) {
-		this.store.dispatch(new Settings.ChangeAnimationsElements({ elementsAnimations }));
+	/**
+	 * Event handler for elements animations toggle
+	 * @param event
+	 */
+	onElementsAnimationsToggle(event: MatSlideToggle): void {
+		this.log.debug(`onElementsAnimationsToggle handler fired with: ${String(event.checked)}`, this);
+		const elementsAnimationsToggle = { elementsAnimations: event.checked };
+		this.store.dispatch(new Settings.ChangeAnimationsElements(elementsAnimationsToggle));
 	}
 }
