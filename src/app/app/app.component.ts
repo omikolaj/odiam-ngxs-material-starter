@@ -22,30 +22,66 @@ import { MatSelectChange } from '@angular/material/select';
 	animations: [routeAnimations]
 })
 export class AppComponent implements OnInit {
+	/** Indicates the environment the application is running under.	 */
 	_isProd = env.production;
+
+	/** String value of DEV or PROD depending on the environment. */
 	_envName = env.envName;
+
+	/** String value representing current version of the app. For example 10.0.2.	 */
 	_version = env.versions.app as string;
+
+	/** Gets the current year. */
 	_year = new Date().getFullYear();
+
+	/** Gets left hand side logo url. */
 	_logo = (require('../../assets/logo.png') as { default: string }).default;
+
+	/** List of currently available languages. */
 	_languages = ['en', 'de', 'sk', 'fr', 'es', 'pt-br', 'zh-cn', 'he'];
+
+	/** Navigation options. */
 	_navigation = [
 		{ link: 'about', label: 'odm.menu.about' },
 		{ link: 'feature-list', label: 'odm.menu.features' },
 		{ link: 'examples', label: 'odm.menu.examples' }
 	];
+
+	/** Navigation options for side drawer. */
 	_navigationSideMenu = [...this._navigation, { link: 'settings', label: 'odm.menu.settings' }];
 
+	/** Stream indicating if user is authenticated. */
 	_isAuthenticated$: Observable<boolean>;
+
+	/** Stream for sticky header setting. */
 	_stickyHeader$: Observable<boolean>;
+
+	/** Stream for current language setting. */
 	_language$: Observable<string>;
+
+	/** stream for current theme. */
 	_theme$: Observable<string>;
 
+	/**
+	 * Creates an instance of app component.
+	 * @param store
+	 * @param storageService
+	 * @param ngxsStore
+	 * @param log
+	 */
 	constructor(private store: Store, private storageService: LocalStorageService, private ngxsStore: ngxsStore, private log: LogService) {}
 
+	/**
+	 * Determines whether browser is IE, Edge or Safari
+	 * @returns true if browser is IE, Edge or Safari
+	 */
 	private static isIEorEdgeOrSafari() {
 		return ['ie', 'edge', 'safari'].includes(browser().name);
 	}
 
+	/**
+	 * NgOnInit life cycle. Performs local storage test as well as sets the state of the application.
+	 */
 	ngOnInit(): void {
 		this.storageService.testLocalStorage();
 
