@@ -22,44 +22,68 @@ import { MatSelectChange } from '@angular/material/select';
 	animations: [routeAnimations]
 })
 export class AppComponent implements OnInit {
-	/** Indicates the environment the application is running under.	 */
+	/**
+	 * Indicates the environment the application is running under.
+	 */
 	_isProd = env.production;
 
-	/** String value of DEV or PROD depending on the environment. */
+	/**
+	 * String value of DEV or PROD depending on the environment.
+	 */
 	_envName = env.envName;
 
-	/** String value representing current version of the app. For example 10.0.2.	 */
+	/**
+	 * String value representing current version of the app. For example 10.0.2.
+	 */
 	_version = env.versions.app as string;
 
-	/** Gets the current year. */
+	/**
+	 * Gets the current year.
+	 */
 	_year = new Date().getFullYear();
 
-	/** Gets left hand side logo url. */
+	/**
+	 * Gets left hand side logo url.
+	 */
 	_logo = (require('../../assets/logo.png') as { default: string }).default;
 
-	/** List of currently available languages. */
+	/**
+	 * List of currently available languages.
+	 */
 	_languages = ['en', 'de', 'sk', 'fr', 'es', 'pt-br', 'zh-cn', 'he'];
 
-	/** Navigation options. */
+	/**
+	 * Navigation options.
+	 */
 	_navigation = [
 		{ link: 'about', label: 'odm.menu.about' },
 		{ link: 'feature-list', label: 'odm.menu.features' },
 		{ link: 'examples', label: 'odm.menu.examples' }
 	];
 
-	/** Navigation options for side drawer. */
+	/**
+	 * Navigation options for side drawer.
+	 */
 	_navigationSideMenu = [...this._navigation, { link: 'settings', label: 'odm.menu.settings' }];
 
-	/** Stream indicating if user is authenticated. */
+	/**
+	 * Stream indicating if user is authenticated.
+	 */
 	_isAuthenticated$: Observable<boolean>;
 
-	/** Stream for sticky header setting. */
+	/**
+	 * Stream for sticky header setting.
+	 */
 	_stickyHeader$: Observable<boolean>;
 
-	/** Stream for current language setting. */
+	/**
+	 * Stream for current language setting.
+	 */
 	_language$: Observable<string>;
 
-	/** stream for current theme. */
+	/**
+	 * Stream for current theme.
+	 */
 	_theme$: Observable<string>;
 
 	/**

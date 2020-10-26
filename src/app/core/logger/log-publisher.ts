@@ -5,7 +5,9 @@ import { Observable } from 'rxjs';
  * Log publisher abstract class.
  */
 export abstract class LogPublisher {
-	/** Location of a given logger. */
+	/**
+	 * Location of a given logger.
+	 */
 	location: string;
 
 	/**

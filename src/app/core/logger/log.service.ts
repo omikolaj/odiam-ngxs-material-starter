@@ -15,7 +15,6 @@ export class LogService {
 	/**
 	 * Level of logging enabled for this log service.
 	 */
-
 	level: LogLevel;
 
 	/**

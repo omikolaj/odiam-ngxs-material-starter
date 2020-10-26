@@ -4,19 +4,29 @@ import { LogLevel } from './log-level';
  * Log entry class responsible for building string that will be logged.
  */
 export class LogEntry {
-	/**	Log entry date. */
+	/**
+	 * Log entry date.
+	 */
 	entryDate: Date = new Date();
 
-	/**	Message that should be logged. */
+	/**
+	 * Message that should be logged.
+	 */
 	message = '';
 
-	/**	Level of this log message. Defaults to LogLevel.Trace. */
+	/**
+	 * Level of this log message. Defaults to LogLevel.Trace.
+	 */
 	level: LogLevel = LogLevel.Trace;
 
-	/**	Extra objects to be included with the log. */
+	/**
+	 * Extra objects to be included with the log.
+	 */
 	extraInfo: any[] = [];
 
-	/**	Whether date should be inlcuded in the log. */
+	/**
+	 * Whether date should be inlcuded in the log.
+	 */
 	logWithDate = true;
 
 	/**

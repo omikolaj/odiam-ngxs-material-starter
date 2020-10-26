@@ -5,6 +5,9 @@ import { UserSettings } from './settings.model';
  * Init settings state from local storage.
  */
 export class InitStateFromLocalStorage {
+	/**
+	 * Type of action
+	 */
 	static readonly type = '[Settings] Init Settings from Local Storage';
 	constructor() {}
 }
@@ -13,6 +16,9 @@ export class InitStateFromLocalStorage {
  * Change language setting.
  */
 export class ChangeLanguage {
+	/**
+	 * Type of action
+	 */
 	static readonly type = '[Settings] Change Language';
 
 	/**
@@ -26,6 +32,9 @@ export class ChangeLanguage {
  * Change theme setting.
  */
 export class ChangeTheme {
+	/**
+	 * Type of action
+	 */
 	static readonly type = '[Settings] Change Theme';
 
 	/**
@@ -39,6 +48,9 @@ export class ChangeTheme {
  * Change auto night mode setting.
  */
 export class ChangeAutoNightMode {
+	/**
+	 * Type of action
+	 */
 	static readonly type = '[Settings] Change Auto Night Mode';
 
 	/**
@@ -52,6 +64,9 @@ export class ChangeAutoNightMode {
  * Change sticky header setting.
  */
 export class ChangeStickyHeader {
+	/**
+	 * Type of action
+	 */
 	static readonly type = '[Settings] Change Sticky Header';
 
 	/**
@@ -65,6 +80,9 @@ export class ChangeStickyHeader {
  * Change animations page setting.
  */
 export class ChangeAnimationsPage {
+	/**
+	 * Type of action
+	 */
 	static readonly type = '[Settings] Change Animations Page';
 
 	/**
@@ -78,6 +96,9 @@ export class ChangeAnimationsPage {
  * Change animations page disabled setting.
  */
 export class ChangeAnimationsPageDisabled {
+	/**
+	 * Type of action
+	 */
 	static readonly type = '[Settings] Change Animations Page Disabled';
 
 	/**
@@ -91,6 +112,9 @@ export class ChangeAnimationsPageDisabled {
  * Change animations elements setting.
  */
 export class ChangeAnimationsElements {
+	/**
+	 * Type of action
+	 */
 	static readonly type = '[Settings] Change Animations Elements';
 
 	/**
@@ -104,6 +128,9 @@ export class ChangeAnimationsElements {
  * Change hour setting.
  */
 export class ChangeHour {
+	/**
+	 * Type of action
+	 */
 	static readonly type = '[Settings] Change Hours';
 
 	/**
@@ -117,6 +144,9 @@ export class ChangeHour {
  * Persist settings action.
  */
 export class PersistSettings {
+	/**
+	 * Type of action
+	 */
 	static readonly type = '[Settings] Persist Settings';
 
 	/**
@@ -130,6 +160,9 @@ export class PersistSettings {
  * Set default translation language.
  */
 export class SetTranslateLanguage {
+	/**
+	 * Type of action
+	 */
 	static readonly type = '[Settings] Set Transalte Langauge';
 	constructor() {}
 }
@@ -138,6 +171,9 @@ export class SetTranslateLanguage {
  * Set default page title.
  */
 export class SetTitle {
+	/**
+	 * Type of action
+	 */
 	static readonly type = '[Settings] Set Title';
 	constructor() {}
 }
