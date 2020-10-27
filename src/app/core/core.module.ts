@@ -42,6 +42,7 @@ import { faGithub, faMediumM, faTwitter, faInstagram, faYoutube } from '@fortawe
 import { NgxsModule } from '@ngxs/store';
 import { SettingsState } from './settings/settings.store.state';
 import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
+import { AuthState } from './auth/auth.store.state';
 
 export {
 	TitleService,
@@ -95,7 +96,7 @@ export function HttpLoaderFactory(http: HttpClient) {
 			  }),
 
 		// ngxs
-		NgxsModule.forRoot([SettingsState], {
+		NgxsModule.forRoot([SettingsState, AuthState], {
 			developmentMode: !environment.production,
 			selectorOptions: {
 				suppressErrors: false,

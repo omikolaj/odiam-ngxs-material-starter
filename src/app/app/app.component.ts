@@ -1,16 +1,17 @@
 import browser from 'browser-detect';
 import { Component, OnInit } from '@angular/core';
-import { Store, select } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { environment as env } from '../../environments/environment';
-import { authLogin, authLogout, routeAnimations, LocalStorageService, selectIsAuthenticated } from '../core/core.module';
+import { routeAnimations, LocalStorageService } from '../core/core.module';
 import { actionSettingsChangeAnimationsPageDisabled } from '../core/settings/settings.actions';
-import { Store as ngxsStore } from '@ngxs/store';
+import { Store } from '@ngxs/store';
 import { SettingsState } from 'app/core/settings/settings.store.state';
 import * as Settings from 'app/core/settings/settings.store.actions';
+import * as Auth from 'app/core/auth/auth.store.actions';
 import { LogService } from 'app/core/logger/log.service';
 import { Language } from 'app/core/settings/settings.model';
 import { MatSelectChange } from '@angular/material/select';
+import { AuthState } from 'app/core/auth/auth.store.state';
 
 /**
  * AppComponent displays navbar, footer and named router-outlet '#o=outlet'.
@@ -90,10 +91,10 @@ export class AppComponent implements OnInit {
 	 * Creates an instance of app component.
 	 * @param store
 	 * @param storageService
-	 * @param ngxsStore
+	 * @param store
 	 * @param log
 	 */
-	constructor(private store: Store, private storageService: LocalStorageService, private ngxsStore: ngxsStore, private log: LogService) {}
+	constructor(private storageService: LocalStorageService, private store: Store, private log: LogService) {}
 
 	/**
 	 * Determines whether browser is IE, Edge or Safari
@@ -117,18 +118,26 @@ export class AppComponent implements OnInit {
 			);
 		}
 
-		this._isAuthenticated$ = this.store.pipe(select(selectIsAuthenticated));
-		this._stickyHeader$ = this.ngxsStore.select(SettingsState.selectStickyHeaderSettings);
-		this._language$ = this.ngxsStore.select(SettingsState.selectLanguageSettings);
-		this._theme$ = this.ngxsStore.select(SettingsState.selectEffectiveTheme);
+		this._isAuthenticated$ = this.store.select(AuthState.selectIsAuthenticated);
+		this._stickyHeader$ = this.store.select(SettingsState.selectStickyHeaderSettings);
+		this._language$ = this.store.select(SettingsState.selectLanguageSettings);
+		this._theme$ = this.store.select(SettingsState.selectEffectiveTheme);
 	}
 
+	/**
+	 * Event handler for logging user in
+	 */
 	onLoginClick(): void {
-		this.store.dispatch(authLogin());
+		this.log.debug('onLoginClick handler fired', this);
+		this.store.dispatch(new Auth.Login());
 	}
 
+	/**
+	 * Event handler for logging user out
+	 */
 	onLogoutClick(): void {
-		this.store.dispatch(authLogout());
+		this.log.debug('onLogoutClick handler fired', this);
+		this.store.dispatch(new Auth.Logout());
 	}
 
 	/**
@@ -138,6 +147,6 @@ export class AppComponent implements OnInit {
 	onLanguageSelect(event: MatSelectChange): void {
 		this.log.debug(`onLanguageSelect handler fired with: ${event.value as Language}.`, this);
 		const languageSelected = { language: event.value as Language };
-		this.ngxsStore.dispatch(new Settings.ChangeLanguage(languageSelected));
+		this.store.dispatch(new Settings.ChangeLanguage(languageSelected));
 	}
 }

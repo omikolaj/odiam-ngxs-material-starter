@@ -150,7 +150,7 @@ export class SettingsState implements NgxsOnInit, NgxsAfterBootstrap {
 	 * @param ctx
 	 */
 	ngxsOnInit(ctx: StateContext<SettingsStateModel>): void {
-		this.log.trace('ngxsOnInit invoked');
+		this.log.trace('ngxsOnInit invoked.', this);
 
 		this.ngZone.runOutsideAngular(() => {
 			let prevHour = 0;
@@ -159,7 +159,7 @@ export class SettingsState implements NgxsOnInit, NgxsAfterBootstrap {
 				this.log.trace(
 					`ngxsOnInit setInterval fired. Current hour: ${hour} | previously set hour: ${prevHour}. Is hour update required: ${String(
 						hour !== prevHour
-					)}`,
+					)}.`,
 					this
 				);
 				if (hour !== prevHour) {
@@ -177,12 +177,12 @@ export class SettingsState implements NgxsOnInit, NgxsAfterBootstrap {
 	 * @param ctx
 	 */
 	ngxsAfterBootstrap(ctx: StateContext<SettingsStateModel>): void {
-		this.log.trace('ngxsAfterBootstrap invoked');
+		this.log.trace('ngxsAfterBootstrap invoked.', this);
 		ctx.dispatch([new Settings.InitStateFromLocalStorage(), new Settings.SetTranslateLanguage()]);
 	}
 
 	/**
-	 * Initialize settings from local storage action handler.
+	 * Action handler that initialize settings from local storage.
 	 * @param ctx
 	 */
 	@Action(Settings.InitStateFromLocalStorage)
@@ -195,7 +195,7 @@ export class SettingsState implements NgxsOnInit, NgxsAfterBootstrap {
 	}
 
 	/**
-	 * Set translation language action handler.
+	 * Action handler that sets translation language.
 	 * @param ctx
 	 * @returns action to set application title.
 	 */
@@ -207,7 +207,7 @@ export class SettingsState implements NgxsOnInit, NgxsAfterBootstrap {
 	}
 
 	/**
-	 * Set page title based on selected language action handler.
+	 * Action handler that sets page title based on selected language.
 	 */
 	@Action(Settings.SetTitle)
 	setTitle(): void {
@@ -215,7 +215,7 @@ export class SettingsState implements NgxsOnInit, NgxsAfterBootstrap {
 	}
 
 	/**
-	 * Change language setting action handler.
+	 * Action handler that changes language setting.
 	 * @param ctx
 	 * @param action
 	 * @returns actions to persist settings and set translation language.
@@ -232,7 +232,7 @@ export class SettingsState implements NgxsOnInit, NgxsAfterBootstrap {
 	}
 
 	/**
-	 * Change theme setting action handler.
+	 * Action handler that changes theme setting.
 	 * @param ctx
 	 * @param action
 	 * @returns actions to persist settings.
@@ -249,7 +249,7 @@ export class SettingsState implements NgxsOnInit, NgxsAfterBootstrap {
 	}
 
 	/**
-	 * Change auto night mode setting action handler.
+	 * Action Handler that changes auto night mode setting.
 	 * @param ctx
 	 * @param action
 	 * @returns action to persist settings.
@@ -266,7 +266,7 @@ export class SettingsState implements NgxsOnInit, NgxsAfterBootstrap {
 	}
 
 	/**
-	 * Change hour action handler.
+	 * Action handler that changes the configured hour.
 	 * @param ctx
 	 * @param action
 	 * @returns action to persist settings.
@@ -283,7 +283,7 @@ export class SettingsState implements NgxsOnInit, NgxsAfterBootstrap {
 	}
 
 	/**
-	 * Change page animations setting action handler.
+	 * Action handler that changes page animations setting.
 	 * @param ctx
 	 * @param action
 	 * @returns action to persist settings.
@@ -300,7 +300,7 @@ export class SettingsState implements NgxsOnInit, NgxsAfterBootstrap {
 	}
 
 	/**
-	 * Change animation on page elements action handler.
+	 * Action handler that changes elements animation on page.
 	 * @param ctx
 	 * @param action
 	 * @returns action to persist settings.
@@ -317,7 +317,7 @@ export class SettingsState implements NgxsOnInit, NgxsAfterBootstrap {
 	}
 
 	/**
-	 * Disable page animations action handler.
+	 * Action handler that disables page animations.
 	 * @param ctx
 	 * @param action
 	 * @returns action to persist settings.
@@ -335,7 +335,7 @@ export class SettingsState implements NgxsOnInit, NgxsAfterBootstrap {
 	}
 
 	/**
-	 * Change sticky header setting action handler.
+	 * Action handler that changes sticky header setting.
 	 * @param ctx
 	 * @param action
 	 * @returns action to persist settings.
@@ -352,7 +352,7 @@ export class SettingsState implements NgxsOnInit, NgxsAfterBootstrap {
 	}
 
 	/**
-	 * Persist settings to local storage action handler.
+	 * Action handler that persists settings to local storage.
 	 * @param ctx
 	 * @param action
 	 */
