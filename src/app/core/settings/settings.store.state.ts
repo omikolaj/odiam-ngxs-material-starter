@@ -1,6 +1,6 @@
 import { Router } from '@angular/router';
 import { Injectable, NgZone } from '@angular/core';
-import { Action, NgxsAfterBootstrap, Selector, State, StateContext, StateToken, NgxsOnInit } from '@ngxs/store';
+import { Action, Selector, State, StateContext, StateToken, NgxsOnInit } from '@ngxs/store';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import produce from 'immer';
 import { DEFAULT_THEME, NIGHT_MODE_THEME, SETTINGS_KEY, UserSettings, SettingsStateModel } from './settings.model';
@@ -33,7 +33,7 @@ const SETTINGS_STATE_TOKEN = new StateToken<SettingsStateModel>('settings');
 /**
  * Provides all action handlers and selectors for user settings.
  */
-export class SettingsState implements NgxsOnInit, NgxsAfterBootstrap {
+export class SettingsState implements NgxsOnInit {
 	/**
 	 * Variable used to store previously set hour for auto night mode.
 	 */
@@ -173,6 +173,8 @@ export class SettingsState implements NgxsOnInit, NgxsAfterBootstrap {
 	 */
 	ngxsOnInit(ctx: StateContext<SettingsStateModel>): void {
 		this.log.trace('ngxsOnInit invoked.', this);
+		ctx.dispatch([new Settings.InitStateFromLocalStorage(), new Settings.SetTranslateLanguage()]);
+
 		this.ngZone.runOutsideAngular(() => {
 			// Fire immediately to check what hour it is.
 			this.changeSetHour(ctx);
@@ -180,15 +182,6 @@ export class SettingsState implements NgxsOnInit, NgxsAfterBootstrap {
 			// Set interval function to check if hour has changed every minute.
 			setInterval(this.changeSetHour, 60_000, ctx);
 		});
-	}
-
-	/**
-	 * Ngxs after bootstrap will be invoked after the root view and all its children have been rendered. Initializes user settings from local storage and sets translation language.
-	 * @param ctx
-	 */
-	ngxsAfterBootstrap(ctx: StateContext<SettingsStateModel>): void {
-		this.log.trace('ngxsAfterBootstrap invoked.', this);
-		ctx.dispatch([new Settings.InitStateFromLocalStorage(), new Settings.SetTranslateLanguage()]);
 	}
 
 	/**

@@ -44,8 +44,8 @@ export class AuthState implements NgxsAfterBootstrap {
 	 * @param ctx
 	 */
 	ngxsAfterBootstrap(ctx: StateContext<AuthStateModel>): void {
-		this.log.trace('ngxsAfterBootstrap invoked.', this);
-		ctx.dispatch(new Auth.InitStateFromLocalStorage());
+		// this.log.trace('ngxsAfterBootstrap invoked.', this);
+		// ctx.dispatch(new Auth.InitStateFromLocalStorage());
 	}
 
 	/**
