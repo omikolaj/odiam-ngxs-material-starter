@@ -35,6 +35,11 @@ const SETTINGS_STATE_TOKEN = new StateToken<SettingsStateModel>('settings');
  */
 export class SettingsState implements NgxsOnInit, NgxsAfterBootstrap {
 	/**
+	 * Variable used to store previously set hour for auto night mode.
+	 */
+	private hour = 0;
+
+	/**
 	 * Selects user settings.
 	 * @param state
 	 * @returns settings
@@ -130,6 +135,23 @@ export class SettingsState implements NgxsOnInit, NgxsAfterBootstrap {
 	}
 
 	/**
+	 * Sets the current hour setting.
+	 */
+	private changeSetHour = (ctx: StateContext<SettingsStateModel>): void => {
+		const hour = new Date().getHours();
+		this.log.trace(
+			`ngxsOnInit setInterval fired. Hour: ${hour} | prevHour: ${this.hour}. Is hour update required: ${String(hour !== this.hour)}.`,
+			this
+		);
+		if (hour !== this.hour) {
+			this.hour = hour;
+			const hourToSet = { hour };
+			this.log.trace(`ngxsOnInit setInterval dispatching action Settings.ChangeHour with data.`, this, hour);
+			this.ngZone.runOutsideAngular(() => ctx.dispatch(new Settings.ChangeHour(hourToSet)));
+		}
+	};
+
+	/**
 	 * Creats settings state instance.
 	 * @param localStorageService
 	 * @param translateService
@@ -151,24 +173,12 @@ export class SettingsState implements NgxsOnInit, NgxsAfterBootstrap {
 	 */
 	ngxsOnInit(ctx: StateContext<SettingsStateModel>): void {
 		this.log.trace('ngxsOnInit invoked.', this);
-
 		this.ngZone.runOutsideAngular(() => {
-			let prevHour = 0;
-			setInterval(() => {
-				const hour = new Date().getHours();
-				this.log.trace(
-					`ngxsOnInit setInterval fired. Current hour: ${hour} | previously set hour: ${prevHour}. Is hour update required: ${String(
-						hour !== prevHour
-					)}.`,
-					this
-				);
-				if (hour !== prevHour) {
-					prevHour = hour;
-					const hourToSet = { hour };
-					this.log.trace(`ngxsOnInit setInterval dispatching action Settings.ChangeHour with data.`, this, hour);
-					this.ngZone.runOutsideAngular(() => ctx.dispatch(new Settings.ChangeHour(hourToSet)));
-				}
-			}, 60_000);
+			// Fire immediately to check what hour it is.
+			this.changeSetHour(ctx);
+
+			// Set interval function to check if hour has changed every minute.
+			setInterval(this.changeSetHour, 60_000, ctx);
 		});
 	}
 
