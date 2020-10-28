@@ -39,10 +39,12 @@ import { selectSettingsLanguage, selectEffectiveTheme, selectSettingsStickyHeade
 import { MatButtonModule } from '@angular/material/button';
 import { faCog, faBars, faRocket, faPowerOff, faUserCircle, faPlayCircle } from '@fortawesome/free-solid-svg-icons';
 import { faGithub, faMediumM, faTwitter, faInstagram, faYoutube } from '@fortawesome/free-brands-svg-icons';
-import { NgxsModule } from '@ngxs/store';
+import { NgxsModule, NGXS_PLUGINS } from '@ngxs/store';
 import { SettingsState } from './settings/settings.store.state';
 
 import { AuthState } from './auth/auth.store.state';
+import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
+import { initStateFromLocalStorage } from './meta-reducers/init-state-from-local-storage.meta-reducer';
 
 export {
 	TitleService,
@@ -107,10 +109,10 @@ export function HttpLoaderFactory(http: HttpClient) {
 			}
 		}),
 
-		// NgxsLoggerPluginModule.forRoot({
-		// 	collapsed: true,
-		// 	disabled: environment.production
-		// }),
+		NgxsLoggerPluginModule.forRoot({
+			collapsed: true,
+			disabled: environment.production
+		}),
 
 		// 3rd party
 		FontAwesomeModule,
@@ -126,9 +128,9 @@ export function HttpLoaderFactory(http: HttpClient) {
 	providers: [
 		{ provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
 		{ provide: ErrorHandler, useClass: AppErrorHandler },
-		{ provide: RouterStateSerializer, useClass: CustomSerializer }
+		{ provide: RouterStateSerializer, useClass: CustomSerializer },
 
-		// { provide: NGXS_PLUGINS, useValue: initStateFromLocalStorageNgxs, multi: true }
+		{ provide: NGXS_PLUGINS, useValue: initStateFromLocalStorage, multi: true }
 	],
 	exports: [
 		// angular
