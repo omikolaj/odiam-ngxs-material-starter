@@ -5,12 +5,12 @@ import { LogPublishersConfig } from './log-publishers-config';
  */
 export interface LoggerConfig {
 	/**
-	 * Log level for the application
+	 * Log level for the application.
 	 */
 	level: string;
 
 	/**
-	 * List of configured loggers
+	 * List of configured loggers.
 	 */
 	loggers: LogPublishersConfig[];
 }

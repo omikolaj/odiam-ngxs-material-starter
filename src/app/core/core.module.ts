@@ -41,7 +41,7 @@ import { faCog, faBars, faRocket, faPowerOff, faUserCircle, faPlayCircle } from 
 import { faGithub, faMediumM, faTwitter, faInstagram, faYoutube } from '@fortawesome/free-brands-svg-icons';
 import { NgxsModule } from '@ngxs/store';
 import { SettingsState } from './settings/settings.store.state';
-import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
+
 import { AuthState } from './auth/auth.store.state';
 
 export {
@@ -107,10 +107,10 @@ export function HttpLoaderFactory(http: HttpClient) {
 			}
 		}),
 
-		NgxsLoggerPluginModule.forRoot({
-			collapsed: true,
-			disabled: environment.production
-		}),
+		// NgxsLoggerPluginModule.forRoot({
+		// 	collapsed: true,
+		// 	disabled: environment.production
+		// }),
 
 		// 3rd party
 		FontAwesomeModule,
@@ -127,6 +127,8 @@ export function HttpLoaderFactory(http: HttpClient) {
 		{ provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
 		{ provide: ErrorHandler, useClass: AppErrorHandler },
 		{ provide: RouterStateSerializer, useClass: CustomSerializer }
+
+		// { provide: NGXS_PLUGINS, useValue: initStateFromLocalStorageNgxs, multi: true }
 	],
 	exports: [
 		// angular

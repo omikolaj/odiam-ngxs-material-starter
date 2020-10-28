@@ -3,7 +3,7 @@ import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpErrorResponse
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
-/** Passes HttpErrorResponse to application-wide error handler */
+/** Passes HttpErrorResponse to application-wide error handler. */
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
 	constructor(private injector: Injector) {}

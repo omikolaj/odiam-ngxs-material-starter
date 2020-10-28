@@ -2,15 +2,12 @@ import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ROUTE_ANIMATIONS_ELEMENTS } from '../../../core/core.module';
 import { Store } from '@ngxs/store';
-import { UserSettings } from 'app/core/settings/settings.model';
-
 import * as Settings from 'app/core/settings/settings.store.actions';
 import { LogService } from 'app/core/logger/log.service';
 import { SettingsState } from 'app/core/settings/settings.store.state';
 import { tap } from 'rxjs/operators';
 import { MatSelectChange } from '@angular/material/select';
-import { Language } from 'app/core/settings/settings_1.model';
-
+import { Language, SettingsStateModel } from 'app/core/settings/settings.model';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 
 /**
@@ -24,7 +21,7 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
 })
 export class SettingsContainerComponent implements OnInit {
 	_routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
-	_settings$: Observable<UserSettings>;
+	_settings$: Observable<SettingsStateModel>;
 	_themes = [
 		{ value: 'DEFAULT-THEME', label: 'blue' },
 		{ value: 'LIGHT-THEME', label: 'light' },
@@ -50,7 +47,7 @@ export class SettingsContainerComponent implements OnInit {
 	constructor(private store: Store, private log: LogService) {}
 
 	/**
-	 * Sets the settings state
+	 * Sets the settings state.
 	 */
 	ngOnInit(): void {
 		this._settings$ = this.store
@@ -59,61 +56,61 @@ export class SettingsContainerComponent implements OnInit {
 	}
 
 	/**
-	 * Event handler for language selection change
+	 * Event handler for language selection change.
 	 * @param event
 	 */
 	onLanguageSelect(event: MatSelectChange): void {
-		this.log.debug(`onLanguageSelect handler fired with: ${event.value as Language}`, this);
+		this.log.debug(`onLanguageSelect handler fired with: ${event.value as Language}.`, this);
 		const languageSelected = { language: event.value as Language };
 		this.store.dispatch(new Settings.ChangeLanguage(languageSelected));
 	}
 
 	/**
-	 * Event handler for theme selection change
+	 * Event handler for theme selection change.
 	 * @param event
 	 */
 	onThemeSelect(event: MatSelectChange): void {
-		this.log.debug(`onThemeSelect handler fired with: ${event.value as string}`, this);
+		this.log.debug(`onThemeSelect handler fired with: ${event.value as string}.`, this);
 		const themeSelected = { theme: event.value as string };
 		this.store.dispatch(new Settings.ChangeTheme(themeSelected));
 	}
 
 	/**
-	 * Event handler for auto night mode toggle
+	 * Event handler for auto night mode toggle.
 	 * @param event
 	 */
 	onAutoNightModeToggle(event: MatSlideToggle): void {
-		this.log.debug(`onAutoNightModeToggle handler fired with: ${String(event.checked)}`, this);
+		this.log.debug(`onAutoNightModeToggle handler fired with: ${String(event.checked)}.`, this);
 		const autoNightModeToggle = { autoNightMode: event.checked };
 		this.store.dispatch(new Settings.ChangeAutoNightMode(autoNightModeToggle));
 	}
 
 	/**
-	 * Event handler for sticky header toggle
+	 * Event handler for sticky header toggle.
 	 * @param event
 	 */
 	onStickyHeaderToggle(event: MatSlideToggle): void {
-		this.log.debug(`onStickyHeaderToggle handler fired with: ${String(event.checked)}`, this);
+		this.log.debug(`onStickyHeaderToggle handler fired with: ${String(event.checked)}.`, this);
 		const stickyHeaderToggle = { stickyHeader: event.checked };
 		this.store.dispatch(new Settings.ChangeStickyHeader(stickyHeaderToggle));
 	}
 
 	/**
-	 * Event handler for page animations toggle
+	 * Event handler for page animations toggle.
 	 * @param event
 	 */
 	onPageAnimationsToggle(event: MatSlideToggle): void {
-		this.log.debug(`onPageAnimationsToggle handler fired with: ${String(event.checked)}`, this);
+		this.log.debug(`onPageAnimationsToggle handler fired with: ${String(event.checked)}.`, this);
 		const pageAnimationToggle = { pageAnimations: event.checked };
 		this.store.dispatch(new Settings.ChangeAnimationsPage(pageAnimationToggle));
 	}
 
 	/**
-	 * Event handler for elements animations toggle
+	 * Event handler for elements animations toggle.
 	 * @param event
 	 */
 	onElementsAnimationsToggle(event: MatSlideToggle): void {
-		this.log.debug(`onElementsAnimationsToggle handler fired with: ${String(event.checked)}`, this);
+		this.log.debug(`onElementsAnimationsToggle handler fired with: ${String(event.checked)}.`, this);
 		const elementsAnimationsToggle = { elementsAnimations: event.checked };
 		this.store.dispatch(new Settings.ChangeAnimationsElements(elementsAnimationsToggle));
 	}

@@ -14,7 +14,7 @@ export const SETTINGS_KEY = 'SETTINGS';
 /**
  * User settings model.
  */
-export interface UserSettings {
+export interface SettingsStateModel {
 	language: string;
 	theme: string;
 	autoNightMode: boolean;
@@ -29,6 +29,6 @@ export interface UserSettings {
 /**
  * Settings state model for ngxs store.
  */
-export interface SettingsStateModel {
-	settings: UserSettings;
-}
+// export interface SettingsStateModel {
+// 	settings: UserSettings;
+// }

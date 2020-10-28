@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 
-/** Prefix for all local storage values for this application */
+/** Prefix for all local storage values for this application. */
 const APP_PREFIX = 'odm-';
 
 /**
- * Handles setting, removing and loading state from local storage
+ * Handles setting, removing and loading state from local storage.
  */
 @Injectable({
 	providedIn: 'root'
@@ -13,7 +13,7 @@ export class LocalStorageService {
 	constructor() {}
 
 	/**
-	 * Loads initial state from local storage
+	 * Loads initial state from local storage.
 	 * @returns initial state
 	 */
 	static loadInitialState(): any {
@@ -44,7 +44,7 @@ export class LocalStorageService {
 	}
 
 	/**
-	 * Sets an item in local storage
+	 * Sets an item in local storage.
 	 * @param key
 	 * @param value
 	 */
@@ -53,7 +53,7 @@ export class LocalStorageService {
 	}
 
 	/**
-	 * Gets an item from local storage
+	 * Gets an item from local storage.
 	 * @param key
 	 * @returns item
 	 */
@@ -62,15 +62,15 @@ export class LocalStorageService {
 	}
 
 	/**
-	 * Removes item from local storage by the given key
-	 * @param key by which to remove the item
+	 * Removes item from local storage by the given key.
+	 * @param key by which to remove the item.
 	 */
 	removeItem(key: string): void {
 		localStorage.removeItem(`${APP_PREFIX}${key}`);
 	}
 
 	/**
-	 * Tests that localStorage exists, can be written to, and read from
+	 * Tests that localStorage exists, can be written to, and read from.
 	 */
 	testLocalStorage(): void {
 		const testValue = 'testValue';
