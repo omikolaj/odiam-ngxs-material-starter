@@ -10,7 +10,7 @@ export class InitStateFromLocalStorage {
 }
 
 /**
- * Log user in.
+ * Logs user in.
  */
 export class Login {
 	/**
@@ -21,7 +21,7 @@ export class Login {
 }
 
 /**
- * Log user out.
+ * Logs user out.
  */
 export class Logout {
 	/**

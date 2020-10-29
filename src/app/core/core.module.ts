@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule, Optional, SkipSelf, ErrorHandler } from '@angular/core';
 import { HttpClientModule, HttpClient, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { StoreRouterConnectingModule, RouterStateSerializer } from '@ngrx/router-store';
+import { StoreRouterConnectingModule } from '@ngrx/router-store';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
@@ -29,7 +29,7 @@ import { TitleService } from './title/title.service';
 import { ROUTE_ANIMATIONS_ELEMENTS, routeAnimations } from './animations/route.animations';
 import { AnimationsService } from './animations/animations.service';
 import { AppErrorHandler } from './error-handler/app-error-handler.service';
-import { CustomSerializer } from './router/custom-serializer';
+
 import { LocalStorageService } from './local-storage/local-storage.service';
 import { HttpErrorInterceptor } from './http-interceptors/http-error.interceptor';
 import { GoogleAnalyticsEffects } from './google-analytics/google-analytics.effects';
@@ -39,10 +39,14 @@ import { selectSettingsLanguage, selectEffectiveTheme, selectSettingsStickyHeade
 import { MatButtonModule } from '@angular/material/button';
 import { faCog, faBars, faRocket, faPowerOff, faUserCircle, faPlayCircle } from '@fortawesome/free-solid-svg-icons';
 import { faGithub, faMediumM, faTwitter, faInstagram, faYoutube } from '@fortawesome/free-brands-svg-icons';
-import { NgxsModule } from '@ngxs/store';
+import { NgxsModule, NGXS_PLUGINS } from '@ngxs/store';
 import { SettingsState } from './settings/settings.store.state';
-import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
+
 import { AuthState } from './auth/auth.store.state';
+
+import { initStateFromLocalStorage } from './meta-reducers/init-state-from-local-storage.meta-reducer';
+import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
+import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
 
 export {
 	TitleService,
@@ -107,6 +111,8 @@ export function HttpLoaderFactory(http: HttpClient) {
 			}
 		}),
 
+		NgxsRouterPluginModule.forRoot(),
+
 		NgxsLoggerPluginModule.forRoot({
 			collapsed: true,
 			disabled: environment.production
@@ -126,7 +132,10 @@ export function HttpLoaderFactory(http: HttpClient) {
 	providers: [
 		{ provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
 		{ provide: ErrorHandler, useClass: AppErrorHandler },
-		{ provide: RouterStateSerializer, useClass: CustomSerializer }
+
+		// { provide: RouterStateSerializer, useClass: CustomSerializer },
+
+		{ provide: NGXS_PLUGINS, useValue: initStateFromLocalStorage, multi: true }
 	],
 	exports: [
 		// angular

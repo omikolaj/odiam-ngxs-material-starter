@@ -1,5 +1,4 @@
-import { Language } from 'app/core/settings/settings.model';
-import { UserSettings } from './settings.model';
+import { Language, SettingsStateModel } from 'app/core/settings/settings.model';
 
 /**
  * Init settings state from local storage.
@@ -153,7 +152,7 @@ export class PersistSettings {
 	 * Creates an instance of persist settings action.
 	 * @param payload
 	 */
-	constructor(public payload: UserSettings) {}
+	constructor(public payload: SettingsStateModel) {}
 }
 
 /**

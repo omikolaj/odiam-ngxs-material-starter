@@ -33,7 +33,7 @@ export class LogLocalStorage extends LogPublisher {
 			// Store array into local storage.
 			localStorage.setItem(this.location, JSON.stringify(values));
 
-			// set return value
+			// set return value.
 			ret = true;
 		} catch (ex) {
 			console.error(ex);

@@ -97,8 +97,8 @@ export class AppComponent implements OnInit {
 	constructor(private storageService: LocalStorageService, private store: Store, private log: LogService) {}
 
 	/**
-	 * Determines whether browser is IE, Edge or Safari
-	 * @returns true if browser is IE, Edge or Safari
+	 * Determines whether browser is IE, Edge or Safari.
+	 * @returns true if browser is IE, Edge or Safari.
 	 */
 	private static isIEorEdgeOrSafari() {
 		return ['ie', 'edge', 'safari'].includes(browser().name);
@@ -125,18 +125,18 @@ export class AppComponent implements OnInit {
 	}
 
 	/**
-	 * Event handler for logging user in
+	 * Event handler for logging user in.
 	 */
 	onLoginClick(): void {
-		this.log.debug('onLoginClick handler fired', this);
+		this.log.debug('onLoginClick handler fired.', this);
 		this.store.dispatch(new Auth.Login());
 	}
 
 	/**
-	 * Event handler for logging user out
+	 * Event handler for logging user out.
 	 */
 	onLogoutClick(): void {
-		this.log.debug('onLogoutClick handler fired', this);
+		this.log.debug('onLogoutClick handler fired.', this);
 		this.store.dispatch(new Auth.Logout());
 	}
 

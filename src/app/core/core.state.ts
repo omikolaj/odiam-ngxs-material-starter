@@ -1,7 +1,7 @@
 import { ActionReducerMap, MetaReducer, createFeatureSelector } from '@ngrx/store';
 import { routerReducer, RouterReducerState } from '@ngrx/router-store';
 
-import { initStateFromLocalStorage } from './meta-reducers/init-state-from-local-storage.reducer';
+import { initStateFromLocalStorageNgrx } from './meta-reducers/init-state-from-local-storage.reducer';
 
 import { AuthState } from './auth/auth.models';
 import { authReducer } from './auth/auth.reducer';
@@ -15,7 +15,7 @@ export const reducers: ActionReducerMap<AppState> = {
 	router: routerReducer
 };
 
-export const metaReducers: MetaReducer<AppState>[] = [initStateFromLocalStorage];
+export const metaReducers: MetaReducer<AppState>[] = [initStateFromLocalStorageNgrx];
 
 // disable NGRX debug logging
 // if (!environment.production) {

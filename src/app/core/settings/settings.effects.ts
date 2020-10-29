@@ -19,7 +19,8 @@ import {
 	actionSettingsChangeAutoNightMode,
 	actionSettingsChangeLanguage,
 	actionSettingsChangeTheme,
-	actionSettingsChangeStickyHeader
+	actionSettingsChangeStickyHeader,
+	actionSettingsChangeHour
 } from './settings.actions';
 import { selectEffectiveTheme, selectSettingsLanguage, selectPageAnimations, selectElementsAnimations } from './settings.selectors';
 import { State } from './settings_1.model';
@@ -42,16 +43,16 @@ export class SettingsEffects {
 		private ngZone: NgZone
 	) {}
 
-	// hour = 0;
-	// changeHour = this.ngZone.runOutsideAngular(() => {
-	// 	return setInterval(() => {
-	// 		const hour = new Date().getHours();
-	// 		if (hour !== this.hour) {
-	// 			this.hour = hour;
-	// 			this.ngZone.run(() => this.store.dispatch(actionSettingsChangeHour({ hour })));
-	// 		}
-	// 	}, 60_000);
-	// });
+	hour = 0;
+	changeHour = this.ngZone.runOutsideAngular(() => {
+		return setInterval(() => {
+			const hour = new Date().getHours();
+			if (hour !== this.hour) {
+				this.hour = hour;
+				this.ngZone.run(() => this.store.dispatch(actionSettingsChangeHour({ hour })));
+			}
+		}, 60_000);
+	});
 
 	persistSettings = createEffect(
 		() =>
