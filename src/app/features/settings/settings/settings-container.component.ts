@@ -50,9 +50,7 @@ export class SettingsContainerComponent implements OnInit {
 	 * Sets the settings state.
 	 */
 	ngOnInit(): void {
-		this._settings$ = this.store
-			.select(SettingsState.selectSettings)
-			.pipe(tap((settings) => this.log.trace('Initialized with settings data.', this, settings)));
+		this._settings$ = this.store.select(SettingsState.selectSettings).pipe(tap((settings) => this.log.trace('Settings data.', this, settings)));
 	}
 
 	/**

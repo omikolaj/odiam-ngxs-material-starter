@@ -1,4 +1,4 @@
-import { StateToken, StateContext, State, Selector, Action, NgxsAfterBootstrap } from '@ngxs/store';
+import { StateToken, StateContext, State, Selector, Action } from '@ngxs/store';
 import { AuthStateModel } from './auth-state-model';
 import { Injectable } from '@angular/core';
 import produce from 'immer';
@@ -6,7 +6,6 @@ import * as Auth from './auth.store.actions';
 import { Router } from '@angular/router';
 import { LocalStorageService } from '../core.module';
 import { AUTH_KEY } from './auth.effects';
-import { LogService } from '../logger/log.service';
 
 const AUTH_STATE_TOKEN = new StateToken<AuthStateModel>('auth');
 
@@ -21,7 +20,7 @@ const AUTH_STATE_TOKEN = new StateToken<AuthStateModel>('auth');
 /**
  * Provides all action handlers for user authentication.
  */
-export class AuthState implements NgxsAfterBootstrap {
+export class AuthState {
 	/**
 	 * Selects user authentication status.
 	 * @param state
@@ -37,23 +36,7 @@ export class AuthState implements NgxsAfterBootstrap {
 	 * @param router
 	 * @param localStorageService
 	 */
-	constructor(private router: Router, private localStorageService: LocalStorageService, private log: LogService) {}
-
-	/**
-	 * Ngxs after bootstrap will be invoked after the root view and all its children have been rendered. Initializes user auth state from local storage.
-	 * @param ctx
-	 */
-	ngxsAfterBootstrap(ctx: StateContext<AuthStateModel>): void {
-		this.log.trace('ngxsAfterBootstrap invoked.', this);
-		ctx.dispatch(new Auth.InitStateFromLocalStorage());
-	}
-
-	/**
-	 * Initializes auth state from local storage action handler.
-	 * @param ctx
-	 */
-	@Action(Auth.InitStateFromLocalStorage)
-	initFromLocalStorage(ctx: StateContext<AuthStateModel>): void {}
+	constructor(private router: Router, private localStorageService: LocalStorageService) {}
 
 	/**
 	 * Action handler that Logs user in.
