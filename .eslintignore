@@ -3,4 +3,4 @@ node_modules
 .eslintrc.js
 
 src/app/core/local-storage
-src\app\core\meta-reducers\init-state-from-local-storage.meta-reducer.ts
+src/app/core/meta-reducers

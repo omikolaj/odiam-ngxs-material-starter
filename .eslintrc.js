@@ -21,7 +21,7 @@ module.exports = {
 	rules: {
 		'no-restricted-syntax': ['error', 'ForOfStatement', 'ForInStatement', 'LabeledStatement', 'WithStatement'],
 		'no-console': 'off',
-		'lines-around-comment': ['error', { beforeLineComment: true, beforeBlockComment: true, allowBlockStart: true }],
+		'lines-around-comment': ['error', { beforeLineComment: true, beforeBlockComment: true, allowBlockStart: true, allowObjectStart: true }],
 		'line-comment-position': ['error', { position: 'above' }],
 		'jsdoc/require-jsdoc': [
 			'warn',
