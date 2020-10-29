@@ -7,7 +7,7 @@ import { LocalStorageService } from '../core.module';
 const INIT = '@@INIT';
 
 /**
- * Inits state from local storage when action type is @@INIT
+ * Inits state from local storage when action type is @@INIT.
  * @param state
  * @param action
  * @param next
