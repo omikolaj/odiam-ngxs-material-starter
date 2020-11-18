@@ -124,6 +124,16 @@ export class ChangeAnimationsElements {
 }
 
 /**
+ * Update route animation type.
+ */
+export class UpdateRouteAnimationType {
+	/**
+	 * Type of action.
+	 */
+	static readonly type = '[Settings] Update Route Animation Type';
+}
+
+/**
  * Change hour setting.
  */
 export class ChangeHour {

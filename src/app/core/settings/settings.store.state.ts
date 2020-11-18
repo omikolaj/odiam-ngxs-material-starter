@@ -9,6 +9,8 @@ import { TitleService } from 'app/core/title/title.service';
 import * as Settings from './settings.store.actions';
 import { Observable } from 'rxjs';
 import { LogService } from '../logger/log.service';
+import { AnimationsService } from '../core.module';
+import { OverlayContainer } from '@angular/cdk/overlay';
 
 const SETTINGS_STATE_TOKEN = new StateToken<SettingsStateModel>('settings');
 
@@ -160,8 +162,10 @@ export class SettingsState implements NgxsOnInit {
 		private localStorageService: LocalStorageService,
 		private translateService: TranslateService,
 		private titleService: TitleService,
-		private router: Router,
+		private animationsService: AnimationsService,
+		private overlayContainer: OverlayContainer,
 		private log: LogService,
+		private router: Router,
 		private ngZone: NgZone
 	) {}
 
@@ -171,6 +175,7 @@ export class SettingsState implements NgxsOnInit {
 	 */
 	ngxsOnInit(ctx: StateContext<SettingsStateModel>): void {
 		this.log.trace('ngxsOnInit invoked.', this);
+		ctx.dispatch(new Settings.UpdateRouteAnimationType());
 		ctx.dispatch(new Settings.SetTranslateLanguage());
 		this.ngZone.runOutsideAngular(() => {
 			// Fire immediately to check what hour it is.
@@ -194,7 +199,17 @@ export class SettingsState implements NgxsOnInit {
 	}
 
 	/**
-	 * Action handler that sets page title based on selected language.
+	 * Action handler that sets page title based on selected language. This is the <title> tag found in
+	 * <html>
+	 *   <head>
+	 *      <title>
+	 *         <this is what gets changed>
+	 *      </title>
+	 *   </head>
+	 * </html>
+	 * Since an Angular application can't be bootstrapped on the entire HTML document (`<html>` tag)
+	 * it is not possible to bind to the `text` property of the `HTMLTitleElement` elements
+	 * (representing the `<title>` tag)
 	 */
 	@Action(Settings.SetTitle)
 	setTitle(): void {
@@ -227,6 +242,12 @@ export class SettingsState implements NgxsOnInit {
 	 */
 	@Action(Settings.ChangeTheme)
 	changeTheme(ctx: StateContext<SettingsStateModel>, action: Settings.ChangeTheme): Observable<void> {
+		const classList = this.overlayContainer.getContainerElement().classList;
+		const toRemove = Array.from(classList).filter((item: string) => item.includes('-theme'));
+		if (toRemove.length) {
+			classList.remove(...toRemove);
+		}
+		classList.add(action.payload.theme.toLocaleLowerCase());
 		ctx.setState(
 			produce((draft: SettingsStateModel) => {
 				draft = { ...draft, ...action.payload };
@@ -288,7 +309,7 @@ export class SettingsState implements NgxsOnInit {
 			})
 		);
 		const settings = ctx.getState();
-		return ctx.dispatch(new Settings.PersistSettings(settings));
+		return ctx.dispatch([new Settings.PersistSettings(settings), new Settings.UpdateRouteAnimationType()]);
 	}
 
 	/**
@@ -306,7 +327,19 @@ export class SettingsState implements NgxsOnInit {
 			})
 		);
 		const settings = ctx.getState();
-		return ctx.dispatch(new Settings.PersistSettings(settings));
+		return ctx.dispatch([new Settings.PersistSettings(settings), new Settings.UpdateRouteAnimationType()]);
+	}
+
+	/**
+	 * Action handler that updates route animation type.
+	 * @param ctx
+	 */
+	@Action(Settings.UpdateRouteAnimationType)
+	updateRouteAnimationType(ctx: StateContext<SettingsStateModel>): void {
+		const pageAnimations = ctx.getState().pageAnimations;
+		const elementsAnimations = ctx.getState().elementsAnimations;
+
+		this.animationsService.updateRouteAnimationType(pageAnimations, elementsAnimations);
 	}
 
 	/**

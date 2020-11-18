@@ -75,6 +75,7 @@ export class SettingsEffects {
 	updateRouteAnimationType = createEffect(
 		() =>
 			merge(INIT, this.actions$.pipe(ofType(actionSettingsChangeAnimationsElements, actionSettingsChangeAnimationsPage))).pipe(
+				tap((_) => console.log('[NGRX]: firing update Route Animation Type')),
 				withLatestFrom(combineLatest([this.store.pipe(select(selectPageAnimations)), this.store.pipe(select(selectElementsAnimations))])),
 				tap(([action, [pageAnimations, elementsAnimations]]) => this.animationsService.updateRouteAnimationType(pageAnimations, elementsAnimations))
 			),
@@ -86,6 +87,7 @@ export class SettingsEffects {
 			merge(INIT, this.actions$.pipe(ofType(actionSettingsChangeTheme))).pipe(
 				withLatestFrom(this.store.pipe(select(selectEffectiveTheme))),
 				tap(([action, effectiveTheme]) => {
+					console.log('[NGRX] update fired');
 					const classList = this.overlayContainer.getContainerElement().classList;
 					const toRemove = Array.from(classList).filter((item: string) => item.includes('-theme'));
 					if (toRemove.length) {

@@ -10,7 +10,7 @@ import { tap } from 'rxjs/operators';
 export class HttpErrorInterceptor implements HttpInterceptor {
 	/**
 	 * Creates an instance of http error interceptor.
-	 * @param injector used to get an instance of ErrorHandler.
+	 * @param injector since error handling is really important it needs to be loaded first, thus making it not possible to use dependency injection in the constructor to get other services such as the error handle api service to send the server our error details.
 	 */
 	constructor(private injector: Injector) {}
 
@@ -18,7 +18,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 	 * Intercepts http errors and performs global error handling.
 	 * @param request
 	 * @param next
-	 * @returns HttpEvent<any>.*
+	 * @returns HttpEvent<any>.
 	 */
 	intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 		return next.handle(request).pipe(

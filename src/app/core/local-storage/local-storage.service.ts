@@ -14,7 +14,7 @@ export class LocalStorageService {
 
 	/**
 	 * Loads initial state from local storage.
-	 * @returns initial state
+	 * @returns state restored from local storage.
 	 */
 	static loadInitialState(): any {
 		return Object.keys(localStorage).reduce((state: any, storageKey) => {

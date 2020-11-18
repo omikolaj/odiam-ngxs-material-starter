@@ -15,6 +15,7 @@ export class AnimationsService {
 	}
 
 	updateRouteAnimationType(pageAnimations: boolean, elementsAnimations: boolean) {
+		console.log('updateRouteAnimationType fired!');
 		AnimationsService.routeAnimationType =
 			pageAnimations && elementsAnimations ? 'ALL' : pageAnimations ? 'PAGE' : elementsAnimations ? 'ELEMENTS' : 'NONE';
 	}
