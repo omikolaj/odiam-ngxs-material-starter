@@ -1,10 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule, Optional, SkipSelf, ErrorHandler } from '@angular/core';
 import { HttpClientModule, HttpClient, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { StoreRouterConnectingModule } from '@ngrx/router-store';
-import { StoreModule } from '@ngrx/store';
-import { EffectsModule } from '@ngrx/effects';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { FaIconLibrary, FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -20,10 +17,6 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { environment } from '../../environments/environment';
 
-import { AppState, reducers, metaReducers, selectRouterState } from './core.state';
-import { AuthEffects } from './auth/auth.effects';
-import { selectIsAuthenticated, selectAuth } from './auth/auth.selectors';
-import { authLogin, authLogout } from './auth/auth.actions';
 import { AuthGuardService } from './auth/auth-guard.service';
 import { TitleService } from './title/title.service';
 import { ROUTE_ANIMATIONS_ELEMENTS, routeAnimations } from './animations/route.animations';
@@ -32,10 +25,8 @@ import { AppErrorHandler } from './error-handler/app-error-handler.service';
 
 import { LocalStorageService } from './local-storage/local-storage.service';
 import { HttpErrorInterceptor } from './http-interceptors/http-error.interceptor';
-import { GoogleAnalyticsEffects } from './google-analytics/google-analytics.effects';
+
 import { NotificationService } from './notifications/notification.service';
-import { SettingsEffects } from './settings/settings.effects';
-import { selectSettingsLanguage, selectEffectiveTheme, selectSettingsStickyHeader } from './settings/settings.selectors';
 import { MatButtonModule } from '@angular/material/button';
 import { faCog, faBars, faRocket, faPowerOff, faUserCircle, faPlayCircle } from '@fortawesome/free-solid-svg-icons';
 import { faGithub, faMediumM, faTwitter, faInstagram, faYoutube } from '@fortawesome/free-brands-svg-icons';
@@ -48,24 +39,7 @@ import { initStateFromLocalStorage } from './meta-reducers/init-state-from-local
 import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
 import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
 
-export {
-	TitleService,
-	selectAuth,
-	authLogin,
-	authLogout,
-	routeAnimations,
-	AppState,
-	LocalStorageService,
-	selectIsAuthenticated,
-	ROUTE_ANIMATIONS_ELEMENTS,
-	AnimationsService,
-	AuthGuardService,
-	selectRouterState,
-	NotificationService,
-	selectEffectiveTheme,
-	selectSettingsLanguage,
-	selectSettingsStickyHeader
-};
+export { TitleService, routeAnimations, LocalStorageService, ROUTE_ANIMATIONS_ELEMENTS, AnimationsService, AuthGuardService, NotificationService };
 
 export function HttpLoaderFactory(http: HttpClient) {
 	return new TranslateHttpLoader(http, `${environment.i18nPrefix}/assets/i18n/`, '.json');
@@ -90,14 +64,14 @@ export function HttpLoaderFactory(http: HttpClient) {
 		MatButtonModule,
 
 		// ngrx
-		StoreModule.forRoot(reducers, { metaReducers }),
-		StoreRouterConnectingModule.forRoot(),
-		EffectsModule.forRoot([AuthEffects, SettingsEffects, GoogleAnalyticsEffects]),
-		environment.production
-			? []
-			: StoreDevtoolsModule.instrument({
-					name: 'Odiam Ngxs Material Starter'
-			  }),
+		// StoreModule.forRoot(reducers, { metaReducers }),
+		// StoreRouterConnectingModule.forRoot(),
+		// EffectsModule.forRoot([AuthEffects, GoogleAnalyticsEffects]),
+		// environment.production
+		// 	? []
+		// 	: StoreDevtoolsModule.instrument({
+		// 			name: 'Odiam Ngxs Material Starter'
+		// 	  }),
 
 		// ngxs
 		NgxsModule.forRoot([SettingsState, AuthState], {

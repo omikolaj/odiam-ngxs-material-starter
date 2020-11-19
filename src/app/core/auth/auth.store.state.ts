@@ -1,11 +1,10 @@
 import { StateToken, StateContext, State, Selector, Action } from '@ngxs/store';
-import { AuthStateModel } from './auth-state-model';
+import { AuthStateModel, AUTH_KEY } from './auth-state-model';
 import { Injectable } from '@angular/core';
 import produce from 'immer';
 import * as Auth from './auth.store.actions';
 import { Router } from '@angular/router';
-import { LocalStorageService } from '../core.module';
-import { AUTH_KEY } from './auth.effects';
+import { LocalStorageService } from '../local-storage/local-storage.service';
 
 const AUTH_STATE_TOKEN = new StateToken<AuthStateModel>('auth');
 

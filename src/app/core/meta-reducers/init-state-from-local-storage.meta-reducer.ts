@@ -1,5 +1,5 @@
 import { getActionTypeFromInstance } from '@ngxs/store';
-import { LocalStorageService } from '../core.module';
+import { LocalStorageService } from '../local-storage/local-storage.service';
 
 /**
  * Represents the initial action dispatched by NGXS when first initialized.

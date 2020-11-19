@@ -9,8 +9,8 @@ import { TitleService } from 'app/core/title/title.service';
 import * as Settings from './settings.store.actions';
 import { Observable } from 'rxjs';
 import { LogService } from '../logger/log.service';
-import { AnimationsService } from '../core.module';
 import { OverlayContainer } from '@angular/cdk/overlay';
+import { AnimationsService } from '../animations/animations.service';
 
 const SETTINGS_STATE_TOKEN = new StateToken<SettingsStateModel>('settings');
 

@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment as env } from '../../environments/environment';
 import { routeAnimations, LocalStorageService } from '../core/core.module';
-import { actionSettingsChangeAnimationsPageDisabled } from '../core/settings/settings.actions';
 import { Store } from '@ngxs/store';
 import { SettingsState } from 'app/core/settings/settings.store.state';
 import * as Settings from 'app/core/settings/settings.store.actions';
@@ -111,11 +110,7 @@ export class AppComponent implements OnInit {
 		this.storageService.testLocalStorage();
 
 		if (AppComponent.isIEorEdgeOrSafari()) {
-			this.store.dispatch(
-				actionSettingsChangeAnimationsPageDisabled({
-					pageAnimationsDisabled: true
-				})
-			);
+			this.store.dispatch(new Settings.ChangeAnimationsPageDisabled({ pageAnimationsDisabled: true }));
 		}
 
 		this._isAuthenticated$ = this.store.select(AuthState.selectIsAuthenticated);
