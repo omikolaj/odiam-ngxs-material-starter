@@ -41,7 +41,12 @@ import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
 
 export { TitleService, routeAnimations, LocalStorageService, ROUTE_ANIMATIONS_ELEMENTS, AnimationsService, AuthGuardService, NotificationService };
 
-export function HttpLoaderFactory(http: HttpClient) {
+/**
+ * Returns custom translations file.
+ * @param http
+ * @returns loader factory.
+ */
+export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
 	return new TranslateHttpLoader(http, `${environment.i18nPrefix}/assets/i18n/`, '.json');
 }
 
@@ -62,16 +67,6 @@ export function HttpLoaderFactory(http: HttpClient) {
 		MatTooltipModule,
 		MatSnackBarModule,
 		MatButtonModule,
-
-		// ngrx
-		// StoreModule.forRoot(reducers, { metaReducers }),
-		// StoreRouterConnectingModule.forRoot(),
-		// EffectsModule.forRoot([AuthEffects, GoogleAnalyticsEffects]),
-		// environment.production
-		// 	? []
-		// 	: StoreDevtoolsModule.instrument({
-		// 			name: 'Odiam Ngxs Material Starter'
-		// 	  }),
 
 		// ngxs
 		NgxsModule.forRoot([SettingsState, AuthState], {

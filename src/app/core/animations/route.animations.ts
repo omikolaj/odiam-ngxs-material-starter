@@ -53,18 +53,34 @@ export const routeAnimations = trigger('routeAnimations', [
 	transition(isRouteAnimationsElements, STEPS_ELEMENTS)
 ]);
 
-export function isRouteAnimationsAll() {
+/**
+ * Determines whether route animations type is set to 'ALL'.
+ * @returns true if route animations is 'ALL'.
+ */
+export function isRouteAnimationsAll(): boolean {
 	return AnimationsService.isRouteAnimationsType('ALL');
 }
 
-export function isRouteAnimationsNone() {
+/**
+ * Determines whether route animations type is set to 'NONE'.
+ * @returns true if route animations is 'NONE'.
+ */
+export function isRouteAnimationsNone(): boolean {
 	return AnimationsService.isRouteAnimationsType('NONE');
 }
 
-export function isRouteAnimationsPage() {
+/**
+ * Determines whether route animations type is set to 'PAGE'.
+ * @returns true if route animations is 'PAGE'.
+ */
+export function isRouteAnimationsPage(): boolean {
 	return AnimationsService.isRouteAnimationsType('PAGE');
 }
 
-export function isRouteAnimationsElements() {
+/**
+ * Determines whether route animations type is set to 'ELEMENTS'.
+ * @returns true if route animations is 'ELEMENTS'.
+ */
+export function isRouteAnimationsElements(): boolean {
 	return AnimationsService.isRouteAnimationsType('ELEMENTS');
 }

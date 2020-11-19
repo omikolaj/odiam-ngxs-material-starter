@@ -6,13 +6,26 @@ import { filter } from 'rxjs/operators';
 
 import { environment as env } from '../../../environments/environment';
 
+/**
+ * Title service used to set the web app title.
+ */
 @Injectable({
 	providedIn: 'root'
 })
 export class TitleService {
+	/**
+	 * Creates an instance of title service.
+	 * @param translateService
+	 * @param title
+	 */
 	constructor(private translateService: TranslateService, private title: Title) {}
 
-	setTitle(snapshot: ActivatedRouteSnapshot, lazyTranslateService?: TranslateService) {
+	/**
+	 * Sets web page title.
+	 * @param snapshot
+	 * @param [lazyTranslateService]
+	 */
+	setTitle(snapshot: ActivatedRouteSnapshot, lazyTranslateService?: TranslateService): void {
 		let lastChild = snapshot;
 		while (lastChild.children.length) {
 			lastChild = lastChild.children[0];
