@@ -17,11 +17,6 @@
 @import './app/app/app.component.scss-theme';
 @import './app/shared/big-input/big-input/big-input.component.scss-theme';
 @import './app/features/about/about/about.component.scss-theme';
-@import './app/features/examples/notifications/components/notifications.component.scss-theme';
-@import './app/features/examples/todos/components/todos-container.component.scss-theme';
-@import './app/features/examples/stock-market/components/stock-market-container.component.scss-theme';
-@import './app/features/examples/theming/parent/parent.component.scss-theme';
-@import './app/features/examples/theming/child/child.component.scss-theme';
 @import './app/features/examples/examples/examples.component.scss-theme';
 
 @mixin custom-components-theme($theme) {
@@ -29,11 +24,6 @@
 	@include odm-app-component-theme($theme);
 	@include odm-about-component-theme($theme);
 	@include odm-big-input-component-theme($theme);
-	@include odm-notifications-component-theme($theme);
-	@include odm-todos-container-component-theme($theme);
-	@include odm-stock-market-container-component-theme($theme);
-	@include odm-parent-component-theme($theme);
-	@include odm-child-component-theme($theme);
 	@include odm-examples-component-theme($theme);
 }
 

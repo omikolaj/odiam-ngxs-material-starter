@@ -1,10 +1,11 @@
-import { Store, select } from '@ngrx/store';
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { routeAnimations, selectIsAuthenticated } from '../../../core/core.module';
+import { routeAnimations } from '../../../core/core.module';
+import { Store } from '@ngxs/store';
+import { AuthState } from 'app/core/auth/auth.store.state';
 
-import { State } from '../examples.state';
+// import { State } from '../examples.state';
 
 @Component({
 	selector: 'odm-examples',
@@ -17,23 +18,23 @@ export class ExamplesComponent implements OnInit {
 	isAuthenticated$: Observable<boolean>;
 
 	examples = [
-		{ link: 'todos', label: 'odm.examples.menu.todos' },
-		{ link: 'stock-market', label: 'odm.examples.menu.stocks' },
-		{ link: 'theming', label: 'odm.examples.menu.theming' },
-		{ link: 'crud', label: 'odm.examples.menu.crud' },
+		{ link: './', label: 'odm.examples.menu.todos' },
+		{ link: './', label: 'odm.examples.menu.stocks' },
+		{ link: './', label: 'odm.examples.menu.theming' },
+		{ link: './', label: 'odm.examples.menu.crud' },
 		{
-			link: 'simple-state-management',
-			label: 'odm.examples.menu.simple-state-management'
+			link: './',
+			label: './'
 		},
-		{ link: 'form', label: 'odm.examples.menu.form' },
-		{ link: 'notifications', label: 'odm.examples.menu.notifications' },
-		{ link: 'elements', label: 'odm.examples.menu.elements' },
-		{ link: 'authenticated', label: 'odm.examples.menu.auth', auth: true }
+		{ link: './', label: 'odm.examples.menu.form' },
+		{ link: './', label: 'odm.examples.menu.notifications' },
+		{ link: './', label: 'odm.examples.menu.elements' },
+		{ link: './', label: 'odm.examples.menu.auth', auth: true }
 	];
 
-	constructor(private store: Store<State>) {}
+	constructor(private store: Store) {}
 
 	ngOnInit(): void {
-		this.isAuthenticated$ = this.store.pipe(select(selectIsAuthenticated));
+		this.isAuthenticated$ = this.store.select(AuthState.selectIsAuthenticated);
 	}
 }
