@@ -9,19 +9,19 @@ const routes: Routes = [
 	},
 	{
 		path: 'about',
-		loadChildren: () => import('./features/about/about.module').then((m) => m.AboutModule)
+		loadChildren: () => import('./views/about/about.module').then((m) => m.AboutModule)
 	},
 	{
 		path: 'feature-list',
-		loadChildren: () => import('./features/feature-list/feature-list.module').then((m) => m.FeatureListModule)
+		loadChildren: () => import('./views/feature-list/feature-list.module').then((m) => m.FeatureListModule)
 	},
 	{
 		path: 'settings',
-		loadChildren: () => import('./features/settings/settings.module').then((m) => m.SettingsModule)
+		loadChildren: () => import('./views/settings/settings.module').then((m) => m.SettingsModule)
 	},
 	{
 		path: 'examples',
-		loadChildren: () => import('./features/examples/examples.module').then((m) => m.ExamplesModule)
+		loadChildren: () => import('./views/examples/examples.module').then((m) => m.ExamplesModule)
 	},
 	{
 		path: '**',

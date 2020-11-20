@@ -16,8 +16,8 @@
 @import 'styles-reset.scss-theme';
 @import './app/app/app.component.scss-theme';
 @import './app/shared/big-input/big-input/big-input.component.scss-theme';
-@import './app/features/about/about/about.component.scss-theme';
-@import './app/features/examples/examples/examples.component.scss-theme';
+@import './app/views/about/about/about.component.scss-theme';
+@import './app/views/examples/examples/examples.component.scss-theme';
 
 @mixin custom-components-theme($theme) {
 	@include odm-styles-reset-theme($theme);
