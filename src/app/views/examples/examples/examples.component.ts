@@ -22,10 +22,7 @@ export class ExamplesComponent implements OnInit {
 		{ link: './', label: 'odm.examples.menu.stocks' },
 		{ link: './', label: 'odm.examples.menu.theming' },
 		{ link: './', label: 'odm.examples.menu.crud' },
-		{
-			link: './',
-			label: './'
-		},
+		{ link: './', label: 'odm.examples.menu.something' },
 		{ link: './', label: 'odm.examples.menu.form' },
 		{ link: './', label: 'odm.examples.menu.notifications' },
 		{ link: './', label: 'odm.examples.menu.elements' },

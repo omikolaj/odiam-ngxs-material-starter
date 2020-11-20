@@ -17,26 +17,5 @@
 				}
 			}
 		}
-
-		.follow-releases,
-		.contributors {
-			p {
-				background-color: mat-color($background, background);
-
-				a {
-					color: mat-color($accent);
-
-					&:hover {
-						color: mat-color($accent, darker);
-					}
-				}
-			}
-		}
-
-		.contributors {
-			img {
-				border-color: mat-color($background, background) !important;
-			}
-		}
 	}
 }
