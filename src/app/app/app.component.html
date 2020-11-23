@@ -22,20 +22,20 @@
       <div class="toolbar" [style.position]="(_stickyHeader$ | async) ? 'fixed' : 'inherit'"
         [class.mat-elevation-z4]="(_stickyHeader$ | async)">
         <mat-toolbar color="primary">
-          <button mat-icon-button class="d-md-none" (click)="sidenav.open()">
+          <button mat-icon-button class="display-md-none" (click)="sidenav.open()">
             <fa-icon icon="bars"></fa-icon>
 
           </button>
 
-          <span routerLink="" class="branding spacer center d-inline d-sm-none">
+          <span routerLink="" class="branding spacer center display-inline display-sm-none">
             <img [src]="_logo" [alt]="_logo" /></span>
-          <span routerLink="" class="branding spacer center d-none d-sm-inline d-md-none"><img [src]="_logo"
+          <span routerLink="" class="branding spacer center display-none display-sm-inline display-md-none"><img [src]="_logo"
               [alt]="_logo" /> {{
             'odm.title.short' | translate }}</span>
-          <span routerLink="" class="branding spacer d-none d-md-inline"><img [src]="_logo" [alt]="_logo" /> {{ 'odm.title.long' | translate
+          <span routerLink="" class="branding spacer display-none display-md-inline"><img [src]="_logo" [alt]="_logo" /> {{ 'odm.title.long' | translate
             }}</span>
 
-          <span class="d-none d-md-inline">
+          <span class="display-none display-md-inline">
             <button mat-button class="nav-button" *ngFor="let item of _navigation" [routerLink]="[item.link]"
               routerLinkActive="active">
               {{item.label | translate}}
@@ -59,12 +59,12 @@
             </button>
           </mat-menu>
 
-          <button mat-icon-button routerLink="settings" class="d-none d-sm-inline">
+          <button mat-icon-button routerLink="settings" class="display-none display-sm-inline">
             <fa-icon icon="cog"></fa-icon>
           </button>
 
           <a [matTooltip]="'odm.header.github' | translate" matTooltipPosition="below" mat-icon-button
-            class="link d-none d-sm-inline" href="https://github.com/omikolaj"
+            class="link display-none display-sm-inline" href="https://github.com/omikolaj"
             target="_blank" rel="noopener noreferrer">
             <fa-icon [icon]="['fab','github']"></fa-icon>
           </a>
@@ -85,8 +85,8 @@
       </div>
 
       <div class="footer">
-        <div class="row">
-          <div class="col-sm-12 links">
+        <div class="_row">
+          <div class="column-sm-12 links">
             <a href="https://github.com/omikolaj" target="_blank" rel="noopener noreferrer">
               <fa-icon [icon]="['fab','github']"></fa-icon>
               <span>Github</span>
@@ -114,10 +114,10 @@
             </a>
           </div>
         </div>
-        <div class="row">
-          <div class="col-12 signature">
+        <div class="_row">
+          <div class="column-12 signature">
             &#169; <span class="year">{{_year}}</span> - Oskar Mikolajczyk
-            <br class="d-block d-sm-none">
+            <br class="display-block display-sm-none">
           </div>
         </div>
       </div>
