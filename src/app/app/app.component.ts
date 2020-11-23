@@ -11,6 +11,8 @@ import { LogService } from 'app/core/logger/log.service';
 import { Language } from 'app/core/settings/settings.model';
 import { MatSelectChange } from '@angular/material/select';
 import { AuthState } from 'app/core/auth/auth.store.state';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter, tap } from 'rxjs/operators';
 
 /**
  * AppComponent displays navbar, footer and named router-outlet '#o=outlet'.
@@ -92,8 +94,20 @@ export class AppComponent implements OnInit {
 	 * @param storageService
 	 * @param store
 	 * @param log
+	 * @param router
 	 */
-	constructor(private storageService: LocalStorageService, private store: Store, private log: LogService) {}
+	constructor(private storageService: LocalStorageService, private store: Store, private log: LogService, router: Router) {
+		// Set up google analytics
+		router.events
+			.pipe(
+				filter((event) => event instanceof NavigationEnd),
+				tap((event: NavigationEnd) => {
+					(<any>window).ga('set', 'page', event.urlAfterRedirects);
+					(<any>window).ga('send', 'pageview');
+				})
+			)
+			.subscribe();
+	}
 
 	/**
 	 * Determines whether browser is IE, Edge or Safari.
