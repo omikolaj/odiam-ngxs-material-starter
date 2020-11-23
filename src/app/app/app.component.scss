@@ -15,38 +15,6 @@ mat-sidenav-container {
 		display: flex;
 		z-index: 10;
 
-		.display-inline {
-			display: inline;
-		}
-
-		.display-none {
-			display: none;
-		}
-
-		@media (min-width: map-get($grid-breakpoints, sm)) {
-			.display-sm-inline {
-				display: inline;
-			}
-		}
-
-		@media (min-width: map-get($grid-breakpoints, sm)) {
-			.display-sm-none {
-				display: none;
-			}
-		}
-
-		@media (min-width: map-get($grid-breakpoints, md)) {
-			.display-md-none {
-				display: none;
-			}
-		}
-
-		@media (min-width: map-get($grid-breakpoints, md)) {
-			.display-md-inline {
-				display: inline;
-			}
-		}
-
 		.nav-button {
 			margin: 0 10px 0 0;
 		}
@@ -115,90 +83,63 @@ mat-sidenav-container {
 			padding: 0 15px;
 			text-align: center;
 
-			.column-12 {
-				flex: 0 0 100%;
-				max-width: 100%;
-			}
+			.links {
+				a {
+					transition: padding 0.5s;
+					display: inline-block;
+					padding: 20px 5px;
 
-			.column-sm-12 {
-				position: relative;
-				width: 100%;
-				padding-right: 15px;
-				padding-left: 15px;
+					&:hover {
+						text-decoration: none;
+					}
+
+					fa-icon {
+						font-size: 30px;
+						width: 35px;
+					}
+
+					span {
+						display: inline-block;
+						width: 75px;
+						padding: 0 0 0 3px;
+						overflow: hidden;
+						text-align: left;
+						white-space: nowrap;
+						transition: width 0.5s;
+					}
+				}
+
+				@media (min-width: map-get($grid-breakpoints, lg)) {
+					a {
+						padding: 20px 10px;
+					}
+				}
+
+				@media (max-width: map-get($grid-breakpoints, md)) {
+					a {
+						padding: 20px;
+
+						span {
+							width: 0;
+							padding: 0;
+						}
+					}
+				}
+
+				@media (max-width: map-get($grid-breakpoints, sm)) {
+					a {
+						padding: 20px 5px;
+					}
+				}
 			}
 
 			@media (min-width: map-get($grid-breakpoints, sm)) {
-				.column-sm-12 {
-					flex: 0 0 100%;
-					max-width: 100%;
-				}
-			}
+				.signature {
+					position: relative;
 
-			._row {
-				padding: 10px 0;
-				display: flex;
-				flex-wrap: wrap;
-				margin-right: -15px;
-				margin-left: -15px;
-
-				.links {
 					a {
-						transition: padding 0.5s;
-						display: inline-block;
-						padding: 20px 5px;
-
-						&:hover {
-							text-decoration: none;
-						}
-
-						fa-icon {
-							font-size: 30px;
-							width: 35px;
-						}
-
-						span {
-							display: inline-block;
-							width: 75px;
-							padding: 0 0 0 3px;
-							overflow: hidden;
-							text-align: left;
-							white-space: nowrap;
-							transition: width 0.5s;
-						}
-					}
-
-					@media (min-width: map-get($grid-breakpoints, lg)) {
-						a {
-							padding: 20px 10px;
-						}
-					}
-
-					@media (max-width: map-get($grid-breakpoints, md)) {
-						a {
-							padding: 20px;
-
-							span {
-								width: 0;
-								padding: 0;
-							}
-						}
-					}
-
-					@media (max-width: map-get($grid-breakpoints, sm)) {
-						a {
-							padding: 20px 5px;
-						}
-					}
-				}
-
-				@media (min-width: map-get($grid-breakpoints, sm)) {
-					.signature {
-						position: relative;
-
-						a {
-							position: absolute;
-							right: 15px;
-						}
+						position: absolute;
+						right: 15px;
 					}
 				}
 			}

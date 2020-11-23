@@ -1,4 +1,4 @@
-<nav mat-tab-nav-bar class="d-none d-sm-flex">
+<nav mat-tab-nav-bar class="display-none display-sm-flex">
   <a mat-tab-link
      *ngFor="let e of examples"
      [routerLink]="e.link"
@@ -9,7 +9,7 @@
   </a>
 </nav>
 
-<nav class="nav-responsive d-sm-none d-flex justify-content-center">
+<nav class="nav-responsive display-sm-none d-flex _justify-content-center">
     <mat-select [placeholder]="'odm.examples.title' | translate" [value]="'todos'">
       <mat-option *ngFor="let e of examples"
         [value]="e"

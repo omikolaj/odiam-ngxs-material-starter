@@ -1,11 +1,11 @@
-<div class="container">
-  <div class="row">
-    <div class="col-md-12">
+<div class="_container">
+  <div class="_row">
+    <div class="column-md-12">
       <h1 rtl class="main-heading">{{ 'odm.features.title' | translate }}</h1>
     </div>
   </div>
-  <div class="row align-items-end">
-    <div *ngFor="let feature of features" class="col-md-6 col-lg-4" [ngClass]="routeAnimationsElements">
+  <div class="_row _align-items-end">
+    <div *ngFor="let feature of features" class="column-md-6 column-lg-4" [ngClass]="routeAnimationsElements">
       <mat-card>
         <mat-card-title>
           <code *ngIf="feature.version">{{feature.version}}</code>{{feature.name | translate}}

@@ -1,13 +1,13 @@
-<div class="container">
-  <div class="row">
-    <div class="col-sm-12">
+<div class="_container">
+  <div class="_row">
+    <div class="column-sm-12">
       <h1>{{ 'odm.settings.title' | translate }}</h1>
     </div>
   </div>
   <br>
   <ng-container *ngIf="_settings$ | async as settings">
-    <div class="row">
-      <div class="col-md-6 group" [ngClass]="_routeAnimationsElements">
+    <div class="_row">
+      <div class="column-md-6 group" [ngClass]="_routeAnimationsElements">
         <h2>{{ 'odm.settings.general.title' | translate }}</h2>
         <div class="icon-form-field">
           <mat-icon color="accent">
@@ -39,8 +39,8 @@
         </div>
       </div>
     </div>
-    <div class="row">
-      <div class="col-md-6 group" [ngClass]="_routeAnimationsElements">
+    <div class="_row">
+      <div class="column-md-6 group" [ngClass]="_routeAnimationsElements">
         <h2>{{ 'odm.settings.themes.title' | translate }}</h2>
         <div class="icon-form-field">
           <mat-icon color="accent">
@@ -65,7 +65,7 @@
           </mat-slide-toggle>
         </div>
       </div>
-      <div class="col-md-6 group" [ngClass]="_routeAnimationsElements">
+      <div class="column-md-6 group" [ngClass]="_routeAnimationsElements">
         <h2>{{ 'odm.settings.animations.title' | translate }}</h2>
         <div class="icon-form-field">
           <mat-icon color="accent">

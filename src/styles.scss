@@ -46,3 +46,142 @@
 	@include angular-material-theme($odm-nature-theme);
 	@include custom-components-theme($odm-nature-theme);
 }
+
+// GLOBAL STYLES
+
+.display-inline {
+	display: inline;
+}
+
+.display-none {
+	display: none;
+}
+
+@media (min-width: map-get($grid-breakpoints, sm)) {
+	.display-sm-none {
+		display: none !important;
+	}
+
+	.display-sm-inline {
+		display: inline;
+	}
+
+	.column-sm-12 {
+		flex: 0 0 100%;
+		max-width: 100%;
+	}
+
+	._container {
+		max-width: 540px;
+	}
+
+	.column-sm-12 {
+		flex: 0 0 100%;
+		max-width: 100%;
+	}
+
+	.display-sm-flex {
+		display: flex !important;
+	}
+}
+
+@media (min-width: map-get($grid-breakpoints, md)) {
+	.display-md-none {
+		display: none !important;
+	}
+
+	.display-md-inline {
+		display: inline;
+	}
+
+	._container {
+		max-width: 720px;
+	}
+
+	.column-md-6 {
+		flex: 0 0 100%;
+		max-width: 50%;
+	}
+
+	.column-md-12 {
+		flex: 0 0 100%;
+		max-width: 100%;
+	}
+
+	.column-lg-4 {
+		flex: 0 0 50%;
+		max-width: 50%;
+	}
+}
+
+@media (min-width: map-get($grid-breakpoints, lg)) {
+	._container {
+		max-width: 960px;
+	}
+
+	.column-lg-4 {
+		flex: 0 0 33.3333333333%;
+		max-width: 33.3333333333%;
+	}
+}
+
+.column-12 {
+	flex: 0 0 100%;
+	max-width: 100%;
+}
+
+.column-sm-12 {
+	position: relative;
+	width: 100%;
+	padding-right: 15px;
+	padding-left: 15px;
+}
+
+.column-md-6 {
+	position: relative;
+	width: 100%;
+	padding-right: 15px;
+	padding-left: 15px;
+}
+
+.column-md-12 {
+	position: relative;
+	width: 100%;
+	padding-right: 15px;
+	padding-left: 15px;
+}
+
+.column-lg-4 {
+	position: relative;
+	width: 100%;
+	padding-right: 15px;
+	padding-left: 15px;
+}
+
+._row {
+	padding: 10px 0;
+	display: flex;
+	flex-wrap: wrap;
+	margin-right: -15px;
+	margin-left: -15px;
+}
+
+._container {
+	width: 100%;
+	padding-right: 15px;
+	padding-left: 15px;
+	margin-right: auto;
+	margin-left: auto;
+}
+
+._align-items-end {
+	align-items: flex-end !important;
+}
+
+.display-flex {
+	display: flex !important;
+}
+
+._justify-content-center {
+	justify-content: center !important;
+}
