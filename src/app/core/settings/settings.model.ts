@@ -25,10 +25,3 @@ export interface SettingsStateModel {
 	elementsAnimations: boolean;
 	hour: number;
 }
-
-/**
- * Settings state model for ngxs store.
- */
-// export interface SettingsStateModel {
-// 	settings: UserSettings;
-// }

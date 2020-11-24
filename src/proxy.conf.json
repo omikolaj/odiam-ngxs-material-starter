@@ -1,7 +1,7 @@
 {
-  "/api/*": {
-    "target": "https://localhost:5005",
-    "secure": false,
-    "logLevel": "debug"
-  }
+	"/api/*": {
+		"target": "https://localhost:5005",
+		"secure": false,
+		"logLevel": "debug"
+	}
 }
