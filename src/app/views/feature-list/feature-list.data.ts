@@ -1,5 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { environment as env } from '../../../environments/environment';
 
+/**
+ * Feature model used to display list of features
+ */
 export interface Feature {
 	name: string;
 	version?: string;

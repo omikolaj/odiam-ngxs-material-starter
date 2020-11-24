@@ -10,10 +10,18 @@ import { environment } from '../../../environments/environment';
 import { ExamplesRoutingModule } from './examples-routing.module';
 import { ExamplesComponent } from './examples/examples.component';
 
-export function HttpLoaderFactory(http: HttpClient) {
+/**
+ * Loads specific translations file.
+ * @param http
+ * @returns translation loader factory.
+ */
+export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
 	return new TranslateHttpLoader(http, `${environment.i18nPrefix}/assets/i18n/examples/`, '.json');
 }
 
+/**
+ * Examples module.
+ */
 @NgModule({
 	imports: [
 		LazyElementsModule,

@@ -175,6 +175,8 @@ export class SettingsState implements NgxsOnInit {
 	 */
 	ngxsOnInit(ctx: StateContext<SettingsStateModel>): void {
 		this.log.trace('ngxsOnInit invoked.', this);
+		const theme = ctx.getState().theme;
+		ctx.dispatch(new Settings.ChangeTheme({ theme }));
 		ctx.dispatch(new Settings.UpdateRouteAnimationType());
 		ctx.dispatch(new Settings.SetTranslateLanguage());
 		this.ngZone.runOutsideAngular(() => {

@@ -44,10 +44,9 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { faMediumM, faGithub } from '@fortawesome/free-brands-svg-icons';
 
-import { BigInputComponent } from './big-input/big-input/big-input.component';
-import { BigInputActionComponent } from './big-input/big-input-action/big-input-action.component';
-import { RtlSupportDirective } from './rtl-support/rtl-support.directive';
-
+/**
+ * Shared module.
+ */
 @NgModule({
 	imports: [
 		CommonModule,
@@ -73,7 +72,6 @@ import { RtlSupportDirective } from './rtl-support/rtl-support.directive';
 
 		FontAwesomeModule
 	],
-	declarations: [BigInputComponent, BigInputActionComponent, RtlSupportDirective],
 	exports: [
 		CommonModule,
 		FormsModule,
@@ -100,14 +98,14 @@ import { RtlSupportDirective } from './rtl-support/rtl-support.directive';
 		MatDatepickerModule,
 		MatNativeDateModule,
 
-		FontAwesomeModule,
-
-		BigInputComponent,
-		BigInputActionComponent,
-		RtlSupportDirective
+		FontAwesomeModule
 	]
 })
 export class SharedModule {
+	/**
+	 * Creates an instance of shared module.
+	 * @param faIconLibrary
+	 */
 	constructor(faIconLibrary: FaIconLibrary) {
 		faIconLibrary.addIcons(
 			faGithub,

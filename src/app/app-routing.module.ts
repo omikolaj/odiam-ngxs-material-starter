@@ -29,6 +29,9 @@ const routes: Routes = [
 	}
 ];
 
+/**
+ * App routing module.
+ */
 @NgModule({
 	// useHash supports github.io demo page, remove in your app
 	imports: [

@@ -6,6 +6,9 @@ import { SharedModule } from '../../shared/shared.module';
 import { SettingsRoutingModule } from './settings-routing.module';
 import { SettingsContainerComponent } from './settings/settings-container.component';
 
+/**
+ * Settings module.
+ */
 @NgModule({
 	declarations: [SettingsContainerComponent],
 	imports: [CommonModule, SharedModule, SettingsRoutingModule]

@@ -5,8 +5,9 @@ import { routeAnimations } from '../../../core/core.module';
 import { Store } from '@ngxs/store';
 import { AuthState } from 'app/core/auth/auth.store.state';
 
-// import { State } from '../examples.state';
-
+/**
+ * Examples component.
+ */
 @Component({
 	selector: 'odm-examples',
 	templateUrl: './examples.component.html',
@@ -29,8 +30,15 @@ export class ExamplesComponent implements OnInit {
 		{ link: './', label: 'odm.examples.menu.auth', auth: true }
 	];
 
+	/**
+	 * Creates an instance of examples component.
+	 * @param store
+	 */
 	constructor(private store: Store) {}
 
+	/**
+	 * ngOnInit
+	 */
 	ngOnInit(): void {
 		this.isAuthenticated$ = this.store.select(AuthState.selectIsAuthenticated);
 	}

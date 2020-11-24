@@ -5,6 +5,9 @@ import { CoreModule } from '../app/core/core.module';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app/app.component';
 
+/**
+ * App module.
+ */
 @NgModule({
 	imports: [
 		// angular

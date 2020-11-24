@@ -102,6 +102,7 @@ export class AppComponent implements OnInit {
 			.pipe(
 				filter((event) => event instanceof NavigationEnd),
 				tap((event: NavigationEnd) => {
+					/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
 					(<any>window).ga('set', 'page', event.urlAfterRedirects);
 					(<any>window).ga('send', 'pageview');
 				})

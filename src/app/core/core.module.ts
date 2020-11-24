@@ -37,7 +37,8 @@ import { AuthState } from './auth/auth.store.state';
 
 import { initStateFromLocalStorage } from './meta-reducers/init-state-from-local-storage.meta-reducer';
 import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
-import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
+import { NgxsRouterPluginModule, RouterStateSerializer } from '@ngxs/router-plugin';
+import { CustomSerializer } from './router/custom-serializer';
 
 export { TitleService, routeAnimations, LocalStorageService, ROUTE_ANIMATIONS_ELEMENTS, AnimationsService, AuthGuardService, NotificationService };
 
@@ -50,6 +51,9 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
 	return new TranslateHttpLoader(http, `${environment.i18nPrefix}/assets/i18n/`, '.json');
 }
 
+/**
+ * Core module.
+ */
 @NgModule({
 	imports: [
 		// angular
@@ -101,9 +105,7 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
 	providers: [
 		{ provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
 		{ provide: ErrorHandler, useClass: AppErrorHandler },
-
-		// { provide: RouterStateSerializer, useClass: CustomSerializer },
-
+		{ provide: RouterStateSerializer, useClass: CustomSerializer },
 		{ provide: NGXS_PLUGINS, useValue: initStateFromLocalStorage, multi: true }
 	],
 	exports: [
@@ -127,6 +129,11 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
 	]
 })
 export class CoreModule {
+	/**
+	 * Creates an instance of core module.
+	 * @param parentModule
+	 * @param faIconLibrary
+	 */
 	constructor(
 		@Optional()
 		@SkipSelf()
