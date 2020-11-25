@@ -15,7 +15,6 @@
 
 @import 'styles-reset.scss-theme';
 @import './app/app/app.component.scss-theme';
-@import './app/shared/big-input/big-input/big-input.component.scss-theme';
 @import './app/views/about/about/about.component.scss-theme';
 @import './app/views/examples/examples/examples.component.scss-theme';
 
@@ -23,7 +22,6 @@
 	@include odm-styles-reset-theme($theme);
 	@include odm-app-component-theme($theme);
 	@include odm-about-component-theme($theme);
-	@include odm-big-input-component-theme($theme);
 	@include odm-examples-component-theme($theme);
 }
 
