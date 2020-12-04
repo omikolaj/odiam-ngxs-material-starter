@@ -17,12 +17,18 @@
 @import './app/app/app.component.scss-theme';
 @import './app/views/about/about/about.component.scss-theme';
 @import './app/views/examples/examples/examples.component.scss-theme';
+@import './app//shared/components/ghost-block/ghost.scss-theme';
+@import './app/views/auth/auth-container/auth-container.component.scss-theme.scss';
+@import './app//views/auth/auth/auth.component.scss-theme.scss';
 
 @mixin custom-components-theme($theme) {
 	@include odm-styles-reset-theme($theme);
 	@include odm-app-component-theme($theme);
 	@include odm-about-component-theme($theme);
 	@include odm-examples-component-theme($theme);
+	@include odm-ghost-theme;
+	@include odm-auth-container-component-theme($theme);
+	@include odm-auth-component-theme($theme);
 }
 
 .default-theme {

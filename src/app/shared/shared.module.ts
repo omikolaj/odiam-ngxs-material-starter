@@ -43,11 +43,15 @@ import {
 	faBook
 } from '@fortawesome/free-solid-svg-icons';
 import { faMediumM, faGithub } from '@fortawesome/free-brands-svg-icons';
+import { GhostBlockComponent } from './components/ghost-block/ghost-block.component';
+import { GhostAnimationService } from './services/ghost-animation.service';
 
 /**
  * Shared module.
  */
 @NgModule({
+	declarations: [GhostBlockComponent],
+	providers: [GhostAnimationService],
 	imports: [
 		CommonModule,
 		FormsModule,
@@ -98,7 +102,9 @@ import { faMediumM, faGithub } from '@fortawesome/free-brands-svg-icons';
 		MatDatepickerModule,
 		MatNativeDateModule,
 
-		FontAwesomeModule
+		FontAwesomeModule,
+
+		GhostBlockComponent
 	]
 })
 export class SharedModule {

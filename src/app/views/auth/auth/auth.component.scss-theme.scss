@@ -1,0 +1,26 @@
+@import '~@angular/material/theming';
+
+@mixin odm-auth-component-theme($theme) {
+	$primary: map-get($theme, primary);
+	$accent: map-get($theme, accent);
+	$foreground: map-get($theme, foreground);
+	$background: map-get($theme, background);
+
+	h3 {
+		background-image: linear-gradient(to right, mat-color($accent, A200), mat-color($primary, 900));
+	}
+
+	.forgot {
+		color: mat-color($primary, A400);
+	}
+
+	.btn {
+		background-image: linear-gradient(to right, mat-color($primary, A200), mat-color($primary, 900));
+	}
+
+	.overlay {
+		background: mat-color($primary, A400);
+		background: linear-gradient(to right, mat-color($accent, A400), mat-color($primary, 700));
+		background: -webkit-linear-gradient(to right, mat-color($accent, A200), mat-color($primary, 700));
+	}
+}

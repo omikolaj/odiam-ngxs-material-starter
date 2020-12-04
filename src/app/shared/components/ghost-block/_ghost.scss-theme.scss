@@ -1,0 +1,34 @@
+@import '~@angular/material/theming';
+
+@mixin odm-ghost-theme {
+	$first-light: map-get($mat-grey, 200);
+	$second-light: map-get($mat-grey, 300);
+	$first-dark: #303030;
+	$second-dark: map-get($mat-grey, 600);
+
+	.ghost-block-container {
+		background-color: $first-light;
+	}
+
+	@keyframes ghost-animation {
+		0%,
+		100% {
+			background-color: $first-light;
+		}
+
+		50% {
+			background-color: $second-light;
+		}
+	}
+
+	@keyframes ghost-animation-dark {
+		0%,
+		100% {
+			background-color: $first-dark;
+		}
+
+		50% {
+			background-color: $second-dark;
+		}
+	}
+}

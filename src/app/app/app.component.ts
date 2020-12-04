@@ -11,8 +11,9 @@ import { LogService } from 'app/core/logger/log.service';
 import { Language } from 'app/core/settings/settings.model';
 import { MatSelectChange } from '@angular/material/select';
 import { AuthState } from 'app/core/auth/auth.store.state';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { filter, tap } from 'rxjs/operators';
+import { Route } from '@angular/compiler/src/core';
 
 /**
  * AppComponent displays navbar, footer and named router-outlet '#o=outlet'.
@@ -96,7 +97,13 @@ export class AppComponent implements OnInit {
 	 * @param log
 	 * @param router
 	 */
-	constructor(private storageService: LocalStorageService, private store: Store, private log: LogService, router: Router) {
+	constructor(
+		private storageService: LocalStorageService,
+		private store: Store,
+		private log: LogService,
+		private router: Router,
+		private route: ActivatedRoute
+	) {
 		// Set up google analytics
 		router.events
 			.pipe(
@@ -139,7 +146,8 @@ export class AppComponent implements OnInit {
 	 */
 	onLoginClick(): void {
 		this.log.debug('onLoginClick handler fired.', this);
-		this.store.dispatch(new Auth.Login());
+		//this.store.dispatch(new Auth.Login());
+		void this.router.navigate(['auth']);
 	}
 
 	/**

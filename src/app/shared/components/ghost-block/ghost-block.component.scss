@@ -1,0 +1,15 @@
+@import './ghost.scss-theme';
+
+.ghost-block-container {
+	border-radius: 2px;
+	height: 100%;
+	width: 100%;
+
+	:host-context(.odm-ghost-active) & {
+		animation: ghost-animation 1.4s ease-in-out infinite;
+	}
+
+	:host-context(.odm-ghost-active .black-theme) & {
+		animation: ghost-animation-dark 1.4s ease-in-out infinite;
+	}
+}
