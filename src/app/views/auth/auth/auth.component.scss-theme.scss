@@ -3,24 +3,40 @@
 @mixin odm-auth-component-theme($theme) {
 	$primary: map-get($theme, primary);
 	$accent: map-get($theme, accent);
-	$foreground: map-get($theme, foreground);
+	$warn: map-get($theme, warn);
 	$background: map-get($theme, background);
 
-	h3 {
-		background-image: linear-gradient(to right, mat-color($accent, A200), mat-color($primary, 900));
-	}
+	odm-auth {
+		.container .sign-in-container {
+			h3 {
+				background-image: linear-gradient(to left, mat-color($accent, A400), mat-color($primary, 700));
+			}
+		}
 
-	.forgot {
-		color: mat-color($primary, A400);
-	}
+		h3 {
+			background-image: linear-gradient(to right, mat-color($accent, A400), mat-color($primary, 700));
+		}
 
-	.btn {
-		background-image: linear-gradient(to right, mat-color($primary, A200), mat-color($primary, 900));
-	}
+		.forgot {
+			color: mat-color($primary, A400);
+		}
 
-	.overlay {
-		background: mat-color($primary, A400);
-		background: linear-gradient(to right, mat-color($accent, A400), mat-color($primary, 700));
-		background: -webkit-linear-gradient(to right, mat-color($accent, A200), mat-color($primary, 700));
+		.btn {
+			background-image: linear-gradient(to right, mat-color($accent, A200), mat-color($accent, 900));
+		}
+
+		.overlay {
+			background: mat-color($primary, A400);
+			background: linear-gradient(to right, mat-color($accent, A400), mat-color($primary, 700));
+			background: -webkit-linear-gradient(to right, mat-color($accent, A200), mat-color($primary, 700));
+		}
+
+		.container {
+			background-color: mat-color($background, background);
+
+			form {
+				background-color: mat-color($background, background);
+			}
+		}
 	}
 }

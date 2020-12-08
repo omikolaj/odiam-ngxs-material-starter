@@ -1,90 +1,84 @@
-<div [ngClass]="_createAccount" class="container" id="container">
-        <div class="form-container sign-up-container">
+<div [ngClass]="_createAccount" class="container">
+	<div class="form-container sign-up-container">
+		<form [formGroup]="_signupForm" (ngSubmit)="_onSignup()" role="form" novalidate>
+			<h3>Create Account</h3>
+			<div>
+				<mat-form-field appearance="standard">
+					<mat-label>E-mail</mat-label>
+					<input formControlName="email" matInput placeholder="example@gmail.com" type="email" />
+				</mat-form-field>
+			</div>
 
-            <form [formGroup]="_signupForm" (ngSubmit)="_onSignup()" id="contact-form" class="main-form" role="form" novalidate>
-                <h3>Create Account</h3>
-                <div class="form-group">
-                <mat-form-field appearance="standard">
-                  <mat-label>E-mail</mat-label>
-                  <input formControlName="email" matInput placeholder="example@gmail.com" type="email">
-                </mat-form-field>
-                </div>
+			<div>
+				<mat-form-field appearance="standard">
+					<mat-label>First name</mat-label>
+					<input matInput formControlName="firstName" />
+				</mat-form-field>
+			</div>
 
-                <div class="form-group">
+			<div>
+				<mat-form-field appearance="standard">
+					<mat-label>Last name</mat-label>
+					<input matInput formControlName="lastName" />
+				</mat-form-field>
+			</div>
 
-                    <mat-form-field appearance="standard">
-                  <mat-label>First name</mat-label>
-                  <input matInput formControlName="firstName">
-                </mat-form-field>
-                </div>
+			<div>
+				<mat-form-field appearance="standard">
+					<mat-label>Password</mat-label>
+					<input matInput formControlName="password" type="password" />
+				</mat-form-field>
+			</div>
 
-                <div class="form-group">
-                <mat-form-field appearance="standard">
-                  <mat-label>Last name</mat-label>
-                  <input matInput formControlName="lastName">
-                </mat-form-field>
-                </div>
+			<div>
+				<button mat-raised-button type="submit" class="btn">CREATE ACCOUNT</button>
+			</div>
+		</form>
+	</div>
 
-                <div class="form-group">
-                <mat-form-field appearance="standard">
-                  <mat-label>Password</mat-label>
-                  <input matInput formControlName="password" type="password">
-                </mat-form-field>
-                </div>
+	<div class="form-container sign-in-container">
+		<form [formGroup]="_signinForm" (ngSubmit)="_onSignin()" role="form" novalidate>
+			<h3>Sign In</h3>
 
-                <div class="form-group">
-                    <button mat-raised-button type="submit" class="btn" >CREATE ACCOUNT</button>
-                </div>
-            </form>
-        </div>
+			<div>
+				<mat-form-field appearance="standard">
+					<mat-label>E-mail</mat-label>
+					<input matInput formControlName="email" type="email" />
+				</mat-form-field>
+			</div>
 
-        <div class="form-container sign-in-container">
+			<div>
+				<mat-form-field appearance="standard">
+					<mat-label>Password</mat-label>
+					<input matInput formControlName="password" type="password" />
+				</mat-form-field>
+			</div>
 
-            <form (ngSubmit)="_onSignin()" [formGroup]="_signinForm" id="contact-form" class="main-form needs-validation" role="form" novalidate>
-                <h3>Sign In</h3>
+			<div class="form-group text-center">
+				<button mat-raised-button type="submit" class="btn btn-primary mt-2 mx-auto">SIGN IN</button>
+			</div>
 
+			<div class="form-group mt-2 text-center">
+				<span class="forgot">Forgot password ?</span>
+			</div>
+		</form>
+	</div>
 
-                <div class="form-group">
-                <mat-form-field appearance="standard">
-                  <mat-label>E-mail</mat-label>
-                  <input matInput formControlName="email" type="email">
-                </mat-form-field>
-                </div>
-
-                <div class="form-group">
-                    <mat-form-field appearance="standard">
-                  <mat-label>Password</mat-label>
-                  <input matInput formControlName="password" type="password">
-                </mat-form-field>
-                </div>
-
-                <div class="form-group text-center">
-                    <button mat-raised-button type="submit" class="btn btn-primary mt-2 mx-auto" >SIGN IN</button>
-                </div>
-
-                <div class="form-group mt-2 text-center">
-                    <span class="forgot">Forgot password ?</span>
-                </div>
-
-            </form>
-
-        </div>
-
-        <div class="overlay-container">
-            <div class="overlay">
-                <div class="overlay-panel overlay-left">
-                    <h1>Welcome Back!</h1>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod</p>
-                    <button mat-raised-button (click)="_onSwitchSignin()" class="ghost" id="signIn">SIGN IN</button>
-
-                </div>
-                <div class="overlay-panel overlay-right">
-                    <h1>Hello World!</h1>
-                    <p>Lorem ipsum dolor sit amet,<br>
-                        sed do eiusmod tempor incididunt.</p>
-                    <button mat-raised-button (click)="_onSwitchToSignup()" class="ghost" id="signUp">CREATE ACCOUNT</button>
-                </div>
-            </div>
-        </div>
-
-    </div>
+	<div class="overlay-container">
+		<div class="overlay">
+			<div class="overlay-panel overlay-left">
+				<h1>Welcome Back!</h1>
+				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod</p>
+				<button mat-raised-button (click)="_onSwitchSignin()" class="ghost">SIGN IN</button>
+			</div>
+			<div class="overlay-panel overlay-right">
+				<h1>Hello World!</h1>
+				<p>
+					Lorem ipsum dolor sit amet,<br />
+					sed do eiusmod tempor incididunt.
+				</p>
+				<button mat-raised-button (click)="_onSwitchToSignup()" class="ghost">CREATE ACCOUNT</button>
+			</div>
+		</div>
+	</div>
+</div>
