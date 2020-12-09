@@ -36,6 +36,11 @@
 					<mat-error *ngIf="_signupForm['controls'].password?.invalid">{{
 						_getPasswordErrorMessage(_signupForm['controls'].password.errors)
 					}}</mat-error>
+					<!-- <ng-container *ngIf="validationProblemDetails"> -->
+					<ng-container *ngFor="let validationError of validationProblemDetails?.errors | keyvalue">
+						<mat-error>{{ validationProblemDetails.errors[validationError.key] }} </mat-error>
+					</ng-container>
+					<!-- </ng-container> -->
 				</mat-form-field>
 			</div>
 

@@ -1,4 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { AuthFacadeService } from '../auth-facade.service';
+import { ProblemDetails } from 'app/core/models/problem-details.model';
+import { Observable } from 'rxjs';
 
 /**
  * AuthContainer component
@@ -10,7 +13,10 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AuthContainerComponent implements OnInit {
-	constructor() {}
+	validationProblemDetails$: Observable<ProblemDetails>;
+	constructor(private facade: AuthFacadeService) {
+		this.validationProblemDetails$ = this.facade.validationProblemDetails$;
+	}
 
 	/**
 	 * NgOnInit life cycle.

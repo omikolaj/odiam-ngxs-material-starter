@@ -1,8 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, Input } from '@angular/core';
 import { FormGroup, FormBuilder, ValidationErrors } from '@angular/forms';
 import { ValidatorsAsyncService } from 'app/core/form-validators/validators-async.service';
 import { OdmValidators } from 'app/core/form-validators/odm-validators';
+import { RegisterUserModel } from 'app/core/auth/register-user.model';
+import { AuthFacadeService } from '../auth-facade.service';
+import { Observable } from 'rxjs';
+import { ProblemDetails } from 'app/core/models/problem-details.model';
 
 /**
  * Auth component handles displaying both sign in and sign up views.
@@ -31,12 +35,15 @@ export class AuthComponent implements OnInit {
 	 */
 	_fieldRequiredMessage = 'This field is required';
 
+	@Input() validationProblemDetails: ProblemDetails;
+
 	/**
 	 * Creates an instance of auth component.
 	 * @param fb
 	 * @param asyncValidators
+	 * @param facade
 	 */
-	constructor(private fb: FormBuilder, private asyncValidators: ValidatorsAsyncService) {}
+	constructor(private fb: FormBuilder, private asyncValidators: ValidatorsAsyncService, private facade: AuthFacadeService) {}
 
 	/**
 	 * NgOnInit life cycle.
@@ -48,7 +55,10 @@ export class AuthComponent implements OnInit {
 	/**
 	 * Event handler for when new user is attempting to sign up.
 	 */
-	_onSignup(): void {}
+	_onSignup(): void {
+		const registerUserModel = this._signupForm.value as RegisterUserModel;
+		this.facade.signupUser(registerUserModel);
+	}
 
 	/**
 	 * Event handler for when user is attempting to sign in.
@@ -77,7 +87,6 @@ export class AuthComponent implements OnInit {
 	 * @returns password error message
 	 */
 	_getPasswordErrorMessage(errors: ValidationErrors): string {
-		console.log('errors', errors);
 		if (errors['required']) {
 			return 'This field is required';
 		} else if (errors['number']) {
@@ -123,7 +132,7 @@ export class AuthComponent implements OnInit {
 			email: this.fb.control('', {
 				validators: [OdmValidators.required, OdmValidators.email],
 				asyncValidators: [this.asyncValidators.checkIfEmailIsUnique()],
-				updateOn: 'blur'
+				updateOn: 'change'
 			}),
 			firstName: this.fb.control('', [OdmValidators.required]),
 			lastName: this.fb.control(''),

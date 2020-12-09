@@ -40,6 +40,8 @@ import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
 import { NgxsRouterPluginModule, RouterStateSerializer } from '@ngxs/router-plugin';
 import { CustomSerializer } from './router/custom-serializer';
 import { BACKEND_API_URL } from './api-url-injection-token';
+import { HttpStatusService } from './http-status.service';
+import { HttpStatusInterceptor } from './interceptors/http-status-interceptor.service';
 
 export { TitleService, routeAnimations, LocalStorageService, ROUTE_ANIMATIONS_ELEMENTS, AnimationsService, AuthGuardService, NotificationService };
 
@@ -105,6 +107,7 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
 	declarations: [],
 	providers: [
 		{ provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
+		{ provide: HTTP_INTERCEPTORS, useClass: HttpStatusInterceptor, multi: true, deps: [HttpStatusService] },
 		{ provide: ErrorHandler, useClass: AppErrorHandler },
 		{ provide: RouterStateSerializer, useClass: CustomSerializer },
 		{ provide: NGXS_PLUGINS, useValue: initStateFromLocalStorage, multi: true },
