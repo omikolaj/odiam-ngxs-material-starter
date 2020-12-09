@@ -6,6 +6,8 @@
 				<mat-form-field appearance="standard">
 					<mat-label>E-mail</mat-label>
 					<input formControlName="email" matInput placeholder="example@gmail.com" type="email" />
+					<mat-icon matSuffix>email</mat-icon>
+					<mat-error *ngIf="_signupForm['controls'].email?.invalid">{{ _getEmailErrorMessage(_signupForm['controls'].email.errors) }}</mat-error>
 				</mat-form-field>
 			</div>
 
@@ -13,6 +15,8 @@
 				<mat-form-field appearance="standard">
 					<mat-label>First name</mat-label>
 					<input matInput formControlName="firstName" />
+					<mat-icon matSuffix>perm_identity</mat-icon>
+					<mat-error *ngIf="_signupForm['controls'].firstName?.invalid">{{ _fieldRequiredMessage }}</mat-error>
 				</mat-form-field>
 			</div>
 
@@ -20,6 +24,7 @@
 				<mat-form-field appearance="standard">
 					<mat-label>Last name</mat-label>
 					<input matInput formControlName="lastName" />
+					<mat-icon matSuffix>perm_identity</mat-icon>
 				</mat-form-field>
 			</div>
 
@@ -27,11 +32,15 @@
 				<mat-form-field appearance="standard">
 					<mat-label>Password</mat-label>
 					<input matInput formControlName="password" type="password" />
+					<mat-icon matSuffix>lock</mat-icon>
+					<mat-error *ngIf="_signupForm['controls'].password?.invalid">{{
+						_getPasswordErrorMessage(_signupForm['controls'].password.errors)
+					}}</mat-error>
 				</mat-form-field>
 			</div>
 
 			<div>
-				<button mat-raised-button type="submit" class="btn">CREATE ACCOUNT</button>
+				<button mat-raised-button type="submit" class="btn" [disabled]="!_signupForm.valid">SIGN UP</button>
 			</div>
 		</form>
 	</div>
@@ -44,6 +53,8 @@
 				<mat-form-field appearance="standard">
 					<mat-label>E-mail</mat-label>
 					<input matInput formControlName="email" type="email" />
+					<mat-error *ngIf="_signinForm['controls'].email?.invalid">{{ _getEmailErrorMessage(_signinForm['controls'].email.errors) }}</mat-error>
+					<mat-icon matSuffix>email</mat-icon>
 				</mat-form-field>
 			</div>
 
@@ -51,14 +62,16 @@
 				<mat-form-field appearance="standard">
 					<mat-label>Password</mat-label>
 					<input matInput formControlName="password" type="password" />
+					<mat-error *ngIf="_signinForm['controls'].password?.invalid">{{ _fieldRequiredMessage }}</mat-error>
+					<mat-icon matSuffix>lock</mat-icon>
 				</mat-form-field>
 			</div>
 
 			<div class="form-group text-center">
-				<button mat-raised-button type="submit" class="btn btn-primary mt-2 mx-auto">SIGN IN</button>
+				<button mat-raised-button type="submit" class="btn" [disabled]="!_signinForm.valid">SIGN IN</button>
 			</div>
 
-			<div class="form-group mt-2 text-center">
+			<div class="form-group">
 				<span class="forgot">Forgot password ?</span>
 			</div>
 		</form>
@@ -69,7 +82,7 @@
 			<div class="overlay-panel overlay-left">
 				<h1>Welcome Back!</h1>
 				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod</p>
-				<button mat-raised-button (click)="_onSwitchSignin()" class="ghost">SIGN IN</button>
+				<button mat-raised-button (click)="_createAccount = ''" class="ghost">SIGN IN</button>
 			</div>
 			<div class="overlay-panel overlay-right">
 				<h1>Hello World!</h1>
@@ -77,7 +90,7 @@
 					Lorem ipsum dolor sit amet,<br />
 					sed do eiusmod tempor incididunt.
 				</p>
-				<button mat-raised-button (click)="_onSwitchToSignup()" class="ghost">CREATE ACCOUNT</button>
+				<button mat-raised-button (click)="_createAccount = 'right-panel-active'" class="ghost">CREATE ACCOUNT</button>
 			</div>
 		</div>
 	</div>

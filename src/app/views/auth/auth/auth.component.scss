@@ -35,10 +35,10 @@ button.ghost {
 	width: 250px;
 	border: none;
 	transition: 0.3s ease-in-out;
-	margin-top: 12px;
+	margin-top: 21.5px;
 }
 
-.btn:hover {
+.btn:enabled:hover {
 	background-position: right;
 }
 

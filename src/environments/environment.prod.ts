@@ -4,6 +4,9 @@ export const environment = {
 	appName: 'Odiam Ngxs Material Starter',
 	envName: 'PROD',
 	production: true,
+	backend: {
+		apiUrl: '/api'
+	},
 	test: false,
 	i18nPrefix: '/odiam-ngxs-material-starter',
 	versions: {

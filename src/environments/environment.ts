@@ -8,6 +8,9 @@ const packageJson = require('../../package.json');
 export const environment = {
 	appName: 'Odiam Ngxs Material Starter',
 	envName: 'DEV',
+	backend: {
+		apiUrl: '/api'
+	},
 	production: false,
 	test: false,
 	i18nPrefix: '',

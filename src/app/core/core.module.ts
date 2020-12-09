@@ -39,6 +39,7 @@ import { initStateFromLocalStorage } from './meta-reducers/init-state-from-local
 import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
 import { NgxsRouterPluginModule, RouterStateSerializer } from '@ngxs/router-plugin';
 import { CustomSerializer } from './router/custom-serializer';
+import { BACKEND_API_URL } from './api-url-injection-token';
 
 export { TitleService, routeAnimations, LocalStorageService, ROUTE_ANIMATIONS_ELEMENTS, AnimationsService, AuthGuardService, NotificationService };
 
@@ -106,7 +107,8 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
 		{ provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
 		{ provide: ErrorHandler, useClass: AppErrorHandler },
 		{ provide: RouterStateSerializer, useClass: CustomSerializer },
-		{ provide: NGXS_PLUGINS, useValue: initStateFromLocalStorage, multi: true }
+		{ provide: NGXS_PLUGINS, useValue: initStateFromLocalStorage, multi: true },
+		{ provide: BACKEND_API_URL, useValue: environment.backend.apiUrl }
 	],
 	exports: [
 		// angular
