@@ -1,15 +1,15 @@
 <section class="section">
 	<div class="main">
 		<div class="intro-section">
-			<h6 class="intro-heading">Welcome</h6>
-			<p class="intro-text">
+			<h6 class="intro-heading" [ngClass]="_routeAnimationsElements">Welcome</h6>
+			<p class="intro-text" [ngClass]="_routeAnimationsElements">
 				Lorem ipsum dolor sit amet, consectetur adipisicing elit. Saepe dignissimos officia sint animi voluptatum est praesentium nostrum, iusto earum
 				fugit.
 			</p>
-			<img src="https://res.cloudinary.com/hetfy/image/upload/v1603459311/laptop_hkaxzz.png" alt="Laptop" />
+			<img src="https://res.cloudinary.com/hetfy/image/upload/v1603459311/laptop_hkaxzz.png" [ngClass]="_routeAnimationsElements" alt="Laptop" />
 		</div>
 		<odm-auth
-			[validationProblemDetails]="_validationProblemDetails$ | async"
+			[problemDetails]="_problemDetails$ | async"
 			[signinForm]="_signinForm"
 			(signinFormSubmitted)="_onSigninSubmitted($event)"
 			[signupForm]="_signupForm"

@@ -51,7 +51,7 @@ import { GhostAnimationService } from './services/ghost-animation.service';
  */
 @NgModule({
 	declarations: [GhostBlockComponent],
-	providers: [GhostAnimationService, { provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher }],
+	providers: [GhostAnimationService], //{ provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher }
 	imports: [
 		CommonModule,
 		FormsModule,

@@ -7,6 +7,7 @@ import { OdmValidators } from 'app/core/form-validators/odm-validators';
 import { AsyncValidatorsService } from 'app/core/form-validators/validators-async.service';
 import { RegisterUserModel } from 'app/core/auth/register-user.model';
 import { LoginUserModel } from 'app/core/auth/login-user.model';
+import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
 
 /**
  * AuthContainer component
@@ -19,9 +20,14 @@ import { LoginUserModel } from 'app/core/auth/login-user.model';
 })
 export class AuthContainerComponent implements OnInit {
 	/**
+	 * Route animations elements of auth container component.
+	 */
+	_routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
+
+	/**
 	 * Validation problem details$ of auth container component when form validations get passed angular but fail on the server.
 	 */
-	_validationProblemDetails$: Observable<ProblemDetails>;
+	_problemDetails$: Observable<ProblemDetails>;
 	/**
 	 * Signin form of auth component.
 	 */
@@ -38,7 +44,7 @@ export class AuthContainerComponent implements OnInit {
 	 * @param fb
 	 */
 	constructor(private facade: AuthFacadeService, private asyncValidators: AsyncValidatorsService, private fb: FormBuilder) {
-		this._validationProblemDetails$ = this.facade.validationProblemDetails$;
+		this._problemDetails$ = facade.problemDetails$;
 	}
 
 	/**
@@ -52,7 +58,9 @@ export class AuthContainerComponent implements OnInit {
 	 * Event handler for when user signs in.
 	 * @param model
 	 */
-	_onSigninSubmitted(model: LoginUserModel): void {}
+	_onSigninSubmitted(model: LoginUserModel): void {
+		this.facade.signinUser(model);
+	}
 
 	/**
 	 * Event handler for when user signs up.
@@ -77,7 +85,7 @@ export class AuthContainerComponent implements OnInit {
 	private _initSigninForm(): FormGroup {
 		return this.fb.group({
 			email: this.fb.control('', [OdmValidators.required, OdmValidators.email]),
-			password: this.fb.control('', OdmValidators.required)
+			password: this.fb.control('', [OdmValidators.required])
 		});
 	}
 

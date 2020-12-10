@@ -1,6 +1,6 @@
 <div [ngClass]="_createAccount" class="container">
 	<div class="form-container sign-up-container">
-		<form [formGroup]="signupForm" (ngSubmit)="_onSignup()" role="form" novalidate>
+		<form [formGroup]="signupForm" #signupFormDirective="ngForm" (ngSubmit)="_onSignup()" role="form" novalidate>
 			<h3>Create Account</h3>
 			<div>
 				<mat-form-field appearance="standard">
@@ -34,6 +34,10 @@
 				<mat-form-field appearance="standard">
 					<mat-label>Password</mat-label>
 					<input matInput formControlName="password" type="password" />
+					<mat-hint align="start"
+						><span [ngClass]="{ 'hint-req-met': checkCharacterLength() }">8 characters long</span><br />1 upppercase<br />1 lowercase<br />1 special
+						character<br />1 digit</mat-hint
+					>
 					<mat-icon matSuffix>lock</mat-icon>
 					<mat-error *ngIf="_ifControlFieldIsInvalid(signupForm['controls'].password, 'password')">{{
 						_getPasswordErrorMessage(signupForm['controls']?.password.errors)
@@ -47,15 +51,17 @@
 		</form>
 	</div>
 
-	<div class="form-container sign-in-container">
-		<form [formGroup]="signinForm" (ngSubmit)="_onSignin()" role="form" novalidate>
+	<div class="form-container sign-in-container" [ngClass]="_routeAnimationsElements">
+		<form [formGroup]="signinForm" #signinFormDirective="ngForm" (ngSubmit)="_onSignin()" role="form" novalidate>
 			<h3>Sign In</h3>
 
 			<div>
 				<mat-form-field appearance="standard">
 					<mat-label>E-mail</mat-label>
 					<input matInput formControlName="email" type="email" />
-					<mat-error *ngIf="signinForm['controls'].email?.invalid">{{ _getEmailErrorMessage(signinForm['controls'].email.errors) }}</mat-error>
+					<mat-error *ngIf="_ifControlFieldIsInvalid(signinForm['controls'].email, 'email')">{{
+						_getEmailErrorMessage(signinForm['controls'].email.errors)
+					}}</mat-error>
 					<mat-icon matSuffix>email</mat-icon>
 				</mat-form-field>
 			</div>
@@ -64,7 +70,7 @@
 				<mat-form-field appearance="standard">
 					<mat-label>Password</mat-label>
 					<input matInput formControlName="password" type="password" />
-					<mat-error *ngIf="signinForm['controls'].password?.invalid">{{ _fieldRequiredMessage }}</mat-error>
+					<mat-error *ngIf="signinForm['controls'].password.invalid">{{ _fieldRequiredMessage }}</mat-error>
 					<mat-icon matSuffix>lock</mat-icon>
 				</mat-form-field>
 			</div>
@@ -80,11 +86,11 @@
 	</div>
 
 	<div class="overlay-container">
-		<div class="overlay">
+		<div class="overlay" [ngClass]="_routeAnimationsElements">
 			<div class="overlay-panel overlay-left">
 				<h1>Welcome Back!</h1>
 				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod</p>
-				<button mat-raised-button (click)="_switchToSignin()" class="ghost">SIGN IN</button>
+				<button mat-raised-button (click)="_switchToSignin(signupFormDirective)" class="ghost">SIGN IN</button>
 			</div>
 			<div class="overlay-panel overlay-right">
 				<h1>Hello World!</h1>
@@ -92,7 +98,7 @@
 					Lorem ipsum dolor sit amet,<br />
 					sed do eiusmod tempor incididunt.
 				</p>
-				<button mat-raised-button (click)="_switchToSignup()" class="ghost">CREATE ACCOUNT</button>
+				<button mat-raised-button (click)="_switchToSignup(signinFormDirective)" class="ghost">CREATE ACCOUNT</button>
 			</div>
 		</div>
 	</div>

@@ -11,5 +11,8 @@ import { ROUTE_ANIMATIONS_ELEMENTS } from '../../../core/core.module';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AboutComponent {
-	routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
+	/**
+	 * Route animations elements of about component.
+	 */
+	_routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
 }

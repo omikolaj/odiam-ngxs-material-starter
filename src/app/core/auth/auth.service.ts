@@ -4,6 +4,7 @@ import { AccessToken } from './access-token.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { RegisterUserModel } from './register-user.model';
 import { Observable } from 'rxjs';
+import { LoginUserModel } from './login-user.model';
 
 /**
  * AuthService injectable.
@@ -23,11 +24,20 @@ export class AuthService {
 	constructor(@Inject(BACKEND_API_URL) private apiUrl: string, private http: HttpClient) {}
 
 	/**
-	 * Signups new users.
-	 * @param registerModel
-	 * @returns signup
+	 * Signs new users up.
+	 * @param model
+	 * @returns access token
 	 */
-	signup(registerModel: RegisterUserModel): Observable<AccessToken> {
-		return this.http.post<AccessToken>(`${this.apiUrl}/auth/signup`, JSON.stringify(registerModel), { headers: this.headers });
+	signup(model: RegisterUserModel): Observable<AccessToken> {
+		return this.http.post<AccessToken>(`${this.apiUrl}/auth/signup`, JSON.stringify(model), { headers: this.headers });
+	}
+
+	/**
+	 * Signs users in.
+	 * @param model
+	 * @returns access token
+	 */
+	signin(model: LoginUserModel): Observable<AccessToken> {
+		return this.http.post<AccessToken>(`${this.apiUrl}/auth/signin`, JSON.stringify(model), { headers: this.headers });
 	}
 }
