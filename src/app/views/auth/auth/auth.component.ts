@@ -92,15 +92,6 @@ export class AuthComponent {
 	 */
 	constructor(private cd: ChangeDetectorRef) {}
 
-	checkCharacterLength(): boolean {
-		let reqMet = false;
-		this.signinForm.get('password').valueChanges.subscribe((value: string) => {
-			reqMet = value.length > 7;
-		});
-
-		return reqMet;
-	}
-
 	/**
 	 * Event handler for when new user is attempting to sign up.
 	 */

@@ -34,10 +34,6 @@
 				<mat-form-field appearance="standard">
 					<mat-label>Password</mat-label>
 					<input matInput formControlName="password" type="password" />
-					<mat-hint align="start"
-						><span [ngClass]="{ 'hint-req-met': checkCharacterLength() }">8 characters long</span><br />1 upppercase<br />1 lowercase<br />1 special
-						character<br />1 digit</mat-hint
-					>
 					<mat-icon matSuffix>lock</mat-icon>
 					<mat-error *ngIf="_ifControlFieldIsInvalid(signupForm['controls'].password, 'password')">{{
 						_getPasswordErrorMessage(signupForm['controls']?.password.errors)
