@@ -7,9 +7,7 @@ export interface ProblemDetails {
 	title: string;
 	detail: string;
 	instance: string;
-	errors?: [
-		{
-			[errorCode: string]: string | string[];
-		}
-	];
+	errors?: {
+		[errorCode: string]: string[];
+	};
 }

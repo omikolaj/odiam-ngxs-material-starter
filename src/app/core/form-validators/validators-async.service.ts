@@ -5,12 +5,12 @@ import { of } from 'rxjs';
 import { debounceTime, take, switchMap, map } from 'rxjs/operators';
 
 /**
- * Injectable ValidatorsAsyncService
+ * Injectable AsyncValidatorsService
  */
 @Injectable({
 	providedIn: 'root'
 })
-export class ValidatorsAsyncService {
+export class AsyncValidatorsService {
 	/**
 	 * Creates an instance of validators async service.
 	 * @param userService
@@ -43,12 +43,7 @@ export class ValidatorsAsyncService {
 					debounceTime(500),
 					take(1),
 					switchMap((_) => {
-						return (
-							this.userService
-								.checkIfEmailExists(control.value)
-								// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-								.pipe(map((exists) => (exists ? { nonUnique: control.value } : null)))
-						);
+						return this.userService.checkIfEmailExists(control.value).pipe(map((exists) => (exists ? { nonUnique: control.value as string } : null)));
 					})
 				);
 			}

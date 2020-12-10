@@ -16,6 +16,7 @@ export class HttpStatusInterceptor implements HttpInterceptor {
 			catchError((e: HttpErrorResponse) => {
 				if (e.status === 400) {
 					const validationProblemDetails = e.error as ProblemDetails;
+					console.log(validationProblemDetails);
 					if (validationProblemDetails.errors) {
 						this.httpStatusService.validationErrors = e.error;
 						return NEVER;

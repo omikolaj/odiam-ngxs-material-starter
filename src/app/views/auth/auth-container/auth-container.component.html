@@ -8,6 +8,12 @@
 			</p>
 			<img src="https://res.cloudinary.com/hetfy/image/upload/v1603459311/laptop_hkaxzz.png" alt="Laptop" />
 		</div>
-		<odm-auth [validationProblemDetails]="validationProblemDetails$ | async"></odm-auth>
+		<odm-auth
+			[validationProblemDetails]="_validationProblemDetails$ | async"
+			[signinForm]="_signinForm"
+			(signinFormSubmitted)="_onSigninSubmitted($event)"
+			[signupForm]="_signupForm"
+			(signupFormSubmitted)="_onSignupSubmitted($event)"
+		></odm-auth>
 	</div>
 </section>

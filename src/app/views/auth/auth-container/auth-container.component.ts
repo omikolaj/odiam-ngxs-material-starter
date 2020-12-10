@@ -2,6 +2,11 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { AuthFacadeService } from '../auth-facade.service';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { Observable } from 'rxjs';
+import { FormGroup, FormBuilder } from '@angular/forms';
+import { OdmValidators } from 'app/core/form-validators/odm-validators';
+import { AsyncValidatorsService } from 'app/core/form-validators/validators-async.service';
+import { RegisterUserModel } from 'app/core/auth/register-user.model';
+import { LoginUserModel } from 'app/core/auth/login-user.model';
 
 /**
  * AuthContainer component
@@ -13,13 +18,93 @@ import { Observable } from 'rxjs';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AuthContainerComponent implements OnInit {
-	validationProblemDetails$: Observable<ProblemDetails>;
-	constructor(private facade: AuthFacadeService) {
-		this.validationProblemDetails$ = this.facade.validationProblemDetails$;
+	/**
+	 * Validation problem details$ of auth container component when form validations get passed angular but fail on the server.
+	 */
+	_validationProblemDetails$: Observable<ProblemDetails>;
+	/**
+	 * Signin form of auth component.
+	 */
+	_signinForm: FormGroup;
+	/**
+	 * Signup form of auth component.
+	 */
+	_signupForm: FormGroup;
+
+	/**
+	 * Creates an instance of auth container component.
+	 * @param facade
+	 * @param asyncValidators
+	 * @param fb
+	 */
+	constructor(private facade: AuthFacadeService, private asyncValidators: AsyncValidatorsService, private fb: FormBuilder) {
+		this._validationProblemDetails$ = this.facade.validationProblemDetails$;
 	}
 
 	/**
 	 * NgOnInit life cycle.
 	 */
-	ngOnInit(): void {}
+	ngOnInit(): void {
+		this._initForms();
+	}
+
+	/**
+	 * Event handler for when user signs in.
+	 * @param model
+	 */
+	_onSigninSubmitted(model: LoginUserModel): void {}
+
+	/**
+	 * Event handler for when user signs up.
+	 * @param model
+	 */
+	_onSignupSubmitted(model: RegisterUserModel): void {
+		this.facade.signupUser(model);
+	}
+
+	/**
+	 * Inits singin and signup forms.
+	 */
+	private _initForms(): void {
+		this._signinForm = this._initSigninForm();
+		this._signupForm = this._initSignupForm();
+	}
+
+	/**
+	 * Creates FormGroup for signin form.
+	 * @returns signin form
+	 */
+	private _initSigninForm(): FormGroup {
+		return this.fb.group({
+			email: this.fb.control('', [OdmValidators.required, OdmValidators.email]),
+			password: this.fb.control('', OdmValidators.required)
+		});
+	}
+
+	/**
+	 * Creates FormGroup for signup form.
+	 * @returns signup form
+	 */
+	private _initSignupForm(): FormGroup {
+		return this.fb.group({
+			email: this.fb.control('', {
+				validators: [OdmValidators.required, OdmValidators.email],
+				asyncValidators: [this.asyncValidators.checkIfEmailIsUnique()],
+				updateOn: 'change'
+			}),
+			firstName: this.fb.control('', [OdmValidators.required]),
+			lastName: this.fb.control(''),
+			password: this.fb.control('', {
+				validators: [
+					OdmValidators.required,
+					OdmValidators.minLength(8),
+					OdmValidators.requireDigit,
+					OdmValidators.requireLowercase,
+					OdmValidators.requireUppercase,
+					OdmValidators.requireNonAlphanumeric
+				],
+				updateOn: 'change'
+			})
+		});
+	}
 }
