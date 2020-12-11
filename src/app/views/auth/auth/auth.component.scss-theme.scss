@@ -16,6 +16,9 @@
 		h3 {
 			background-image: linear-gradient(to right, mat-color($accent, A400), mat-color($primary, 700));
 		}
+		.req-not-met {
+			color: mat-color($warn);
+		}
 
 		.forgot {
 			color: mat-color($primary, A400);

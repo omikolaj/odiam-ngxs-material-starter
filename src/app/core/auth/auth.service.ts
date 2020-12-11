@@ -2,9 +2,9 @@ import { Injectable, Inject } from '@angular/core';
 import { BACKEND_API_URL } from '../api-url-injection-token';
 import { AccessToken } from './access-token.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { RegisterUserModel } from './register-user.model';
+import { SignupUserModel } from './signup-user.model';
 import { Observable } from 'rxjs';
-import { LoginUserModel } from './login-user.model';
+import { SigninUserModel } from './signin-user.model';
 
 /**
  * AuthService injectable.
@@ -28,7 +28,7 @@ export class AuthService {
 	 * @param model
 	 * @returns access token
 	 */
-	signup(model: RegisterUserModel): Observable<AccessToken> {
+	signup(model: SignupUserModel): Observable<AccessToken> {
 		return this.http.post<AccessToken>(`${this.apiUrl}/auth/signup`, JSON.stringify(model), { headers: this.headers });
 	}
 
@@ -37,7 +37,7 @@ export class AuthService {
 	 * @param model
 	 * @returns access token
 	 */
-	signin(model: LoginUserModel): Observable<AccessToken> {
+	signin(model: SigninUserModel): Observable<AccessToken> {
 		return this.http.post<AccessToken>(`${this.apiUrl}/auth/signin`, JSON.stringify(model), { headers: this.headers });
 	}
 }

@@ -1,7 +1,7 @@
 /**
- * Register user model.
+ * Signup user model.
  */
-export interface RegisterUserModel {
+export interface SignupUserModel {
 	email: string;
 	firstName: string;
 	lastName?: string;

@@ -5,8 +5,8 @@ import { Observable } from 'rxjs';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { OdmValidators } from 'app/core/form-validators/odm-validators';
 import { AsyncValidatorsService } from 'app/core/form-validators/validators-async.service';
-import { RegisterUserModel } from 'app/core/auth/register-user.model';
-import { LoginUserModel } from 'app/core/auth/login-user.model';
+import { SignupUserModel } from 'app/core/auth/signup-user.model';
+import { SigninUserModel } from 'app/core/auth/signin-user.model';
 import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
 
 /**
@@ -58,7 +58,7 @@ export class AuthContainerComponent implements OnInit {
 	 * Event handler for when user signs in.
 	 * @param model
 	 */
-	_onSigninSubmitted(model: LoginUserModel): void {
+	_onSigninSubmitted(model: SigninUserModel): void {
 		this.facade.signinUser(model);
 	}
 
@@ -66,7 +66,7 @@ export class AuthContainerComponent implements OnInit {
 	 * Event handler for when user signs up.
 	 * @param model
 	 */
-	_onSignupSubmitted(model: RegisterUserModel): void {
+	_onSignupSubmitted(model: SignupUserModel): void {
 		this.facade.signupUser(model);
 	}
 

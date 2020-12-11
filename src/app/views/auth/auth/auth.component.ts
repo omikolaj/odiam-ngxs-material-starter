@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { Component, ChangeDetectionStrategy, Input, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, ChangeDetectorRef, Output, EventEmitter, OnInit } from '@angular/core';
 import { FormGroup, ValidationErrors, AbstractControl, FormGroupDirective } from '@angular/forms';
-import { RegisterUserModel } from 'app/core/auth/register-user.model';
+import { SignupUserModel } from 'app/core/auth/signup-user.model';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
-import { LoginUserModel } from 'app/core/auth/login-user.model';
+import { SigninUserModel } from 'app/core/auth/signin-user.model';
 import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
+import { tap, filter } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 /**
  * Determines if control is associated with email or password form control.
@@ -37,17 +39,22 @@ export class AuthComponent {
 	/**
 	 * Event emitter for when the signup form is submitted.
 	 */
-	@Output() signupFormSubmitted = new EventEmitter<RegisterUserModel>();
+	@Output() signupFormSubmitted = new EventEmitter<SignupUserModel>();
 
 	/**
 	 * Signup form of auth component.
 	 */
-	@Input() signupForm: FormGroup;
+	@Input() set signupForm(form: FormGroup) {
+		this._signupForm = form;
+		this._validateSignupFormPasswordField(form).subscribe();
+	}
+
+	_signupForm: FormGroup;
 
 	/**
 	 * Event emitter for when the signin form is submitted.
 	 */
-	@Output() signinFormSubmitted = new EventEmitter<LoginUserModel>();
+	@Output() signinFormSubmitted = new EventEmitter<SigninUserModel>();
 
 	/**
 	 * Property used to control if signin or signup view is displayed.
@@ -68,6 +75,42 @@ export class AuthComponent {
 	 * Hide/show password.
 	 */
 	_hide = true;
+
+	/**
+	 * Password length requirement for password control.
+	 * Used to inform user about password requirement.
+	 */
+	_passwordLengthReqMet = false;
+
+	/**
+	 * Password uppercase requirement for password control.
+	 * Used to inform user about password requirement.
+	 */
+	_passwordUppercaseReqMet = false;
+
+	/**
+	 * Password lowercase requirement for password control.
+	 * Used to inform user about password requirement.
+	 */
+	_passwordLowercaseReqmet = false;
+
+	/**
+	 * Password digit requirement for password control.
+	 * Used to inform user about password requirement.
+	 */
+	_passwordDigitReqMet = false;
+
+	/**
+	 * Password special character requirement for password control.
+	 * Used to inform user about password requirement.
+	 */
+	_passwordSpecialCharacterReqMet = false;
+
+	/**
+	 * If field input is invalid but the control has no errors associated with it.
+	 * This serves as the generic error message.
+	 */
+	private _fieldIsInvalid = 'Input validation error.';
 
 	/**
 	 * If server error occured, this property is used to determine if the error has been handled by the component in the template.
@@ -96,8 +139,8 @@ export class AuthComponent {
 	 * Event handler for when new user is attempting to sign up.
 	 */
 	_onSignup(): void {
-		const registerUserModel = this.signupForm.value as RegisterUserModel;
-		this.signupFormSubmitted.emit(registerUserModel);
+		const signupUserModel = this._signupForm.value as SignupUserModel;
+		this.signupFormSubmitted.emit(signupUserModel);
 	}
 
 	/**
@@ -115,8 +158,8 @@ export class AuthComponent {
 	 * Event handler for when user is attempting to sign in.
 	 */
 	_onSignin(): void {
-		const loginUserModel = this.signinForm.value as LoginUserModel;
-		this.signinFormSubmitted.emit(loginUserModel);
+		const SigninUserModel = this.signinForm.value as SigninUserModel;
+		this.signinFormSubmitted.emit(SigninUserModel);
 	}
 
 	/**
@@ -142,10 +185,12 @@ export class AuthComponent {
 			return 'Invalid e-mail format.';
 		} else if (errors['nonUnique']) {
 			// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-			return `E-mail ${errors['nonUnique']} is taken.`;
+			return `${errors['nonUnique']} is already registered.`;
 		} else if (errors['serverAuthenticationError']) {
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 			return errors['errorDescription'];
+		} else {
+			return this._fieldIsInvalid;
 		}
 	}
 
@@ -175,6 +220,54 @@ export class AuthComponent {
 		} else if (errors['serverAuthenticationError']) {
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 			return errors['errorDescription'];
+		} else {
+			return this._fieldIsInvalid;
+		}
+	}
+
+	/**
+	 * Checks if the control was invalidated by the server.
+	 * This will only happen if angular form validations were somehow passed.
+	 * @param control
+	 * @param controlType
+	 * @returns true if control field is invalidated by server
+	 */
+	_ifControlFieldIsInvalidatedByServer(control: AbstractControl, controlType: AuthControlType): boolean {
+		if (this._problemDetails) {
+			if (this._serverErrorHandled === false) {
+				if (this._isServerValidationError) {
+					const errors = Object.keys(this._problemDetails.errors).map((err) => err.toLocaleLowerCase());
+					if (controlType === 'email') {
+						if (errors.map((err) => err.includes('email')).includes(true)) {
+							return this._setAndHandleServerValidationError(control);
+						}
+					} else if (controlType === 'password') {
+						if (errors.map((err) => err.includes('password')).includes(true)) {
+							return this._setAndHandleServerValidationError(control);
+						}
+					}
+				} else if (this._isServerValidationError === false) {
+					this._setServerLoginError(control);
+					this._abstractControlServerErrorHandler(control);
+
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Checks if the control field is invalid by also checking server side validations.
+	 * @param control
+	 * @param controlType
+	 * @returns true if control field is invalid
+	 */
+	_ifControlFieldIsInvalid(control: AbstractControl, controlType: AuthControlType): boolean {
+		if (control.invalid) {
+			return true;
+		} else {
+			return this._ifControlFieldIsInvalidatedByServer(control, controlType);
 		}
 	}
 
@@ -204,55 +297,67 @@ export class AuthComponent {
 	}
 
 	/**
-	 * Checks if the control field is invalid by also checking server side validations.
+	 * Sets and handles server validation error for the given control.
 	 * @param control
-	 * @param controlType
-	 * @returns true if control field is invalid
+	 * @returns true to indicate the control is invalid
 	 */
-	_ifControlFieldIsInvalid(control: AbstractControl, controlType?: AuthControlType): boolean {
-		if (control.invalid) {
-			return true;
-		}
-		if (this._problemDetails) {
-			if (this._serverErrorHandled === false) {
-				if (this._isServerValidationError) {
-					const errors = Object.keys(this._problemDetails.errors).map((err) => err.toLocaleLowerCase());
-					if (controlType === 'email') {
-						if (errors.map((err) => err.toLocaleLowerCase().includes('email')).includes(true)) {
-							// adds error message to the control
-							this._setServerValidationError(control);
-							this._serverErrorHandler(control);
-							return true;
-						}
-					} else if (controlType === 'password') {
-						if (errors.map((err) => err.toLocaleLowerCase().includes('password')).includes(true)) {
-							// adds error message to the control
-							this._setServerValidationError(control);
-							this._serverErrorHandler(control);
-							return true;
-						}
-					}
-				} else if (this._isServerValidationError === false) {
-					this._setServerLoginError(control);
-					this._serverErrorHandler(control);
-
-					return true;
-				}
-			}
-		}
-		return false;
+	private _setAndHandleServerValidationError(control: AbstractControl): boolean {
+		// adds error message to the control
+		this._setServerValidationError(control);
+		this._abstractControlServerErrorHandler(control);
+		// return true to indicate the control is invalid with server validatione rrors
+		return true;
 	}
 
 	/**
 	 * Servers error validation handler. Sets up control for being invalid.
 	 * @param control
 	 */
-	private _serverErrorHandler(control: AbstractControl): void {
+	private _abstractControlServerErrorHandler(control: AbstractControl): void {
 		control.markAsPristine();
 		control.markAsUntouched();
 		this._serverErrorHandled = true;
 
 		// required to display error message right away, otherwise its only displayed on blur.
 		this.cd.detectChanges();
+	}
+
+	/**
+	 * Validates signup form password field.
+	 * @param form
+	 * @returns signup form password field
+	 */
+	private _validateSignupFormPasswordField(form: FormGroup): Observable<any> {
+		const passwordControl = form.get('password');
+		return passwordControl.valueChanges.pipe(
+			tap((value: string) => {
+				console.log('value changes', passwordControl);
+				if (passwordControl.hasError('number')) {
+					this._passwordDigitReqMet = false;
+				} else {
+					this._passwordDigitReqMet = true;
+				}
+				if (passwordControl.hasError('uppercase')) {
+					this._passwordUppercaseReqMet = false;
+				} else {
+					this._passwordUppercaseReqMet = true;
+				}
+				if (passwordControl.hasError('lowercase')) {
+					this._passwordLowercaseReqmet = false;
+				} else {
+					this._passwordLowercaseReqmet = true;
+				}
+				if (passwordControl.hasError('nonAlphanumeric')) {
+					this._passwordSpecialCharacterReqMet = false;
+				} else {
+					this._passwordSpecialCharacterReqMet = true;
+				}
+				if ((value || '').length === 0 || passwordControl.hasError('minlength')) {
+					this._passwordLengthReqMet = false;
+				} else if (passwordControl.errors && !passwordControl.errors['minlength'] && passwordControl.hasError('minlength') === false) {
+					this._passwordLengthReqMet = true;
+				}
+			})
+		);
 	}
 }
