@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { Component, ChangeDetectionStrategy, Input, ChangeDetectorRef, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, ChangeDetectorRef, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, ValidationErrors, AbstractControl, FormGroupDirective } from '@angular/forms';
 import { SignupUserModel } from 'app/core/auth/signup-user.model';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { SigninUserModel } from 'app/core/auth/signin-user.model';
 import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
-import { tap, filter } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { tap, takeUntil } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
 
 /**
  * Determines if control is associated with email or password form control.
@@ -22,7 +22,7 @@ type AuthControlType = 'email' | 'password';
 	styleUrls: ['./auth.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AuthComponent {
+export class AuthComponent implements OnDestroy {
 	/**
 	 * ProblemDetails for when server responds with validation error.
 	 */
@@ -46,7 +46,7 @@ export class AuthComponent {
 	 */
 	@Input() set signupForm(form: FormGroup) {
 		this._signupForm = form;
-		this._validateSignupFormPasswordField(form).subscribe();
+		this._validateSignupFormPasswordField(form).pipe(takeUntil(this._unsubscribe$)).subscribe();
 	}
 
 	_signupForm: FormGroup;
@@ -123,6 +123,11 @@ export class AuthComponent {
 	private _problemDetails: ProblemDetails;
 
 	/**
+	 * Subscription for auth component.
+	 */
+	private _unsubscribe$ = new Subject();
+
+	/**
 	 * Determines whether the problem details error is validation related to model validations.
 	 */
 	private get _isServerValidationError(): boolean {
@@ -134,6 +139,14 @@ export class AuthComponent {
 	 * @param cd
 	 */
 	constructor(private cd: ChangeDetectorRef) {}
+
+	/**
+	 * NgOnDestroy life cycle.
+	 */
+	ngOnDestroy(): void {
+		this._unsubscribe$.next();
+		this._unsubscribe$.complete();
+	}
 
 	/**
 	 * Event handler for when new user is attempting to sign up.
@@ -331,7 +344,6 @@ export class AuthComponent {
 		const passwordControl = form.get('password');
 		return passwordControl.valueChanges.pipe(
 			tap((value: string) => {
-				console.log('value changes', passwordControl);
 				if (passwordControl.hasError('number')) {
 					this._passwordDigitReqMet = false;
 				} else {
