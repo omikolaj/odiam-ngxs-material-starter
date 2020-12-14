@@ -65,18 +65,6 @@ export class LogEntry {
 	 * @returns string.
 	 */
 	private formatParams(params: any[]): string {
-		let ret: string = params.join(',');
-
-		// Is there at least one object in the array?
-		if (params.some((p) => typeof p === 'object')) {
-			ret = '';
-
-			// Build comma-delimited string.
-			params.forEach((item: any) => {
-				ret += JSON.stringify(item) + ', ';
-			});
-		}
-
-		return ret;
+		return params.join(',');
 	}
 }

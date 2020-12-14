@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { Component, ChangeDetectionStrategy, Input, ChangeDetectorRef, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, ChangeDetectorRef, Output, EventEmitter, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, ValidationErrors, AbstractControl, FormGroupDirective } from '@angular/forms';
 import { SignupUserModel } from 'app/core/auth/signup-user.model';
-import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { SigninUserModel } from 'app/core/auth/signin-user.model';
 import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
-import { tap, takeUntil } from 'rxjs/operators';
-import { Observable, Subject } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { Observable, Subscription } from 'rxjs';
+import { ProblemDetails } from 'app/core/models/problem-details.model';
+import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
+import { implementsOdmWebApiException } from 'app/core/implements-odm-web-api-exception';
 
 /**
  * Determines if control is associated with email or password form control.
@@ -22,14 +24,19 @@ type AuthControlType = 'email' | 'password';
 	styleUrls: ['./auth.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AuthComponent implements OnDestroy {
+export class AuthComponent implements OnInit, OnDestroy {
 	/**
 	 * ProblemDetails for when server responds with validation error.
 	 */
 	@Input() set problemDetails(value: ProblemDetails) {
-		this._serverErrorHandled = false;
+		this._problemDetailsServerErrorHandled = false;
 		this._problemDetails = value;
 	}
+
+	/**
+	 * InternalServerErrorDetails for when server crashes and responds with 500 error.
+	 */
+	@Input() internalServerErrorDetails: InternalServerErrorDetails;
 
 	/**
 	 * Signin form of auth component.
@@ -46,10 +53,18 @@ export class AuthComponent implements OnDestroy {
 	 */
 	@Input() set signupForm(form: FormGroup) {
 		this._signupForm = form;
-		this._validateSignupFormPasswordField(form).pipe(takeUntil(this._unsubscribe$)).subscribe();
+		this._subscription.add(this._validateSignupFormPasswordField(form).subscribe());
 	}
 
+	/**
+	 * Signup form of auth component.
+	 */
 	_signupForm: FormGroup;
+
+	/**
+	 * Signup form email control status changes$ of auth component.
+	 */
+	_signupFormEmailControlStatusChanges$: Observable<any>;
 
 	/**
 	 * Event emitter for when the signin form is submitted.
@@ -107,6 +122,20 @@ export class AuthComponent implements OnDestroy {
 	_passwordSpecialCharacterReqMet = false;
 
 	/**
+	 * Gets whether is internal server error occured.
+	 */
+	get _isInternalServerError(): boolean {
+		return !!this.internalServerErrorDetails;
+	}
+
+	/**
+	 * Checks if internal server error implements problem details
+	 */
+	private get _doesInternalServerErrorImplementOdmWebApiException(): boolean {
+		return implementsOdmWebApiException(this.internalServerErrorDetails);
+	}
+
+	/**
 	 * If field input is invalid but the control has no errors associated with it.
 	 * This serves as the generic error message.
 	 */
@@ -115,7 +144,7 @@ export class AuthComponent implements OnDestroy {
 	/**
 	 * If server error occured, this property is used to determine if the error has been handled by the component in the template.
 	 */
-	private _serverErrorHandled: boolean;
+	private _problemDetailsServerErrorHandled: boolean;
 
 	/**
 	 * Validation problem details used to check server side validation errors.
@@ -123,9 +152,9 @@ export class AuthComponent implements OnDestroy {
 	private _problemDetails: ProblemDetails;
 
 	/**
-	 * Subscription for auth component.
+	 * Subscription of auth component.
 	 */
-	private _unsubscribe$ = new Subject();
+	private _subscription: Subscription = new Subscription();
 
 	/**
 	 * Determines whether the problem details error is validation related to model validations.
@@ -141,11 +170,27 @@ export class AuthComponent implements OnDestroy {
 	constructor(private cd: ChangeDetectorRef) {}
 
 	/**
+	 * NgOnInit life cycle.
+	 */
+	ngOnInit(): void {
+		this._signupFormEmailControlStatusChanges$ = this._signupForm.get('email').statusChanges.pipe(
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			tap((_) => {
+				if (this._isInternalServerError) {
+					// null out internalServerErrorDetails when the email
+					// control statusChanges. Necessary to remove old message
+					// and display new one.
+					this.internalServerErrorDetails = null;
+				}
+			})
+		);
+	}
+
+	/**
 	 * NgOnDestroy life cycle.
 	 */
 	ngOnDestroy(): void {
-		this._unsubscribe$.next();
-		this._unsubscribe$.complete();
+		this._subscription.unsubscribe();
 	}
 
 	/**
@@ -182,6 +227,7 @@ export class AuthComponent implements OnDestroy {
 		this._createAccount = '';
 		// allow for the animation before cleaning up the form.
 		setTimeout(() => {
+			this.internalServerErrorDetails = null;
 			formDirective.resetForm();
 		}, 600);
 	}
@@ -239,6 +285,20 @@ export class AuthComponent implements OnDestroy {
 	}
 
 	/**
+	 * Gets internal server error message.
+	 * @returns internal server error message
+	 */
+	_getInternalServerErrorMessage(): string {
+		let errorDescription = '';
+		if (this._doesInternalServerErrorImplementOdmWebApiException) {
+			errorDescription = this.internalServerErrorDetails.detail;
+		} else {
+			errorDescription = this.internalServerErrorDetails.message;
+		}
+		return errorDescription;
+	}
+
+	/**
 	 * Checks if the control was invalidated by the server.
 	 * This will only happen if angular form validations were somehow passed.
 	 * @param control
@@ -247,7 +307,7 @@ export class AuthComponent implements OnDestroy {
 	 */
 	_ifControlFieldIsInvalidatedByServer(control: AbstractControl, controlType: AuthControlType): boolean {
 		if (this._problemDetails) {
-			if (this._serverErrorHandled === false) {
+			if (this._problemDetailsServerErrorHandled === false) {
 				if (this._isServerValidationError) {
 					const errors = Object.keys(this._problemDetails.errors).map((err) => err.toLocaleLowerCase());
 					if (controlType === 'email') {
@@ -329,7 +389,7 @@ export class AuthComponent implements OnDestroy {
 	private _abstractControlServerErrorHandler(control: AbstractControl): void {
 		control.markAsPristine();
 		control.markAsUntouched();
-		this._serverErrorHandled = true;
+		this._problemDetailsServerErrorHandled = true;
 
 		// required to display error message right away, otherwise its only displayed on blur.
 		this.cd.detectChanges();

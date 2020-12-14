@@ -10,6 +10,7 @@
 		</div>
 		<odm-auth
 			[problemDetails]="_problemDetails$ | async"
+			[internalServerErrorDetails]="_internalServerErrorDetails$ | async"
 			[signinForm]="_signinForm"
 			(signinFormSubmitted)="_onSigninSubmitted($event)"
 			[signupForm]="_signupForm"

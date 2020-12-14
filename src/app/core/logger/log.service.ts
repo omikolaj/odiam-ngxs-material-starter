@@ -46,6 +46,8 @@ export class LogService {
 		let fromLog = '';
 		if (typeof from === 'string') {
 			fromLog = from;
+		} else if (this.isTypeError(from)) {
+			fromLog = from.name;
 		} else if (this.isComponent(from)) {
 			fromLog = from.name;
 		} else if (from) {
@@ -63,6 +65,16 @@ export class LogService {
 	 */
 	private isComponent<T>(from: string | ComponentType<T> | unknown): from is ComponentType<T> {
 		return (from as ComponentType<T>)?.name !== undefined;
+	}
+
+	/**
+	 * Determines whether error is of type TypeError.
+	 * @template T
+	 * @param from
+	 * @returns type error
+	 */
+	private isTypeError<T>(from: string | ComponentType<T> | unknown): from is TypeError {
+		return (from as TypeError).name && (from as TypeError).message !== undefined;
 	}
 
 	/**

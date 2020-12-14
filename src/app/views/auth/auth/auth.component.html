@@ -7,13 +7,17 @@
 					<mat-label>E-mail</mat-label>
 					<input formControlName="email" matInput placeholder="example@gmail.com" type="email" />
 					<mat-hint>
-						<ng-container *ngIf="_signupForm.get('email').statusChanges | async as status">
-							<span *ngIf="status === 'PENDING'" class="check-availability-animation"
+						<ng-container *ngIf="_signupFormEmailControlStatusChanges$ | async as status">
+							<span *ngIf="status === 'PENDING' && !_isInternalServerError" class="check-availability-animation"
 								>Checking availability<span>.</span><span>.</span><span>.</span>
 							</span>
 							<span *ngIf="status === 'VALID'">
 								<mat-icon class="req-met" matPrefix>{{ 'task_alt' }}</mat-icon>
 								E-mail is not registered.
+							</span>
+							<span *ngIf="_isInternalServerError">
+								<mat-icon class="req-not-met" matPrefix>{{ 'clear' }}</mat-icon>
+								{{ _getInternalServerErrorMessage() }}
 							</span>
 						</ng-container>
 					</mat-hint>
