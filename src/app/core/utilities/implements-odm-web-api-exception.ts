@@ -1,4 +1,4 @@
-import { InternalServerErrorDetails } from './models/internal-server-error-details.model';
+import { InternalServerErrorDetails } from '../models/internal-server-error-details.model';
 
 /**
  * Determines whether the internal server error response implements OdmWebApiException

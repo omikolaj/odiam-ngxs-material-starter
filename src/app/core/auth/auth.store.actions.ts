@@ -1,3 +1,5 @@
+import { AccessToken } from './access-token.model';
+
 /**
  * Init auth state from local storage.
  */
@@ -10,23 +12,27 @@ export class InitStateFromLocalStorage {
 }
 
 /**
- * Logs user in.
+ * Signs user in.
  */
-export class Login {
+export class Signin {
 	/**
 	 * Type of action.
 	 */
-	static readonly type = '[Auth] Login';
-	constructor() {}
+	static readonly type = '[Auth] Signin';
+	/**
+	 * Creates an instance of signin action.
+	 * @param payload
+	 */
+	constructor(public payload: AccessToken) {}
 }
 
 /**
- * Logs user out.
+ * Signs user out.
  */
-export class Logout {
+export class Signout {
 	/**
 	 * Type of action.
 	 */
-	static readonly type = '[Auth] Logout';
+	static readonly type = '[Auth] Signout';
 	constructor() {}
 }

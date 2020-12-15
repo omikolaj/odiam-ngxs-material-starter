@@ -8,7 +8,8 @@ import { tap } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
-import { implementsOdmWebApiException } from 'app/core/implements-odm-web-api-exception';
+import { implementsOdmWebApiException } from 'app/core/utilities/implements-odm-web-api-exception';
+import { LogService } from 'app/core/logger/log.service';
 
 /**
  * Determines if control is associated with email or password form control.
@@ -29,6 +30,8 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 * ProblemDetails for when server responds with validation error.
 	 */
 	@Input() set problemDetails(value: ProblemDetails) {
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const _ = value ? this.logger.debug('Problem details emitted.', this) : null;
 		this._problemDetailsServerErrorHandled = false;
 		this._problemDetails = value;
 	}
@@ -51,9 +54,11 @@ export class AuthComponent implements OnInit, OnDestroy {
 	/**
 	 * Signup form of auth component.
 	 */
-	@Input() set signupForm(form: FormGroup) {
-		this._signupForm = form;
-		this._subscription.add(this._validateSignupFormPasswordField(form).subscribe());
+	@Input() set signupForm(value: FormGroup) {
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const _ = value ? this.logger.info('Signup form emitted.', this) : null;
+		this._signupForm = value;
+		this._subscription.add(this._validateSignupFormPasswordField(value).subscribe());
 	}
 
 	/**
@@ -167,7 +172,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 * Creates an instance of auth component.
 	 * @param cd
 	 */
-	constructor(private cd: ChangeDetectorRef) {}
+	constructor(private cd: ChangeDetectorRef, private logger: LogService) {}
 
 	/**
 	 * NgOnInit life cycle.
@@ -197,6 +202,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 * Event handler for when new user is attempting to sign up.
 	 */
 	_onSignup(): void {
+		this.logger.debug('onSignup event handler emitted.', this);
 		const signupUserModel = this._signupForm.value as SignupUserModel;
 		this.signupFormSubmitted.emit(signupUserModel);
 	}
@@ -205,6 +211,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 * Used to switch view to signup context.
 	 */
 	_switchToSignup(formDirective: FormGroupDirective): void {
+		this.logger.debug('Switching to signup view.');
 		this._createAccount = 'right-panel-active';
 		// allow for the animation before cleaning up the form.
 		setTimeout(() => {
@@ -216,6 +223,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 * Event handler for when user is attempting to sign in.
 	 */
 	_onSignin(): void {
+		this.logger.debug('onSignin event handler emitted.', this);
 		const SigninUserModel = this.signinForm.value as SigninUserModel;
 		this.signinFormSubmitted.emit(SigninUserModel);
 	}
@@ -224,6 +232,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 * Used to switch view to signin context.
 	 */
 	_switchToSignin(formDirective: FormGroupDirective): void {
+		this.logger.debug('Switching to signin view.');
 		this._createAccount = '';
 		// allow for the animation before cleaning up the form.
 		setTimeout(() => {
@@ -319,7 +328,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 							return this._setAndHandleServerValidationError(control);
 						}
 					}
-				} else if (this._isServerValidationError === false) {
+				} else if (this._isServerValidationError === false && control.pristine === false) {
 					this._setServerLoginError(control);
 					this._abstractControlServerErrorHandler(control);
 
@@ -327,6 +336,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 				}
 			}
 		}
+
 		return false;
 	}
 

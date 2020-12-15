@@ -11,4 +11,14 @@ export interface AuthStateModel {
 	 * Determines if user is authenticated.
 	 */
 	isAuthenticated: boolean;
+
+	/**
+	 * Encode json web token.
+	 */
+	access_token: string;
+
+	/**
+	 * Time when the access token will expire.
+	 */
+	expires_at: number;
 }

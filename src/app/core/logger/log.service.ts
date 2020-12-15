@@ -64,7 +64,7 @@ export class LogService {
 	 * @returns rather from is an Angular component.
 	 */
 	private isComponent<T>(from: string | ComponentType<T> | unknown): from is ComponentType<T> {
-		return (from as ComponentType<T>)?.name !== undefined;
+		return ((from as ComponentType<T>) || {})?.name !== undefined;
 	}
 
 	/**
@@ -74,7 +74,7 @@ export class LogService {
 	 * @returns type error
 	 */
 	private isTypeError<T>(from: string | ComponentType<T> | unknown): from is TypeError {
-		return (from as TypeError).name && (from as TypeError).message !== undefined;
+		return ((from as TypeError) || {}).name !== undefined && ((from as TypeError) || {}).message !== undefined;
 	}
 
 	/**

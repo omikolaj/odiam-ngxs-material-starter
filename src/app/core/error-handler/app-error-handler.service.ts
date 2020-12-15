@@ -4,11 +4,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 
 import { NotificationService } from '../notifications/notification.service';
-import { LogService } from '../logger/log.service';
-import { InternalServerError } from './internal-server-error.decorator';
-import { Observable } from 'rxjs';
 import { InternalServerErrorDetails } from '../models/internal-server-error-details.model';
-import { implementsOdmWebApiException } from '../implements-odm-web-api-exception';
 
 /** Application-wide error handler that adds a UI notification to the error handling
  * provided by the default Angular ErrorHandler.

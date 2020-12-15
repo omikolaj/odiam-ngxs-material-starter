@@ -21,7 +21,7 @@ export class LogConsole extends LogPublisher {
 				break;
 			case LogLevel.Info:
 			case LogLevel.Debug:
-				console.info(log);
+				console.log(log);
 				break;
 			case LogLevel.Warn:
 				console.warn(log);

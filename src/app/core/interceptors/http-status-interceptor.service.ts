@@ -6,13 +6,24 @@ import { ServerErrorService } from '../error-handler/server-error.service';
 import { catchError } from 'rxjs/operators';
 import { ProblemDetails } from '../models/problem-details.model';
 import { InternalServerErrorDetails } from '../models/internal-server-error-details.model';
-import { implementsOdmWebApiException } from '../implements-odm-web-api-exception';
+import { implementsOdmWebApiException } from '../utilities/implements-odm-web-api-exception';
 
 @Injectable({
 	providedIn: 'root'
 })
 export class HttpStatusInterceptor implements HttpInterceptor {
+	/**
+	 * Creates an instance of http status interceptor.
+	 * @param serverErrorService
+	 */
 	constructor(private serverErrorService: ServerErrorService) {}
+
+	/**
+	 * Intercepts requests checking for specific http status codes.
+	 * @param req
+	 * @param next
+	 * @returns intercept
+	 */
 	intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 		return next.handle(req.clone()).pipe(
 			catchError((e: HttpErrorResponse) => {
@@ -28,6 +39,7 @@ export class HttpStatusInterceptor implements HttpInterceptor {
 						return throwError(internalServerError);
 					}
 
+					// eslint-disable-next-line prefer-const
 					let error = {
 						status: e.status,
 						message: e.error

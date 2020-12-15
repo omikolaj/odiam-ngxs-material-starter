@@ -3,15 +3,18 @@ import { AuthStateModel, AUTH_KEY } from './auth-state-model';
 import { Injectable } from '@angular/core';
 import produce from 'immer';
 import * as Auth from './auth.store.actions';
-import { Router } from '@angular/router';
 import { LocalStorageService } from '../local-storage/local-storage.service';
+import { isBefore, add, getUnixTime, fromUnixTime } from 'date-fns';
+import { LogService } from '../logger/log.service';
 
 const AUTH_STATE_TOKEN = new StateToken<AuthStateModel>('auth');
 
 @State<AuthStateModel>({
 	name: AUTH_STATE_TOKEN,
 	defaults: {
-		isAuthenticated: false
+		isAuthenticated: false,
+		access_token: '',
+		expires_at: 0
 	}
 })
 @Injectable()
@@ -25,9 +28,22 @@ export class AuthState {
 	 * @param state
 	 * @returns true if is authenticated.
 	 */
+	@Selector([AuthState.selectExpiresAt])
+	static selectIsAuthenticated(state: AuthStateModel, expiresAt: Date): boolean {
+		console.log('state.isAuthenticated', state.isAuthenticated);
+		console.log('isBefore(new Date(), expiresAt)', expiresAt);
+		console.log('state.isAuthenticated && isBefore(new Date(), expiresAt)', state.isAuthenticated && isBefore(new Date(), expiresAt));
+		return state.isAuthenticated && isBefore(new Date(), expiresAt);
+	}
+
+	/**
+	 * Selects expires_at value from local storage and converts it to Date.
+	 * @param state
+	 * @returns date of expires at
+	 */
 	@Selector([AUTH_STATE_TOKEN])
-	static selectIsAuthenticated(state: AuthStateModel): boolean {
-		return state.isAuthenticated;
+	static selectExpiresAt(state: AuthStateModel): Date {
+		return fromUnixTime(state.expires_at || 0);
 	}
 
 	/**
@@ -35,23 +51,26 @@ export class AuthState {
 	 * @param router
 	 * @param localStorageService
 	 */
-	constructor(private router: Router, private localStorageService: LocalStorageService) {}
+	constructor(private localStorageService: LocalStorageService, private logger: LogService) {}
 
 	/**
 	 * Action handler that Logs user in.
 	 * @param ctx
 	 * @returns action to persist auth state.
 	 */
-	@Action(Auth.Login)
-	login(ctx: StateContext<AuthStateModel>): void {
+	@Action(Auth.Signin)
+	signin(ctx: StateContext<AuthStateModel>, action: Auth.Signin): void {
+		this.logger.debug(`Jwt token expires in: ${action.payload.expires_in} seconds.`, this);
+		this.logger.debug(`Jwt token expirey date`, this, add(new Date(), { seconds: action.payload.expires_in }));
+		const expires_at = getUnixTime(add(new Date(), { seconds: action.payload.expires_in }));
+		const auth = { isAuthenticated: true, access_token: action.payload.access_token, expires_at };
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft.isAuthenticated = true;
+				draft.access_token = action.payload.access_token;
+				draft.expires_at = expires_at;
 			})
 		);
-
-		// TODO remove from store put inside facade.
-		const auth = { isAuthenticated: true };
 		this.localStorageService.setItem(AUTH_KEY, auth);
 	}
 
@@ -60,17 +79,18 @@ export class AuthState {
 	 * @param ctx
 	 * @returns action to persist auth state.
 	 */
-	@Action(Auth.Logout)
-	logout(ctx: StateContext<AuthStateModel>): void {
+	@Action(Auth.Signout)
+	signout(ctx: StateContext<AuthStateModel>): void {
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft.isAuthenticated = false;
+				draft.access_token = '';
+				draft.expires_at = 0;
 			})
 		);
 
-		// TODO remove this.router.navigate from the store, should be inside the facade.
-		void this.router.navigate(['']);
 		const auth = { isAuthenticated: false };
 		this.localStorageService.setItem(AUTH_KEY, auth);
+		this.logger.debug('User has been signed out.');
 	}
 }

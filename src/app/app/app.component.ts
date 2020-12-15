@@ -144,25 +144,24 @@ export class AppComponent implements OnInit {
 	/**
 	 * Event handler for logging user in.
 	 */
-	onLoginClick(): void {
+	_onLoginClick(): void {
 		this.log.debug('onLoginClick handler fired.', this);
-		//this.store.dispatch(new Auth.Login());
 		void this.router.navigate(['auth']);
 	}
 
 	/**
 	 * Event handler for logging user out.
 	 */
-	onLogoutClick(): void {
+	_onLogoutClick(): void {
 		this.log.debug('onLogoutClick handler fired.', this);
-		this.store.dispatch(new Auth.Logout());
+		this.store.dispatch(new Auth.Signout());
 	}
 
 	/**
 	 * Language select handler for nav bar language selection.
 	 * @param MatSelectChange
 	 */
-	onLanguageSelect(event: MatSelectChange): void {
+	_onLanguageSelect(event: MatSelectChange): void {
 		this.log.debug(`onLanguageSelect handler fired with: ${event.value as Language}.`, this);
 		const languageSelected = { language: event.value as Language };
 		this.store.dispatch(new Settings.ChangeLanguage(languageSelected));

@@ -9,6 +9,7 @@ import { SigninUserModel } from 'app/core/auth/signin-user.model';
 import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
+import { LogService } from 'app/core/logger/log.service';
 
 /**
  * AuthContainer component
@@ -49,7 +50,12 @@ export class AuthContainerComponent implements OnInit {
 	 * @param asyncValidators
 	 * @param fb
 	 */
-	constructor(private facade: AuthFacadeService, private asyncValidators: AsyncValidatorsService, private fb: FormBuilder) {
+	constructor(
+		private facade: AuthFacadeService,
+		private asyncValidators: AsyncValidatorsService,
+		private fb: FormBuilder,
+		private logger: LogService
+	) {
 		this._problemDetails$ = facade.problemDetails$;
 		this._internalServerErrorDetails$ = facade.internalServerErrorDetails$;
 	}
@@ -66,6 +72,7 @@ export class AuthContainerComponent implements OnInit {
 	 * @param model
 	 */
 	_onSigninSubmitted(model: SigninUserModel): void {
+		this.logger.info('onSigninSubmitted event handler fired.', this);
 		this.facade.signinUser(model);
 	}
 
@@ -74,6 +81,7 @@ export class AuthContainerComponent implements OnInit {
 	 * @param model
 	 */
 	_onSignupSubmitted(model: SignupUserModel): void {
+		this.logger.info('onSignupSubmitted event handler fired.', this);
 		this.facade.signupUser(model);
 	}
 
