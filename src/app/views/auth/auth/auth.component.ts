@@ -224,8 +224,8 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 */
 	_onSignin(): void {
 		this.logger.debug('onSignin event handler emitted.', this);
-		const SigninUserModel = this.signinForm.value as SigninUserModel;
-		this.signinFormSubmitted.emit(SigninUserModel);
+		const signinUserModel = this.signinForm.value as SigninUserModel;
+		this.signinFormSubmitted.emit(signinUserModel);
 	}
 
 	/**

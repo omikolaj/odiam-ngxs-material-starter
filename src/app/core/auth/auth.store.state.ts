@@ -30,9 +30,6 @@ export class AuthState {
 	 */
 	@Selector([AuthState.selectExpiresAt])
 	static selectIsAuthenticated(state: AuthStateModel, expiresAt: Date): boolean {
-		console.log('state.isAuthenticated', state.isAuthenticated);
-		console.log('isBefore(new Date(), expiresAt)', expiresAt);
-		console.log('state.isAuthenticated && isBefore(new Date(), expiresAt)', state.isAuthenticated && isBefore(new Date(), expiresAt));
 		return state.isAuthenticated && isBefore(new Date(), expiresAt);
 	}
 

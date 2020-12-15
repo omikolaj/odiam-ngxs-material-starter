@@ -47,7 +47,7 @@ export class HttpStatusInterceptor implements HttpInterceptor {
 
 					// server is most likely down
 					if (e.status === 504) {
-						error.message = `Status Code: ${e.status}. Server is down. Try again.`;
+						error.message = `Server is down.`;
 					}
 
 					this.serverErrorService.internalServerErrorDetails = error;

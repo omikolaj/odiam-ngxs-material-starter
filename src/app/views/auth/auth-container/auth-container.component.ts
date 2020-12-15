@@ -99,8 +99,12 @@ export class AuthContainerComponent implements OnInit {
 	 */
 	private _initSigninForm(): FormGroup {
 		return this.fb.group({
-			email: this.fb.control('', [OdmValidators.required, OdmValidators.email]),
-			password: this.fb.control('', [OdmValidators.required])
+			email: this.fb.control('', {
+				validators: [OdmValidators.required, OdmValidators.email],
+				updateOn: 'blur'
+			}),
+			password: this.fb.control('', [OdmValidators.required]),
+			rememberMe: this.fb.control('')
 		});
 	}
 
