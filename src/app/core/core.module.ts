@@ -41,7 +41,7 @@ import { NgxsRouterPluginModule, RouterStateSerializer } from '@ngxs/router-plug
 import { CustomSerializer } from './router/custom-serializer';
 import { BACKEND_API_URL } from './api-url-injection-token';
 import { ServerErrorService } from './error-handler/server-error.service';
-import { HttpStatusInterceptor } from './interceptors/http-status-interceptor.service';
+import { HttpStatusInterceptor } from './http-interceptors/http-status.interceptor';
 
 export { TitleService, routeAnimations, LocalStorageService, ROUTE_ANIMATIONS_ELEMENTS, AnimationsService, AuthGuardService, NotificationService };
 

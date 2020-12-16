@@ -59,7 +59,7 @@ export class AuthState {
 	signin(ctx: StateContext<AuthStateModel>, action: Auth.Signin): void {
 		this.logger.debug(`Jwt token expires in: ${action.payload.expires_in} seconds.`, this);
 		this.logger.debug(`Jwt token expirey date`, this, add(new Date(), { seconds: action.payload.expires_in }));
-		const expires_at = getUnixTime(add(new Date(), { seconds: action.payload.expires_in }));
+		const expires_at = getUnixTime(add(new Date().getUTCDate(), { seconds: action.payload.expires_in }));
 		const auth = { isAuthenticated: true, access_token: action.payload.access_token, expires_at };
 		ctx.setState(
 			produce((draft: AuthStateModel) => {

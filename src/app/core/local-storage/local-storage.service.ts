@@ -62,15 +62,6 @@ export class LocalStorageService {
 	}
 
 	/**
-	 * Gets an item from local storage.
-	 * @param key
-	 * @returns item
-	 */
-	static getItem(key: string): any {
-		return JSON.parse(localStorage.getItem(`${APP_PREFIX}${key}`));
-	}
-
-	/**
 	 * Removes item from local storage by the given key.
 	 * @param key by which to remove the item.
 	 */

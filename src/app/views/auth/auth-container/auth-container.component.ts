@@ -104,7 +104,7 @@ export class AuthContainerComponent implements OnInit {
 				updateOn: 'blur'
 			}),
 			password: this.fb.control('', [OdmValidators.required]),
-			rememberMe: this.fb.control('')
+			rememberMe: this.fb.control(false)
 		});
 	}
 
