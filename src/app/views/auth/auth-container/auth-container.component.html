@@ -8,9 +8,11 @@
 			</p>
 			<img src="https://res.cloudinary.com/hetfy/image/upload/v1603459311/laptop_hkaxzz.png" [ngClass]="_routeAnimationsElements" alt="Laptop" />
 		</div>
+
 		<odm-auth
 			[problemDetails]="_problemDetails$ | async"
 			[internalServerErrorDetails]="_internalServerErrorDetails$ | async"
+			(rememberMeChanged)="_onRememberMeChanged($event)"
 			[signinForm]="_signinForm"
 			(signinFormSubmitted)="_onSigninSubmitted($event)"
 			[signupForm]="_signupForm"

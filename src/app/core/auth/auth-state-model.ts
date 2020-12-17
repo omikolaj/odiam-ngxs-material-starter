@@ -13,6 +13,11 @@ export interface AuthStateModel {
 	isAuthenticated: boolean;
 
 	/**
+	 *  Determines if remember me option is selected.
+	 */
+	rememberMe: boolean;
+
+	/**
 	 * Encode json web token.
 	 */
 	access_token: string;

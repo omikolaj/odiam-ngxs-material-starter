@@ -1,6 +1,6 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { AuthFacadeService } from '../auth-facade.service';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { OdmValidators } from 'app/core/form-validators/odm-validators';
 import { AsyncValidatorsService } from 'app/core/form-validators/validators-async.service';
@@ -10,6 +10,7 @@ import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { LogService } from 'app/core/logger/log.service';
+import { tap } from 'rxjs/operators';
 
 /**
  * AuthContainer component
@@ -20,7 +21,7 @@ import { LogService } from 'app/core/logger/log.service';
 	styleUrls: ['./auth-container.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AuthContainerComponent implements OnInit {
+export class AuthContainerComponent implements OnInit, OnDestroy {
 	/**
 	 * Route animations elements of auth container component.
 	 */
@@ -35,14 +36,26 @@ export class AuthContainerComponent implements OnInit {
 	 * Internal server error details$ of auth container component.
 	 */
 	_internalServerErrorDetails$: Observable<InternalServerErrorDetails>;
+
 	/**
 	 * Signin form of auth component.
 	 */
 	_signinForm: FormGroup;
+
 	/**
 	 * Signup form of auth component.
 	 */
 	_signupForm: FormGroup;
+
+	/**
+	 * Remember me option selected by the user.
+	 */
+	private _rememberMe$: Observable<boolean>;
+
+	/**
+	 * Subscription of auth container component.
+	 */
+	private _subscription = new Subscription();
 
 	/**
 	 * Creates an instance of auth container component.
@@ -58,6 +71,7 @@ export class AuthContainerComponent implements OnInit {
 	) {
 		this._problemDetails$ = facade.problemDetails$;
 		this._internalServerErrorDetails$ = facade.internalServerErrorDetails$;
+		this._rememberMe$ = facade.rememberMe$;
 	}
 
 	/**
@@ -65,6 +79,23 @@ export class AuthContainerComponent implements OnInit {
 	 */
 	ngOnInit(): void {
 		this._initForms();
+		this._subscription = this._rememberMe$.pipe(tap((value) => this._signinForm.get('rememberMe').setValue(value))).subscribe();
+	}
+
+	/**
+	 * NgOnDestroy life cycle.
+	 */
+	ngOnDestroy(): void {
+		this._subscription.unsubscribe();
+	}
+
+	/**
+	 * Event handler for when user changes remember me option.
+	 * @param event
+	 */
+	_onRememberMeChanged(event: boolean): void {
+		this.logger.info('onRememberMeChanged event handler fired.', this, event);
+		this.facade.onRememberMeChanged(event);
 	}
 
 	/**

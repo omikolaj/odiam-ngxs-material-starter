@@ -42,6 +42,7 @@ import { CustomSerializer } from './router/custom-serializer';
 import { BACKEND_API_URL } from './api-url-injection-token';
 import { ServerErrorService } from './error-handler/server-error.service';
 import { HttpStatusInterceptor } from './http-interceptors/http-status.interceptor';
+import { HttpAccessTokenInterceptor } from './http-interceptors/http-access-token.interceptor';
 
 export { TitleService, routeAnimations, LocalStorageService, ROUTE_ANIMATIONS_ELEMENTS, AnimationsService, AuthGuardService, NotificationService };
 
@@ -108,6 +109,7 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
 	providers: [
 		{ provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
 		{ provide: HTTP_INTERCEPTORS, useClass: HttpStatusInterceptor, multi: true, deps: [ServerErrorService] },
+		{ provide: HTTP_INTERCEPTORS, useClass: HttpAccessTokenInterceptor, multi: true },
 		{ provide: ErrorHandler, useClass: AppErrorHandler },
 		{ provide: RouterStateSerializer, useClass: CustomSerializer },
 		{ provide: NGXS_PLUGINS, useValue: initStateFromLocalStorage, multi: true },

@@ -13,7 +13,6 @@ import { MatSelectChange } from '@angular/material/select';
 import { AuthState } from 'app/core/auth/auth.store.state';
 import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { filter, tap } from 'rxjs/operators';
-import { Route } from '@angular/compiler/src/core';
 
 /**
  * AppComponent displays navbar, footer and named router-outlet '#o=outlet'.
@@ -144,16 +143,16 @@ export class AppComponent implements OnInit {
 	/**
 	 * Event handler for logging user in.
 	 */
-	_onLoginClick(): void {
-		this.log.debug('onLoginClick handler fired.', this);
+	_onSigninClick(): void {
+		this.log.debug('onSigninClick handler fired.', this);
 		void this.router.navigate(['auth']);
 	}
 
 	/**
 	 * Event handler for logging user out.
 	 */
-	_onLogoutClick(): void {
-		this.log.debug('onLogoutClick handler fired.', this);
+	_onSignoutClick(): void {
+		this.log.debug('onSignoutClick handler fired.', this);
 		this.store.dispatch(new Auth.Signout());
 	}
 

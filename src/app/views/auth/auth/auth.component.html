@@ -131,8 +131,9 @@
 				<span class="forgot">Forgot password ?</span>
 			</div>
 			<div class="form-group">
-				<!-- <mat-checkbox><span class="forgot">Remember me</span></mat-checkbox> -->
-				<mat-slide-toggle formControlName="rememberMe"><span class="forgot">Remember me</span></mat-slide-toggle>
+				<mat-slide-toggle [checked]="signinForm.get('rememberMe').value" (change)="_onRememberMeChange($event)" formControlName="rememberMe"
+					><span class="forgot">Remember me</span></mat-slide-toggle
+				>
 			</div>
 		</form>
 	</div>

@@ -10,6 +10,7 @@ import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { implementsOdmWebApiException } from 'app/core/utilities/implements-odm-web-api-exception';
 import { LogService } from 'app/core/logger/log.service';
+import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 
 /**
  * Determines if control is associated with email or password form control.
@@ -26,6 +27,11 @@ type AuthControlType = 'email' | 'password';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AuthComponent implements OnInit, OnDestroy {
+	/**
+	 * Event emitter for when remember me option is changed.
+	 */
+	@Output() rememberMeChanged = new EventEmitter<boolean>();
+
 	/**
 	 * ProblemDetails for when server responds with validation error.
 	 */
@@ -196,6 +202,15 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 */
 	ngOnDestroy(): void {
 		this._subscription.unsubscribe();
+	}
+
+	/**
+	 * Event handler for when remember me option is changed.
+	 * @param event
+	 */
+	_onRememberMeChange(event: MatSlideToggleChange): void {
+		this.logger.debug('onRememberMeChanged event handler emitted.', this);
+		this.rememberMeChanged.emit(event.checked);
 	}
 
 	/**
@@ -436,7 +451,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 				}
 				if ((value || '').length === 0 || passwordControl.hasError('minlength')) {
 					this._passwordLengthReqMet = false;
-				} else if (passwordControl.errors && !passwordControl.errors['minlength'] && passwordControl.hasError('minlength') === false) {
+				} else if (passwordControl.hasError('minlength') === false) {
 					this._passwordLengthReqMet = true;
 				}
 			})

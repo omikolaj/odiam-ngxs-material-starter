@@ -5,14 +5,15 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { SignupUserModel } from './signup-user.model';
 import { Observable } from 'rxjs';
 import { SigninUserModel } from './signin-user.model';
+import { RenewAccessTokenResult } from './renew-access-token-result.model';
 
 /**
- * AuthService injectable.
+ * AuthAsyncService injectable.
  */
 @Injectable({
 	providedIn: 'root'
 })
-export class AuthService {
+export class AuthAsyncService {
 	private headers = new HttpHeaders({
 		'Content-Type': 'application/json'
 	});
@@ -39,5 +40,13 @@ export class AuthService {
 	 */
 	signin(model: SigninUserModel): Observable<AccessToken> {
 		return this.http.post<AccessToken>(`${this.apiUrl}/auth/signin`, JSON.stringify(model), { headers: this.headers });
+	}
+
+	/**
+	 * Trys to renew access token.
+	 * @returns renew access token
+	 */
+	tryRenewAccessToken(): Observable<RenewAccessTokenResult> {
+		return this.http.post<RenewAccessTokenResult>(`${this.apiUrl}/auth/refresh-token`, { headers: this.headers });
 	}
 }

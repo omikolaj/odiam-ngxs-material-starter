@@ -24,7 +24,7 @@ export class HttpStatusInterceptor implements HttpInterceptor {
 	 * @param next
 	 * @returns intercept
 	 */
-	intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+	intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<unknown>> {
 		return next.handle(req.clone()).pipe(
 			catchError((e: HttpErrorResponse) => {
 				if (e.status === 400 || e.status === 401) {

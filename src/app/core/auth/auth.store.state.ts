@@ -14,7 +14,8 @@ const AUTH_STATE_TOKEN = new StateToken<AuthStateModel>('auth');
 	defaults: {
 		isAuthenticated: false,
 		access_token: '',
-		expires_at: 0
+		expires_at: 0,
+		rememberMe: false
 	}
 })
 @Injectable()
@@ -30,6 +31,7 @@ export class AuthState {
 	 */
 	@Selector([AuthState.selectExpiresAt])
 	static selectIsAuthenticated(state: AuthStateModel, expiresAt: Date): boolean {
+		console.log('is authenticated', state.isAuthenticated && isBefore(new Date(), expiresAt));
 		return state.isAuthenticated && isBefore(new Date(), expiresAt);
 	}
 
@@ -39,8 +41,28 @@ export class AuthState {
 	 * @returns date of expires at
 	 */
 	@Selector([AUTH_STATE_TOKEN])
-	static selectExpiresAt(state: AuthStateModel): Date {
+	private static selectExpiresAt(state: AuthStateModel): Date {
 		return fromUnixTime(state.expires_at || 0);
+	}
+
+	/**
+	 * Selectors access token.
+	 * @param state
+	 * @returns access token
+	 */
+	@Selector([AUTH_STATE_TOKEN])
+	static selectAccessToken(state: AuthStateModel): string {
+		return state.access_token || '';
+	}
+
+	/**
+	 * Selects whether user selected remember me option
+	 * @param state
+	 * @returns true if remember me
+	 */
+	@Selector([AUTH_STATE_TOKEN])
+	static selectRememberMe(state: AuthStateModel): boolean {
+		return state.rememberMe;
 	}
 
 	/**
@@ -51,21 +73,39 @@ export class AuthState {
 	constructor(private localStorageService: LocalStorageService, private logger: LogService) {}
 
 	/**
+	 * Action handler that updates remember me option.
+	 * @param ctx
+	 * @param action
+	 */
+	@Action(Auth.RememberMeOptionChange)
+	rememberMe(ctx: StateContext<AuthStateModel>, action: Auth.RememberMeOptionChange): void {
+		this.logger.debug('Remember me action fired.', this);
+		ctx.setState(
+			produce((draft: AuthStateModel) => {
+				draft.rememberMe = action.payload;
+			})
+		);
+		const auth = ctx.getState();
+		this.localStorageService.setItem(AUTH_KEY, auth);
+	}
+
+	/**
 	 * Action handler that Logs user in.
 	 * @param ctx
 	 * @returns action to persist auth state.
 	 */
 	@Action(Auth.Signin)
 	signin(ctx: StateContext<AuthStateModel>, action: Auth.Signin): void {
-		this.logger.debug(`Jwt token expires in: ${action.payload.expires_in} seconds.`, this);
-		this.logger.debug(`Jwt token expirey date`, this, add(new Date(), { seconds: action.payload.expires_in }));
-		const expires_at = getUnixTime(add(new Date().getUTCDate(), { seconds: action.payload.expires_in }));
-		const auth = { isAuthenticated: true, access_token: action.payload.access_token, expires_at };
+		this.logger.debug(`Jwt token expires in: ${action.payload.accessToken.expires_in} seconds.`, this);
+		this.logger.debug(`Jwt token expirey date`, this, add(new Date(), { seconds: action.payload.accessToken.expires_in }));
+		const expires_at = getUnixTime(add(new Date(), { seconds: action.payload.accessToken.expires_in }));
+		const auth = { isAuthenticated: true, access_token: action.payload.accessToken.access_token, expires_at, rememberMe: action.payload.rememberMe };
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft.isAuthenticated = true;
-				draft.access_token = action.payload.access_token;
+				draft.access_token = action.payload.accessToken.access_token;
 				draft.expires_at = expires_at;
+				draft.rememberMe = action.payload.rememberMe;
 			})
 		);
 		this.localStorageService.setItem(AUTH_KEY, auth);
@@ -85,8 +125,8 @@ export class AuthState {
 				draft.expires_at = 0;
 			})
 		);
-
-		const auth = { isAuthenticated: false };
+		const rememberMe = ctx.getState().rememberMe;
+		const auth = { isAuthenticated: false, rememberMe };
 		this.localStorageService.setItem(AUTH_KEY, auth);
 		this.logger.debug('User has been signed out.');
 	}

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SignupUserModel } from 'app/core/auth/signup-user.model';
-import { AuthService } from 'app/core/auth/auth.service';
+import { AuthAsyncService } from 'app/core/auth/auth-async.service';
 import { Observable } from 'rxjs';
 import { NotificationService } from 'app/core/core.module';
 import { SigninUserModel } from 'app/core/auth/signin-user.model';
@@ -9,7 +9,7 @@ import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerError } from 'app/core/error-handler/internal-server-error.decorator';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { tap } from 'rxjs/operators';
-import { Store } from '@ngxs/store';
+import { Store, Select } from '@ngxs/store';
 import * as Auth from '../../core/auth/auth.store.actions';
 import { Router } from '@angular/router';
 import { AccessToken } from 'app/core/auth/access-token.model';
@@ -22,22 +22,31 @@ import { AuthState } from 'app/core/auth/auth.store.state';
 export class AuthFacadeService {
 	@ProblemDetailsError() problemDetails$: Observable<ProblemDetails>;
 	@InternalServerError() internalServerErrorDetails$: Observable<InternalServerErrorDetails>;
+	@Select(AuthState.selectRememberMe) rememberMe$: Observable<boolean>;
 
 	/**
 	 * Creates an instance of auth facade service.
-	 * @param authService
+	 * @param authAsyncService
 	 * @param notification
 	 * @param store
 	 * @param router
 	 */
-	constructor(private authService: AuthService, private notification: NotificationService, private store: Store, private router: Router) {}
+	constructor(private authAsyncService: AuthAsyncService, private notification: NotificationService, private store: Store, private router: Router) {}
+
+	/**
+	 * Changes remember me state.
+	 * @param event
+	 */
+	onRememberMeChanged(event: boolean): void {
+		this.store.dispatch(new Auth.RememberMeOptionChange(event));
+	}
 
 	/**
 	 * Signs user up.
 	 * @param model
 	 */
 	signupUser(model: SignupUserModel): void {
-		this.authService
+		this.authAsyncService
 			.signup(model)
 			.pipe(tap((access_token) => this._authenticate(access_token)))
 			.subscribe();
@@ -48,9 +57,9 @@ export class AuthFacadeService {
 	 * @param model
 	 */
 	signinUser(model: SigninUserModel): void {
-		this.authService
+		this.authAsyncService
 			.signin(model)
-			.pipe(tap((access_token) => this._authenticate(access_token)))
+			.pipe(tap((access_token) => this._authenticate(access_token, model.rememberMe)))
 			.subscribe();
 	}
 
@@ -58,12 +67,34 @@ export class AuthFacadeService {
 	 * Authenticates user that has signed in or signed up.
 	 * @param access_token
 	 */
-	private _authenticate(access_token: AccessToken): void {
-		this.store.dispatch(new Auth.Signin(access_token));
+	private _authenticate(access_token: AccessToken, rememberMe?: boolean): void {
+		this.store.dispatch(new Auth.Signin({ accessToken: access_token, rememberMe: rememberMe || false }));
 		void this.router.navigate(['']);
 		setTimeout(() => {
-			this.store.dispatch(new Auth.Signout());
-			void this.router.navigate(['auth']);
+			this._signoutOrRenewAccessToken();
 		}, access_token.expires_in * 1000);
+	}
+
+	/**
+	 * Attempts to refresh access token, otherwise signs user out.
+	 */
+	private _signoutOrRenewAccessToken(): void {
+		// try renew token
+		this.authAsyncService
+			.tryRenewAccessToken()
+			.pipe(
+				tap((renewAccessTokenResult) =>
+					renewAccessTokenResult.succeeded ? this._authenticate(renewAccessTokenResult.accessToken) : this._initiateSignout()
+				)
+			)
+			.subscribe();
+	}
+
+	/**
+	 * Initiates signout procedure.
+	 */
+	private _initiateSignout(): void {
+		this.store.dispatch(new Auth.Signout());
+		void this.router.navigate(['auth']);
 	}
 }
