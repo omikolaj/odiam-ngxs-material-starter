@@ -83,6 +83,11 @@ export class AuthComponent implements OnInit, OnDestroy {
 	@Output() signinFormSubmitted = new EventEmitter<SigninUserModel>();
 
 	/**
+	 * Event emitter for when user signs in with google.
+	 */
+	@Output() signinWithGoogleSubmitted = new EventEmitter<void>();
+
+	/**
 	 * Property used to control if signin or signup view is displayed.
 	 */
 	_createAccount: 'right-panel-active' | '';
@@ -241,6 +246,13 @@ export class AuthComponent implements OnInit, OnDestroy {
 		this.logger.debug('onSignin event handler emitted.', this);
 		const signinUserModel = this.signinForm.value as SigninUserModel;
 		this.signinFormSubmitted.emit(signinUserModel);
+	}
+
+	/**
+	 * Event handler for when user is attempting to sign in with google.
+	 */
+	_onSigninWithGoogle(): void {
+		this.signinWithGoogleSubmitted.emit();
 	}
 
 	/**

@@ -6,6 +6,7 @@ import { SignupUserModel } from './signup-user.model';
 import { Observable } from 'rxjs';
 import { SigninUserModel } from './signin-user.model';
 import { RenewAccessTokenResult } from './renew-access-token-result.model';
+import { SocialUser } from 'angularx-social-login';
 
 /**
  * AuthAsyncService injectable.
@@ -40,6 +41,15 @@ export class AuthAsyncService {
 	 */
 	signin(model: SigninUserModel): Observable<AccessToken> {
 		return this.http.post<AccessToken>(`${this.apiUrl}/auth/signin`, JSON.stringify(model), { headers: this.headers });
+	}
+
+	/**
+	 * Signs user in with google.
+	 * @param model
+	 * @returns with google
+	 */
+	signinWithGoogle(model: SocialUser): Observable<AccessToken> {
+		return this.http.post<AccessToken>(`${this.apiUrl}/auth/external-signin`, JSON.stringify(model), { headers: this.headers });
 	}
 
 	/**

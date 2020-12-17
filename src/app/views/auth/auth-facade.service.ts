@@ -14,6 +14,7 @@ import * as Auth from '../../core/auth/auth.store.actions';
 import { Router } from '@angular/router';
 import { AccessToken } from 'app/core/auth/access-token.model';
 import { AuthState } from 'app/core/auth/auth.store.state';
+import { SocialAuthService, SocialUser, GoogleLoginProvider } from 'angularx-social-login';
 
 /**
  * Auth facade service.
@@ -31,7 +32,13 @@ export class AuthFacadeService {
 	 * @param store
 	 * @param router
 	 */
-	constructor(private authAsyncService: AuthAsyncService, private notification: NotificationService, private store: Store, private router: Router) {}
+	constructor(
+		private authAsyncService: AuthAsyncService,
+		private notification: NotificationService,
+		private store: Store,
+		private router: Router,
+		private socialAuthService: SocialAuthService
+	) {}
 
 	/**
 	 * Changes remember me state.
@@ -61,6 +68,18 @@ export class AuthFacadeService {
 			.signin(model)
 			.pipe(tap((access_token) => this._authenticate(access_token, model.rememberMe)))
 			.subscribe();
+	}
+
+	/**
+	 * Signs user in with google.
+	 */
+	signinUserWithGoogle(): void {
+		void this.socialAuthService.signIn(GoogleLoginProvider.PROVIDER_ID).then((model: SocialUser) => {
+			this.authAsyncService
+				.signinWithGoogle(model)
+				.pipe(tap((access_token) => this._authenticate(access_token)))
+				.subscribe();
+		});
 	}
 
 	/**

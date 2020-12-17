@@ -108,6 +108,14 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	}
 
 	/**
+	 * Event handler for when user signs in with google.
+	 */
+	_onSigninWithGoogleSubmitted(): void {
+		this.logger.info('onSigninWithGoogleSubmitted event handler fired.', this);
+		this.facade.signinUserWithGoogle();
+	}
+
+	/**
 	 * Event handler for when user signs up.
 	 * @param model
 	 */
