@@ -116,6 +116,14 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	}
 
 	/**
+	 * Event handler for when user signs in with facebook.
+	 */
+	_onSigninWithFacebookSubmitted(): void {
+		this.logger.info('onSigninWithFacebookSubmitted event handler fired.', this);
+		this.facade.signinUserWithFacebook();
+	}
+
+	/**
 	 * Event handler for when user signs up.
 	 * @param model
 	 */
@@ -152,25 +160,31 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 * @returns signup form
 	 */
 	private _initSignupForm(): FormGroup {
-		return this.fb.group({
-			email: this.fb.control('', {
-				validators: [OdmValidators.required, OdmValidators.email],
-				asyncValidators: [this.asyncValidators.checkIfEmailIsUnique()],
-				updateOn: 'blur'
-			}),
-			firstName: this.fb.control('', [OdmValidators.required]),
-			lastName: this.fb.control(''),
-			password: this.fb.control('', {
-				validators: [
-					OdmValidators.required,
-					OdmValidators.minLength(8),
-					OdmValidators.requireDigit,
-					OdmValidators.requireLowercase,
-					OdmValidators.requireUppercase,
-					OdmValidators.requireNonAlphanumeric
-				],
+		return this.fb.group(
+			{
+				email: this.fb.control('', {
+					validators: [OdmValidators.required, OdmValidators.email],
+					asyncValidators: [this.asyncValidators.checkIfEmailIsUnique()],
+					updateOn: 'blur'
+				}),
+				password: this.fb.control('', {
+					validators: [
+						OdmValidators.required,
+						OdmValidators.minLength(8),
+						OdmValidators.requireDigit,
+						OdmValidators.requireLowercase,
+						OdmValidators.requireUppercase,
+						OdmValidators.requireNonAlphanumeric,
+						OdmValidators.requireThreeUniqueCharacters
+					],
+					updateOn: 'change'
+				}),
+				confirmPassword: this.fb.control('')
+			},
+			{
+				validators: OdmValidators.requireConfirmPassword,
 				updateOn: 'change'
-			})
-		});
+			}
+		);
 	}
 }

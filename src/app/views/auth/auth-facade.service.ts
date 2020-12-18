@@ -14,7 +14,7 @@ import * as Auth from '../../core/auth/auth.store.actions';
 import { Router } from '@angular/router';
 import { AccessToken } from 'app/core/auth/access-token.model';
 import { AuthState } from 'app/core/auth/auth.store.state';
-import { SocialAuthService, SocialUser, GoogleLoginProvider } from 'angularx-social-login';
+import { SocialAuthService, SocialUser, GoogleLoginProvider, FacebookLoginProvider } from 'angularx-social-login';
 
 /**
  * Auth facade service.
@@ -75,8 +75,22 @@ export class AuthFacadeService {
 	 */
 	signinUserWithGoogle(): void {
 		void this.socialAuthService.signIn(GoogleLoginProvider.PROVIDER_ID).then((model: SocialUser) => {
+			console.log(model);
 			this.authAsyncService
 				.signinWithGoogle(model)
+				.pipe(tap((access_token) => this._authenticate(access_token)))
+				.subscribe();
+		});
+	}
+
+	/**
+	 * Signs user in with facebook.
+	 */
+	signinUserWithFacebook(): void {
+		void this.socialAuthService.signIn(FacebookLoginProvider.PROVIDER_ID).then((model: SocialUser) => {
+			console.log(model);
+			this.authAsyncService
+				.signinWithFacebook(model)
 				.pipe(tap((access_token) => this._authenticate(access_token)))
 				.subscribe();
 		});

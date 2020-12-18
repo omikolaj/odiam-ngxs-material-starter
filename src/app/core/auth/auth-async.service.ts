@@ -46,10 +46,19 @@ export class AuthAsyncService {
 	/**
 	 * Signs user in with google.
 	 * @param model
-	 * @returns with google
+	 * @returns access token
 	 */
 	signinWithGoogle(model: SocialUser): Observable<AccessToken> {
-		return this.http.post<AccessToken>(`${this.apiUrl}/auth/external-signin`, JSON.stringify(model), { headers: this.headers });
+		return this.http.post<AccessToken>(`${this.apiUrl}/auth/external-signin-google`, JSON.stringify(model), { headers: this.headers });
+	}
+
+	/**
+	 * Signs user in with facebook.
+	 * @param model
+	 * @returns access token
+	 */
+	signinWithFacebook(model: SocialUser): Observable<AccessToken> {
+		return this.http.post<AccessToken>(`${this.apiUrl}/auth/external-signin-facebook`, JSON.stringify(model), { headers: this.headers });
 	}
 
 	/**

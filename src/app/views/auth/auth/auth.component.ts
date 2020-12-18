@@ -65,6 +65,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 		const _ = value ? this.logger.info('Signup form emitted.', this) : null;
 		this._signupForm = value;
 		this._subscription.add(this._validateSignupFormPasswordField(value).subscribe());
+		this._subscription.add(this._validateSignupFormConfirmPasswordField(value).subscribe());
 	}
 
 	/**
@@ -86,6 +87,11 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 * Event emitter for when user signs in with google.
 	 */
 	@Output() signinWithGoogleSubmitted = new EventEmitter<void>();
+
+	/**
+	 * Event emitter for when user signs in with google.
+	 */
+	@Output() signinWithFacebookSubmitted = new EventEmitter<void>();
 
 	/**
 	 * Property used to control if signin or signup view is displayed.
@@ -123,7 +129,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 * Password lowercase requirement for password control.
 	 * Used to inform user about password requirement.
 	 */
-	_passwordLowercaseReqmet = false;
+	_passwordLowercaseReqMet = false;
 
 	/**
 	 * Password digit requirement for password control.
@@ -132,10 +138,20 @@ export class AuthComponent implements OnInit, OnDestroy {
 	_passwordDigitReqMet = false;
 
 	/**
+	 * Requires user to enter in at least three unique characters.
+	 */
+	_passwordThreeUniqueCharacterCountReqMet = false;
+
+	/**
 	 * Password special character requirement for password control.
 	 * Used to inform user about password requirement.
 	 */
 	_passwordSpecialCharacterReqMet = false;
+
+	/**
+	 * Requires user to enter the same password for confirm password field.
+	 */
+	_confirmPasswordNotMatchReqMet = false;
 
 	/**
 	 * Gets whether is internal server error occured.
@@ -252,7 +268,16 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 * Event handler for when user is attempting to sign in with google.
 	 */
 	_onSigninWithGoogle(): void {
+		this.logger.debug('onSigninWithGoogle event handler emitted.', this);
 		this.signinWithGoogleSubmitted.emit();
+	}
+
+	/**
+	 * Event handler for when user is attempting to sign in with facebook.
+	 */
+	_onSigninWithFacebook(): void {
+		this.logger.debug('onSigninWithFacebook event handler emitted.', this);
+		this.signinWithFacebookSubmitted.emit();
 	}
 
 	/**
@@ -433,6 +458,24 @@ export class AuthComponent implements OnInit, OnDestroy {
 	}
 
 	/**
+	 * Validates signup form confirm password field.
+	 * @param form
+	 * @returns signup form confirm password field
+	 */
+	private _validateSignupFormConfirmPasswordField(form: FormGroup): Observable<any> {
+		return form.valueChanges.pipe(
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			tap((_) => {
+				if (form.hasError('notSame')) {
+					this._confirmPasswordNotMatchReqMet = false;
+				} else {
+					this._confirmPasswordNotMatchReqMet = true;
+				}
+			})
+		);
+	}
+
+	/**
 	 * Validates signup form password field.
 	 * @param form
 	 * @returns signup form password field
@@ -452,14 +495,19 @@ export class AuthComponent implements OnInit, OnDestroy {
 					this._passwordUppercaseReqMet = true;
 				}
 				if (passwordControl.hasError('lowercase')) {
-					this._passwordLowercaseReqmet = false;
+					this._passwordLowercaseReqMet = false;
 				} else {
-					this._passwordLowercaseReqmet = true;
+					this._passwordLowercaseReqMet = true;
 				}
 				if (passwordControl.hasError('nonAlphanumeric')) {
 					this._passwordSpecialCharacterReqMet = false;
 				} else {
 					this._passwordSpecialCharacterReqMet = true;
+				}
+				if (passwordControl.hasError('uniqueChars')) {
+					this._passwordThreeUniqueCharacterCountReqMet = false;
+				} else {
+					this._passwordThreeUniqueCharacterCountReqMet = true;
 				}
 				if ((value || '').length === 0 || passwordControl.hasError('minlength')) {
 					this._passwordLengthReqMet = false;

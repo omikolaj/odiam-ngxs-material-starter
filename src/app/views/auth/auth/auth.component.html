@@ -3,7 +3,7 @@
 		<form [formGroup]="_signupForm" #signupFormDirective="ngForm" (ngSubmit)="_onSignup()" role="form" novalidate>
 			<h3>Create Account</h3>
 			<div>
-				<mat-form-field appearance="fill">
+				<mat-form-field appearance="standard">
 					<mat-label>E-mail</mat-label>
 					<input formControlName="email" matInput placeholder="example@gmail.com" type="email" autocomplete="email" required />
 					<mat-hint>
@@ -28,25 +28,8 @@
 				</mat-form-field>
 			</div>
 
-			<div>
-				<mat-form-field appearance="fill">
-					<mat-label>First name</mat-label>
-					<input matInput formControlName="firstName" required />
-					<mat-icon matSuffix>perm_identity</mat-icon>
-					<mat-error *ngIf="_signupForm?.get('firstName').invalid">{{ _fieldRequiredMessage }}</mat-error>
-				</mat-form-field>
-			</div>
-
-			<div>
-				<mat-form-field appearance="fill">
-					<mat-label>Last name</mat-label>
-					<input matInput formControlName="lastName" />
-					<mat-icon matSuffix>perm_identity</mat-icon>
-				</mat-form-field>
-			</div>
-
-			<div>
-				<mat-form-field appearance="fill">
+			<div class="password-field">
+				<mat-form-field appearance="standard">
 					<mat-label>Password</mat-label>
 					<input matInput formControlName="password" [type]="_hide ? 'password' : 'text'" autocomplete="new-password" required />
 					<mat-icon class="view-password" matSuffix (click)="_hide = !_hide">{{ _hide ? 'visibility_off' : 'visibility' }}</mat-icon>
@@ -62,11 +45,20 @@
 						<br />
 						<span>
 							<ng-container *ngIf="!_signupForm?.get('password').pristine">
-								<mat-icon [ngClass]="_passwordUppercaseReqMet && _passwordLowercaseReqmet ? 'req-met' : 'req-not-met'" matPrefix>{{
-									_passwordUppercaseReqMet && _passwordLowercaseReqmet ? 'task_alt' : 'clear'
+								<mat-icon [ngClass]="_passwordUppercaseReqMet ? 'req-met' : 'req-not-met'" matPrefix>{{
+									_passwordUppercaseReqMet ? 'task_alt' : 'clear'
 								}}</mat-icon>
 							</ng-container>
-							Must contain 1 upper and lower case letter
+							Must contain 1 upper case letter
+						</span>
+						<br />
+						<span>
+							<ng-container *ngIf="!_signupForm?.get('password').pristine">
+								<mat-icon [ngClass]="_passwordLowercaseReqMet ? 'req-met' : 'req-not-met'" matPrefix>{{
+									_passwordLowercaseReqMet ? 'task_alt' : 'clear'
+								}}</mat-icon>
+							</ng-container>
+							Must contain 1 lower case letter
 						</span>
 						<br />
 						<span>
@@ -80,16 +72,44 @@
 						<br />
 						<span>
 							<ng-container *ngIf="!_signupForm?.get('password').pristine">
+								<mat-icon [ngClass]="_passwordThreeUniqueCharacterCountReqMet ? 'req-met' : 'req-not-met'" matPrefix>{{
+									_passwordThreeUniqueCharacterCountReqMet ? 'task_alt' : 'clear'
+								}}</mat-icon>
+							</ng-container>
+							Must contain 3 unique characters
+						</span>
+						<br />
+						<span>
+							<ng-container *ngIf="!_signupForm?.get('password').pristine">
 								<mat-icon [ngClass]="_passwordSpecialCharacterReqMet ? 'req-met' : 'req-not-met'" matPrefix>{{
 									_passwordSpecialCharacterReqMet ? 'task_alt' : 'clear'
 								}}</mat-icon>
 							</ng-container>
-							Must contain (! @ # $ % & * _ ?)</span
-						></mat-hint
-					>
+							Must contain (! @ # $ % & * _ ?)
+						</span>
+					</mat-hint>
 					<mat-error *ngIf="_ifControlFieldIsInvalidatedByServer(_signupForm?.get('password'), 'password')">{{
 						_getPasswordErrorMessage(_signupForm?.get('password').errors)
 					}}</mat-error>
+				</mat-form-field>
+			</div>
+
+			<div>
+				<mat-form-field appearance="standard">
+					<mat-label>Confirm Password</mat-label>
+					<input matInput formControlName="confirmPassword" [type]="_hide ? 'password' : 'text'" autocomplete="new-password" />
+					<mat-icon class="view-password" matSuffix (click)="_hide = !_hide">{{ _hide ? 'visibility_off' : 'visibility' }}</mat-icon>
+					<mat-hint>
+						<span>
+							<ng-container *ngIf="!_signupForm?.get('confirmPassword').pristine && _signupForm?.get('password').valid">
+								<mat-icon [ngClass]="_confirmPasswordNotMatchReqMet ? 'req-met' : 'req-not-met'" matPrefix>{{
+									_confirmPasswordNotMatchReqMet ? 'task_alt' : 'clear'
+								}}</mat-icon>
+							</ng-container>
+							Passwords must match
+						</span>
+					</mat-hint>
+					<mat-error *ngIf="_signupForm?.get('confirmPassword').invalid">{{ _fieldRequiredMessage }}</mat-error>
 				</mat-form-field>
 			</div>
 
@@ -104,7 +124,7 @@
 			<h3>Sign In</h3>
 
 			<div>
-				<mat-form-field appearance="fill">
+				<mat-form-field appearance="standard">
 					<mat-label>E-mail</mat-label>
 					<input matInput formControlName="email" type="email" autocomplete="email" required />
 					<mat-icon matSuffix>email</mat-icon>
@@ -115,7 +135,7 @@
 			</div>
 
 			<div>
-				<mat-form-field appearance="fill">
+				<mat-form-field appearance="standard">
 					<mat-label>Password</mat-label>
 					<input matInput formControlName="password" [type]="_hide ? 'password' : 'text'" type="password" autocomplete="current-password" required />
 					<mat-icon class="view-password" matSuffix (click)="_hide = !_hide">{{ _hide ? 'visibility_off' : 'visibility' }}</mat-icon>
@@ -129,6 +149,9 @@
 
 			<div class="form-group text-center">
 				<button mat-raised-button type="button" class="btn" (click)="_onSigninWithGoogle()">SIGN IN WITH GOOGLE</button>
+			</div>
+			<div class="form-group text-center">
+				<button mat-raised-button type="button" class="btn" (click)="_onSigninWithFacebook()">SIGN IN WITH FACEBOOK</button>
 			</div>
 
 			<div class="form-group">

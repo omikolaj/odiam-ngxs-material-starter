@@ -26,6 +26,10 @@ mat-spinner {
 	display: inline-block;
 }
 
+mat-form-field {
+	margin-bottom: 8px;
+}
+
 button {
 	border: 1px solid;
 	font-weight: bold;
@@ -42,6 +46,10 @@ button.ghost {
 	color: green;
 }
 
+.password-field {
+	margin-bottom: 85px;
+}
+
 .btn {
 	background-size: 200%;
 	width: 250px;
@@ -52,7 +60,7 @@ button.ghost {
 }
 
 .btn.signup-btn {
-	margin-top: 70px;
+	margin-top: 18px;
 }
 
 .btn:enabled:hover {
