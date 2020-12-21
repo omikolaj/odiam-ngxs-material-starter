@@ -12,9 +12,11 @@ import { tap } from 'rxjs/operators';
 import { Store, Select } from '@ngxs/store';
 import * as Auth from '../../core/auth/auth.store.actions';
 import { Router } from '@angular/router';
-import { AccessToken } from 'app/core/auth/access-token.model';
+import { AccessTokenModel } from 'app/core/auth/access-token.model';
 import { AuthState } from 'app/core/auth/auth.store.state';
 import { SocialAuthService, SocialUser, GoogleLoginProvider, FacebookLoginProvider } from 'angularx-social-login';
+import { UsersAsyncService } from 'app/core/services/users-async.service';
+import { PasswordResetModel } from 'app/core/auth/password-reset.model';
 
 /**
  * Auth facade service.
@@ -34,6 +36,7 @@ export class AuthFacadeService {
 	 */
 	constructor(
 		private authAsyncService: AuthAsyncService,
+		private usersAsyncService: UsersAsyncService,
 		private notification: NotificationService,
 		private store: Store,
 		private router: Router,
@@ -46,6 +49,22 @@ export class AuthFacadeService {
 	 */
 	onRememberMeChanged(event: boolean): void {
 		this.store.dispatch(new Auth.RememberMeOptionChange(event));
+	}
+
+	/**
+	 * Sends reset password link to the passed in email.
+	 * @param email
+	 */
+	onForgotPassword(email: string): void {
+		this.usersAsyncService.forgotPassword(email).subscribe();
+	}
+
+	/**
+	 * Resets user password.
+	 * @param model
+	 */
+	onResetPassword(model: PasswordResetModel): void {
+		this.usersAsyncService.resetPassword(model).subscribe();
 	}
 
 	/**
@@ -100,24 +119,24 @@ export class AuthFacadeService {
 	 * Authenticates user that has signed in or signed up.
 	 * @param access_token
 	 */
-	private _authenticate(access_token: AccessToken, rememberMe?: boolean): void {
-		this.store.dispatch(new Auth.Signin({ accessToken: access_token, rememberMe: rememberMe || false }));
+	private _authenticate(access_token: AccessTokenModel, rememberMe?: boolean): void {
+		this.store.dispatch(new Auth.Signin({ AccessTokenModel: access_token, rememberMe: rememberMe || false }));
 		void this.router.navigate(['']);
 		setTimeout(() => {
-			this._signoutOrRenewAccessToken();
+			this._signoutOrRenewAccessTokenModel();
 		}, access_token.expires_in * 1000);
 	}
 
 	/**
 	 * Attempts to refresh access token, otherwise signs user out.
 	 */
-	private _signoutOrRenewAccessToken(): void {
+	private _signoutOrRenewAccessTokenModel(): void {
 		// try renew token
 		this.authAsyncService
-			.tryRenewAccessToken()
+			.tryRenewAccessTokenModel()
 			.pipe(
-				tap((renewAccessTokenResult) =>
-					renewAccessTokenResult.succeeded ? this._authenticate(renewAccessTokenResult.accessToken) : this._initiateSignout()
+				tap((renewAccessTokenModelResult) =>
+					renewAccessTokenModelResult.succeeded ? this._authenticate(renewAccessTokenModelResult.AccessTokenModel) : this._initiateSignout()
 				)
 			)
 			.subscribe();

@@ -1,11 +1,11 @@
 import { Injectable, Inject } from '@angular/core';
 import { BACKEND_API_URL } from '../api-url-injection-token';
-import { AccessToken } from './access-token.model';
+import { AccessTokenModel } from './access-token.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { SignupUserModel } from './signup-user.model';
 import { Observable } from 'rxjs';
 import { SigninUserModel } from './signin-user.model';
-import { RenewAccessTokenResult } from './renew-access-token-result.model';
+import { RenewAccessTokenModelResult } from './renew-access-token-result.model';
 import { SocialUser } from 'angularx-social-login';
 
 /**
@@ -15,7 +15,7 @@ import { SocialUser } from 'angularx-social-login';
 	providedIn: 'root'
 })
 export class AuthAsyncService {
-	private headers = new HttpHeaders({
+	private _headers = new HttpHeaders({
 		'Content-Type': 'application/json'
 	});
 
@@ -30,8 +30,8 @@ export class AuthAsyncService {
 	 * @param model
 	 * @returns access token
 	 */
-	signup(model: SignupUserModel): Observable<AccessToken> {
-		return this.http.post<AccessToken>(`${this.apiUrl}/auth/signup`, JSON.stringify(model), { headers: this.headers });
+	signup(model: SignupUserModel): Observable<AccessTokenModel> {
+		return this.http.post<AccessTokenModel>(`${this.apiUrl}/auth/signup`, JSON.stringify(model), { headers: this._headers });
 	}
 
 	/**
@@ -39,8 +39,8 @@ export class AuthAsyncService {
 	 * @param model
 	 * @returns access token
 	 */
-	signin(model: SigninUserModel): Observable<AccessToken> {
-		return this.http.post<AccessToken>(`${this.apiUrl}/auth/signin`, JSON.stringify(model), { headers: this.headers });
+	signin(model: SigninUserModel): Observable<AccessTokenModel> {
+		return this.http.post<AccessTokenModel>(`${this.apiUrl}/auth/signin`, JSON.stringify(model), { headers: this._headers });
 	}
 
 	/**
@@ -48,8 +48,8 @@ export class AuthAsyncService {
 	 * @param model
 	 * @returns access token
 	 */
-	signinWithGoogle(model: SocialUser): Observable<AccessToken> {
-		return this.http.post<AccessToken>(`${this.apiUrl}/auth/external-signin-google`, JSON.stringify(model), { headers: this.headers });
+	signinWithGoogle(model: SocialUser): Observable<AccessTokenModel> {
+		return this.http.post<AccessTokenModel>(`${this.apiUrl}/auth/external-signin-google`, JSON.stringify(model), { headers: this._headers });
 	}
 
 	/**
@@ -57,15 +57,15 @@ export class AuthAsyncService {
 	 * @param model
 	 * @returns access token
 	 */
-	signinWithFacebook(model: SocialUser): Observable<AccessToken> {
-		return this.http.post<AccessToken>(`${this.apiUrl}/auth/external-signin-facebook`, JSON.stringify(model), { headers: this.headers });
+	signinWithFacebook(model: SocialUser): Observable<AccessTokenModel> {
+		return this.http.post<AccessTokenModel>(`${this.apiUrl}/auth/external-signin-facebook`, JSON.stringify(model), { headers: this._headers });
 	}
 
 	/**
 	 * Trys to renew access token.
 	 * @returns renew access token
 	 */
-	tryRenewAccessToken(): Observable<RenewAccessTokenResult> {
-		return this.http.post<RenewAccessTokenResult>(`${this.apiUrl}/auth/refresh-token`, { headers: this.headers });
+	tryRenewAccessTokenModel(): Observable<RenewAccessTokenModelResult> {
+		return this.http.post<RenewAccessTokenModelResult>(`${this.apiUrl}/auth/refresh-token`, { headers: this._headers });
 	}
 }

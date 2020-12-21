@@ -50,7 +50,7 @@ export class AuthState {
 	 * @returns access token
 	 */
 	@Selector([AUTH_STATE_TOKEN])
-	static selectAccessToken(state: AuthStateModel): string {
+	static selectAccessTokenModel(state: AuthStateModel): string {
 		return state.access_token || '';
 	}
 
@@ -95,14 +95,19 @@ export class AuthState {
 	 */
 	@Action(Auth.Signin)
 	signin(ctx: StateContext<AuthStateModel>, action: Auth.Signin): void {
-		this.logger.debug(`Jwt token expires in: ${action.payload.accessToken.expires_in} seconds.`, this);
-		this.logger.debug(`Jwt token expirey date`, this, add(new Date(), { seconds: action.payload.accessToken.expires_in }));
-		const expires_at = getUnixTime(add(new Date(), { seconds: action.payload.accessToken.expires_in }));
-		const auth = { isAuthenticated: true, access_token: action.payload.accessToken.access_token, expires_at, rememberMe: action.payload.rememberMe };
+		this.logger.debug(`Jwt token expires in: ${action.payload.AccessTokenModel.expires_in} seconds.`, this);
+		this.logger.debug(`Jwt token expirey date`, this, add(new Date(), { seconds: action.payload.AccessTokenModel.expires_in }));
+		const expires_at = getUnixTime(add(new Date(), { seconds: action.payload.AccessTokenModel.expires_in }));
+		const auth = {
+			isAuthenticated: true,
+			access_token: action.payload.AccessTokenModel.access_token,
+			expires_at,
+			rememberMe: action.payload.rememberMe
+		};
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft.isAuthenticated = true;
-				draft.access_token = action.payload.accessToken.access_token;
+				draft.access_token = action.payload.AccessTokenModel.access_token;
 				draft.expires_at = expires_at;
 				draft.rememberMe = action.payload.rememberMe;
 			})

@@ -11,11 +11,9 @@ import { InternalServerErrorDetails } from 'app/core/models/internal-server-erro
 import { implementsOdmWebApiException } from 'app/core/utilities/implements-odm-web-api-exception';
 import { LogService } from 'app/core/logger/log.service';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
-
-/**
- * Determines if control is associated with email or password form control.
- */
-type AuthControlType = 'email' | 'password';
+import { ValidationMessage_Required } from 'app/shared/validation-messages';
+import { AuthControlType } from 'app/shared/auth-abstract-control-type';
+import * as newCredentialsHelpers from 'app/shared/new-credentials-functions';
 
 /**
  * Auth component handles displaying both sign in and sign up views.
@@ -76,7 +74,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	/**
 	 * Signup form email control status changes$ of auth component.
 	 */
-	_signupFormEmailControlStatusChanges$: Observable<any>;
+	_signupFormEmailControlStatusChanges$: Observable<string>;
 
 	/**
 	 * Event emitter for when the signin form is submitted.
@@ -94,6 +92,11 @@ export class AuthComponent implements OnInit, OnDestroy {
 	@Output() signinWithFacebookSubmitted = new EventEmitter<void>();
 
 	/**
+	 * Event emitter for when user clicks forgot password.
+	 */
+	@Output() forgotPasswordClicked = new EventEmitter<void>();
+
+	/**
 	 * Property used to control if signin or signup view is displayed.
 	 */
 	_createAccount: 'right-panel-active' | '';
@@ -101,7 +104,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	/**
 	 * Field is required message.
 	 */
-	_fieldRequiredMessage = 'This field is required.';
+	_fieldRequiredMessage = ValidationMessage_Required;
 
 	/**
 	 * Route animations elements of auth component.
@@ -168,12 +171,6 @@ export class AuthComponent implements OnInit, OnDestroy {
 	}
 
 	/**
-	 * If field input is invalid but the control has no errors associated with it.
-	 * This serves as the generic error message.
-	 */
-	private _fieldIsInvalid = 'Input validation error.';
-
-	/**
 	 * If server error occured, this property is used to determine if the error has been handled by the component in the template.
 	 */
 	private _problemDetailsServerErrorHandled: boolean;
@@ -207,7 +204,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	ngOnInit(): void {
 		this._signupFormEmailControlStatusChanges$ = this._signupForm.get('email').statusChanges.pipe(
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			tap((_) => {
+			tap((_: string) => {
 				if (this._isInternalServerError) {
 					// null out internalServerErrorDetails when the email
 					// control statusChanges. Necessary to remove old message
@@ -223,6 +220,14 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 */
 	ngOnDestroy(): void {
 		this._subscription.unsubscribe();
+	}
+
+	/**
+	 * Event handler for when user clicks forgot password button.
+	 */
+	_onForgotPassword(): void {
+		this.logger.debug('onForgotPassword fired.', this);
+		this.forgotPasswordClicked.emit();
 	}
 
 	/**
@@ -299,19 +304,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 * @returns email error message
 	 */
 	_getEmailErrorMessage(errors: ValidationErrors): string {
-		if (errors['required']) {
-			return this._fieldRequiredMessage;
-		} else if (errors['email']) {
-			return 'Invalid e-mail format.';
-		} else if (errors['nonUnique']) {
-			// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-			return `${errors['nonUnique']} is already registered.`;
-		} else if (errors['serverAuthenticationError']) {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-return
-			return errors['errorDescription'];
-		} else {
-			return this._fieldIsInvalid;
-		}
+		return newCredentialsHelpers.getEmailErrorMessage(errors);
 	}
 
 	/**
@@ -320,29 +313,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 * @returns password error message
 	 */
 	_getPasswordErrorMessage(errors: ValidationErrors): string {
-		if (errors['required']) {
-			return this._fieldRequiredMessage;
-		} else if (errors['number']) {
-			return "Password must have at least one digit ('0'-'9').";
-		} else if (errors['uppercase']) {
-			return "Password must have at least one uppercase ('A'-'Z').";
-		} else if (errors['lowercase']) {
-			return "Password must have at least one lowercase ('a'-'z').";
-		} else if (errors['nonAlphanumeric']) {
-			// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-			return `Password must contain one of: ${errors['requiredNonAlphanumeric']}`;
-		} else if (errors['minlength']) {
-			// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-			return `Password must to be at least ${errors['minlength']['requiredLength']} characters long.`;
-		} else if (errors['serverValidationError']) {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-return
-			return errors['errorDescription'];
-		} else if (errors['serverAuthenticationError']) {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-return
-			return errors['errorDescription'];
-		} else {
-			return this._fieldIsInvalid;
-		}
+		return newCredentialsHelpers.getPasswordErrorMessage(errors);
 	}
 
 	/**

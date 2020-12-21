@@ -5,3 +5,4 @@ node_modules
 src/app/core/local-storage
 src/app/core/meta-reducers
 src/environments
+src/app/shared/new-credentials-functions.ts

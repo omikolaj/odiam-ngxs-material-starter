@@ -11,6 +11,8 @@ import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { LogService } from 'app/core/logger/log.service';
 import { tap } from 'rxjs/operators';
+import { Router, ActivatedRoute } from '@angular/router';
+import * as newCredentialsHelpers from '../../../shared/new-credentials-functions';
 
 /**
  * AuthContainer component
@@ -67,7 +69,9 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 		private facade: AuthFacadeService,
 		private asyncValidators: AsyncValidatorsService,
 		private fb: FormBuilder,
-		private logger: LogService
+		private logger: LogService,
+		private router: Router,
+		private route: ActivatedRoute
 	) {
 		this._problemDetails$ = facade.problemDetails$;
 		this._internalServerErrorDetails$ = facade.internalServerErrorDetails$;
@@ -87,6 +91,14 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 */
 	ngOnDestroy(): void {
 		this._subscription.unsubscribe();
+	}
+
+	/**
+	 * Event handler for when user clicks forgot password.
+	 */
+	_onForgotPasswordClicked(): void {
+		this.logger.debug('_onForgotPasswordClicked fired.', this);
+		void this.router.navigate(['forgot-password'], { relativeTo: this.route.parent });
 	}
 
 	/**

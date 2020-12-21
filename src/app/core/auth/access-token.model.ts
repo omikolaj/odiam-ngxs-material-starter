@@ -1,7 +1,7 @@
 /**
  * Jwt access token.
  */
-export interface AccessToken {
+export interface AccessTokenModel {
 	access_token: string;
 	expires_in: number;
 }

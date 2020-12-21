@@ -5,7 +5,7 @@ import { Store } from '@ngxs/store';
 import { AuthState } from '../auth/auth.store.state';
 
 @Injectable()
-export class HttpAccessTokenInterceptor implements HttpInterceptor {
+export class HttpAccessTokenModelInterceptor implements HttpInterceptor {
 	/**
 	 * Creates an instance of http access token interceptor.
 	 * @param store
@@ -19,7 +19,7 @@ export class HttpAccessTokenInterceptor implements HttpInterceptor {
 	 * @returns intercept
 	 */
 	intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-		const access_token = this.store.selectSnapshot(AuthState.selectAccessToken);
+		const access_token = this.store.selectSnapshot(AuthState.selectAccessTokenModel);
 		request = request.clone({
 			setHeaders: {
 				Authorization: `Bearer ${access_token}`

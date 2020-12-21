@@ -155,11 +155,11 @@
 			</div>
 
 			<div class="form-group">
-				<span class="forgot">Forgot password ?</span>
+				<span class="forgot-remember" (click)="_onForgotPassword()">Forgot password ?</span>
 			</div>
 			<div class="form-group">
 				<mat-slide-toggle [checked]="signinForm.get('rememberMe').value" (change)="_onRememberMeChange($event)" formControlName="rememberMe"
-					><span class="forgot">Remember me</span></mat-slide-toggle
+					><span class="forgot-remember">Remember me</span></mat-slide-toggle
 				>
 			</div>
 		</form>

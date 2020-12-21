@@ -1,4 +1,4 @@
-import { AccessToken } from './access-token.model';
+import { AccessTokenModel } from './access-token.model';
 
 /**
  * Init auth state from local storage.
@@ -38,7 +38,7 @@ export class Signin {
 	 * Creates an instance of signin action.
 	 * @param payload
 	 */
-	constructor(public payload: { accessToken: AccessToken; rememberMe: boolean }) {}
+	constructor(public payload: { AccessTokenModel: AccessTokenModel; rememberMe: boolean }) {}
 }
 
 /**

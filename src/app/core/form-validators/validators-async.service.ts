@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { AsyncValidatorFn, AbstractControl } from '@angular/forms';
-import { UserService } from '../auth/user.service';
 import { of } from 'rxjs';
 import { debounceTime, take, switchMap, map } from 'rxjs/operators';
+import { UsersAsyncService } from '../services/users-async.service';
 
 /**
  * Injectable AsyncValidatorsService
@@ -15,7 +15,7 @@ export class AsyncValidatorsService {
 	 * Creates an instance of validators async service.
 	 * @param userService
 	 */
-	constructor(private userService: UserService) {}
+	constructor(private usersAsyncService: UsersAsyncService) {}
 
 	/**
 	 * Determines whether the value coming from the input is empty.
@@ -42,8 +42,11 @@ export class AsyncValidatorsService {
 				return control.valueChanges.pipe(
 					debounceTime(500),
 					take(1),
+					// eslint-disable-next-line @typescript-eslint/no-unused-vars
 					switchMap((_) => {
-						return this.userService.checkIfEmailExists(control.value).pipe(map((exists) => (exists ? { nonUnique: control.value as string } : null)));
+						return this.usersAsyncService
+							.checkIfEmailExists(control.value)
+							.pipe(map((exists) => (exists ? { nonUnique: control.value as string } : null)));
 					})
 				);
 			}
