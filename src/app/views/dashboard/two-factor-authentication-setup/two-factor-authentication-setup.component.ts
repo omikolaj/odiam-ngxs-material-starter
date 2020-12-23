@@ -13,6 +13,8 @@ import { ValidationMessage_Required } from 'app/shared/validation-messages';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TwoFactorAuthenticationSetupComponent implements OnInit {
+	@Input() hasAuthenticator: boolean;
+
 	/**
 	 * Authenticator setup model. Responsible for displaying QR code
 	 */
@@ -21,7 +23,7 @@ export class TwoFactorAuthenticationSetupComponent implements OnInit {
 	/**
 	 * Authenticator setup result model. Indicates if authenticator was successfully setup.
 	 */
-	@Input() authenticatorSetupResultModel: AuthenticatorSetupResultModel = { status: TwoFactorAuthenticationStatus.None };
+	@Input() authenticatorSetupResultModel: AuthenticatorSetupResultModel = { status: TwoFactorAuthenticationStatus.None, recoveryCodes: [] };
 
 	@Input() verificationCodeForm: FormGroup;
 

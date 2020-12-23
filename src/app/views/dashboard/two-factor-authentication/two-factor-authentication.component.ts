@@ -8,6 +8,7 @@ import { AuthenticatorVerificationCodeModel } from 'app/core/models/2fa/authenti
 import { AuthenticatorSetupResultModel } from 'app/core/models/2fa/authenticator-setup-result-model.2fa';
 import { LogService } from 'app/core/logger/log.service';
 import { tap } from 'rxjs/operators';
+import { TwoFactorConfigurationStatus } from 'app/core/models/2fa/2fa-configuration-status.model';
 
 /**
  * Component responsible for handling two factor authentication.
@@ -40,6 +41,8 @@ export class TwoFactorAuthenticationComponent implements OnInit {
 
 	_recoveryCodes$: Observable<string[]>;
 
+	_twoFactorConfigurationStatus$: Observable<TwoFactorConfigurationStatus>;
+
 	/**
 	 * Creates an instance of two factor authentication component.
 	 * @param facade
@@ -51,12 +54,14 @@ export class TwoFactorAuthenticationComponent implements OnInit {
 		this._hasAuthenticator$ = facade.hasAuthenticator$.pipe(tap((v) => console.log(v)));
 		this._recoveryCodes$ = facade.recoveryCodes$.pipe(tap((v) => console.log(v)));
 		this._hasTwoFactorEnabled$ = facade.hasTwoFactorEnabled$.pipe(tap((v) => console.log(v)));
+		this._twoFactorConfigurationStatus$ = facade.twoFactorConfigurationStatus$.pipe(tap((v) => console.log(v)));
 	}
 
 	/**
 	 * NgOnInit life cycle.
 	 */
 	ngOnInit(): void {
+		this.facade.twoFactorConfigurationStatus$.pipe(tap((v) => console.log(v))).subscribe();
 		this._initVerificationCodeForm();
 	}
 

@@ -9,5 +9,5 @@ export interface AuthenticatorSetupResultModel {
 	 */
 	status: TwoFactorAuthenticationStatus;
 
-	recoveryCodes?: string[];
+	recoveryCodes: string[];
 }

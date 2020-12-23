@@ -5,7 +5,6 @@ import { AuthenticatorSetupModel } from '../models/2fa/authenticator-setup.model
 import { BACKEND_API_URL } from '../api-url-injection-token';
 import { AuthenticatorVerificationCodeModel } from '../models/2fa/authenticator-verification-code-model.2fa';
 import { AuthenticatorSetupResultModel } from '../models/2fa/authenticator-setup-result-model.2fa';
-import { Disable2FaResultModel } from '../models/2fa/disable-2fa-result-model.2fa';
 import { GenerateRecoveryCodesResultModel } from '../models/2fa/generate-recovery-codes-result-model.2fa';
 
 /**

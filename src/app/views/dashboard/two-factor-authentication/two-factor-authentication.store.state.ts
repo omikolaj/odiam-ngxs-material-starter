@@ -6,6 +6,7 @@ import * as TwoFactorAuthentication from './two-factor-authentication.store.acti
 import { AuthenticatorSetupModel } from 'app/core/models/2fa/authenticator-setup.model.2fa';
 import { AuthenticatorSetupResultModel } from 'app/core/models/2fa/authenticator-setup-result-model.2fa';
 import { TwoFactorAuthenticationStatus } from 'app/core/models/2fa/2fa-status.enum';
+import { LogService } from 'app/core/logger/log.service';
 
 const SECURITY_STATE_TOKEN = new StateToken<TwoFactorAuthenticationStateModel>('2fa');
 
@@ -54,6 +55,16 @@ export class TwoFactorAuthenticationState {
 		return state.authenticationSetupResult.recoveryCodes;
 	}
 
+	@Selector([SECURITY_STATE_TOKEN])
+	static selectNewRecoveryCodes(state: TwoFactorAuthenticationStateModel): string[] {
+		return state.newRecoveryCodes;
+	}
+
+	/**
+	 *
+	 */
+	constructor(private logger: LogService) {}
+
 	/**
 	 * Action handler for setting authenticator setup model.
 	 * @param ctx
@@ -61,6 +72,7 @@ export class TwoFactorAuthenticationState {
 	 */
 	@Action(TwoFactorAuthentication.AuthenticatorSetup)
 	setupAuthenticator(ctx: StateContext<TwoFactorAuthenticationStateModel>, action: TwoFactorAuthentication.AuthenticatorSetup): void {
+		this.logger.debug('setupAuthenticator action handler fired.');
 		ctx.setState(
 			produce((draft: TwoFactorAuthenticationStateModel) => {
 				draft.authenticatorSetup = action.paylaod;
@@ -78,9 +90,11 @@ export class TwoFactorAuthenticationState {
 		ctx: StateContext<TwoFactorAuthenticationStateModel>,
 		action: TwoFactorAuthentication.AuthenticatorVerificationResult
 	): void {
+		this.logger.debug('authenticatorSetupResult action handler fired.');
 		ctx.setState(
 			produce((draft: TwoFactorAuthenticationStateModel) => {
-				draft.authenticationSetupResult = action.payload;
+				draft.authenticationSetupResult.recoveryCodes = action.payload.recoveryCodes || [];
+				draft.authenticationSetupResult.status = action.payload.status;
 			})
 		);
 	}
@@ -92,10 +106,11 @@ export class TwoFactorAuthenticationState {
 	 */
 	@Action(TwoFactorAuthentication.Disable2Fa)
 	disable2Fa(ctx: StateContext<TwoFactorAuthenticationStateModel>): void {
+		this.logger.debug('disable2Fa action handler fired.');
 		ctx.setState(
 			produce((draft: TwoFactorAuthenticationStateModel) => {
 				draft.authenticatorSetup = { authenticatorUri: '', sharedKey: '' };
-				draft.authenticationSetupResult = { status: TwoFactorAuthenticationStatus.None };
+				draft.authenticationSetupResult = { status: TwoFactorAuthenticationStatus.None, recoveryCodes: [] };
 			})
 		);
 	}
@@ -107,9 +122,11 @@ export class TwoFactorAuthenticationState {
 	 */
 	@Action(TwoFactorAuthentication.GenerateRecoveryCodes)
 	generateRecoveryCodes(ctx: StateContext<TwoFactorAuthenticationStateModel>, action: TwoFactorAuthentication.GenerateRecoveryCodes): void {
+		this.logger.debug('generateRecoveryCodes action handler fired.');
 		ctx.setState(
 			produce((draft: TwoFactorAuthenticationStateModel) => {
-				draft.newRecoveryCodes = action.payload.recoveryCodes;
+				draft.newRecoveryCodes = action.payload.items;
+				draft.authenticationSetupResult = { status: TwoFactorAuthenticationStatus.None, recoveryCodes: [] };
 			})
 		);
 	}
