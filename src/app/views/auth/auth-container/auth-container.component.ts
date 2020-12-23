@@ -12,7 +12,6 @@ import { InternalServerErrorDetails } from 'app/core/models/internal-server-erro
 import { LogService } from 'app/core/logger/log.service';
 import { tap } from 'rxjs/operators';
 import { Router, ActivatedRoute } from '@angular/router';
-import * as newCredentialsHelpers from '../../../shared/new-credentials-functions';
 
 /**
  * AuthContainer component

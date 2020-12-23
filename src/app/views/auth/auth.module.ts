@@ -7,7 +7,6 @@ import { SharedModule } from 'app/shared/shared.module';
 import { AuthComponent } from './auth/auth.component';
 import { AuthFacadeService } from './auth-facade.service';
 import { SocialLoginModule, SocialAuthServiceConfig, GoogleLoginProvider, FacebookLoginProvider } from 'angularx-social-login';
-import { QRCodeModule } from 'angularx-qrcode';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 
@@ -16,7 +15,7 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
  */
 @NgModule({
 	declarations: [AuthContainerComponent, AuthComponent, ForgotPasswordComponent, ResetPasswordComponent],
-	imports: [CommonModule, AuthRoutingModule, SharedModule, SocialLoginModule, QRCodeModule],
+	imports: [CommonModule, AuthRoutingModule, SharedModule, SocialLoginModule],
 	providers: [
 		AuthFacadeService,
 		{

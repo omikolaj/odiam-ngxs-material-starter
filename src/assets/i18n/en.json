@@ -24,6 +24,7 @@
 	"odm.menu.features": "Features",
 	"odm.menu.login": "Sign in",
 	"odm.menu.logout": "Logout",
+	"odm.menu.dash": "Dash",
 	"odm.menu.settings": "Settings",
 	"odm.settings.animations.elements": "Navigation page elements slide up",
 	"odm.settings.animations.page": "Navigation whole page transition",

@@ -38,7 +38,23 @@ export class Signin {
 	 * Creates an instance of signin action.
 	 * @param payload
 	 */
-	constructor(public payload: { AccessTokenModel: AccessTokenModel; rememberMe: boolean }) {}
+	constructor(public payload: { AccessTokenModel: AccessTokenModel; rememberMe: boolean; userId: string }) {}
+}
+
+/**
+ * Set current user id
+ */
+export class SetCurrentUserId {
+	/**
+	 * Type of action.
+	 */
+	static readonly type = '[Auth] Set Current User Id';
+
+	/**
+	 * Creates an instance of set current user id.
+	 * @param payload
+	 */
+	constructor(public payload: string) {}
 }
 
 /**

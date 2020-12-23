@@ -3,6 +3,7 @@ import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { BACKEND_API_URL } from '../api-url-injection-token';
 import { Observable } from 'rxjs';
 import { PasswordResetModel } from '../auth/password-reset.model';
+import { UserProfileDetails } from '../models/user-profile-details.model';
 
 @Injectable({
 	providedIn: 'root'
@@ -22,13 +23,17 @@ export class UsersAsyncService {
 	 */
 	constructor(@Inject(BACKEND_API_URL) private apiUrl: string, private http: HttpClient) {}
 
+	getUserProfile(id: string): Observable<UserProfileDetails> {
+		return this.http.get<UserProfileDetails>(`${this.apiUrl}/users/${id}`);
+	}
+
 	/**
 	 * Checks if email exists.
 	 * @param email
 	 * @returns if email exists
 	 */
 	checkIfEmailExists(email: string): Observable<boolean> {
-		return this.http.get<boolean>(`${this.apiUrl}/users/${email}`, { headers: this._headers });
+		return this.http.get<boolean>(`${this.apiUrl}/users/email`, { params: { email: email }, headers: this._headers });
 	}
 
 	/**

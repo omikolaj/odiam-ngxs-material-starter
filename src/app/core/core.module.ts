@@ -28,7 +28,7 @@ import { HttpErrorInterceptor } from './http-interceptors/http-error.interceptor
 
 import { NotificationService } from './notifications/notification.service';
 import { MatButtonModule } from '@angular/material/button';
-import { faCog, faBars, faRocket, faPowerOff, faUserCircle, faPlayCircle } from '@fortawesome/free-solid-svg-icons';
+import { faCog, faBars, faRocket, faPowerOff, faUserCircle, faPlayCircle, faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
 import { faGithub, faMediumM, faTwitter, faInstagram, faYoutube } from '@fortawesome/free-brands-svg-icons';
 import { NgxsModule, NGXS_PLUGINS } from '@ngxs/store';
 import { SettingsState } from './settings/settings.store.state';
@@ -150,6 +150,19 @@ export class CoreModule {
 		if (parentModule) {
 			throw new Error('CoreModule is already loaded. Import only in AppModule');
 		}
-		faIconLibrary.addIcons(faCog, faBars, faRocket, faPowerOff, faUserCircle, faPlayCircle, faGithub, faMediumM, faTwitter, faInstagram, faYoutube);
+		faIconLibrary.addIcons(
+			faCog,
+			faBars,
+			faRocket,
+			faPowerOff,
+			faUserCircle,
+			faTachometerAlt,
+			faPlayCircle,
+			faGithub,
+			faMediumM,
+			faTwitter,
+			faInstagram,
+			faYoutube
+		);
 	}
 }

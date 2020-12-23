@@ -1,4 +1,4 @@
-import { StateToken, StateContext, State, Selector, Action } from '@ngxs/store';
+import { StateToken, StateContext, State, Selector, Action, NgxsOnInit } from '@ngxs/store';
 import { AuthStateModel, AUTH_KEY } from './auth-state-model';
 import { Injectable } from '@angular/core';
 import produce from 'immer';
@@ -6,6 +6,7 @@ import * as Auth from './auth.store.actions';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import { isBefore, add, getUnixTime, fromUnixTime } from 'date-fns';
 import { LogService } from '../logger/log.service';
+import { JsonWebTokenService } from '../services/json-web-token.service';
 
 const AUTH_STATE_TOKEN = new StateToken<AuthStateModel>('auth');
 
@@ -15,7 +16,8 @@ const AUTH_STATE_TOKEN = new StateToken<AuthStateModel>('auth');
 		isAuthenticated: false,
 		access_token: '',
 		expires_at: 0,
-		rememberMe: false
+		rememberMe: false,
+		userId: ''
 	}
 })
 @Injectable()
@@ -32,6 +34,16 @@ export class AuthState {
 	@Selector([AuthState.selectExpiresAt])
 	static selectIsAuthenticated(state: AuthStateModel, expiresAt: Date): boolean {
 		return state.isAuthenticated && isBefore(new Date(), expiresAt);
+	}
+
+	/**
+	 * Selects expires_at value from local storage and converts it to Date.
+	 * @param state
+	 * @returns date of expires at
+	 */
+	@Selector([AUTH_STATE_TOKEN])
+	static selectCurrentUserId(state: AuthStateModel): string {
+		return state.userId;
 	}
 
 	/**
@@ -102,7 +114,8 @@ export class AuthState {
 			isAuthenticated: true,
 			access_token: action.payload.AccessTokenModel.access_token,
 			expires_at,
-			rememberMe: action.payload.rememberMe
+			rememberMe: action.payload.rememberMe,
+			userId: action.payload.userId
 		};
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
@@ -110,9 +123,25 @@ export class AuthState {
 				draft.access_token = action.payload.AccessTokenModel.access_token;
 				draft.expires_at = expires_at;
 				draft.rememberMe = action.payload.rememberMe;
+				draft.userId = action.payload.userId;
 			})
 		);
 		this.localStorageService.setItem(AUTH_KEY, auth);
+	}
+
+	/**
+	 * Action handler for setting current user id.
+	 * @param ctx
+	 * @param action
+	 */
+	@Action(Auth.SetCurrentUserId)
+	setCurrentUserId(ctx: StateContext<AuthStateModel>, action: Auth.SetCurrentUserId): void {
+		this.logger.debug('Setting current user id', this, action.payload);
+		ctx.setState(
+			produce((draft: AuthStateModel) => {
+				draft.userId = action.payload;
+			})
+		);
 	}
 
 	/**

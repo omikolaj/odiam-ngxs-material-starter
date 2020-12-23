@@ -13,6 +13,11 @@ export interface AuthStateModel {
 	isAuthenticated: boolean;
 
 	/**
+	 * Currently logged in user id.
+	 */
+	userId: string;
+
+	/**
 	 *  Determines if remember me option is selected.
 	 */
 	rememberMe: boolean;

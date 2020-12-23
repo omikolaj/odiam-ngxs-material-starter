@@ -17,6 +17,7 @@ import { AuthState } from 'app/core/auth/auth.store.state';
 import { SocialAuthService, SocialUser, GoogleLoginProvider, FacebookLoginProvider } from 'angularx-social-login';
 import { UsersAsyncService } from 'app/core/services/users-async.service';
 import { PasswordResetModel } from 'app/core/auth/password-reset.model';
+import { JsonWebTokenService } from 'app/core/services/json-web-token.service';
 
 /**
  * Auth facade service.
@@ -40,7 +41,8 @@ export class AuthFacadeService {
 		private notification: NotificationService,
 		private store: Store,
 		private router: Router,
-		private socialAuthService: SocialAuthService
+		private socialAuthService: SocialAuthService,
+		private jwtService: JsonWebTokenService
 	) {}
 
 	/**
@@ -94,10 +96,9 @@ export class AuthFacadeService {
 	 */
 	signinUserWithGoogle(): void {
 		void this.socialAuthService.signIn(GoogleLoginProvider.PROVIDER_ID).then((model: SocialUser) => {
-			console.log(model);
 			this.authAsyncService
 				.signinWithGoogle(model)
-				.pipe(tap((access_token) => this._authenticate(access_token)))
+				.pipe(tap((token) => this._authenticate(token)))
 				.subscribe();
 		});
 	}
@@ -107,24 +108,24 @@ export class AuthFacadeService {
 	 */
 	signinUserWithFacebook(): void {
 		void this.socialAuthService.signIn(FacebookLoginProvider.PROVIDER_ID).then((model: SocialUser) => {
-			console.log(model);
 			this.authAsyncService
 				.signinWithFacebook(model)
-				.pipe(tap((access_token) => this._authenticate(access_token)))
+				.pipe(tap((token) => this._authenticate(token)))
 				.subscribe();
 		});
 	}
 
 	/**
 	 * Authenticates user that has signed in or signed up.
-	 * @param access_token
+	 * @param token
 	 */
-	private _authenticate(access_token: AccessTokenModel, rememberMe?: boolean): void {
-		this.store.dispatch(new Auth.Signin({ AccessTokenModel: access_token, rememberMe: rememberMe || false }));
-		void this.router.navigate(['']);
+	private _authenticate(token: AccessTokenModel, rememberMe?: boolean): void {
+		const userId = this.jwtService.getSubClaim(token.access_token);
+		this.store.dispatch(new Auth.Signin({ AccessTokenModel: token, rememberMe: rememberMe || false, userId: userId }));
+		void this.router.navigate(['dashboard']);
 		setTimeout(() => {
 			this._signoutOrRenewAccessTokenModel();
-		}, access_token.expires_in * 1000);
+		}, token.expires_in * 1000);
 	}
 
 	/**

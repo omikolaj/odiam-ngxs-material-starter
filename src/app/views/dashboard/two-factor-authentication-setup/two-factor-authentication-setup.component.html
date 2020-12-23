@@ -1,0 +1,29 @@
+<h3>Welcome to security! Please set up authenticator for 2FA</h3>
+<button mat-raised-button color="primary" (click)="_onSetupAuthenticator()">Setup authenticator</button>
+
+<ng-container *ngIf="authenticatorSetupModel?.authenticatorUri !== '' && authenticatorSetupResultModel?.status === 0">
+	<p>
+		Scan the QR Code or enter the following key into your two factor authenticator app such as Google Authenticator or Microsoft Authenticator. Spaces
+		and casing do not matter
+	</p>
+	<h3>{{ authenticatorSetupModel?.sharedKey }}</h3>
+	<qrcode [qrdata]="authenticatorSetupModel?.authenticatorUri" [width]="256" [errorCorrectionLevel]="'M'" [elementType]="'svg'"></qrcode>
+	<p>
+		Once you have scanned the QR code or entered the key above, your two factor authentication app will provide you with a unique code. Enter that
+		code in the confirmation box below
+	</p>
+	<div [formGroup]="verificationCodeForm">
+		<mat-form-field>
+			<mat-label>
+				6-digit verification code
+			</mat-label>
+			<input matInput type="text" formControlName="verificationCode" />
+			<mat-error *ngIf="verificationCodeForm.get('verificationCode').invalid">{{
+				_getVerificationCodeControlErrorMessage(verificationCodeForm.get('verificationCode').errors)
+			}}</mat-error>
+		</mat-form-field>
+		<div>
+			<button mat-raised-button color="primary" (click)="_onVerificationCodeSubmitted()" [disabled]="verificationCodeForm.invalid">Verify</button>
+		</div>
+	</div>
+</ng-container>

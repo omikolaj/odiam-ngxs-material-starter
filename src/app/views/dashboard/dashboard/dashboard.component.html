@@ -1,0 +1,20 @@
+<div class="dashboard">
+	<ng-container *ngIf="userProfileDetails$ | async as profileDetails; else loading">
+		<mat-tab-group mat-align-tabs="center">
+			<mat-tab label="Profile">
+				<ng-template matTabContent>
+					<odm-profile-details [profileDetails]="profileDetails"> </odm-profile-details>
+				</ng-template>
+			</mat-tab>
+			<mat-tab label="Two Factor Authentication">
+				<ng-template matTabContent>
+					<odm-two-factor-authentication></odm-two-factor-authentication>
+				</ng-template>
+			</mat-tab>
+		</mat-tab-group>
+	</ng-container>
+</div>
+
+<ng-template #loading>
+	<span>loading profile</span>
+</ng-template>

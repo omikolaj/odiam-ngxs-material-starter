@@ -2,9 +2,8 @@
  * Shared functions between reset password component and signup component.
  */
 
-import { ValidationErrors, FormGroup, FormBuilder } from '@angular/forms';
+import { ValidationErrors } from '@angular/forms';
 import { ValidationMessage_Invalid, ValidationMessage_Required, ValidationMessage_Email } from './validation-messages';
-import { OdmValidators } from 'app/core/form-validators/odm-validators';
 
 /**
  * Gets email error message.

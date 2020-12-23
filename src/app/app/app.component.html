@@ -42,6 +42,12 @@
 						<fa-icon icon="user-circle"></fa-icon>
 					</button>
 					<mat-menu #toolbarUserMenu="matMenu">
+						<button mat-menu-item (click)="_onDashboardClick()">
+							<mat-icon>
+								<fa-icon icon="tachometer-alt"></fa-icon>
+							</mat-icon>
+							<span>{{ 'odm.menu.dash' | translate }}</span>
+						</button>
 						<button mat-menu-item (click)="_onSignoutClick()">
 							<mat-icon>
 								<fa-icon icon="power-off"></fa-icon>

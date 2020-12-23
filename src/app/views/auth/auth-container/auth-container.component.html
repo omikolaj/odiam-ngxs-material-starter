@@ -9,15 +9,6 @@
 			<img src="https://res.cloudinary.com/hetfy/image/upload/v1603459311/laptop_hkaxzz.png" [ngClass]="_routeAnimationsElements" alt="Laptop" />
 		</div>
 
-		<!-- <qrcode
-			[qrdata]="
-				'otpauth://totp/ASP.NET%20Core%20Identity:admin@admin.com?secret=CE24SVYJBLJRLDT2DDQY4BYDZISJLC2B&issuer=ASP.NET%20Core%20Identity&digits=6'
-			"
-			[width]="256"
-			[errorCorrectionLevel]="'M'"
-			[elementType]="'svg'"
-		></qrcode> -->
-
 		<odm-auth
 			[problemDetails]="_problemDetails$ | async"
 			[internalServerErrorDetails]="_internalServerErrorDetails$ | async"

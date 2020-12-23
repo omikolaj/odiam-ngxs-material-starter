@@ -149,11 +149,20 @@ export class AppComponent implements OnInit {
 	}
 
 	/**
+	 * Event handler for when user clicks the dashboard button.
+	 */
+	_onDashboardClick(): void {
+		this.log.debug('onDashboardClick event handler fired.', this);
+		void this.router.navigate(['dashboard']);
+	}
+
+	/**
 	 * Event handler for logging user out.
 	 */
 	_onSignoutClick(): void {
 		this.log.debug('onSignoutClick handler fired.', this);
 		this.store.dispatch(new Auth.Signout());
+		void this.router.navigate(['auth']);
 	}
 
 	/**

@@ -1,0 +1,28 @@
+<ng-container *ngIf="(_hasAuthenticator$ | async) === false">
+	<div>
+		<odm-two-factor-authentication-setup
+			[authenticatorSetupModel]="_authenticatorSetupModel$ | async"
+			[authenticatorSetupResultModel]="_authenticatorSetupResultModel$ | async"
+			[verificationCodeForm]="_verificationCodeForm"
+			(setupAuthentictorClicked)="_onSetupAuthenticator()"
+			(verificationCodeSubmitted)="_onVerifyAuthenticator($event)"
+		>
+		</odm-two-factor-authentication-setup>
+	</div>
+</ng-container>
+
+<ng-container *ngIf="(_hasAuthenticator$ | async) === true && (_hasTwoFactorEnabled$ | async) === false">
+	<button (click)="_onSetupAuthenticator()">Re-enable 2Fa</button>
+</ng-container>
+
+<ng-container *ngIf="(_hasAuthenticator$ | async) === true && (_hasTwoFactorEnabled$ | async) === true">
+	<div>
+		<button mat-raised-button (click)="_onResetRecoveryCodes()" color="primary">Reset recovery codes</button>
+		<button mat-raised-button (click)="_onDisable2Fa()" color="warn">Disable 2FA</button>
+	</div>
+	<div *ngFor="let code of _recoveryCodes$ | async">
+		<mat-form-field>
+			<input matInput type="text" [value]="code" readonly />
+		</mat-form-field>
+	</div>
+</ng-container>
