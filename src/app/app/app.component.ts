@@ -149,11 +149,11 @@ export class AppComponent implements OnInit {
 	}
 
 	/**
-	 * Event handler for when user clicks the dashboard button.
+	 * Event handler for when user clicks the account button.
 	 */
 	_onDashboardClick(): void {
 		this.log.debug('onDashboardClick event handler fired.', this);
-		void this.router.navigate(['dashboard']);
+		void this.router.navigate(['account']);
 	}
 
 	/**

@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { DashboardFacadeService } from '../dashboard-facade.service';
+import { AccountFacadeService } from '../account-facade.service';
 import { Observable } from 'rxjs';
 import { AuthenticatorSetupModel } from 'app/core/models/2fa/authenticator-setup.model.2fa';
 import { OdmValidators } from 'app/core/form-validators/odm-validators';
@@ -48,7 +48,7 @@ export class TwoFactorAuthenticationComponent implements OnInit {
 	 * @param facade
 	 * @param fb
 	 */
-	constructor(private facade: DashboardFacadeService, private fb: FormBuilder, private logger: LogService) {
+	constructor(private facade: AccountFacadeService, private fb: FormBuilder, private logger: LogService) {
 		this._authenticatorSetupModel$ = facade.authenticatorSetupModel$.pipe(tap((v) => console.log(v)));
 		this._authenticatorSetupResultModel$ = facade.authenticatorSetupResultModel$.pipe(tap((v) => console.log(v)));
 		this._hasAuthenticator$ = facade.hasAuthenticator$.pipe(tap((v) => console.log(v)));

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { TwoFactorAuthenticationAsyncService } from 'app/core/services/two-factor-authentication-async.service';
-import { tap, map, filter } from 'rxjs/operators';
+import { tap, map } from 'rxjs/operators';
 import * as TwoFactorAuthentication from './two-factor-authentication/two-factor-authentication.store.actions';
 import { Store, Select } from '@ngxs/store';
 import { TwoFactorAuthenticationState } from './two-factor-authentication/two-factor-authentication.store.state';
@@ -9,17 +9,17 @@ import { AuthenticatorSetupModel } from 'app/core/models/2fa/authenticator-setup
 import { AuthenticatorVerificationCodeModel } from 'app/core/models/2fa/authenticator-verification-code-model.2fa';
 import { AuthenticatorSetupResultModel } from 'app/core/models/2fa/authenticator-setup-result-model.2fa';
 import { UsersAsyncService } from 'app/core/services/users-async.service';
-import * as Dash from './dashboard/dashboard.store.actions';
-import { UserProfileDetails } from 'app/core/models/user-profile-details.model';
-import { DashboardState } from './dashboard/dashboard.store.state';
+import * as Dash from './account/account.store.actions';
+import { AccountDetails } from 'app/core/models/account-details.model';
+import { DashboardState } from './account/account.store.state';
 import { AuthState } from 'app/core/auth/auth.store.state';
 import { TwoFactorConfigurationStatus } from 'app/core/models/2fa/2fa-configuration-status.model';
 
 /**
- * User dashboard facade service.
+ * User account facade service.
  */
 @Injectable()
-export class DashboardFacadeService {
+export class AccountFacadeService {
 	/**
 	 * Select authenticator setup model.
 	 */
@@ -42,14 +42,14 @@ export class DashboardFacadeService {
 		})
 	);
 
-	@Select(DashboardState.selectUserProfileDetails) userProfileDetails$: Observable<UserProfileDetails>;
+	@Select(DashboardState.selectUserProfileDetails) accountDetails$: Observable<AccountDetails>;
 
 	@Select(DashboardState.selectHasAuthenticator) hasAuthenticator$: Observable<boolean>;
 
 	@Select(DashboardState.selectTwoFactorConfigurationStatus) twoFactorConfigurationStatus$: Observable<TwoFactorConfigurationStatus>;
 
 	/**
-	 * Creates an instance of dashboard facade service.
+	 * Creates an instance of account facade service.
 	 * @param twoFactorAuthenticationAsync
 	 */
 	constructor(

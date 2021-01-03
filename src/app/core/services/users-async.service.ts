@@ -3,7 +3,7 @@ import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { BACKEND_API_URL } from '../api-url-injection-token';
 import { Observable } from 'rxjs';
 import { PasswordResetModel } from '../auth/password-reset.model';
-import { UserProfileDetails } from '../models/user-profile-details.model';
+import { AccountDetails } from '../models/account-details.model';
 
 @Injectable({
 	providedIn: 'root'
@@ -23,8 +23,8 @@ export class UsersAsyncService {
 	 */
 	constructor(@Inject(BACKEND_API_URL) private apiUrl: string, private http: HttpClient) {}
 
-	getUserProfile(id: string): Observable<UserProfileDetails> {
-		return this.http.get<UserProfileDetails>(`${this.apiUrl}/users/${id}`);
+	getUserProfile(id: string): Observable<AccountDetails> {
+		return this.http.get<AccountDetails>(`${this.apiUrl}/users/${id}`);
 	}
 
 	/**

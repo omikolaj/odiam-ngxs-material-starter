@@ -1,15 +1,15 @@
 import { StateToken, State, Action, StateContext, Selector } from '@ngxs/store';
-import { DashboardStateModel } from './dashboard-state-model';
+import { AccountStateModel } from './account-state-model';
 import { Injectable } from '@angular/core';
-import * as Dash from './dashboard.store.actions';
+import * as Dash from './account.store.actions';
 import produce from 'immer';
-import { UserProfileDetails } from 'app/core/models/user-profile-details.model';
+import { AccountDetails } from 'app/core/models/account-details.model';
 import { TwoFactorConfigurationStatus } from 'app/core/models/2fa/2fa-configuration-status.model';
 
-const DASHBOARD_STATE_TOKEN = new StateToken<DashboardStateModel>('dashboard');
+const ACCOUNT_STATE_TOKEN = new StateToken<AccountStateModel>('account');
 
-@State<DashboardStateModel>({
-	name: DASHBOARD_STATE_TOKEN,
+@State<AccountStateModel>({
+	name: ACCOUNT_STATE_TOKEN,
 	defaults: {
 		email: '',
 		emailConfirmed: false,
@@ -27,30 +27,30 @@ const DASHBOARD_STATE_TOKEN = new StateToken<DashboardStateModel>('dashboard');
  * Provides all action handlers for user two factor authentication.
  */
 export class DashboardState {
-	@Selector([DASHBOARD_STATE_TOKEN])
-	static selectUserProfileDetails(state: DashboardStateModel): UserProfileDetails {
+	@Selector([ACCOUNT_STATE_TOKEN])
+	static selectUserProfileDetails(state: AccountStateModel): AccountDetails {
 		return state;
 	}
 
-	@Selector([DASHBOARD_STATE_TOKEN])
-	static selectHasAuthenticator(state: DashboardStateModel): boolean {
+	@Selector([ACCOUNT_STATE_TOKEN])
+	static selectHasAuthenticator(state: AccountStateModel): boolean {
 		return state.hasAuthenticator;
 	}
 
-	@Selector([DASHBOARD_STATE_TOKEN])
-	static selectHasTwoFactorEnabled(state: DashboardStateModel): boolean {
+	@Selector([ACCOUNT_STATE_TOKEN])
+	static selectHasTwoFactorEnabled(state: AccountStateModel): boolean {
 		return state.twoFactorEnabled;
 	}
 
-	@Selector([DASHBOARD_STATE_TOKEN])
-	static selectTwoFactorConfigurationStatus(state: DashboardStateModel): TwoFactorConfigurationStatus {
+	@Selector([ACCOUNT_STATE_TOKEN])
+	static selectTwoFactorConfigurationStatus(state: AccountStateModel): TwoFactorConfigurationStatus {
 		return state.twoFactorConfigurationStatus;
 	}
 
 	@Action(Dash.SetUserProfileDetails)
-	setUserProfile(ctx: StateContext<DashboardStateModel>, action: Dash.SetUserProfileDetails): void {
+	setUserProfile(ctx: StateContext<AccountStateModel>, action: Dash.SetUserProfileDetails): void {
 		ctx.setState(
-			produce((draft: DashboardStateModel) => {
+			produce((draft: AccountStateModel) => {
 				draft.email = action.paylaod.email;
 				draft.emailConfirmed = action.paylaod.emailConfirmed;
 				draft.externalLogins = action.paylaod.externalLogins;
@@ -64,9 +64,9 @@ export class DashboardState {
 	}
 
 	@Action(Dash.UpdateTwoFactorConfigurationStatus)
-	twoFactorConfigurationStatusChange(ctx: StateContext<DashboardStateModel>, action: Dash.UpdateTwoFactorConfigurationStatus): void {
+	twoFactorConfigurationStatusChange(ctx: StateContext<AccountStateModel>, action: Dash.UpdateTwoFactorConfigurationStatus): void {
 		ctx.setState(
-			produce((draft: DashboardStateModel) => {
+			produce((draft: AccountStateModel) => {
 				draft.twoFactorConfigurationStatus = action.payload;
 			})
 		);

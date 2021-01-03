@@ -1,6 +1,6 @@
 import { TwoFactorConfigurationStatus } from './2fa/2fa-configuration-status.model';
 
-export interface UserProfileDetails {
+export interface AccountDetails {
 	email: string;
 	emailConfirmed: boolean;
 	externalLogins: string[];

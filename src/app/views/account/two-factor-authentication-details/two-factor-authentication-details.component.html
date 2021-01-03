@@ -1,0 +1,21 @@
+<div class="two-factor-details">
+	<mat-accordion class="recovery-codes">
+		<mat-expansion-panel>
+			<mat-expansion-panel-header>
+				<mat-panel-title>
+					Recovery Codes
+				</mat-panel-title>
+				<mat-panel-description
+					matTooltip="Get security codes to use when you can't access your phone"
+					[matTooltipTouchGestures]="_touchGestrues"
+					class="truncate"
+				>
+					Get security codes to use when you can't access your phone
+					<mat-icon class="user-secret"><fa-icon icon="user-secret"></fa-icon></mat-icon>
+				</mat-panel-description>
+			</mat-expansion-panel-header>
+
+			<odm-two-factor-authentication-codes></odm-two-factor-authentication-codes>
+		</mat-expansion-panel>
+	</mat-accordion>
+</div>

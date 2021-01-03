@@ -21,6 +21,8 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule, ErrorStateMatcher, ShowOnDirtyErrorStateMatcher } from '@angular/material/core';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import {
@@ -40,7 +42,8 @@ import {
 	faLightbulb,
 	faWindowMaximize,
 	faStream,
-	faBook
+	faBook,
+	faUserSecret
 } from '@fortawesome/free-solid-svg-icons';
 import { faMediumM, faGithub } from '@fortawesome/free-brands-svg-icons';
 import { GhostBlockComponent } from './components/ghost-block/ghost-block.component';
@@ -73,6 +76,8 @@ import { GhostAnimationService } from './services/ghost-animation.service';
 		MatSnackBarModule,
 		MatSlideToggleModule,
 		MatDividerModule,
+		MatStepperModule,
+		MatExpansionModule,
 
 		FontAwesomeModule
 	],
@@ -101,6 +106,8 @@ import { GhostAnimationService } from './services/ghost-animation.service';
 		MatSliderModule,
 		MatDatepickerModule,
 		MatNativeDateModule,
+		MatStepperModule,
+		MatExpansionModule,
 
 		FontAwesomeModule,
 
@@ -132,7 +139,8 @@ export class SharedModule {
 			faLightbulb,
 			faWindowMaximize,
 			faStream,
-			faBook
+			faBook,
+			faUserSecret
 		);
 	}
 }

@@ -122,7 +122,7 @@ export class AuthFacadeService {
 	private _authenticate(token: AccessTokenModel, rememberMe?: boolean): void {
 		const userId = this.jwtService.getSubClaim(token.access_token);
 		this.store.dispatch(new Auth.Signin({ AccessTokenModel: token, rememberMe: rememberMe || false, userId: userId }));
-		void this.router.navigate(['dashboard']);
+		void this.router.navigate(['account']);
 		setTimeout(() => {
 			this._signoutOrRenewAccessTokenModel();
 		}, token.expires_in * 1000);

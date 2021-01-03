@@ -1,0 +1,41 @@
+<ng-container *ngIf="!_show2Fa; else twoFactorAuth">
+	<div style="overflow: hidden;">
+		<div>
+			<div class="two-factor-settings">
+				<div class="two-factor-detail">
+					<h3>Two-step verification</h3>
+					<span>Require a security key or code in addition to your password.</span>
+				</div>
+
+				<div class="two-factor-detail">
+					<mat-slide-toggle [checked]="twoFactorEnabled" (click)="onTwoFactorAuthToggle()" color="primary"></mat-slide-toggle>
+				</div>
+			</div>
+
+			<ng-container *ngIf="twoFactorEnabled">
+				<odm-two-factor-authentication-details></odm-two-factor-authentication-details>
+			</ng-container>
+		</div>
+		<div>
+			<h3>Change password</h3>
+			<mat-form-field>
+				<input matInput type="text" />
+			</mat-form-field>
+		</div>
+	</div>
+</ng-container>
+
+<ng-template #twoFactorAuth>
+	<div>
+		<mat-horizontal-stepper linear #stepper>
+			<mat-step>
+				<ng-template matStepLabel>Done</ng-template>
+				<odm-two-factor-authentication></odm-two-factor-authentication>
+				<div>
+					<button mat-button matStepperPrevious>Back</button>
+					<button mat-button (click)="stepper.reset()">Reset</button>
+				</div>
+			</mat-step>
+		</mat-horizontal-stepper>
+	</div>
+</ng-template>

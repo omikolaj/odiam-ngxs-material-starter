@@ -1,0 +1,21 @@
+<div class="account">
+	<h1>Personal account</h1>
+	<ng-container *ngIf="accountDetails$ | async as accountDetails; else loading">
+		<mat-tab-group mat-align-tabs="left">
+			<mat-tab label="General">
+				<ng-template matTabContent>
+					<odm-general></odm-general>
+				</ng-template>
+			</mat-tab>
+			<mat-tab label="Security">
+				<ng-template matTabContent>
+					<odm-security [twoFactorEnabled]="accountDetails?.twoFactorEnabled"></odm-security>
+				</ng-template>
+			</mat-tab>
+		</mat-tab-group>
+	</ng-container>
+</div>
+
+<ng-template #loading>
+	<span>loading profile</span>
+</ng-template>
