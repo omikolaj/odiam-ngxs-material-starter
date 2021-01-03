@@ -4,6 +4,7 @@ import { BACKEND_API_URL } from '../api-url-injection-token';
 import { Observable } from 'rxjs';
 import { PasswordResetModel } from '../auth/password-reset.model';
 import { AccountDetails } from '../models/account-details.model';
+import { AccountSecurityDetails } from '../models/account-security-details.model';
 
 @Injectable({
 	providedIn: 'root'
@@ -25,6 +26,15 @@ export class UsersAsyncService {
 
 	getUserProfile(id: string): Observable<AccountDetails> {
 		return this.http.get<AccountDetails>(`${this.apiUrl}/users/${id}`);
+	}
+
+	/**
+	 * Gets user account security details.
+	 * @param id
+	 * @returns account security details
+	 */
+	getAccountSecurityDetails(id: string): Observable<AccountSecurityDetails> {
+		return this.http.get<AccountSecurityDetails>(`${this.apiUrl}/users/${id}/account/security`);
 	}
 
 	/**

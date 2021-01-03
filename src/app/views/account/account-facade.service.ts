@@ -14,6 +14,9 @@ import { AccountDetails } from 'app/core/models/account-details.model';
 import { DashboardState } from './account/account.store.state';
 import { AuthState } from 'app/core/auth/auth.store.state';
 import { TwoFactorConfigurationStatus } from 'app/core/models/2fa/2fa-configuration-status.model';
+import { AccountSecurityState } from './account-security/account-security.store.state';
+import { AccountSecurityDetails } from 'app/core/models/account-security-details.model';
+import * as AccountSecurity from './account-security/account-security.store.actions';
 
 /**
  * User account facade service.
@@ -48,6 +51,8 @@ export class AccountFacadeService {
 
 	@Select(DashboardState.selectTwoFactorConfigurationStatus) twoFactorConfigurationStatus$: Observable<TwoFactorConfigurationStatus>;
 
+	@Select(AccountSecurityState.selectAccountSecurityDetails) accountSecurityDetails$: Observable<AccountSecurityDetails>;
+
 	/**
 	 * Creates an instance of account facade service.
 	 * @param twoFactorAuthenticationAsync
@@ -63,6 +68,17 @@ export class AccountFacadeService {
 		this.userAsyncService
 			.getUserProfile(id)
 			.pipe(tap((profileDetails) => this.store.dispatch(new Dash.SetUserProfileDetails(profileDetails))))
+			.subscribe();
+	}
+
+	/**
+	 * Gets user account security details.
+	 */
+	getAccountSecurityInfo(): void {
+		const id = this.store.selectSnapshot(AuthState.selectCurrentUserId);
+		this.userAsyncService
+			.getAccountSecurityDetails(id)
+			.pipe(tap((accountSecurityDetails) => this.store.dispatch(new AccountSecurity.SetAccountSecurityDetails(accountSecurityDetails))))
 			.subscribe();
 	}
 

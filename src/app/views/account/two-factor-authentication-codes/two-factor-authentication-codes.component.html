@@ -1,1 +1,32 @@
-<p>two-factor-authentication-codes works!</p>
+<mat-accordion class="recovery-codes">
+	<mat-expansion-panel>
+		<mat-expansion-panel-header>
+			<mat-panel-title>
+				{{ 'odm.account.security.two-step.recovery-codes.title' | translate }}
+			</mat-panel-title>
+			<mat-panel-description
+				[matTooltip]="'odm.account.security.two-step.recovery-codes.description' | translate"
+				[matTooltipTouchGestures]="_touchGestrues"
+				class="truncate"
+			>
+				{{ 'odm.account.security.two-step.recovery-codes.description' | translate }}
+				<mat-icon class="user-secret"><fa-icon icon="user-secret"></fa-icon></mat-icon>
+			</mat-panel-description>
+		</mat-expansion-panel-header>
+
+		<div>
+			<h3>{{ 'odm.account.security.two-step.recovery-codes.header' | translate }}</h3>
+			<p>{{ 'odm.account.security.two-step.recovery-codes.subheader' | translate }}</p>
+			<ul>
+				<li *ngFor="let code of codes">
+					{{ code }}
+				</li>
+			</ul>
+			<div>
+				<button mat-raised-button color="accent" (click)="onGenerateNewRecoveryCodes()">
+					{{ 'odm.account.security.two-step.recovery-codes.generate' | translate }}
+				</button>
+			</div>
+		</div>
+	</mat-expansion-panel>
+</mat-accordion>

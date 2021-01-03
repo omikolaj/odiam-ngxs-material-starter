@@ -7,7 +7,8 @@ const routes: Routes = [
 	{
 		path: '',
 		component: AccountComponent,
-		canActivate: [AuthGuardService]
+		canActivate: [AuthGuardService],
+		data: { title: 'odm.account' }
 	}
 ];
 
