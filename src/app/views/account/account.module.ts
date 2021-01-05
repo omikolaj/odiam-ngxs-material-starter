@@ -16,6 +16,8 @@ import { TwoFactorAuthenticationDetailsComponent } from './two-factor-authentica
 import { TwoFactorAuthenticationCodesComponent } from './two-factor-authentication-codes/two-factor-authentication-codes.component';
 import { TwoFactorAuthentication2Component } from './two-factor-authentication2/two-factor-authentication2.component';
 import { AccountSecurityState } from './account-security/account-security.store.state';
+import { TwoFactorAuthenticationSetupWizardComponent } from './two-factor-authentication-setup-wizard/two-factor-authentication-setup-wizard.component';
+import { TwoFactorAuthentication2State } from './two-factor-authentication2/two-factor-authentication2.store.state';
 
 /**
  * User account module.
@@ -29,14 +31,15 @@ import { AccountSecurityState } from './account-security/account-security.store.
 		AccountSecurityContainerComponent,
 		TwoFactorAuthenticationDetailsComponent,
 		TwoFactorAuthenticationCodesComponent,
-		TwoFactorAuthentication2Component
+		TwoFactorAuthentication2Component,
+		TwoFactorAuthenticationSetupWizardComponent
 	],
 	imports: [
 		CommonModule,
 		AccountRoutingModule,
 		QRCodeModule,
 		SharedModule,
-		NgxsModule.forFeature([TwoFactorAuthenticationState, DashboardState, AccountSecurityState])
+		NgxsModule.forFeature([TwoFactorAuthenticationState, DashboardState, AccountSecurityState, TwoFactorAuthentication2State])
 	],
 	providers: [AccountFacadeService]
 })

@@ -1,5 +1,5 @@
-import { AuthenticatorSetupModel } from 'app/core/models/2fa/authenticator-setup.model.2fa';
-import { AuthenticatorSetupResultModel } from 'app/core/models/2fa/authenticator-setup-result-model.2fa';
+import { AuthenticatorSetup } from 'app/core/models/2fa/authenticator-setup.model.2fa';
+import { AuthenticatorSetupResult } from 'app/core/models/2fa/authenticator-setup-result.model.2fa';
 import { GenerateRecoveryCodesResultModel } from 'app/core/models/2fa/generate-recovery-codes-result-model.2fa';
 
 /**
@@ -15,7 +15,7 @@ export class AuthenticatorSetup {
 	 * Creates an instance of authenticator setup.
 	 * @param paylaod
 	 */
-	constructor(public paylaod: AuthenticatorSetupModel) {}
+	constructor(public paylaod: AuthenticatorSetup) {}
 }
 
 /**
@@ -31,7 +31,7 @@ export class AuthenticatorVerificationResult {
 	 * Creates an instance of authenticator verification result.
 	 * @param payload
 	 */
-	constructor(public payload: AuthenticatorSetupResultModel) {}
+	constructor(public payload: AuthenticatorSetupResult) {}
 }
 
 /**

@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy, Output, EventEmitter, Input } from '@angular/core';
 import { TooltipTouchGestures } from '@angular/material/tooltip';
+import { showDelayInMs } from 'app/shared/mat-tooltip-settings';
 
 /**
  * Two factor authentication codes component.
@@ -24,6 +25,8 @@ export class TwoFactorAuthenticationCodesComponent {
 	 * Touch gestrues of two factor authentication codes component.
 	 */
 	_touchGestrues: TooltipTouchGestures = 'on';
+
+	_showDelayInMs = showDelayInMs;
 
 	constructor() {}
 

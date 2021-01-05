@@ -3,9 +3,9 @@
 		<pre>{{ status }}</pre>
 		<ng-container *ngSwitchDefault>
 			<odm-two-factor-authentication-setup
-				[authenticatorSetupModel]="_authenticatorSetupModel$ | async"
+				[AuthenticatorSetup]="_authenticatorSetupModel$ | async"
 				[hasAuthenticator]="_hasAuthenticator$ | async"
-				[authenticatorSetupResultModel]="_authenticatorSetupResultModel$ | async"
+				[AuthenticatorSetupResult]="_authenticatorSetupResultModel$ | async"
 				[verificationCodeForm]="_verificationCodeForm"
 				(setupAuthentictorClicked)="_onSetupAuthenticator()"
 				(verificationCodeSubmitted)="_onVerifyAuthenticator($event)"
@@ -36,8 +36,8 @@
 <!-- <ng-container *ngIf="(_hasAuthenticator$ | async) === false && (_hasTwoFactorEnabled$ | async) === true">
 	<div>
 		<odm-two-factor-authentication-setup
-			[authenticatorSetupModel]="_authenticatorSetupModel$ | async"
-			[authenticatorSetupResultModel]="_authenticatorSetupResultModel$ | async"
+			[AuthenticatorSetup]="_authenticatorSetupModel$ | async"
+			[AuthenticatorSetupResult]="_authenticatorSetupResultModel$ | async"
 			[verificationCodeForm]="_verificationCodeForm"
 			(setupAuthentictorClicked)="_onSetupAuthenticator()"
 			(verificationCodeSubmitted)="_onVerifyAuthenticator($event)"

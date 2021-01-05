@@ -3,13 +3,13 @@
 	<button mat-raised-button color="primary" (click)="_onSetupAuthenticator()">Setup authenticator</button>
 </ng-container>
 
-<ng-container *ngIf="authenticatorSetupModel?.authenticatorUri !== '' && authenticatorSetupResultModel?.status === 0">
+<ng-container *ngIf="AuthenticatorSetup?.authenticatorUri !== '' && AuthenticatorSetupResult?.status === 0">
 	<p>
 		Scan the QR Code or enter the following key into your two factor authenticator app such as Google Authenticator or Microsoft Authenticator. Spaces
 		and casing do not matter
 	</p>
-	<h3>{{ authenticatorSetupModel?.sharedKey }}</h3>
-	<qrcode [qrdata]="authenticatorSetupModel?.authenticatorUri" [width]="256" [errorCorrectionLevel]="'M'" [elementType]="'svg'"></qrcode>
+	<h3>{{ AuthenticatorSetup?.sharedKey }}</h3>
+	<qrcode [qrdata]="AuthenticatorSetup?.authenticatorUri" [width]="256" [errorCorrectionLevel]="'M'" [elementType]="'svg'"></qrcode>
 	<p>
 		Once you have scanned the QR code or entered the key above, your two factor authentication app will provide you with a unique code. Enter that
 		code in the confirmation box below

@@ -1,10 +1,10 @@
 import { Injectable, Inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { AuthenticatorSetupModel } from '../models/2fa/authenticator-setup.model.2fa';
+import { AuthenticatorSetup } from '../models/2fa/authenticator-setup.model.2fa';
 import { BACKEND_API_URL } from '../api-url-injection-token';
-import { AuthenticatorVerificationCodeModel } from '../models/2fa/authenticator-verification-code-model.2fa';
-import { AuthenticatorSetupResultModel } from '../models/2fa/authenticator-setup-result-model.2fa';
+import { AuthenticatorVerificationCode } from '../models/2fa/authenticator-verification-code.model.2fa';
+import { AuthenticatorSetupResult } from '../models/2fa/authenticator-setup-result.model.2fa';
 import { GenerateRecoveryCodesResultModel } from '../models/2fa/generate-recovery-codes-result-model.2fa';
 
 /**
@@ -32,17 +32,17 @@ export class TwoFactorAuthenticationAsyncService {
 	 * Gets authenticator setup information.
 	 * @returns authenticator
 	 */
-	setupAuthenticator(): Observable<AuthenticatorSetupModel> {
-		return this.http.get<AuthenticatorSetupModel>(`${this.apiUrl}/2fa/setup-authenticator`, { headers: this._headers });
+	setupAuthenticator(): Observable<AuthenticatorSetup> {
+		return this.http.get<AuthenticatorSetup>(`${this.apiUrl}/2fa/setup-authenticator`, { headers: this._headers });
 	}
 
 	/**
 	 * Verifys authenticator verification code is valid.
 	 * @param model
-	 * @returns AuthenticatorSetupResultModel
+	 * @returns AuthenticatorSetupResult
 	 */
-	verifyAuthenticator(model: AuthenticatorVerificationCodeModel): Observable<AuthenticatorSetupResultModel> {
-		return this.http.post<AuthenticatorSetupResultModel>(`${this.apiUrl}/2fa/verify-authenticator`, JSON.stringify(model.verificationCode), {
+	verifyAuthenticator(model: AuthenticatorVerificationCode): Observable<AuthenticatorSetupResult> {
+		return this.http.post<AuthenticatorSetupResult>(`${this.apiUrl}/2fa/verify-authenticator`, JSON.stringify(model.verificationCode), {
 			headers: this._headers
 		});
 	}

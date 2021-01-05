@@ -4,7 +4,6 @@ import { Injectable } from '@angular/core';
 import * as AccountSecurity from './account-security.store.actions';
 import produce from 'immer';
 import { AccountSecurityDetails } from 'app/core/models/account-security-details.model';
-import { LogService } from 'app/core/logger/log.service';
 
 const ACCOUNT_SECURITY_STATE_TOKEN = new StateToken<AccountSecurityStateModel>('security');
 

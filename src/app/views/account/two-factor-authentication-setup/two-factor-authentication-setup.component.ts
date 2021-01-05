@@ -1,9 +1,9 @@
 import { Component, OnInit, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
-import { AuthenticatorSetupModel } from 'app/core/models/2fa/authenticator-setup.model.2fa';
-import { AuthenticatorSetupResultModel } from 'app/core/models/2fa/authenticator-setup-result-model.2fa';
+import { AuthenticatorSetup } from 'app/core/models/2fa/authenticator-setup.model.2fa';
+import { AuthenticatorSetupResult } from 'app/core/models/2fa/authenticator-setup-result.model.2fa';
 import { TwoFactorAuthenticationStatus } from 'app/core/models/2fa/2fa-status.enum';
 import { FormGroup, ValidationErrors } from '@angular/forms';
-import { AuthenticatorVerificationCodeModel } from 'app/core/models/2fa/authenticator-verification-code-model.2fa';
+import { AuthenticatorVerificationCode } from 'app/core/models/2fa/authenticator-verification-code.model.2fa';
 import { ValidationMessage_Required } from 'app/shared/validation-messages';
 
 @Component({
@@ -18,18 +18,18 @@ export class TwoFactorAuthenticationSetupComponent implements OnInit {
 	/**
 	 * Authenticator setup model. Responsible for displaying QR code
 	 */
-	@Input() authenticatorSetupModel: AuthenticatorSetupModel;
+	@Input() AuthenticatorSetup: AuthenticatorSetup;
 
 	/**
 	 * Authenticator setup result model. Indicates if authenticator was successfully setup.
 	 */
-	@Input() authenticatorSetupResultModel: AuthenticatorSetupResultModel = { status: TwoFactorAuthenticationStatus.None, recoveryCodes: [] };
+	@Input() AuthenticatorSetupResult: AuthenticatorSetupResult = { status: TwoFactorAuthenticationStatus.None, recoveryCodes: [] };
 
 	@Input() verificationCodeForm: FormGroup;
 
 	@Output() setupAuthentictorClicked = new EventEmitter<void>();
 
-	@Output() verificationCodeSubmitted = new EventEmitter<AuthenticatorVerificationCodeModel>();
+	@Output() verificationCodeSubmitted = new EventEmitter<AuthenticatorVerificationCode>();
 
 	private _fieldRequiredMessage = ValidationMessage_Required;
 
@@ -42,7 +42,7 @@ export class TwoFactorAuthenticationSetupComponent implements OnInit {
 	}
 
 	_onVerificationCodeSubmitted(): void {
-		const code = this.verificationCodeForm.value as AuthenticatorVerificationCodeModel;
+		const code = this.verificationCodeForm.value as AuthenticatorVerificationCode;
 		this.verificationCodeSubmitted.emit(code);
 	}
 

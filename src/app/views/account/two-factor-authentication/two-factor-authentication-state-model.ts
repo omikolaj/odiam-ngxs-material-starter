@@ -1,8 +1,8 @@
-import { AuthenticatorSetupModel } from 'app/core/models/2fa/authenticator-setup.model.2fa';
-import { AuthenticatorSetupResultModel } from 'app/core/models/2fa/authenticator-setup-result-model.2fa';
+import { AuthenticatorSetup } from 'app/core/models/2fa/authenticator-setup.model.2fa';
+import { AuthenticatorSetupResult } from 'app/core/models/2fa/authenticator-setup-result.model.2fa';
 
 export interface TwoFactorAuthenticationStateModel {
-	authenticatorSetup: AuthenticatorSetupModel;
-	authenticationSetupResult: AuthenticatorSetupResultModel;
+	authenticatorSetup: AuthenticatorSetup;
+	authenticationSetupResult: AuthenticatorSetupResult;
 	newRecoveryCodes: string[];
 }

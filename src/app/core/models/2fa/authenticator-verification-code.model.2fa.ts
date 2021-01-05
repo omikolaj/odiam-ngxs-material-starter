@@ -1,7 +1,7 @@
 /**
  * Authenticator verification code model.
  */
-export interface AuthenticatorVerificationCodeModel {
+export interface AuthenticatorVerificationCode {
 	/**
 	 *  Verification code entered in by the user.
 	 */

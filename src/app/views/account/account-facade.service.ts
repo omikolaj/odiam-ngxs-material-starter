@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { TwoFactorAuthenticationAsyncService } from 'app/core/services/two-factor-authentication-async.service';
 import { tap, map } from 'rxjs/operators';
-import * as TwoFactorAuthentication from './two-factor-authentication/two-factor-authentication.store.actions';
+import * as TwoFactorAuthenticationSetupWizard from './two-factor-authentication2/two-factor-authentication2.store.actions';
 import { Store, Select } from '@ngxs/store';
 import { TwoFactorAuthenticationState } from './two-factor-authentication/two-factor-authentication.store.state';
 import { Observable, combineLatest } from 'rxjs';
-import { AuthenticatorSetupModel } from 'app/core/models/2fa/authenticator-setup.model.2fa';
-import { AuthenticatorVerificationCodeModel } from 'app/core/models/2fa/authenticator-verification-code-model.2fa';
-import { AuthenticatorSetupResultModel } from 'app/core/models/2fa/authenticator-setup-result-model.2fa';
+import { AuthenticatorSetup } from 'app/core/models/2fa/authenticator-setup.model.2fa';
+import { AuthenticatorVerificationCode } from 'app/core/models/2fa/authenticator-verification-code.model.2fa';
+import { AuthenticatorSetupResult } from 'app/core/models/2fa/authenticator-setup-result.model.2fa';
 import { UsersAsyncService } from 'app/core/services/users-async.service';
 import * as Dash from './account/account.store.actions';
 import { AccountDetails } from 'app/core/models/account-details.model';
@@ -17,41 +17,21 @@ import { TwoFactorConfigurationStatus } from 'app/core/models/2fa/2fa-configurat
 import { AccountSecurityState } from './account-security/account-security.store.state';
 import { AccountSecurityDetails } from 'app/core/models/account-security-details.model';
 import * as AccountSecurity from './account-security/account-security.store.actions';
+import { TwoFactorAuthenticationSetupWizardState } from './two-factor-authentication2/two-factor-authentication2.store.state';
 
 /**
  * User account facade service.
  */
 @Injectable()
 export class AccountFacadeService {
-	/**
-	 * Select authenticator setup model.
-	 */
-	@Select(TwoFactorAuthenticationState.selectAuthenticatorSetup) authenticatorSetupModel$: Observable<AuthenticatorSetupModel>;
+	@Select(AccountSecurityState.selectAccountSecurityDetails) accountSecurityDetails$: Observable<AccountSecurityDetails>;
 
-	@Select(DashboardState.selectHasTwoFactorEnabled) hasTwoFactorEnabled$: Observable<boolean>;
+	@Select(TwoFactorAuthenticationSetupWizardState.selectAuthenticatorSetup) authenticatorSetup$: Observable<AuthenticatorSetup>;
 
 	/**
 	 * Selects authenticator setup result model.
 	 */
-	@Select(TwoFactorAuthenticationState.selectAuthenticatorSetupResult) authenticatorSetupResultModel$: Observable<AuthenticatorSetupResultModel>;
-	// @Select(TwoFactorAuthenticationState.selectRecoveryCodes) recoveryCodes$: Observable<string[]>;
-
-	recoveryCodes$ = combineLatest([
-		this.store.select(TwoFactorAuthenticationState.selectRecoveryCodes),
-		this.store.select(TwoFactorAuthenticationState.selectNewRecoveryCodes)
-	]).pipe(
-		map((recoveryCodes: [string[], string[]]) => {
-			return recoveryCodes[0].concat(recoveryCodes[1]).filter((codes) => codes !== '');
-		})
-	);
-
-	@Select(DashboardState.selectUserProfileDetails) accountDetails$: Observable<AccountDetails>;
-
-	@Select(DashboardState.selectHasAuthenticator) hasAuthenticator$: Observable<boolean>;
-
-	@Select(DashboardState.selectTwoFactorConfigurationStatus) twoFactorConfigurationStatus$: Observable<TwoFactorConfigurationStatus>;
-
-	@Select(AccountSecurityState.selectAccountSecurityDetails) accountSecurityDetails$: Observable<AccountSecurityDetails>;
+	@Select(TwoFactorAuthenticationState.selectAuthenticatorSetupResult) authenticatorSetupResult$: Observable<AuthenticatorSetupResult>;
 
 	/**
 	 * Creates an instance of account facade service.
@@ -88,14 +68,7 @@ export class AccountFacadeService {
 	setupAuthenticator(): void {
 		this.twoFactorAuthenticationAsync
 			.setupAuthenticator()
-			.pipe(
-				tap((authenticatorInfo) =>
-					this.store.dispatch([
-						new TwoFactorAuthentication.AuthenticatorSetup(authenticatorInfo),
-						new Dash.UpdateTwoFactorConfigurationStatus('Configuring')
-					])
-				)
-			)
+			.pipe(tap((authenticatorInfo) => this.store.dispatch([new TwoFactorAuthenticationSetupWizard.SetupTwoFactorAuthentication(authenticatorInfo)])))
 			.subscribe();
 	}
 
@@ -103,37 +76,37 @@ export class AccountFacadeService {
 	 * Verifys authenticator verification code is valid.
 	 * @param model
 	 */
-	verifyAuthenticator(model: AuthenticatorVerificationCodeModel): void {
-		this.twoFactorAuthenticationAsync
-			.verifyAuthenticator(model)
-			.pipe(
-				tap((authenticatorResult) =>
-					this.store.dispatch([
-						new TwoFactorAuthentication.AuthenticatorVerificationResult(authenticatorResult),
-						new Dash.UpdateTwoFactorConfigurationStatus('Enabled')
-					])
-				)
-			)
-			.subscribe();
+	verifyAuthenticator(model: AuthenticatorVerificationCode): void {
+		// this.twoFactorAuthenticationAsync
+		// 	.verifyAuthenticator(model)
+		// 	.pipe(
+		// 		tap((authenticatorResult) =>
+		// 			this.store.dispatch([
+		// 				new TwoFactorAuthentication.AuthenticatorVerificationResult(authenticatorResult),
+		// 				new Dash.UpdateTwoFactorConfigurationStatus('Enabled')
+		// 			])
+		// 		)
+		// 	)
+		// 	.subscribe();
 	}
 
 	/**
 	 * Generates recovery codes.
 	 */
 	generateRecoveryCodes(): void {
-		this.twoFactorAuthenticationAsync
-			.generate2FaRecoveryCodes()
-			.pipe(tap((result) => this.store.dispatch(new TwoFactorAuthentication.GenerateRecoveryCodes(result))))
-			.subscribe();
+		// this.twoFactorAuthenticationAsync
+		// 	.generate2FaRecoveryCodes()
+		// 	.pipe(tap((result) => this.store.dispatch(new TwoFactorAuthentication.GenerateRecoveryCodes(result))))
+		// 	.subscribe();
 	}
 
 	/**
 	 * Disables two factor authentication.
 	 */
 	disable2Fa(): void {
-		this.twoFactorAuthenticationAsync
-			.disable2Fa()
-			.pipe(tap(() => this.store.dispatch([new TwoFactorAuthentication.Disable2Fa(), new Dash.UpdateTwoFactorConfigurationStatus('Disabled')])))
-			.subscribe();
+		// this.twoFactorAuthenticationAsync
+		// 	.disable2Fa()
+		// 	.pipe(tap(() => this.store.dispatch([new TwoFactorAuthentication.Disable2Fa(), new Dash.UpdateTwoFactorConfigurationStatus('Disabled')])))
+		// 	.subscribe();
 	}
 }

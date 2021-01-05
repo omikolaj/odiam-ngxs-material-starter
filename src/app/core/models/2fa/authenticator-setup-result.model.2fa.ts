@@ -3,7 +3,7 @@ import { TwoFactorAuthenticationStatus } from './2fa-status.enum';
 /**
  * Authenticator setup result model.
  */
-export interface AuthenticatorSetupResultModel {
+export interface AuthenticatorSetupResult {
 	/**
 	 * Result of the authenticator setup operation.
 	 */

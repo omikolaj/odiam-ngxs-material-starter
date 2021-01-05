@@ -1,7 +1,7 @@
 /**
  * Setup authenticator model.
  */
-export interface AuthenticatorSetupModel {
+export interface AuthenticatorSetup {
 	sharedKey: string;
 	authenticatorUri: string;
 }

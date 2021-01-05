@@ -3,8 +3,8 @@ import { StateToken, State, Selector, Action, StateContext } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import produce from 'immer';
 import * as TwoFactorAuthentication from './two-factor-authentication.store.actions';
-import { AuthenticatorSetupModel } from 'app/core/models/2fa/authenticator-setup.model.2fa';
-import { AuthenticatorSetupResultModel } from 'app/core/models/2fa/authenticator-setup-result-model.2fa';
+import { AuthenticatorSetup } from 'app/core/models/2fa/authenticator-setup.model.2fa';
+import { AuthenticatorSetupResult } from 'app/core/models/2fa/authenticator-setup-result.model.2fa';
 import { TwoFactorAuthenticationStatus } from 'app/core/models/2fa/2fa-status.enum';
 import { LogService } from 'app/core/logger/log.service';
 
@@ -36,7 +36,7 @@ export class TwoFactorAuthenticationState {
 	 * @returns authenticator setup
 	 */
 	@Selector([SECURITY_STATE_TOKEN])
-	static selectAuthenticatorSetup(state: TwoFactorAuthenticationStateModel): AuthenticatorSetupModel {
+	static selectAuthenticatorSetup(state: TwoFactorAuthenticationStateModel): AuthenticatorSetup {
 		return state.authenticatorSetup;
 	}
 
@@ -46,7 +46,7 @@ export class TwoFactorAuthenticationState {
 	 * @returns authenticator setup result
 	 */
 	@Selector([SECURITY_STATE_TOKEN])
-	static selectAuthenticatorSetupResult(state: TwoFactorAuthenticationStateModel): AuthenticatorSetupResultModel {
+	static selectAuthenticatorSetupResult(state: TwoFactorAuthenticationStateModel): AuthenticatorSetupResult {
 		return state.authenticationSetupResult;
 	}
 
