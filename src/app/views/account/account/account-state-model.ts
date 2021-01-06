@@ -1,5 +1,3 @@
-import { TwoFactorConfigurationStatus } from 'app/core/models/2fa/2fa-configuration-status.model';
-
 export interface AccountStateModel {
 	email: string;
 	emailConfirmed: boolean;
@@ -8,5 +6,4 @@ export interface AccountStateModel {
 	hasAuthenticator: boolean;
 	twoFactorClientRemembered: boolean;
 	recoveryCodesLeft: string;
-	twoFactorConfigurationStatus: TwoFactorConfigurationStatus;
 }

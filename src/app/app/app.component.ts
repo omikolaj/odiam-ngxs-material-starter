@@ -8,7 +8,7 @@ import { SettingsState } from 'app/core/settings/settings.store.state';
 import * as Settings from 'app/core/settings/settings.store.actions';
 import * as Auth from 'app/core/auth/auth.store.actions';
 import { LogService } from 'app/core/logger/log.service';
-import { Language } from 'app/core/settings/settings.model';
+import { Language } from 'app/core/settings/settings-state.model';
 import { MatSelectChange } from '@angular/material/select';
 import { AuthState } from 'app/core/auth/auth.store.state';
 import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';

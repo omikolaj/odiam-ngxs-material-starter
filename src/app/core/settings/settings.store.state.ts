@@ -3,7 +3,7 @@ import { Injectable, NgZone } from '@angular/core';
 import { Action, Selector, State, StateContext, StateToken, NgxsOnInit } from '@ngxs/store';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import produce from 'immer';
-import { DEFAULT_THEME, NIGHT_MODE_THEME, SETTINGS_KEY, SettingsStateModel } from './settings.model';
+import { DEFAULT_THEME, NIGHT_MODE_THEME, SETTINGS_KEY, SettingsStateModel } from './settings-state.model';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleService } from 'app/core/title/title.service';
 import * as Settings from './settings.store.actions';

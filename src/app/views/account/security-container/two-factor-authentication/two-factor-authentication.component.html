@@ -1,0 +1,33 @@
+<ng-container *ngIf="_showTwoFactorAuthSetupWizard === false; else twoFactorAuthenticationSetupWizard">
+	<div style="overflow: hidden;">
+		<div>
+			<div class="two-factor-settings">
+				<div class="two-factor-detail">
+					<h3>{{ 'odm.account.security.two-step.title' | translate }}</h3>
+					<span>{{ 'odm.account.security.two-step.subtitle' | translate }}</span>
+				</div>
+
+				<div class="two-factor-detail">
+					<mat-slide-toggle [checked]="twoFactorEnabled" (change)="_onTwoFactorAuthToggle($event)" color="primary"></mat-slide-toggle>
+				</div>
+			</div>
+
+			<ng-container *ngIf="twoFactorEnabled">
+				<odm-two-factor-authentication-details
+					[recoveryCodes]="userRecoveryCodes"
+					(generateNewRecoveryCodes)="_onGenerateNew2FaRecoveryCodes()"
+				></odm-two-factor-authentication-details>
+			</ng-container>
+		</div>
+	</div>
+</ng-container>
+
+<ng-template #twoFactorAuthenticationSetupWizard>
+	<odm-two-factor-authentication-setup-wizard
+		(verificationCodeSubmitted)="_onVerifyAuthenticator($event)"
+		(cancelSetupWizardClicked)="_onCancelSetupWizard()"
+		[verificationCodeForm]="_verificationCodeForm"
+		[twoFactorAuthenticationSetupResult]="_authenticatorSetupResult$ | async"
+		[twoFactorAuthenticationSetup]="_authenticatorSetup$ | async"
+	></odm-two-factor-authentication-setup-wizard>
+</ng-template>

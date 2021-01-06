@@ -1,0 +1,58 @@
+<div>
+	<mat-vertical-stepper [linear]="_isLinear" #stepper>
+		<mat-step>
+			<ng-template matStepLabel>Setup</ng-template>
+			<p>
+				Scan the QR Code or enter the following key into your two factor authenticator app such as Google Authenticator or Microsoft Authenticator.
+				Spaces and casing do not matter
+			</p>
+			<h3>{{ twoFactorAuthenticationSetup?.sharedKey }}</h3>
+			<qrcode [qrdata]="twoFactorAuthenticationSetup?.authenticatorUri" [width]="256" [errorCorrectionLevel]="'M'" [elementType]="'svg'"></qrcode>
+			<p>
+				Once you have scanned the QR code or entered the key above, your two factor authentication app will provide you with a unique code. Enter that
+				code in the confirmation box below
+			</p>
+			<div [formGroup]="verificationCodeForm">
+				<mat-form-field>
+					<mat-label>
+						6-digit verification code
+					</mat-label>
+					<input matInput type="text" formControlName="verificationCode" />
+					<mat-error *ngIf="verificationCodeForm.get('verificationCode').invalid">{{
+						_getVerificationCodeControlErrorMessage(verificationCodeForm.get('verificationCode').errors)
+					}}</mat-error>
+				</mat-form-field>
+				<div>
+					<button mat-button (click)="_onCancelClicked()" color="warn">Cancel</button>
+					<button mat-raised-button matStepperNext color="primary" (click)="_onVerificationCodeSubmitted()" [disabled]="verificationCodeForm.invalid">
+						Verify
+					</button>
+				</div>
+			</div>
+		</mat-step>
+		<mat-step>
+			<ng-template matStepLabel>Finished</ng-template>
+			<h3>{{ twoFactorAuthenticationSetupResult?.status === 'Succeeded' ? 'Succeeded' : 'Failed' }}</h3>
+			<ng-container *ngIf="twoFactorAuthenticationSetupResult?.status === 'Succeeded'; else setupFailed">
+				<p>Next time you log in you will have to use two factor authentication</p>
+				<p>Save below one time access codes in case you do not have access to your phone</p>
+				<div>
+					<ul>
+						<li *ngFor="let code of twoFactorAuthenticationSetupResult?.recoveryCodes">{{ code }}</li>
+					</ul>
+				</div>
+			</ng-container>
+			<div>
+				<button mat-button matStepperPrevious color="accent">Back</button>
+				<button mat-button (click)="_onCancelClicked()" color="warn">Cancel</button>
+				<button mat-button (click)="_onResterOrFinishClicked(stepper)" color="primary">
+					{{ twoFactorAuthenticationSetupResult?.status === 'Succeeded' ? 'Finish' : 'Restart' }}
+				</button>
+			</div>
+		</mat-step>
+	</mat-vertical-stepper>
+</div>
+
+<ng-template #setupFailed>
+	<p>Something went wrong, please try again.</p>
+</ng-template>

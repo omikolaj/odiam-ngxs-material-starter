@@ -1,21 +1,15 @@
 <div class="account">
 	<h1>{{ 'odm.account.header' | translate }}</h1>
-	<ng-container *ngIf="accountDetails$ | async as accountDetails; else loading">
-		<mat-tab-group mat-align-tabs="left">
-			<mat-tab [label]="'odm.account.general.title' | translate">
-				<ng-template matTabContent>
-					<odm-general></odm-general>
-				</ng-template>
-			</mat-tab>
-			<mat-tab [label]="'odm.account.security.title' | translate">
-				<ng-template matTabContent>
-					<odm-account-security-container></odm-account-security-container>
-				</ng-template>
-			</mat-tab>
-		</mat-tab-group>
-	</ng-container>
+	<mat-tab-group mat-align-tabs="left">
+		<mat-tab [label]="'odm.account.general.title' | translate">
+			<ng-template matTabContent>
+				<odm-general></odm-general>
+			</ng-template>
+		</mat-tab>
+		<mat-tab [label]="'odm.account.security.title' | translate">
+			<ng-template matTabContent>
+				<odm-security-container></odm-security-container>
+			</ng-template>
+		</mat-tab>
+	</mat-tab-group>
 </div>
-
-<ng-template #loading>
-	<span>loading profile</span>
-</ng-template>

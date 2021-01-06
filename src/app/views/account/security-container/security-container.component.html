@@ -1,0 +1,14 @@
+<ng-container *ngIf="_accountSecurityDetails$ | async as accountSecurityDetails">
+	<div>
+		<odm-two-factor-authentication
+			[userRecoveryCodes]="accountSecurityDetails?.recoveryCodes?.items"
+			[twoFactorEnabled]="accountSecurityDetails?.twoFactorEnabled"
+		></odm-two-factor-authentication>
+		<div>
+			<h3>Change password</h3>
+			<mat-form-field>
+				<input matInput type="text" />
+			</mat-form-field>
+		</div>
+	</div>
+</ng-container>

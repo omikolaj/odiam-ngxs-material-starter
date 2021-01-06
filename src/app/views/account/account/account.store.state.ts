@@ -4,7 +4,6 @@ import { Injectable } from '@angular/core';
 import * as Dash from './account.store.actions';
 import produce from 'immer';
 import { AccountDetails } from 'app/core/models/account-details.model';
-import { TwoFactorConfigurationStatus } from 'app/core/models/2fa/2fa-configuration-status.model';
 
 const ACCOUNT_STATE_TOKEN = new StateToken<AccountStateModel>('account');
 
@@ -17,8 +16,7 @@ const ACCOUNT_STATE_TOKEN = new StateToken<AccountStateModel>('account');
 		hasAuthenticator: false,
 		recoveryCodesLeft: '',
 		twoFactorClientRemembered: false,
-		twoFactorEnabled: false,
-		twoFactorConfigurationStatus: 'NotConfigured'
+		twoFactorEnabled: false
 	}
 })
 @Injectable()
@@ -42,11 +40,6 @@ export class DashboardState {
 		return state.twoFactorEnabled;
 	}
 
-	@Selector([ACCOUNT_STATE_TOKEN])
-	static selectTwoFactorConfigurationStatus(state: AccountStateModel): TwoFactorConfigurationStatus {
-		return state.twoFactorConfigurationStatus;
-	}
-
 	@Action(Dash.SetUserProfileDetails)
 	setUserProfile(ctx: StateContext<AccountStateModel>, action: Dash.SetUserProfileDetails): void {
 		ctx.setState(
@@ -58,16 +51,6 @@ export class DashboardState {
 				draft.recoveryCodesLeft = action.paylaod.recoveryCodesLeft;
 				draft.twoFactorClientRemembered = action.paylaod.twoFactorClientRemembered;
 				draft.twoFactorEnabled = action.paylaod.twoFactorEnabled;
-				draft.twoFactorConfigurationStatus = action.paylaod.twoFactorConfigurationStatus;
-			})
-		);
-	}
-
-	@Action(Dash.UpdateTwoFactorConfigurationStatus)
-	twoFactorConfigurationStatusChange(ctx: StateContext<AccountStateModel>, action: Dash.UpdateTwoFactorConfigurationStatus): void {
-		ctx.setState(
-			produce((draft: AccountStateModel) => {
-				draft.twoFactorConfigurationStatus = action.payload;
 			})
 		);
 	}

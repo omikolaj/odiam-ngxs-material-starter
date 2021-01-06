@@ -7,7 +7,7 @@ import { LogService } from 'app/core/logger/log.service';
 import { SettingsState } from 'app/core/settings/settings.store.state';
 import { tap } from 'rxjs/operators';
 import { MatSelectChange } from '@angular/material/select';
-import { Language, SettingsStateModel } from 'app/core/settings/settings.model';
+import { Language, SettingsStateModel } from 'app/core/settings/settings-state.model';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 
 /**

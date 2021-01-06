@@ -1,4 +1,4 @@
-import { Language, SettingsStateModel } from 'app/core/settings/settings.model';
+import { Language, SettingsStateModel } from 'app/core/settings/settings-state.model';
 
 /**
  * Init settings state from local storage.

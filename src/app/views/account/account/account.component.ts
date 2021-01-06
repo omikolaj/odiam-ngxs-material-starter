@@ -1,5 +1,4 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { AccountFacadeService } from '../account-facade.service';
 import { AccountDetails } from 'app/core/models/account-details.model';
 import { Observable } from 'rxjs';
 
@@ -12,11 +11,7 @@ import { Observable } from 'rxjs';
 export class AccountComponent implements OnInit {
 	accountDetails$: Observable<AccountDetails>;
 
-	constructor(private facade: AccountFacadeService) {
-		this.accountDetails$ = facade.accountDetails$;
-	}
+	constructor() {}
 
-	ngOnInit(): void {
-		this.facade.getUserProfile();
-	}
+	ngOnInit(): void {}
 }

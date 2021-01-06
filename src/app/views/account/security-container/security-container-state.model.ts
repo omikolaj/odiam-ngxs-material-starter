@@ -1,9 +1,9 @@
-import { UserRecoveryCodes } from 'app/views/account/security-container/models/user-recovery-codes.model';
+import { UserRecoveryCodes } from './models/user-recovery-codes.model';
 
 /**
- * Account security details model.
+ * Security state model for ngxs store.
  */
-export interface AccountSecurityDetails {
+export interface SecurityContainerStateModel {
 	/**
 	 * Whether user has setup two factor authentication before.
 	 */
