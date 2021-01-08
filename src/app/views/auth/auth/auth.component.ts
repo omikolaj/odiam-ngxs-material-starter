@@ -378,7 +378,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	}
 
 	/**
-	 * Sets server validation error on the control if one occured.
+	 * Sets server validation error on the control.
 	 * @param control
 	 */
 	private _setServerValidationError(control: AbstractControl): void {

@@ -1,13 +1,13 @@
-import { TwoFactorAuthenticationStatus } from './two-factor-authentication-status.enum';
+import { UserRecoveryCodes } from '../../models/user-recovery-codes.model';
 
 /**
  * Authenticator setup result model.
  */
 export interface TwoFactorAuthenticationSetupResult {
 	/**
-	 * Result of the authenticator setup operation.
+	 * User recovery codes.
 	 */
-	status: TwoFactorAuthenticationStatus;
+	recoveryCodes: UserRecoveryCodes;
 
-	recoveryCodes: string[];
+	status: 'None' | 'Succeeded' | 'Failed';
 }

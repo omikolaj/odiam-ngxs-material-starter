@@ -1,7 +1,8 @@
 import { Component, ChangeDetectionStrategy, EventEmitter, Output, Input } from '@angular/core';
+import { LogService } from 'app/core/logger/log.service';
 
 /**
- * Component used to display details about two factor authentication user settings.
+ * Two factor authentication details component.
  */
 @Component({
 	selector: 'odm-two-factor-authentication-details',
@@ -15,14 +16,22 @@ export class TwoFactorAuthenticationDetailsComponent {
 	 */
 	@Output() generateNewRecoveryCodes = new EventEmitter<void>();
 
+	/**
+	 * Recovery codes user has left to redeem for logging in.
+	 */
 	@Input() recoveryCodes: string[] = [];
 
-	constructor() {}
+	/**
+	 * Creates an instance of two factor authentication details component.
+	 * @param logger
+	 */
+	constructor(private logger: LogService) {}
 
 	/**
 	 * Event handler when user requests to generate new recovery codes.
 	 */
-	onGenerateNewRecoveryCodes(): void {
+	_onGenerateNewRecoveryCodes(): void {
+		this.logger.trace('_onGenerateNewRecoveryCodes fired.', this);
 		this.generateNewRecoveryCodes.emit();
 	}
 }

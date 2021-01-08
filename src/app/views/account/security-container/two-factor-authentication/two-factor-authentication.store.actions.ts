@@ -1,6 +1,5 @@
 import { TwoFactorAuthenticationSetup } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-setup.model';
 import { TwoFactorAuthenticationSetupResult } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-setup-result.model';
-import { UserRecoveryCodes } from '../models/user-recovery-codes.model';
 
 /**
  * Setup two factor authentication.
@@ -9,7 +8,7 @@ export class SetupTwoFactorAuthentication {
 	/**
 	 * Type of action.
 	 */
-	static readonly type = '[2Fa] Setup Two Factor Authentication';
+	static readonly type = '[2fa] Setup Two Factor Authentication';
 	/**
 	 * Creates an instance of setup two factor authentication.
 	 * @param payload
@@ -24,7 +23,7 @@ export class AuthenticatorVerificationResult {
 	/**
 	 * Type of action.
 	 */
-	static readonly type = '[2Fa] Authenticator Verification Result';
+	static readonly type = '[2fa] Authenticator Verification Result';
 
 	/**
 	 * Creates an instance of authenticator verification result.
@@ -40,5 +39,5 @@ export class Disable2Fa {
 	/**
 	 * Type of action.
 	 */
-	static readonly type = '[2Fa] Disable Two Factor Authentication';
+	static readonly type = '[2fa] Disable Two Factor Authentication';
 }

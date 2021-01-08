@@ -1,0 +1,36 @@
+.verification-form {
+	.verification-form__action-buttons {
+		margin-top: 20px;
+	}
+}
+
+.req-not-met {
+	color: red;
+}
+
+.basic-container {
+	display: inline-block;
+	position: relative;
+}
+
+img {
+	opacity: 0.1;
+	right: 45px;
+	max-width: 100%;
+	position: absolute;
+	max-height: 100%;
+	top: 30px;
+	width: 60%;
+	clip-path: circle(55% at 55% 55%);
+}
+
+.server-down {
+	opacity: 0.1;
+	right: 45px;
+	max-width: 100%;
+	position: absolute;
+	max-height: 100%;
+	top: 150px;
+	width: 60%;
+	text-align: center;
+}

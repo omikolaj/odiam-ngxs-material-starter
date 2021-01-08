@@ -1,41 +1,52 @@
 <div>
 	<mat-vertical-stepper [linear]="_isLinear" #stepper>
 		<mat-step>
-			<ng-template matStepLabel>Setup</ng-template>
+			<ng-template matStepLabel>{{ 'odm.account.security.two-step.setup-wizard.first-step-title' | translate }}</ng-template>
 			<p>
-				Scan the QR Code or enter the following key into your two factor authenticator app such as Google Authenticator or Microsoft Authenticator.
-				Spaces and casing do not matter
+				{{ 'odm.account.security.two-step.setup-wizard.instructions' | translate }}
 			</p>
-			<h3>{{ twoFactorAuthenticationSetup?.sharedKey }}</h3>
-			<qrcode [qrdata]="twoFactorAuthenticationSetup?.authenticatorUri" [width]="256" [errorCorrectionLevel]="'M'" [elementType]="'svg'"></qrcode>
+			<h3>{{ _twoFactorAuthenticationSetup?.sharedKey }}</h3>
+			<div *ngIf="_twoFactorAuthenticationSetup?.authenticatorUri; else loading">
+				<qrcode
+					[qrdata]="_twoFactorAuthenticationSetup?.authenticatorUri"
+					[width]="_qrWidth"
+					[errorCorrectionLevel]="'M'"
+					[elementType]="'svg'"
+				></qrcode>
+			</div>
 			<p>
-				Once you have scanned the QR code or entered the key above, your two factor authentication app will provide you with a unique code. Enter that
-				code in the confirmation box below
+				{{ 'odm.account.security.two-step.setup-wizard.verification-code-message' | translate }}
 			</p>
-			<div [formGroup]="verificationCodeForm">
+			<div [formGroup]="verificationCodeForm" class="verification-form">
 				<mat-form-field>
 					<mat-label>
-						6-digit verification code
+						{{ 'odm.account.security.two-step.setup-wizard.verification-code-placeholder' | translate }}
 					</mat-label>
 					<input matInput type="text" formControlName="verificationCode" />
-					<mat-error *ngIf="verificationCodeForm.get('verificationCode').invalid">{{
+					<mat-hint>
+						<span *ngIf="internalServerErrorDetails">
+							<mat-icon class="req-not-met" matPrefix>{{ 'clear' }}</mat-icon>
+							{{ _getInternalServerErrorMessage() }}
+						</span>
+					</mat-hint>
+					<mat-error *ngIf="_ifControlFieldIsInvalid()">{{
 						_getVerificationCodeControlErrorMessage(verificationCodeForm.get('verificationCode').errors)
 					}}</mat-error>
 				</mat-form-field>
-				<div>
-					<button mat-button (click)="_onCancelClicked()" color="warn">Cancel</button>
-					<button mat-raised-button matStepperNext color="primary" (click)="_onVerificationCodeSubmitted()" [disabled]="verificationCodeForm.invalid">
-						Verify
+				<div class="verification-form__action-buttons">
+					<button mat-button (click)="_onCancelClicked()" color="warn">{{ 'odm.account.security.setup-wizard.cancel-button' | translate }}</button>
+					<button mat-button matStepperNext color="primary" (click)="_onVerificationCodeSubmitted()" [disabled]="!verificationCodeForm.valid">
+						{{ 'odm.account.security.two-step.setup-wizard.verify-button' | translate }}
 					</button>
 				</div>
 			</div>
 		</mat-step>
 		<mat-step>
-			<ng-template matStepLabel>Finished</ng-template>
+			<ng-template matStepLabel>{{ 'odm.account.security.two-step.setup-wizard.last-step-title' | translate }}</ng-template>
 			<h3>{{ twoFactorAuthenticationSetupResult?.status === 'Succeeded' ? 'Succeeded' : 'Failed' }}</h3>
 			<ng-container *ngIf="twoFactorAuthenticationSetupResult?.status === 'Succeeded'; else setupFailed">
-				<p>Next time you log in you will have to use two factor authentication</p>
-				<p>Save below one time access codes in case you do not have access to your phone</p>
+				<p>{{ 'odm.account.security.two-step.setup-wizard.last-step-information' | translate }}</p>
+				<p>{{ 'odm.account.security.two-step.setup-wizard.last-step-save-codes' | translate }}</p>
 				<div>
 					<ul>
 						<li *ngFor="let code of twoFactorAuthenticationSetupResult?.recoveryCodes">{{ code }}</li>
@@ -43,9 +54,9 @@
 				</div>
 			</ng-container>
 			<div>
-				<button mat-button matStepperPrevious color="accent">Back</button>
-				<button mat-button (click)="_onCancelClicked()" color="warn">Cancel</button>
-				<button mat-button (click)="_onResterOrFinishClicked(stepper)" color="primary">
+				<button mat-button matStepperPrevious color="accent">{{ 'odm.account.security.two-step.setup-wizard.back-button' | translate }}</button>
+				<button mat-button (click)="_onCancelClicked()" color="warn">{{ 'odm.account.security.setup-wizard.cancel-button' | translate }}</button>
+				<button mat-button (click)="_onRestartOrFinishClicked(stepper)" color="primary">
 					{{ twoFactorAuthenticationSetupResult?.status === 'Succeeded' ? 'Finish' : 'Restart' }}
 				</button>
 			</div>
@@ -54,5 +65,17 @@
 </div>
 
 <ng-template #setupFailed>
-	<p>Something went wrong, please try again.</p>
+	<p>{{ 'odm.account.security.two-step.setup-wizard.error-message' | translate }}</p>
+</ng-template>
+
+<ng-template #loading>
+	<div class="basic-container">
+		<mat-spinner [strokeWidth]="_strokeWidth" color="primary" [diameter]="_qrWidth"></mat-spinner>
+		<ng-container *ngIf="internalServerErrorDetails">
+			<div>
+				<img src="../../../../../assets/skull.png" />
+				<h4 class="server-down">Server down</h4>
+			</div>
+		</ng-container>
+	</div>
 </ng-template>

@@ -1,5 +1,5 @@
 import { StateToken, State, Action, StateContext, Selector } from '@ngxs/store';
-import { TwoFactorAuthenticationStateModel } from './two-factor-authentication-state.model';
+import { TwoFactorAuthenticationStateModel } from './two-factor-authentication-state.store.model';
 import { Injectable } from '@angular/core';
 import * as TwoFactorAuthentication from './two-factor-authentication.store.actions';
 import produce from 'immer';
@@ -8,19 +8,29 @@ import { TwoFactorAuthenticationSetupResult } from 'app/views/account/security-c
 
 const TWO_FACTOR_AUTHENTICATION_STATE_TOKEN = new StateToken<TwoFactorAuthenticationStateModel>('twoFactorAuthentication');
 
+/**
+ * Two factor authentication state.
+ */
 @State<TwoFactorAuthenticationStateModel>({
 	name: TWO_FACTOR_AUTHENTICATION_STATE_TOKEN,
 	defaults: {
 		sharedKey: '',
 		authenticatorUri: '',
 		authenticatorResult: {
-			recoveryCodes: [],
+			recoveryCodes: {
+				items: []
+			},
 			status: 'None'
 		}
 	}
 })
 @Injectable()
 export class TwoFactorAuthenticationState {
+	/**
+	 * Selects authenticator setup details.
+	 * @param state
+	 * @returns authenticator setup
+	 */
 	@Selector([TWO_FACTOR_AUTHENTICATION_STATE_TOKEN])
 	static selectAuthenticatorSetup(state: TwoFactorAuthenticationStateModel): TwoFactorAuthenticationSetup {
 		return {
@@ -39,6 +49,11 @@ export class TwoFactorAuthenticationState {
 		return state.authenticatorResult;
 	}
 
+	/**
+	 * Actions handler for getting details for two factor authentication setup wizard.
+	 * @param ctx
+	 * @param action
+	 */
 	@Action(TwoFactorAuthentication.SetupTwoFactorAuthentication)
 	setupTwoFactorAuthentication(
 		ctx: StateContext<TwoFactorAuthenticationStateModel>,
@@ -58,7 +73,7 @@ export class TwoFactorAuthenticationState {
 	 * @param action
 	 */
 	@Action(TwoFactorAuthentication.AuthenticatorVerificationResult)
-	TwoFactorAuthenticationSetupResult(
+	twoFactorAuthenticationSetupResult(
 		ctx: StateContext<TwoFactorAuthenticationStateModel>,
 		action: TwoFactorAuthentication.AuthenticatorVerificationResult
 	): void {
@@ -86,7 +101,9 @@ export class TwoFactorAuthenticationState {
 			produce((draft: TwoFactorAuthenticationStateModel) => {
 				draft = {
 					authenticatorResult: {
-						recoveryCodes: [],
+						recoveryCodes: {
+							items: []
+						},
 						status: 'None'
 					},
 					authenticatorUri: '',

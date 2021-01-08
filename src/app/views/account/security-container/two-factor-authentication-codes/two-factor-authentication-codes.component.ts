@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, Output, EventEmitter, Input } from '@angular/core';
 import { TooltipTouchGestures } from '@angular/material/tooltip';
 import { showDelayInMs } from 'app/shared/mat-tooltip-settings';
+import { LogService } from 'app/core/logger/log.service';
 
 /**
  * Two factor authentication codes component.
@@ -17,7 +18,7 @@ export class TwoFactorAuthenticationCodesComponent {
 	 */
 	@Output() generateNewRecoveryCodes = new EventEmitter<void>();
 	/**
-	 * User available recovery codes.
+	 * Recovery codes user has left to redeem for logging in.
 	 */
 	@Input() codes: string[] = [];
 
@@ -26,14 +27,22 @@ export class TwoFactorAuthenticationCodesComponent {
 	 */
 	_touchGestrues: TooltipTouchGestures = 'on';
 
+	/**
+	 * Show delay in ms for toolip.
+	 */
 	_showDelayInMs = showDelayInMs;
 
-	constructor() {}
+	/**
+	 * Creates an instance of two factor authentication codes component.
+	 * @param logger
+	 */
+	constructor(private logger: LogService) {}
 
 	/**
 	 * Event handler when user requests to generate new recovery codes.
 	 */
-	onGenerateNewRecoveryCodes(): void {
+	_onGenerateNewRecoveryCodes(): void {
+		this.logger.trace('_onGenerateNewRecoveryCodes fired.', this);
 		this.generateNewRecoveryCodes.emit();
 	}
 }

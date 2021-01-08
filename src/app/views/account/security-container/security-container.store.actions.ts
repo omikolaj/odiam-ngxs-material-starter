@@ -18,7 +18,7 @@ export class SetAccountSecurityDetails {
 }
 
 /**
- * Set account security details.
+ * Update account security details.
  */
 export class UpdateTwoFactorAuthenticationSettings {
 	/**
@@ -34,7 +34,7 @@ export class UpdateTwoFactorAuthenticationSettings {
 }
 
 /**
- * Set account security details.
+ * Updates recovery codes.
  */
 export class UpdateRecoveryCodes {
 	/**
@@ -43,7 +43,7 @@ export class UpdateRecoveryCodes {
 	static readonly type = '[Security] Updates User Recovery Codes';
 
 	/**
-	 * Creates an instance that updates two factor authentication settings.
+	 * Creates an instance of that updates recovery codes.
 	 * @param payload
 	 */
 	constructor(public payload: UserRecoveryCodes) {}

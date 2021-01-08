@@ -49,8 +49,13 @@ export class AccountSecurityState {
 		);
 	}
 
+	/**
+	 * Actions handler that updates two factor authentication settings
+	 * @param ctx
+	 * @param action
+	 */
 	@Action(SecurityContainer.UpdateTwoFactorAuthenticationSettings)
-	updateTwoFactorAuthenticationEnabledSetting(
+	updateTwoFactorAuthenticationSetting(
 		ctx: StateContext<SecurityContainerStateModel>,
 		action: SecurityContainer.UpdateTwoFactorAuthenticationSettings
 	): void {
@@ -67,6 +72,11 @@ export class AccountSecurityState {
 		);
 	}
 
+	/**
+	 * Actions handler that updates recovery codes.
+	 * @param ctx
+	 * @param action
+	 */
 	@Action(SecurityContainer.UpdateRecoveryCodes)
 	updateUserRecoveryCodes(ctx: StateContext<SecurityContainerStateModel>, action: SecurityContainer.UpdateRecoveryCodes): void {
 		ctx.setState(

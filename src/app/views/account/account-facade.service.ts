@@ -13,12 +13,18 @@ import { AccountSecurityState } from './security-container/security-container.st
 import { AccountSecurityDetails } from 'app/core/models/account-security-details.model';
 import * as SecurityContainer from './security-container/security-container.store.actions';
 import { TwoFactorAuthenticationState } from './security-container/two-factor-authentication/two-factor-authentication.store.state';
+import { InternalServerError } from 'app/core/error-handler/internal-server-error.decorator';
+import { ProblemDetailsError } from 'app/core/error-handler/problem-details-error.decorator';
+import { ProblemDetails } from 'app/core/models/problem-details.model';
+import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 
 /**
  * User account facade service.
  */
 @Injectable()
 export class AccountFacadeService {
+	@ProblemDetailsError() problemDetails$: Observable<ProblemDetails>;
+	@InternalServerError() internalServerErrorDetails$: Observable<InternalServerErrorDetails>;
 	@Select(AccountSecurityState.selectAccountSecurityDetails) accountSecurityDetails$: Observable<AccountSecurityDetails>;
 	@Select(TwoFactorAuthenticationState.selectAuthenticatorSetup)
 	twoFactorAuthenticationSetup$: Observable<TwoFactorAuthenticationSetup>;
