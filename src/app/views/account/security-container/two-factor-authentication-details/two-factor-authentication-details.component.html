@@ -1,6 +1,7 @@
 <div class="two-factor-details">
 	<odm-two-factor-authentication-codes
 		[codes]="recoveryCodes"
+		[generatingCodes]="generatingRecoveryCodes"
 		(generateNewRecoveryCodes)="_onGenerateNewRecoveryCodes()"
 	></odm-two-factor-authentication-codes>
 </div>

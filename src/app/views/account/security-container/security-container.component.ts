@@ -3,8 +3,8 @@ import { AccountFacadeService } from '../account-facade.service';
 import { Observable } from 'rxjs';
 import { AccountSecurityDetails } from 'app/core/models/account-security-details.model';
 import { LogService } from 'app/core/logger/log.service';
-import { ProblemDetails } from 'app/core/models/problem-details.model';
-import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
+import { ofActionSuccessful } from '@ngxs/store';
+import { tap } from 'rxjs/internal/operators/tap';
 
 /**
  * Component container that houses user security functionality.
@@ -21,15 +21,7 @@ export class SecurityContainerComponent implements OnInit {
 	 */
 	_accountSecurityDetails$: Observable<AccountSecurityDetails>;
 
-	/**
-	 * Validation problem details$ of auth container component when form validations get passed angular but fail on the server.
-	 */
-	_problemDetails$: Observable<ProblemDetails>;
-
-	/**
-	 * Internal server error details$ of auth container component.
-	 */
-	_internalServerErrorDetails$: Observable<InternalServerErrorDetails>;
+	generatingNewRecoveryCodes = false;
 
 	/**
 	 * Creates an instance of security container component.
@@ -37,8 +29,6 @@ export class SecurityContainerComponent implements OnInit {
 	 */
 	constructor(private facade: AccountFacadeService, private logger: LogService) {
 		this._accountSecurityDetails$ = facade.accountSecurityDetails$;
-		this._problemDetails$ = facade.problemDetails$;
-		this._internalServerErrorDetails$ = facade.internalServerErrorDetails$;
 	}
 
 	/**

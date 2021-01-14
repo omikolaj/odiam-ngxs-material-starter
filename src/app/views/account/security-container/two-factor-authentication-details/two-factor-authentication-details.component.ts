@@ -22,6 +22,11 @@ export class TwoFactorAuthenticationDetailsComponent {
 	@Input() recoveryCodes: string[] = [];
 
 	/**
+	 * Whether or not there is an outgoing request to generate new recovery codes.
+	 */
+	@Input() generatingRecoveryCodes = false;
+
+	/**
 	 * Creates an instance of two factor authentication details component.
 	 * @param logger
 	 */

@@ -1,81 +1,88 @@
 <div>
-	<mat-vertical-stepper [linear]="_isLinear" #stepper>
-		<mat-step>
-			<ng-template matStepLabel>{{ 'odm.account.security.two-step.setup-wizard.first-step-title' | translate }}</ng-template>
-			<p>
-				{{ 'odm.account.security.two-step.setup-wizard.instructions' | translate }}
-			</p>
-			<h3>{{ _twoFactorAuthenticationSetup?.sharedKey }}</h3>
-			<div *ngIf="_twoFactorAuthenticationSetup?.authenticatorUri; else loading">
-				<qrcode
-					[qrdata]="_twoFactorAuthenticationSetup?.authenticatorUri"
-					[width]="_qrWidth"
-					[errorCorrectionLevel]="'M'"
-					[elementType]="'svg'"
-				></qrcode>
-			</div>
-			<p>
-				{{ 'odm.account.security.two-step.setup-wizard.verification-code-message' | translate }}
-			</p>
-			<div [formGroup]="verificationCodeForm" class="verification-form">
-				<mat-form-field>
-					<mat-label>
-						{{ 'odm.account.security.two-step.setup-wizard.verification-code-placeholder' | translate }}
-					</mat-label>
-					<input matInput type="text" formControlName="verificationCode" />
-					<mat-hint>
-						<span *ngIf="internalServerErrorDetails">
-							<mat-icon class="req-not-met" matPrefix>{{ 'clear' }}</mat-icon>
-							{{ _getInternalServerErrorMessage() }}
-						</span>
-					</mat-hint>
-					<mat-error *ngIf="_ifControlFieldIsInvalid()">{{
-						_getVerificationCodeControlErrorMessage(verificationCodeForm.get('verificationCode').errors)
-					}}</mat-error>
-				</mat-form-field>
-				<div class="verification-form__action-buttons">
-					<button mat-button (click)="_onCancelClicked()" color="warn">{{ 'odm.account.security.setup-wizard.cancel-button' | translate }}</button>
-					<button mat-button matStepperNext color="primary" (click)="_onVerificationCodeSubmitted()" [disabled]="!verificationCodeForm.valid">
-						{{ 'odm.account.security.two-step.setup-wizard.verify-button' | translate }}
-					</button>
+	<div class="overlay"></div>
+	<div class="setup-wizard">
+		<mat-vertical-stepper [linear]="_stepperIsLinear" #stepper odmMatVerticalStepperScroller>
+			<mat-step [editable]="_stepper2faSetupEditable" [completed]="_is2faSetupCompleted">
+				<ng-template matStepLabel>{{ 'odm.account.security.two-step.setup-wizard.first-step-title' | translate }}</ng-template>
+				<p>
+					{{ 'odm.account.security.two-step.setup-wizard.instructions' | translate }}
+				</p>
+				<h3>{{ _twoFactorAuthenticationSetup?.sharedKey }}</h3>
+				<div *ngIf="_twoFactorAuthenticationSetup?.authenticatorUri; else loading">
+					<qrcode
+						[qrdata]="_twoFactorAuthenticationSetup?.authenticatorUri"
+						[width]="_qrBarCodeWidth"
+						[errorCorrectionLevel]="'M'"
+						[elementType]="'svg'"
+					></qrcode>
 				</div>
-			</div>
-		</mat-step>
-		<mat-step>
-			<ng-template matStepLabel>{{ 'odm.account.security.two-step.setup-wizard.last-step-title' | translate }}</ng-template>
-			<h3>{{ twoFactorAuthenticationSetupResult?.status === 'Succeeded' ? 'Succeeded' : 'Failed' }}</h3>
-			<ng-container *ngIf="twoFactorAuthenticationSetupResult?.status === 'Succeeded'; else setupFailed">
-				<p>{{ 'odm.account.security.two-step.setup-wizard.last-step-information' | translate }}</p>
-				<p>{{ 'odm.account.security.two-step.setup-wizard.last-step-save-codes' | translate }}</p>
-				<div>
-					<ul>
-						<li *ngFor="let code of twoFactorAuthenticationSetupResult?.recoveryCodes">{{ code }}</li>
-					</ul>
+				<p>
+					{{ 'odm.account.security.two-step.setup-wizard.verification-code-message' | translate }}
+				</p>
+				<div class="verification-form">
+					<form [formGroup]="verificationCodeForm" (ngSubmit)="_onVerificationCodeSubmitted()">
+						<mat-form-field>
+							<mat-label>
+								{{ 'odm.account.security.two-step.setup-wizard.verification-code-placeholder' | translate }}
+							</mat-label>
+							<input matInput type="text" formControlName="verificationCode" [maxlength]="_verificationCodeInputLength" />
+							<mat-hint>
+								<span *ngIf="_internalServerErrorDetails && !_serverErrorHandled">
+									<mat-icon class="req-not-met" matPrefix>{{ 'clear' }}</mat-icon>
+									{{ _getInternalServerErrorMessage() }}
+								</span>
+							</mat-hint>
+							<mat-error *ngIf="_ifControlFieldIsInvalid()">{{
+								_getVerificationCodeControlErrorMessage(verificationCodeForm.get('verificationCode').errors)
+							}}</mat-error>
+						</mat-form-field>
+						<div class="verification-form__action-buttons">
+							<button mat-button (click)="_onCancelClicked()" color="warn">
+								{{ 'odm.account.security.setup-wizard.cancel-button' | translate }}
+							</button>
+							<button mat-button color="primary" type="submit" [disabled]="!verificationCodeForm.valid || codeVerificationInProgress">
+								<ng-container *ngIf="!codeVerificationInProgress && _codeVerificationSucceeded">
+									{{ 'odm.account.security.two-step.setup-wizard.verified-button' | translate }}
+									<mat-icon class="req-met" matSuffix>{{ 'task_alt' }}</mat-icon>
+									<odm-spinner
+										[type]="'button'"
+										[diameter]="_verifiedNextStepSpinnerDiameter"
+										[strokeWidth]="_verifiedNextStepSpinnerStrokeWidth"
+									></odm-spinner>
+								</ng-container>
+								<span *ngIf="codeVerificationInProgress" class="loading-dots-animation"
+									>{{ 'odm.account.security.two-step.setup-wizard.verifing-button' | translate }}<span>.</span><span>.</span><span>.</span>
+								</span>
+								<ng-container *ngIf="!codeVerificationInProgress && !_codeVerificationSucceeded">
+									{{ 'odm.account.security.two-step.setup-wizard.verify-button' | translate }}
+								</ng-container>
+							</button>
+						</div>
+					</form>
 				</div>
-			</ng-container>
-			<div>
-				<button mat-button matStepperPrevious color="accent">{{ 'odm.account.security.two-step.setup-wizard.back-button' | translate }}</button>
-				<button mat-button (click)="_onCancelClicked()" color="warn">{{ 'odm.account.security.setup-wizard.cancel-button' | translate }}</button>
-				<button mat-button (click)="_onRestartOrFinishClicked(stepper)" color="primary">
-					{{ twoFactorAuthenticationSetupResult?.status === 'Succeeded' ? 'Finish' : 'Restart' }}
-				</button>
-			</div>
-		</mat-step>
-	</mat-vertical-stepper>
+			</mat-step>
+			<mat-step>
+				<div class="final-step">
+					<ng-template matStepLabel>{{ 'odm.account.security.two-step.setup-wizard.last-step.title' | translate }}</ng-template>
+					<h3>{{ 'odm.account.security.two-step.setup-wizard.last-step.header' | translate }}</h3>
+					<p>{{ 'odm.account.security.two-step.setup-wizard.last-step.information' | translate }}</p>
+					<p>{{ 'odm.account.security.two-step.setup-wizard.last-step.save-codes' | translate }}</p>
+					<div>
+						<ol class="final-step__format-codes">
+							<li *ngFor="let code of _twoFactorAuthenticationSetupResult?.recoveryCodes?.items">{{ code }}</li>
+						</ol>
+					</div>
+					<div>
+						<button mat-button (click)="_onFinishSetup()" color="primary">
+							{{ 'odm.account.security.setup-wizard.finish-button' | translate }}
+						</button>
+					</div>
+				</div>
+			</mat-step>
+		</mat-vertical-stepper>
+	</div>
 </div>
 
-<ng-template #setupFailed>
-	<p>{{ 'odm.account.security.two-step.setup-wizard.error-message' | translate }}</p>
-</ng-template>
-
 <ng-template #loading>
-	<div class="basic-container">
-		<mat-spinner [strokeWidth]="_strokeWidth" color="primary" [diameter]="_qrWidth"></mat-spinner>
-		<ng-container *ngIf="internalServerErrorDetails">
-			<div>
-				<img src="../../../../../assets/skull.png" />
-				<h4 class="server-down">Server down</h4>
-			</div>
-		</ng-container>
-	</div>
+	<odm-spinner [strokeWidth]="_qrBarCodeSpinnerStrokeWidth" [diameter]="_qrBarCodeSpinnerDiameter"></odm-spinner>
 </ng-template>

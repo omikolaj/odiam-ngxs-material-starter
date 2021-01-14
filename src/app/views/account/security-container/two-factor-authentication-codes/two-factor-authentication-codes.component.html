@@ -8,24 +8,28 @@
 				[matTooltip]="'odm.account.security.two-step.recovery-codes.description' | translate"
 				[matTooltipShowDelay]="_showDelayInMs"
 				[matTooltipTouchGestures]="_touchGestrues"
-				class="truncate"
+				class="recovery-codes__truncate"
 			>
 				{{ 'odm.account.security.two-step.recovery-codes.description' | translate }}
-				<mat-icon class="user-secret"><fa-icon icon="user-secret"></fa-icon></mat-icon>
+				<mat-icon class="recovery-codes__user-secret"><fa-icon icon="user-secret"></fa-icon></mat-icon>
 			</mat-panel-description>
 		</mat-expansion-panel-header>
 
 		<div>
 			<h3>{{ 'odm.account.security.two-step.recovery-codes.header' | translate }}</h3>
 			<p>{{ 'odm.account.security.two-step.recovery-codes.subheader' | translate }}</p>
-			<ul>
+			<ol class="recovery-codes__format-codes">
 				<li *ngFor="let code of codes">
 					{{ code }}
 				</li>
-			</ul>
+			</ol>
 			<div>
-				<button mat-raised-button color="accent" (click)="_onGenerateNewRecoveryCodes()">
+				<button mat-raised-button color="accent" (click)="_onGenerateNewRecoveryCodes()" [disabled]="generatingCodes">
 					{{ 'odm.account.security.two-step.recovery-codes.generate' | translate }}
+					<ng-container *ngIf="generatingCodes">
+						<odm-spinner [type]="'button'" [diameter]="_generatingCodesSpinnerDiameter" [strokeWidth]="_generatingCodesSpinnerStrokeWidth">
+						</odm-spinner>
+					</ng-container>
 				</button>
 			</div>
 		</div>

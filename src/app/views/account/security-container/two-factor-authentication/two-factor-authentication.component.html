@@ -1,13 +1,13 @@
 <ng-container *ngIf="_showTwoFactorAuthSetupWizard === false; else twoFactorAuthenticationSetupWizard">
-	<div style="overflow: hidden;">
-		<div>
-			<div class="two-factor-settings">
-				<div class="two-factor-detail">
+	<div class="two-factor-settings" style="overflow: hidden;">
+		<div class="two-factor-settings__container">
+			<div class="two-factor-settings__details">
+				<div class="two-factor-settings__detail">
 					<h3>{{ 'odm.account.security.two-step.title' | translate }}</h3>
 					<span>{{ 'odm.account.security.two-step.subtitle' | translate }}</span>
 				</div>
 
-				<div class="two-factor-detail">
+				<div class="two-factor-settings__detail">
 					<mat-slide-toggle [checked]="twoFactorEnabled" (change)="_onTwoFactorAuthToggle($event)" color="primary"></mat-slide-toggle>
 				</div>
 			</div>
@@ -15,6 +15,7 @@
 			<ng-container *ngIf="twoFactorEnabled">
 				<odm-two-factor-authentication-details
 					[recoveryCodes]="userRecoveryCodes"
+					[generatingRecoveryCodes]="_generatingNewRecoveryCodes"
 					(generateNewRecoveryCodes)="_onGenerateNew2FaRecoveryCodes()"
 				></odm-two-factor-authentication-details>
 			</ng-container>
@@ -26,10 +27,12 @@
 	<odm-two-factor-authentication-setup-wizard
 		(verificationCodeSubmitted)="_onVerifyAuthenticator($event)"
 		(cancelSetupWizardClicked)="_onCancelSetupWizard()"
+		(finish2faSetupClicked)="_onFinish2faSetup($event)"
 		[verificationCodeForm]="_verificationCodeForm"
 		[twoFactorAuthenticationSetupResult]="_authenticatorSetupResult$ | async"
 		[twoFactorAuthenticationSetup]="_authenticatorSetup$ | async"
-		[problemDetails]="problemDetails"
-		[internalServerErrorDetails]="internalServerErrorDetails"
+		[problemDetails]="_problemDetails$ | async"
+		[internalServerErrorDetails]="_internalServerErrorDetails$ | async"
+		[codeVerificationInProgress]="_codeVerificationInProgress"
 	></odm-two-factor-authentication-setup-wizard>
 </ng-template>

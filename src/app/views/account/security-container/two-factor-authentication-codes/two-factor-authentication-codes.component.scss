@@ -1,22 +1,25 @@
 @import '../../../../../styles-variables.scss';
 
-.recovery-codes .mat-expansion-panel-header-description {
-	justify-content: space-between;
-	align-items: center;
-}
+.recovery-codes {
+	.mat-expansion-panel-header-description {
+		justify-content: space-between;
+		align-items: center;
+	}
 
-.user-secret {
-	display: block;
+	.recovery-codes__user-secret {
+		display: block;
+	}
+
+	.recovery-codes__format-codes {
+		columns: 2;
+		padding-left: 20px;
+	}
 }
 
 @media (max-width: map-get($grid-breakpoints, sm)) {
-	.truncate {
+	.recovery-codes__truncate {
 		display: -webkit-box;
 		-webkit-line-clamp: 2;
 		-webkit-box-orient: vertical;
-	}
-
-	.user-secret {
-		display: block;
 	}
 }

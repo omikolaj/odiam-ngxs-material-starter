@@ -1,10 +1,29 @@
+@import '../../../../../styles-variables.scss';
+
 .two-factor-settings {
+	overflow: hidden;
+
+	.two-factor-settings__container {
+		width: 100%;
+	}
+}
+
+.two-factor-settings__details {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	margin-bottom: 18.72px;
 
-	.two-factor-detail {
+	.two-factor-settings__detail {
 		display: inline-block;
+	}
+	.two-factor-settings__detail:last-child {
+		padding-right: 14px;
+	}
+}
+
+@media (min-width: map-get($grid-breakpoints, sm)) {
+	.two-factor-settings {
+		overflow: hidden;
 	}
 }

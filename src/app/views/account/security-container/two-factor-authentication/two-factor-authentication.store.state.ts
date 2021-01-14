@@ -8,9 +8,6 @@ import { TwoFactorAuthenticationSetupResult } from 'app/views/account/security-c
 
 const TWO_FACTOR_AUTHENTICATION_STATE_TOKEN = new StateToken<TwoFactorAuthenticationStateModel>('twoFactorAuthentication');
 
-/**
- * Two factor authentication state.
- */
 @State<TwoFactorAuthenticationStateModel>({
 	name: TWO_FACTOR_AUTHENTICATION_STATE_TOKEN,
 	defaults: {
@@ -25,6 +22,9 @@ const TWO_FACTOR_AUTHENTICATION_STATE_TOKEN = new StateToken<TwoFactorAuthentica
 	}
 })
 @Injectable()
+/**
+ * Two factor authentication state.
+ */
 export class TwoFactorAuthenticationState {
 	/**
 	 * Selects authenticator setup details.
@@ -91,12 +91,12 @@ export class TwoFactorAuthenticationState {
 	}
 
 	/**
-	 * Actions handler for setting authenticator setup result.
+	 * Actions handler for resetting two factor authentication.
 	 * @param ctx
 	 * @param action
 	 */
-	@Action(TwoFactorAuthentication.Disable2Fa)
-	disableTwoFactorAuthentication(ctx: StateContext<TwoFactorAuthenticationStateModel>): void {
+	@Action(TwoFactorAuthentication.Reset2fa)
+	resetTwoFactorAuthentication(ctx: StateContext<TwoFactorAuthenticationStateModel>): void {
 		ctx.setState(
 			produce((draft: TwoFactorAuthenticationStateModel) => {
 				draft = {

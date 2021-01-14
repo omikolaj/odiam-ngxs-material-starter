@@ -33,9 +33,9 @@ export class AuthenticatorVerificationResult {
 }
 
 /**
- * Disables two factor authentication.
+ * Resets two factor authentication to default.
  */
-export class Disable2Fa {
+export class Reset2fa {
 	/**
 	 * Type of action.
 	 */

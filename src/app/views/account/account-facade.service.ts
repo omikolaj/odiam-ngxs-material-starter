@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { TwoFactorAuthenticationAsyncService } from 'app/core/services/two-factor-authentication-async.service';
 import { tap } from 'rxjs/operators';
 import * as TwoFactorAuthentication from './security-container/two-factor-authentication/two-factor-authentication.store.actions';
-import { Store, Select } from '@ngxs/store';
+import { Store, Select, Actions, ofActionSuccessful } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { TwoFactorAuthenticationSetup } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-setup.model';
 import { TwoFactorAuthenticationVerificationCode } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-verification-code.model';
@@ -23,9 +23,21 @@ import { InternalServerErrorDetails } from 'app/core/models/internal-server-erro
  */
 @Injectable()
 export class AccountFacadeService {
+	/**
+	 * Problem details error for account module.
+	 */
 	@ProblemDetailsError() problemDetails$: Observable<ProblemDetails>;
+	/**
+	 * Internal server error for account model.
+	 */
 	@InternalServerError() internalServerErrorDetails$: Observable<InternalServerErrorDetails>;
+	/**
+	 * Selects account security details.
+	 */
 	@Select(AccountSecurityState.selectAccountSecurityDetails) accountSecurityDetails$: Observable<AccountSecurityDetails>;
+	/**
+	 * Selects two factor authentication setup details.
+	 */
 	@Select(TwoFactorAuthenticationState.selectAuthenticatorSetup)
 	twoFactorAuthenticationSetup$: Observable<TwoFactorAuthenticationSetup>;
 
@@ -36,6 +48,8 @@ export class AccountFacadeService {
 		TwoFactorAuthenticationSetupResult
 	>;
 
+	onSuccessfullUpdateRecoveryCodesAction$ = this.actions$.pipe(ofActionSuccessful(SecurityContainer.UpdateRecoveryCodes));
+
 	/**
 	 * Creates an instance of account facade service.
 	 * @param twoFactorAuthenticationAsync
@@ -43,7 +57,8 @@ export class AccountFacadeService {
 	constructor(
 		private twoFactorAuthenticationAsync: TwoFactorAuthenticationAsyncService,
 		private store: Store,
-		private userAsyncService: UsersAsyncService
+		private userAsyncService: UsersAsyncService,
+		private actions$: Actions
 	) {}
 
 	getUserProfile(): void {
@@ -87,6 +102,29 @@ export class AccountFacadeService {
 	}
 
 	/**
+	 * Cancels two factor authentication setup wizard.
+	 */
+	cancel2faSetupWizard(): void {
+		this.store.dispatch(new TwoFactorAuthentication.Reset2fa());
+	}
+
+	/**
+	 * Finalizes two factor authentication.
+	 * @param model
+	 */
+	finish2faSetup(model: TwoFactorAuthenticationSetupResult): void {
+		this.store.dispatch([
+			new TwoFactorAuthentication.Reset2fa(),
+			new SecurityContainer.UpdateTwoFactorAuthenticationSettings({
+				hasAuthenticator: true,
+				recoveryCodes: model.recoveryCodes,
+				recoveryCodesLeft: model.recoveryCodes.items.length,
+				twoFactorEnabled: model.status === 'Succeeded'
+			})
+		]);
+	}
+
+	/**
 	 * Generates recovery codes.
 	 */
 	generateRecoveryCodes(): void {
@@ -105,9 +143,8 @@ export class AccountFacadeService {
 			.pipe(
 				tap(() =>
 					this.store.dispatch([
-						new TwoFactorAuthentication.Disable2Fa(),
+						new TwoFactorAuthentication.Reset2fa(),
 						new SecurityContainer.UpdateTwoFactorAuthenticationSettings({
-							externalLogins: [],
 							hasAuthenticator: false,
 							recoveryCodes: {
 								items: []

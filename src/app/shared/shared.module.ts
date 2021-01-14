@@ -48,12 +48,14 @@ import {
 import { faMediumM, faGithub } from '@fortawesome/free-brands-svg-icons';
 import { GhostBlockComponent } from './components/ghost-block/ghost-block.component';
 import { GhostAnimationService } from './services/ghost-animation.service';
+import { OdmSpinnerComponent } from './components/odm-spinner/odm-spinner.component';
+import { MatVerticalStepperScrollerDirective } from './directives/mat-vertical-stepper-scroller.directive';
 
 /**
  * Shared module.
  */
 @NgModule({
-	declarations: [GhostBlockComponent],
+	declarations: [GhostBlockComponent, OdmSpinnerComponent, MatVerticalStepperScrollerDirective],
 	providers: [GhostAnimationService, { provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher }],
 	imports: [
 		CommonModule,
@@ -111,7 +113,9 @@ import { GhostAnimationService } from './services/ghost-animation.service';
 
 		FontAwesomeModule,
 
-		GhostBlockComponent
+		GhostBlockComponent,
+		OdmSpinnerComponent,
+		MatVerticalStepperScrollerDirective
 	]
 })
 export class SharedModule {

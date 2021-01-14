@@ -23,6 +23,11 @@ export class TwoFactorAuthenticationCodesComponent {
 	@Input() codes: string[] = [];
 
 	/**
+	 * Determines whether there is an outgoing request to generate new recovery codes.
+	 */
+	@Input() generatingCodes = false;
+
+	/**
 	 * Touch gestrues of two factor authentication codes component.
 	 */
 	_touchGestrues: TooltipTouchGestures = 'on';
@@ -31,6 +36,16 @@ export class TwoFactorAuthenticationCodesComponent {
 	 * Show delay in ms for toolip.
 	 */
 	_showDelayInMs = showDelayInMs;
+
+	/**
+	 * Generating recovery codes spinner diameter.
+	 */
+	_generatingCodesSpinnerDiameter = 15;
+
+	/**
+	 * Generating recovery codes spinner stroke width.
+	 */
+	_generatingCodesSpinnerStrokeWidth = 1;
 
 	/**
 	 * Creates an instance of two factor authentication codes component.

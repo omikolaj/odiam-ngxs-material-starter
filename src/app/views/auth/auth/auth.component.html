@@ -8,7 +8,7 @@
 					<input formControlName="email" matInput placeholder="example@gmail.com" type="email" autocomplete="email" required />
 					<mat-hint>
 						<ng-container *ngIf="_signupFormEmailControlStatusChanges$ | async as status">
-							<span *ngIf="status === 'PENDING' && !_isInternalServerError" class="check-availability-animation"
+							<span *ngIf="status === 'PENDING' && !_isInternalServerError" class="loading-dots-animation"
 								>Checking availability<span>.</span><span>.</span><span>.</span>
 							</span>
 							<span *ngIf="status === 'VALID'">

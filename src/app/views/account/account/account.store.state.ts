@@ -12,7 +12,6 @@ const ACCOUNT_STATE_TOKEN = new StateToken<AccountStateModel>('account');
 	defaults: {
 		email: '',
 		emailConfirmed: false,
-		externalLogins: [],
 		hasAuthenticator: false,
 		recoveryCodesLeft: '',
 		twoFactorClientRemembered: false,
@@ -46,7 +45,6 @@ export class DashboardState {
 			produce((draft: AccountStateModel) => {
 				draft.email = action.paylaod.email;
 				draft.emailConfirmed = action.paylaod.emailConfirmed;
-				draft.externalLogins = action.paylaod.externalLogins;
 				draft.hasAuthenticator = action.paylaod.hasAuthenticator;
 				draft.recoveryCodesLeft = action.paylaod.recoveryCodesLeft;
 				draft.twoFactorClientRemembered = action.paylaod.twoFactorClientRemembered;

@@ -1,7 +1,7 @@
-import { Component, ChangeDetectionStrategy, Input, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, OnInit, OnDestroy } from '@angular/core';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { AccountFacadeService } from '../../account-facade.service';
-import { Observable } from 'rxjs';
+import { Observable, merge, Subscription } from 'rxjs';
 import { TwoFactorAuthenticationSetup } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-setup.model';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { TwoFactorAuthenticationSetupResult } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-setup-result.model';
@@ -10,6 +10,8 @@ import { OdmValidators } from 'app/core/form-validators/odm-validators';
 import { TwoFactorAuthenticationVerificationCode } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-verification-code.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
+import { map } from 'rxjs/internal/operators/map';
+import { filter } from 'rxjs/internal/operators/filter';
 import { tap } from 'rxjs/internal/operators/tap';
 
 /**
@@ -21,7 +23,7 @@ import { tap } from 'rxjs/internal/operators/tap';
 	styleUrls: ['./two-factor-authentication.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TwoFactorAuthenticationComponent implements OnInit {
+export class TwoFactorAuthenticationComponent implements OnInit, OnDestroy {
 	/**
 	 * Show two factor auth setup wizard.
 	 */
@@ -30,12 +32,12 @@ export class TwoFactorAuthenticationComponent implements OnInit {
 	/**
 	 * Validation problem details$ of auth container component when form validations get passed angular but fail on the server.
 	 */
-	@Input() problemDetails: ProblemDetails;
+	_problemDetails$: Observable<ProblemDetails>;
 
 	/**
 	 * Internal server error details$ of auth container component.
 	 */
-	@Input() internalServerErrorDetails: InternalServerErrorDetails;
+	_internalServerErrorDetails$: Observable<InternalServerErrorDetails>;
 
 	/**
 	 * Initial state of the user's two factor authentication setting.
@@ -46,6 +48,11 @@ export class TwoFactorAuthenticationComponent implements OnInit {
 	 * Recovery codes user has left to redeem for logging in.
 	 */
 	@Input() userRecoveryCodes: string[] = [];
+
+	/**
+	 * Whether there is an outgoing request to generate new recovery codes.
+	 */
+	_generatingNewRecoveryCodes = false;
 
 	/**
 	 * Two factor authenticator setup.
@@ -63,6 +70,16 @@ export class TwoFactorAuthenticationComponent implements OnInit {
 	_authenticatorSetupResult$: Observable<TwoFactorAuthenticationSetupResult>;
 
 	/**
+	 * Whether we are in the middle of a request to verify 2fa setup verification code.
+	 */
+	_codeVerificationInProgress: boolean;
+
+	/**
+	 * Subscription for all manual subscriptions for TwoFactorAuthenticationComponent.
+	 */
+	private _subscription = new Subscription();
+
+	/**
 	 * Creates an instance of two factor authentication component.
 	 * @param facade
 	 * @param fb
@@ -71,6 +88,8 @@ export class TwoFactorAuthenticationComponent implements OnInit {
 	constructor(private facade: AccountFacadeService, private fb: FormBuilder, private logger: LogService) {
 		this._authenticatorSetup$ = facade.twoFactorAuthenticationSetup$;
 		this._authenticatorSetupResult$ = facade.twoFactorAuthenticationSetupResult$;
+		this._problemDetails$ = facade.problemDetails$;
+		this._internalServerErrorDetails$ = facade.internalServerErrorDetails$;
 	}
 
 	/**
@@ -78,7 +97,29 @@ export class TwoFactorAuthenticationComponent implements OnInit {
 	 */
 	ngOnInit(): void {
 		this.logger.trace('Initialized.', this);
+		this._subscription.add(
+			merge(this.facade.twoFactorAuthenticationSetupResult$, this.facade.problemDetails$, this.facade.internalServerErrorDetails$)
+				.pipe(
+					filter((value) => value !== undefined),
+					// set the _verfyingCode property to false if any of the above observables emit
+					tap(() => (this._codeVerificationInProgress = false))
+				)
+				.subscribe()
+		);
+
+		this._subscription.add(
+			this.facade.onSuccessfullUpdateRecoveryCodesAction$.pipe(tap(() => (this._generatingNewRecoveryCodes = false))).subscribe()
+		);
+
 		this._initVerificationCodeForm();
+	}
+
+	/**
+	 * NgOnDestroy life cycle.
+	 */
+	ngOnDestroy(): void {
+		this.logger.trace('Destroyed.', this);
+		this._subscription.unsubscribe();
 	}
 
 	/**
@@ -118,6 +159,18 @@ export class TwoFactorAuthenticationComponent implements OnInit {
 	_onCancelSetupWizard(): void {
 		this.logger.trace('_onCancelSetupWizard fired.', this);
 		this._showTwoFactorAuthSetupWizard = false;
+		this._verificationCodeForm.reset();
+		this.facade.cancel2faSetupWizard();
+	}
+
+	/**
+	 * Event handler when user finishes two factor authentication setup.
+	 */
+	_onFinish2faSetup(event: TwoFactorAuthenticationSetupResult): void {
+		this.logger.trace('_onFinish2faSetup fired.', this);
+		this._showTwoFactorAuthSetupWizard = false;
+		this._verificationCodeForm.reset();
+		this.facade.finish2faSetup(event);
 	}
 
 	/**
@@ -125,6 +178,7 @@ export class TwoFactorAuthenticationComponent implements OnInit {
 	 */
 	_onGenerateNew2FaRecoveryCodes(): void {
 		this.logger.trace('_onGenerateNew2FaRecoveryCodes fired.', this);
+		this._generatingNewRecoveryCodes = true;
 		this.facade.generateRecoveryCodes();
 	}
 
@@ -134,6 +188,7 @@ export class TwoFactorAuthenticationComponent implements OnInit {
 	 */
 	_onVerifyAuthenticator(event: TwoFactorAuthenticationVerificationCode): void {
 		this.logger.trace('_onVerifyAuthenticator fired.', this);
+		this._codeVerificationInProgress = true;
 		this.facade.verifyAuthenticator(event);
 	}
 }

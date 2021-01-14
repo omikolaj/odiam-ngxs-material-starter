@@ -1,0 +1,9 @@
+<div [ngClass]="type === 'default' ? 'default-spinner' : 'button-spinner'">
+	<mat-spinner [strokeWidth]="strokeWidth" color="primary" [diameter]="diameter"></mat-spinner>
+	<ng-container *ngIf="internalServerErrorDetails$ | async">
+		<div>
+			<img src="../../../../../assets/skull.png" />
+			<h4 class="default-spinner__server-down">Server down</h4>
+		</div>
+	</ng-container>
+</div>

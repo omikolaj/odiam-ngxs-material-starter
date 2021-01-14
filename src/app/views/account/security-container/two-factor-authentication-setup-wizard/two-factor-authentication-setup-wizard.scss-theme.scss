@@ -1,0 +1,9 @@
+@import '~@angular/material/theming';
+
+@mixin odm-two-factor-authentication-setup-wizard-component-theme($theme) {
+	$warn: map-get($theme, warn);
+
+	.req-not-met {
+		color: mat-color($warn);
+	}
+}

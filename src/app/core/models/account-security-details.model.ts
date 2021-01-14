@@ -15,11 +15,6 @@ export interface AccountSecurityDetails {
 	twoFactorEnabled: boolean;
 
 	/**
-	 * Any external logins for this user.
-	 */
-	externalLogins: string[];
-
-	/**
 	 * Number of recovery codes left.
 	 */
 	recoveryCodesLeft: number;

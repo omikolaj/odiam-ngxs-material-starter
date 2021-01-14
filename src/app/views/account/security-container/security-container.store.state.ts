@@ -10,7 +10,6 @@ const ACCOUNT_SECURITY_STATE_TOKEN = new StateToken<SecurityContainerStateModel>
 @State<SecurityContainerStateModel>({
 	name: ACCOUNT_SECURITY_STATE_TOKEN,
 	defaults: {
-		externalLogins: [],
 		hasAuthenticator: false,
 		recoveryCodes: {
 			items: []
