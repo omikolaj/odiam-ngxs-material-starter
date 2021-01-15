@@ -14,6 +14,18 @@
 		columns: 2;
 		padding-left: 20px;
 	}
+
+	.recovery-codes__error-hint {
+		padding-top: 8px;
+		display: block;
+
+		.recovery-codes__format-position {
+			width: 15px;
+			height: 15px;
+			vertical-align: text-top;
+			font-size: 15px;
+		}
+	}
 }
 
 @media (max-width: map-get($grid-breakpoints, sm)) {

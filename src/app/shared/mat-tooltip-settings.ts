@@ -1,1 +1,1 @@
-export const showDelayInMs = 700;
+export const ODM_TOOLTIP_SHOW_DELAY_IN_MS = 700;

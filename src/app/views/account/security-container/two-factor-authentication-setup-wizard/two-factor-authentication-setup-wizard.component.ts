@@ -5,7 +5,7 @@ import { LogService } from 'app/core/logger/log.service';
 import { TwoFactorAuthenticationVerificationCode } from '../two-factor-authentication/models/two-factor-authentication-verification-code.model';
 import { TwoFactorAuthenticationSetup } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-setup.model';
 import { ValidationMessage_Required } from 'app/shared/validation-messages';
-import { strokeWidth } from 'app/shared/mat-spinner-settings';
+import { ODM_SPINNER_DIAMETER, ODM_SPINNER_STROKE_WIDTH } from 'app/shared/mat-spinner-settings';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { implementsOdmWebApiException } from 'app/core/utilities/implements-odm-web-api-exception';
@@ -30,7 +30,7 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 	}
 
 	/**
-	 * Validation problem details$ of auth container component when form validations get passed angular but fail on the server.
+	 * Validation problem details of auth container component when form validations get passed angular but fail on the server.
 	 */
 	private _problemDetails: ProblemDetails;
 
@@ -156,12 +156,12 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 	/**
 	 * QR bar code spinner width.
 	 */
-	_qrBarCodeSpinnerDiameter = 225;
+	_qrBarCodeSpinnerDiameter = ODM_SPINNER_DIAMETER;
 
 	/**
 	 * QR bar code spinner stroke width.
 	 */
-	_qrBarCodeSpinnerStrokeWidth = strokeWidth;
+	_qrBarCodeSpinnerStrokeWidth = ODM_SPINNER_STROKE_WIDTH;
 
 	/**
 	 * Whether the two factor authentication setup is complete.

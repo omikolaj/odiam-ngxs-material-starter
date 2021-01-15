@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, Input, OnInit, OnDestroy } from '@angular/core';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { AccountFacadeService } from '../../account-facade.service';
-import { Observable, merge, Subscription } from 'rxjs';
+import { Observable, merge, Subscription, of, Subject } from 'rxjs';
 import { TwoFactorAuthenticationSetup } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-setup.model';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { TwoFactorAuthenticationSetupResult } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-setup-result.model';
@@ -10,7 +10,6 @@ import { OdmValidators } from 'app/core/form-validators/odm-validators';
 import { TwoFactorAuthenticationVerificationCode } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-verification-code.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
-import { map } from 'rxjs/internal/operators/map';
 import { filter } from 'rxjs/internal/operators/filter';
 import { tap } from 'rxjs/internal/operators/tap';
 
@@ -52,7 +51,7 @@ export class TwoFactorAuthenticationComponent implements OnInit, OnDestroy {
 	/**
 	 * Whether there is an outgoing request to generate new recovery codes.
 	 */
-	_generatingNewRecoveryCodes = false;
+	_generatingNewRecoveryCodes: boolean;
 
 	/**
 	 * Two factor authenticator setup.
@@ -108,7 +107,12 @@ export class TwoFactorAuthenticationComponent implements OnInit, OnDestroy {
 		);
 
 		this._subscription.add(
-			this.facade.onSuccessfullUpdateRecoveryCodesAction$.pipe(tap(() => (this._generatingNewRecoveryCodes = false))).subscribe()
+			merge(this.facade.onCompletedUpdateRecoveryCodesAction$, this.facade.problemDetails$, this.facade.internalServerErrorDetails$)
+				.pipe(
+					filter((value) => value !== undefined),
+					tap(() => (this._generatingNewRecoveryCodes = false))
+				)
+				.subscribe()
 		);
 
 		this._initVerificationCodeForm();

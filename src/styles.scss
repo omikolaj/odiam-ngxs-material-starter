@@ -21,6 +21,7 @@
 @import './app/views/auth/auth-container/auth-container.component.scss-theme.scss';
 @import './app/views/auth/auth/auth.component.scss-theme.scss';
 @import './app/views/account/security-container/two-factor-authentication-setup-wizard/two-factor-authentication-setup-wizard.scss-theme.scss';
+@import './app/views/account/security-container/two-factor-authentication-codes/two-factor-authentication-codes.scss-theme.scss';
 
 @mixin custom-components-theme($theme) {
 	@include odm-styles-reset-theme($theme);
@@ -31,6 +32,7 @@
 	@include odm-auth-container-component-theme($theme);
 	@include odm-auth-component-theme($theme);
 	@include odm-two-factor-authentication-setup-wizard-component-theme($theme);
+	@include odm-two-factor-authentication-codes-component-theme($theme);
 }
 
 .default-theme {

@@ -18,8 +18,8 @@
 		<div>
 			<h3>{{ 'odm.account.security.two-step.recovery-codes.header' | translate }}</h3>
 			<p>{{ 'odm.account.security.two-step.recovery-codes.subheader' | translate }}</p>
-			<ol class="recovery-codes__format-codes">
-				<li *ngFor="let code of codes">
+			<ol class="recovery-codes__format-codes blink">
+				<li *ngFor="let code of codes" @fadeIn>
 					{{ code }}
 				</li>
 			</ol>
@@ -31,6 +31,16 @@
 						</odm-spinner>
 					</ng-container>
 				</button>
+				<mat-hint class="recovery-codes__error-hint">
+					<span *ngIf="_isProblemDetailsError" @upDownFadeIn>
+						<mat-icon class="recovery-codes__req-not-met recovery-codes__format-position" matPrefix>{{ 'clear' }}</mat-icon>
+						{{ _getProblemDetailsErrorMessage() }}
+					</span>
+					<span *ngIf="_isInternalServerError" @upDownFadeIn>
+						<mat-icon class="recovery-codes__req-not-met recovery-codes__format-position" matPrefix>{{ 'clear' }}</mat-icon>
+						{{ _getInternalServerErrorMessage() }}
+					</span>
+				</mat-hint>
 			</div>
 		</div>
 	</mat-expansion-panel>

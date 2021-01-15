@@ -1,1 +1,3 @@
-export const strokeWidth = 4;
+export const ODM_SPINNER_STROKE_WIDTH = 4;
+
+export const ODM_SPINNER_DIAMETER = 225;

@@ -11,11 +11,12 @@
 					<mat-slide-toggle [checked]="twoFactorEnabled" (change)="_onTwoFactorAuthToggle($event)" color="primary"></mat-slide-toggle>
 				</div>
 			</div>
-
 			<ng-container *ngIf="twoFactorEnabled">
 				<odm-two-factor-authentication-details
 					[recoveryCodes]="userRecoveryCodes"
 					[generatingRecoveryCodes]="_generatingNewRecoveryCodes"
+					[problemDetails]="_problemDetails$ | async"
+					[internalServerErrorDetails]="_internalServerErrorDetails$ | async"
 					(generateNewRecoveryCodes)="_onGenerateNew2FaRecoveryCodes()"
 				></odm-two-factor-authentication-details>
 			</ng-container>

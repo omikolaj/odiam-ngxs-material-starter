@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { TwoFactorAuthenticationAsyncService } from 'app/core/services/two-factor-authentication-async.service';
 import { tap } from 'rxjs/operators';
 import * as TwoFactorAuthentication from './security-container/two-factor-authentication/two-factor-authentication.store.actions';
-import { Store, Select, Actions, ofActionSuccessful } from '@ngxs/store';
+import { Store, Select, Actions, ofActionSuccessful, ofActionCompleted } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { TwoFactorAuthenticationSetup } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-setup.model';
 import { TwoFactorAuthenticationVerificationCode } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-verification-code.model';
@@ -48,7 +48,7 @@ export class AccountFacadeService {
 		TwoFactorAuthenticationSetupResult
 	>;
 
-	onSuccessfullUpdateRecoveryCodesAction$ = this.actions$.pipe(ofActionSuccessful(SecurityContainer.UpdateRecoveryCodes));
+	onCompletedUpdateRecoveryCodesAction$ = this.actions$.pipe(ofActionCompleted(SecurityContainer.UpdateRecoveryCodes));
 
 	/**
 	 * Creates an instance of account facade service.
