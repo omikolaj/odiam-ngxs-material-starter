@@ -8,7 +8,7 @@
 					{{ 'odm.account.security.two-step.setup-wizard.instructions' | translate }}
 				</p>
 				<h3>{{ _twoFactorAuthenticationSetup?.sharedKey }}</h3>
-				<div *ngIf="_twoFactorAuthenticationSetup?.authenticatorUri; else loading">
+				<div>
 					<qrcode
 						[qrdata]="_twoFactorAuthenticationSetup?.authenticatorUri"
 						[width]="_qrBarCodeWidth"
@@ -82,7 +82,3 @@
 		</mat-vertical-stepper>
 	</div>
 </div>
-
-<ng-template #loading>
-	<odm-spinner [strokeWidth]="_qrBarCodeSpinnerStrokeWidth" [diameter]="_qrBarCodeSpinnerDiameter"></odm-spinner>
-</ng-template>

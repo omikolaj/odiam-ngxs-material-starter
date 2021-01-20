@@ -1,9 +1,9 @@
 @import '~@angular/material/theming';
 
-@mixin odm-two-factor-authentication-codes-component-theme($theme) {
+@mixin odm-two-factor-authentication-component-theme($theme) {
 	$warn: map-get($theme, warn);
 
-	.recovery-codes__req-not-met {
+	.two-factor-settings__req-not-met {
 		color: mat-color($warn);
 	}
 }

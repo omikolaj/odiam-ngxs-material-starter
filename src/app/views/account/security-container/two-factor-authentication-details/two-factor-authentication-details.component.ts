@@ -1,7 +1,6 @@
 import { Component, ChangeDetectionStrategy, EventEmitter, Output, Input } from '@angular/core';
 import { LogService } from 'app/core/logger/log.service';
-import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
-import { ProblemDetails } from 'app/core/models/problem-details.model';
+import { fadeInAnimation } from 'app/core/animations/element.animations';
 
 /**
  * Two factor authentication details component.
@@ -10,6 +9,7 @@ import { ProblemDetails } from 'app/core/models/problem-details.model';
 	selector: 'odm-two-factor-authentication-details',
 	templateUrl: './two-factor-authentication-details.component.html',
 	styleUrls: ['./two-factor-authentication-details.component.scss'],
+	animations: [fadeInAnimation],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TwoFactorAuthenticationDetailsComponent {
@@ -29,14 +29,9 @@ export class TwoFactorAuthenticationDetailsComponent {
 	@Input() generatingRecoveryCodes: boolean;
 
 	/**
-	 * Internal server error details$ of auth container component.
+	 * Whether the mat-expansien-panel should disallow user to expand it. Used only in child component odm-two-factor-authentication-codes.
 	 */
-	@Input() internalServerErrorDetails: InternalServerErrorDetails;
-
-	/**
-	 * When the request results in an error other than 50X server error.
-	 */
-	@Input() problemDetails: ProblemDetails;
+	@Input() disabled: boolean;
 
 	/**
 	 * Creates an instance of two factor authentication details component.

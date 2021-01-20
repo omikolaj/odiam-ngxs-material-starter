@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { TwoFactorAuthenticationAsyncService } from 'app/core/services/two-factor-authentication-async.service';
 import { tap } from 'rxjs/operators';
 import * as TwoFactorAuthentication from './security-container/two-factor-authentication/two-factor-authentication.store.actions';
-import { Store, Select, Actions, ofActionSuccessful, ofActionCompleted } from '@ngxs/store';
+import { Store, Select, Actions, ofActionCompleted } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { TwoFactorAuthenticationSetup } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-setup.model';
 import { TwoFactorAuthenticationVerificationCode } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-verification-code.model';
@@ -105,7 +105,7 @@ export class AccountFacadeService {
 	 * Cancels two factor authentication setup wizard.
 	 */
 	cancel2faSetupWizard(): void {
-		this.store.dispatch(new TwoFactorAuthentication.Reset2fa());
+		this.store.dispatch(new TwoFactorAuthentication.Reset2faSetupWizard());
 	}
 
 	/**
@@ -114,7 +114,7 @@ export class AccountFacadeService {
 	 */
 	finish2faSetup(model: TwoFactorAuthenticationSetupResult): void {
 		this.store.dispatch([
-			new TwoFactorAuthentication.Reset2fa(),
+			new TwoFactorAuthentication.Reset2faSetupWizard(),
 			new SecurityContainer.UpdateTwoFactorAuthenticationSettings({
 				hasAuthenticator: true,
 				recoveryCodes: model.recoveryCodes,
@@ -141,19 +141,7 @@ export class AccountFacadeService {
 		this.twoFactorAuthenticationAsync
 			.disable2Fa()
 			.pipe(
-				tap(() =>
-					this.store.dispatch([
-						new TwoFactorAuthentication.Reset2fa(),
-						new SecurityContainer.UpdateTwoFactorAuthenticationSettings({
-							hasAuthenticator: false,
-							recoveryCodes: {
-								items: []
-							},
-							recoveryCodesLeft: 0,
-							twoFactorEnabled: false
-						})
-					])
-				)
+				tap(() => this.store.dispatch([new TwoFactorAuthentication.Reset2faSetupWizard(), new SecurityContainer.DisableTwoFactorAuthentication()]))
 			)
 			.subscribe();
 	}

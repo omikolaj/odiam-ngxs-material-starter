@@ -34,6 +34,16 @@ export class UpdateTwoFactorAuthenticationSettings {
 }
 
 /**
+ * Disable two factor authentication.
+ */
+export class DisableTwoFactorAuthentication {
+	/**
+	 * Type of action.
+	 */
+	static readonly type = '[Security] Disables Two Factor Authentication';
+}
+
+/**
  * Updates recovery codes.
  */
 export class UpdateRecoveryCodes {

@@ -3,6 +3,7 @@
 		<odm-two-factor-authentication
 			[userRecoveryCodes]="accountSecurityDetails?.recoveryCodes?.items"
 			[twoFactorEnabled]="accountSecurityDetails?.twoFactorEnabled"
+			[loading]="_loading$ | async"
 		></odm-two-factor-authentication>
 		<div>
 			<h3>Change password</h3>

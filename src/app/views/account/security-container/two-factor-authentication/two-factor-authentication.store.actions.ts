@@ -8,7 +8,7 @@ export class SetupTwoFactorAuthentication {
 	/**
 	 * Type of action.
 	 */
-	static readonly type = '[2fa] Setup Two Factor Authentication';
+	static readonly type = '[2fa Setup] Setup Two Factor Authentication';
 	/**
 	 * Creates an instance of setup two factor authentication.
 	 * @param payload
@@ -23,7 +23,7 @@ export class AuthenticatorVerificationResult {
 	/**
 	 * Type of action.
 	 */
-	static readonly type = '[2fa] Authenticator Verification Result';
+	static readonly type = '[2fa Setup] Authenticator Verification Result';
 
 	/**
 	 * Creates an instance of authenticator verification result.
@@ -33,11 +33,11 @@ export class AuthenticatorVerificationResult {
 }
 
 /**
- * Resets two factor authentication to default.
+ * Resets two factor authentication setup wizard to defaults.
  */
-export class Reset2fa {
+export class Reset2faSetupWizard {
 	/**
 	 * Type of action.
 	 */
-	static readonly type = '[2fa] Disable Two Factor Authentication';
+	static readonly type = '[2fa Setup] Resets Two Factor Authentication Setup';
 }

@@ -86,4 +86,27 @@ export class AccountSecurityState {
 			})
 		);
 	}
+
+	/**
+	 * Actions handler that disables two factor authentication.
+	 * @param ctx
+	 * @param action
+	 */
+	@Action(SecurityContainer.DisableTwoFactorAuthentication)
+	disableTwoFactorAuthentication(ctx: StateContext<SecurityContainerStateModel>): void {
+		const defaults: SecurityContainerStateModel = {
+			hasAuthenticator: false,
+			recoveryCodes: {
+				items: []
+			},
+			recoveryCodesLeft: 0,
+			twoFactorEnabled: false
+		};
+		ctx.setState(
+			produce((draft: SecurityContainerStateModel) => {
+				draft = defaults;
+				return draft;
+			})
+		);
+	}
 }

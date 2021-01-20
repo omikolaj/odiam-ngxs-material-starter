@@ -1,7 +1,7 @@
-import { Component, ChangeDetectionStrategy, Input, OnInit, OnDestroy } from '@angular/core';
-import { MatSlideToggleChange } from '@angular/material/slide-toggle';
+import { Component, ChangeDetectionStrategy, Input, OnInit, OnDestroy, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { MatSlideToggleChange, MatSlideToggle } from '@angular/material/slide-toggle';
 import { AccountFacadeService } from '../../account-facade.service';
-import { Observable, merge, Subscription, of, Subject } from 'rxjs';
+import { Observable, merge, Subscription } from 'rxjs';
 import { TwoFactorAuthenticationSetup } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-setup.model';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { TwoFactorAuthenticationSetupResult } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-setup-result.model';
@@ -12,6 +12,9 @@ import { InternalServerErrorDetails } from 'app/core/models/internal-server-erro
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { filter } from 'rxjs/internal/operators/filter';
 import { tap } from 'rxjs/internal/operators/tap';
+import { fadeInAnimation, upDownFadeInAnimation } from 'app/core/animations/element.animations';
+import { skip } from 'rxjs/internal/operators/skip';
+import { implementsOdmWebApiException } from 'app/core/utilities/implements-odm-web-api-exception';
 
 /**
  * Component responsible for handling two factor authentication settings.
@@ -20,6 +23,7 @@ import { tap } from 'rxjs/internal/operators/tap';
 	selector: 'odm-two-factor-authentication',
 	templateUrl: './two-factor-authentication.component.html',
 	styleUrls: ['./two-factor-authentication.component.scss'],
+	animations: [fadeInAnimation, upDownFadeInAnimation],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TwoFactorAuthenticationComponent implements OnInit, OnDestroy {
@@ -39,6 +43,21 @@ export class TwoFactorAuthenticationComponent implements OnInit, OnDestroy {
 	_internalServerErrorDetails$: Observable<InternalServerErrorDetails>;
 
 	/**
+	 * Indicates whether problem details error has been handled.
+	 */
+	private _problemDetailsErrorHandled = false;
+
+	/**
+	 * Indicates whether internal server error has been handled.
+	 */
+	private _internalServerErrorHandled = false;
+
+	/**
+	 * Whether the two factor authentication data is being fetched.
+	 */
+	@Input() loading: boolean;
+
+	/**
 	 * Initial state of the user's two factor authentication setting.
 	 */
 	@Input() twoFactorEnabled: boolean;
@@ -52,6 +71,26 @@ export class TwoFactorAuthenticationComponent implements OnInit, OnDestroy {
 	 * Whether there is an outgoing request to generate new recovery codes.
 	 */
 	_generatingNewRecoveryCodes: boolean;
+
+	/**
+	 * Whether there is an outgoing request to enable/disable two factor authentication.
+	 */
+	_twoFactorAuthToggleLoading: boolean;
+
+	/**
+	 * Two factor auth toggle spinner diameter.
+	 */
+	_twoFactorAuthToggleSpinnerDiameter = 15;
+
+	/**
+	 * Two factor auth toggle spinner stroke width.
+	 */
+	_twoFactorAuthToggleSpinnerStrokeWidth = 1;
+
+	/**
+	 * MatSlideToggle for enabling/disabling two factor authentication.
+	 */
+	@ViewChild('slideToggle') twoFactorEnabledToggle: MatSlideToggle;
 
 	/**
 	 * Two factor authenticator setup.
@@ -78,17 +117,33 @@ export class TwoFactorAuthenticationComponent implements OnInit, OnDestroy {
 	 */
 	private _subscription = new Subscription();
 
+	// private _serverError$: Observable<ProblemDetails | InternalServerErrorDetails>;
+
 	/**
 	 * Creates an instance of two factor authentication component.
 	 * @param facade
 	 * @param fb
 	 * @param logger
 	 */
-	constructor(private facade: AccountFacadeService, private fb: FormBuilder, private logger: LogService) {
+	constructor(private facade: AccountFacadeService, private fb: FormBuilder, private logger: LogService, private cd: ChangeDetectorRef) {
 		this._authenticatorSetup$ = facade.twoFactorAuthenticationSetup$;
 		this._authenticatorSetupResult$ = facade.twoFactorAuthenticationSetupResult$;
-		this._problemDetails$ = facade.problemDetails$;
-		this._internalServerErrorDetails$ = facade.internalServerErrorDetails$;
+		this._problemDetails$ = facade.problemDetails$.pipe(
+			tap(() => {
+				// if problem details emitted it means its new thus not handled.
+				this._problemDetailsErrorHandled = false;
+				// only display one error either problem details or internal server error.
+				this._internalServerErrorHandled = true;
+			})
+		);
+		this._internalServerErrorDetails$ = facade.internalServerErrorDetails$.pipe(
+			tap(() => {
+				// if problem details emitted it means its new thus not handled.
+				this._internalServerErrorHandled = false;
+				// only display one error either problem details or internal server error.
+				this._problemDetailsErrorHandled = true;
+			})
+		);
 	}
 
 	/**
@@ -96,26 +151,72 @@ export class TwoFactorAuthenticationComponent implements OnInit, OnDestroy {
 	 */
 	ngOnInit(): void {
 		this.logger.trace('Initialized.', this);
+
 		this._subscription.add(
-			merge(this.facade.twoFactorAuthenticationSetupResult$, this.facade.problemDetails$, this.facade.internalServerErrorDetails$)
+			merge(
+				this.facade.twoFactorAuthenticationSetupResult$.pipe(skip(1)),
+				this.facade.onCompletedUpdateRecoveryCodesAction$,
+				this.facade.problemDetails$,
+				this.facade.internalServerErrorDetails$
+			)
 				.pipe(
 					filter((value) => value !== undefined),
 					// set the _verfyingCode property to false if any of the above observables emit
-					tap(() => (this._codeVerificationInProgress = false))
+					tap(() => {
+						this._codeVerificationInProgress = false;
+						this._generatingNewRecoveryCodes = false;
+					})
 				)
 				.subscribe()
 		);
 
 		this._subscription.add(
-			merge(this.facade.onCompletedUpdateRecoveryCodesAction$, this.facade.problemDetails$, this.facade.internalServerErrorDetails$)
+			merge(this.facade.twoFactorAuthenticationSetup$, this.facade.problemDetails$, this.facade.internalServerErrorDetails$)
 				.pipe(
 					filter((value) => value !== undefined),
-					tap(() => (this._generatingNewRecoveryCodes = false))
+					tap(() => {
+						// if twoFactorAuthenticationSetup or problemDetails or internalServerErrorDetails emit a value, set _twoFactorAuthToggleLoading to false.
+						this._twoFactorAuthToggleLoading = false;
+						// when setup wizard is displayed mat-slide-toggle is undefined. This is used control accurate state of the mat-slide-toggle.
+						// If request to disable the toggle fails, set it back to original value.
+						if (this.twoFactorEnabledToggle) {
+							this.twoFactorEnabledToggle.checked = this.twoFactorEnabled;
+						}
+					}),
+					// filter out any types that are not TwoFactorAuthenticationSetup
+					filter((value) => this._isTwoFactorAuthenticationSetup(value)),
+					// filter out any TwoFactorAuthenticationSetup that only contain default values.
+					filter((value: TwoFactorAuthenticationSetup) => this._doesTwoFactorAuthenticationSetupHaveValues(value)),
+					tap(() => {
+						this._showTwoFactorAuthSetupWizard = true;
+						// Manual change detection is necessary to display setup wizard.
+						this.cd.detectChanges();
+					})
 				)
 				.subscribe()
 		);
 
 		this._initVerificationCodeForm();
+	}
+
+	/**
+	 * Determines if TwoFactorAuthenticationSetup contains values sent from the server and not just defaults.
+	 * @param value
+	 * @returns true if two factor authentication setup have values
+	 */
+	_doesTwoFactorAuthenticationSetupHaveValues(value: TwoFactorAuthenticationSetup): boolean {
+		return value.authenticatorUri !== '' && value.sharedKey !== '';
+	}
+
+	/**
+	 * Determines whether value is of type TwoFactorAuthenticationSetup.
+	 * @param value
+	 * @returns TwoFactorAuthenticationSetup type.
+	 */
+	_isTwoFactorAuthenticationSetup(
+		value: TwoFactorAuthenticationSetup | ProblemDetails | InternalServerErrorDetails
+	): value is TwoFactorAuthenticationSetup {
+		return (value as TwoFactorAuthenticationSetup).authenticatorUri !== undefined && (value as TwoFactorAuthenticationSetup).sharedKey !== undefined;
 	}
 
 	/**
@@ -147,10 +248,16 @@ export class TwoFactorAuthenticationComponent implements OnInit, OnDestroy {
 	 */
 	_onTwoFactorAuthToggle(event: MatSlideToggleChange): void {
 		this.logger.trace('_onTwoFactorAuthToggle fired.', this);
+		this._twoFactorAuthToggleLoading = true;
+
+		// if any server errors were displayed set them all to handled.
+		this._internalServerErrorHandled = true;
+		this._problemDetailsErrorHandled = true;
+
 		if (event.checked) {
 			this.logger.trace('_onTwoFactorAuthToggle: enter 2fa setup.', this);
 			this.facade.setupAuthenticator();
-			this._showTwoFactorAuthSetupWizard = event.checked;
+			// this._showTwoFactorAuthSetupWizard = event.checked;
 		} else {
 			this.logger.trace('_onTwoFactorAuthToggle: disable 2fa.', this);
 			this.facade.disable2Fa();
@@ -194,5 +301,47 @@ export class TwoFactorAuthenticationComponent implements OnInit, OnDestroy {
 		this.logger.trace('_onVerifyAuthenticator fired.', this);
 		this._codeVerificationInProgress = true;
 		this.facade.verifyAuthenticator(event);
+	}
+
+	/**
+	 * Gets problem details error message.
+	 * @returns problem details error message
+	 */
+	_getProblemDetailsErrorMessage(error: ProblemDetails): string {
+		if (this._problemDetailsErrorHandled === false) {
+			return error.detail;
+		}
+	}
+
+	/**
+	 * Gets internal server error message.
+	 * @returns internal server error message
+	 */
+	_getInternalServerErrorMessage(error: InternalServerErrorDetails): string {
+		if (this._internalServerErrorHandled === false) {
+			if (implementsOdmWebApiException(error)) {
+				return error.detail;
+			} else {
+				return (error as InternalServerErrorDetails).message;
+			}
+		}
+	}
+
+	/**
+	 * Determines whether internal server error occured.
+	 * @param error
+	 * @returns true if internal server error
+	 */
+	_isInternalServerError(error: InternalServerErrorDetails): boolean {
+		return !!error && this._internalServerErrorHandled === false && !this.loading;
+	}
+
+	/**
+	 * Determines whether problem details error occured.
+	 * @param error
+	 * @returns true if problem details error
+	 */
+	_isProblemDetailsError(error: ProblemDetails): boolean {
+		return !!error && this._problemDetailsErrorHandled === false && !this.loading;
 	}
 }

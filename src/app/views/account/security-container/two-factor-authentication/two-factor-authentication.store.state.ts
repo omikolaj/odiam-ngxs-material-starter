@@ -23,7 +23,7 @@ const TWO_FACTOR_AUTHENTICATION_STATE_TOKEN = new StateToken<TwoFactorAuthentica
 })
 @Injectable()
 /**
- * Two factor authentication state.
+ * Setup state for two factor authentication. Maintains state for setting up, completing and resetting two factor authentication.
  */
 export class TwoFactorAuthenticationState {
 	/**
@@ -95,8 +95,8 @@ export class TwoFactorAuthenticationState {
 	 * @param ctx
 	 * @param action
 	 */
-	@Action(TwoFactorAuthentication.Reset2fa)
-	resetTwoFactorAuthentication(ctx: StateContext<TwoFactorAuthenticationStateModel>): void {
+	@Action(TwoFactorAuthentication.Reset2faSetupWizard)
+	resetTwoFactorAuthenticationSetupWizard(ctx: StateContext<TwoFactorAuthenticationStateModel>): void {
 		ctx.setState(
 			produce((draft: TwoFactorAuthenticationStateModel) => {
 				draft = {
