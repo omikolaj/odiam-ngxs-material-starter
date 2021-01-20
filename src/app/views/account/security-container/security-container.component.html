@@ -3,7 +3,20 @@
 		<odm-two-factor-authentication
 			[userRecoveryCodes]="accountSecurityDetails?.recoveryCodes?.items"
 			[twoFactorEnabled]="accountSecurityDetails?.twoFactorEnabled"
+			[generatingNewRecoveryCodes]="_generatingNewRecoveryCodes"
+			[codeVerificationInProgress]="_codeVerificationInProgress"
 			[loading]="_loading$ | async"
+			[twoFactorAuthToggleLoading]="_twoFactorAuthToggleLoading$ | async"
+			[verificationCodeForm]="_verificationCodeForm"
+			[authenticatorSetup]="_authenticatorSetup$ | async"
+			[authenticatorSetupResult]="_authenticatorSetupResult$ | async"
+			[problemDetails]="_problemDetails$ | async"
+			[internalServerErrorDetails]="_internalServerErrorDetails$ | async"
+			(verifyAuthenticatorClicked)="_verifyAuthenticatorClicked($event)"
+			(cancelSetupWizardClicked)="_cancelSetupWizardClicked()"
+			(finish2faSetupClicked)="_finish2faSetupClicked($event)"
+			(generateNew2faRecoveryCodesClicked)="_generateNew2faRecoveryCodesClicked()"
+			(twoFactorAuthToggleChanged)="_onTwoFactorAuthToggle($event)"
 		></odm-two-factor-authentication>
 		<div>
 			<h3>Change password</h3>

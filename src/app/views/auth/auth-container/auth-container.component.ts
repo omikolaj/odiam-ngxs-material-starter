@@ -34,7 +34,7 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	_problemDetails$: Observable<ProblemDetails>;
 
 	/**
-	 * Internal server error details$ of auth container component.
+	 * InternalServerErrorDetails for when server crashes and responds with 500 error.
 	 */
 	_internalServerErrorDetails$: Observable<InternalServerErrorDetails>;
 

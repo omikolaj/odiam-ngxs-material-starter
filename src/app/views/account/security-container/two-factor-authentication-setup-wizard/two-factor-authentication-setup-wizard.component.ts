@@ -40,7 +40,7 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 	_serverErrorHandled = false;
 
 	/**
-	 * Internal server error details for auth container component.
+	 * InternalServerErrorDetails for when server crashes and responds with 500 error.
 	 */
 	@Input() set internalServerErrorDetails(value: InternalServerErrorDetails) {
 		this._serverErrorHandled = false;
@@ -48,7 +48,7 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 	}
 
 	/**
-	 * Internal server error details for auth container component.
+	 * Internal server error details.
 	 */
 	_internalServerErrorDetails: InternalServerErrorDetails;
 

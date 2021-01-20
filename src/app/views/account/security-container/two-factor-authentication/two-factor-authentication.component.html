@@ -31,25 +31,21 @@
 						<odm-two-factor-authentication-details
 							[recoveryCodes]="userRecoveryCodes"
 							[disabled]="_twoFactorAuthToggleLoading"
-							[generatingRecoveryCodes]="_generatingNewRecoveryCodes"
+							[generatingRecoveryCodes]="generatingNewRecoveryCodes"
 							(generateNewRecoveryCodes)="_onGenerateNew2FaRecoveryCodes()"
 						></odm-two-factor-authentication-details>
 					</div>
 				</ng-container>
 			</ng-container>
 			<div class="two-factor-settings__error">
-				<ng-container *ngIf="_problemDetails$ | async as problemDetails">
-					<span *ngIf="_isProblemDetailsError(problemDetails)" @upDownFadeIn>
-						<mat-icon class="two-factor-settings__req-not-met two-factor-settings__error-format-position" matPrefix>{{ 'clear' }}</mat-icon>
-						{{ _getProblemDetailsErrorMessage(problemDetails) }}
-					</span>
-				</ng-container>
-				<ng-container *ngIf="_internalServerErrorDetails$ | async as internalServerErrorDetails">
-					<span *ngIf="_isInternalServerError(internalServerErrorDetails)" @upDownFadeIn>
-						<mat-icon class="two-factor-settings__req-not-met two-factor-settings__error-format-position" matPrefix>{{ 'clear' }}</mat-icon>
-						{{ _getInternalServerErrorMessage(internalServerErrorDetails) }}
-					</span>
-				</ng-container>
+				<span *ngIf="_problemDetails" @upDownFadeIn>
+					<mat-icon class="two-factor-settings__req-not-met two-factor-settings__error-format-position" matPrefix>{{ 'clear' }}</mat-icon>
+					{{ _getProblemDetailsErrorMessage() }}
+				</span>
+				<span *ngIf="_internalServerErrorDetails" @upDownFadeIn>
+					<mat-icon class="two-factor-settings__req-not-met two-factor-settings__error-format-position" matPrefix>{{ 'clear' }}</mat-icon>
+					{{ _getInternalServerErrorMessage() }}
+				</span>
 			</div>
 		</div>
 	</div>
@@ -60,12 +56,12 @@
 		(verificationCodeSubmitted)="_onVerifyAuthenticator($event)"
 		(cancelSetupWizardClicked)="_onCancelSetupWizard()"
 		(finish2faSetupClicked)="_onFinish2faSetup($event)"
-		[verificationCodeForm]="_verificationCodeForm"
-		[twoFactorAuthenticationSetupResult]="_authenticatorSetupResult$ | async"
-		[twoFactorAuthenticationSetup]="_authenticatorSetup$ | async"
-		[problemDetails]="_problemDetails$ | async"
-		[internalServerErrorDetails]="_internalServerErrorDetails$ | async"
-		[codeVerificationInProgress]="_codeVerificationInProgress"
+		[verificationCodeForm]="verificationCodeForm"
+		[twoFactorAuthenticationSetupResult]="authenticatorSetupResult"
+		[twoFactorAuthenticationSetup]="_authenticatorSetup"
+		[problemDetails]="_problemDetails"
+		[internalServerErrorDetails]="_internalServerErrorDetails"
+		[codeVerificationInProgress]="codeVerificationInProgress"
 	></odm-two-factor-authentication-setup-wizard>
 </ng-template>
 
