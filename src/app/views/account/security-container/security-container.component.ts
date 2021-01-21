@@ -1,19 +1,18 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ContentChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { AccountFacadeService } from '../account-facade.service';
-import { Observable, Subscription, merge, Subject, BehaviorSubject } from 'rxjs';
+import { Observable, Subscription, merge, BehaviorSubject } from 'rxjs';
 import { AccountSecurityDetails } from 'app/core/models/account-security-details.model';
 import { LogService } from 'app/core/logger/log.service';
 import { tap } from 'rxjs/internal/operators/tap';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { skip, filter } from 'rxjs/operators';
-import { ODM_SPINNER_DIAMETER, ODM_SPINNER_STROKE_WIDTH } from 'app/shared/mat-spinner-settings';
 import { TwoFactorAuthenticationSetupResult } from './two-factor-authentication/models/two-factor-authentication-setup-result.model';
 import { TwoFactorAuthenticationSetup } from './two-factor-authentication/models/two-factor-authentication-setup.model';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { OdmValidators } from 'app/core/form-validators/odm-validators';
 import { TwoFactorAuthenticationVerificationCode } from './two-factor-authentication/models/two-factor-authentication-verification-code.model';
-import { MatSlideToggleChange, MatSlideToggle } from '@angular/material/slide-toggle';
+import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 
 /**
  * Component container that houses user security functionality.
@@ -30,16 +29,15 @@ export class SecurityContainerComponent implements OnInit {
 	 */
 	_accountSecurityDetails$: Observable<AccountSecurityDetails>;
 
+	/**
+	 * Emitted when server responds with 40X error.
+	 */
 	_problemDetails$: Observable<ProblemDetails>;
 
 	/**
-	 * InternalServerErrorDetails for when server crashes and responds with 500 error.
+	 * Emitted when server crashes and responds with 50X error.
 	 */
 	_internalServerErrorDetails$: Observable<InternalServerErrorDetails>;
-
-	_strokeWidth = ODM_SPINNER_STROKE_WIDTH;
-
-	_diameter = ODM_SPINNER_DIAMETER;
 
 	/**
 	 * Authenticator setup result model.
@@ -77,25 +75,37 @@ export class SecurityContainerComponent implements OnInit {
 	_showTwoFactorAuthSetupWizard: boolean;
 
 	/**
-	 * Security container needs to manually emit loading values because when its loading two-factor-authentication component
-	 * it is not binding any observables in the template so changing the loading value does not trigger change detection
+	 * Loading subject. Required for angular OnPush change detection to be triggered.
 	 */
 	private _loadingSub = new BehaviorSubject<boolean>(false);
 
+	/**
+	 * Whether this component is fetching data for the view.
+	 */
 	_loading$ = this._loadingSub.asObservable();
 
+	/**
+	 * Loading subject. Required for angular OnPush change detection to be triggered.
+	 */
 	private _twoFactorAuthToggleLoadingSub = new BehaviorSubject<boolean>(false);
 
+	/**
+	 * Whether there is an outgoing request to enable/disable two factor authentication setting.
+	 */
 	_twoFactorAuthToggleLoading$ = this._twoFactorAuthToggleLoadingSub.asObservable();
 
+	/**
+	 * Subscriptions for this component.
+	 */
 	private _subscription = new Subscription();
 
-	@ContentChild(MatSlideToggle) twoFactorEnabledToggle: MatSlideToggle;
 	/**
 	 * Creates an instance of security container component.
 	 * @param facade
+	 * @param logger
+	 * @param fb
 	 */
-	constructor(private facade: AccountFacadeService, private logger: LogService, private fb: FormBuilder, private cd: ChangeDetectorRef) {
+	constructor(private facade: AccountFacadeService, private logger: LogService, private fb: FormBuilder) {
 		this._accountSecurityDetails$ = facade.accountSecurityDetails$;
 		this._authenticatorSetup$ = facade.twoFactorAuthenticationSetup$;
 		this._authenticatorSetupResult$ = facade.twoFactorAuthenticationSetupResult$;
@@ -108,23 +118,19 @@ export class SecurityContainerComponent implements OnInit {
 	 */
 	ngOnInit(): void {
 		this.logger.trace('Initialized.', this);
+
 		this._loadingSub.next(true);
 		this.facade.getAccountSecurityInfo();
 
 		this._subscription.add(
-			merge(this.facade.accountSecurityDetails$.pipe(skip(1)), this.facade.problemDetails$, this.facade.internalServerErrorDetails$)
-				.pipe(
-					filter((value) => value !== undefined),
-					tap(() => this._loadingSub.next(false))
-				)
-				.subscribe()
-		);
-
-		this._subscription.add(
 			merge(
+				// skip first value that emits, which is the default value.
+				this.facade.accountSecurityDetails$.pipe(skip(1)),
+				// skip first value that emits, which is the default value.
 				this.facade.twoFactorAuthenticationSetupResult$.pipe(skip(1)),
 				this.facade.onCompletedUpdateRecoveryCodesAction$,
-				this.facade.twoFactorAuthenticationSetup$,
+				// skip first value that emits, which is the default value.
+				this.facade.twoFactorAuthenticationSetup$.pipe(skip(1)),
 				this.facade.problemDetails$,
 				this.facade.internalServerErrorDetails$
 			)
@@ -136,9 +142,10 @@ export class SecurityContainerComponent implements OnInit {
 						this._codeVerificationInProgress = false;
 						// manual subject is NOT necessary because when _generatingNewRecoveryCodes changes to false, onCompletedUpdateRecoveryCodesAction$ emits.
 						this._generatingNewRecoveryCodes = false;
-
-						// manual subject is necessary because when twoFactoAuthToggle changes nothing else that is bound in the template emits any values.
+						// manual subject is necessary because when twoFactoAuthToggle changes nothing else emits so OnPush change detection is not triggered.
 						this._twoFactorAuthToggleLoadingSub.next(false);
+						// manual subject is necessary because when loading changes nothing else emits so OnPush change detection is not triggered.
+						this._loadingSub.next(false);
 					})
 				)
 				.subscribe()

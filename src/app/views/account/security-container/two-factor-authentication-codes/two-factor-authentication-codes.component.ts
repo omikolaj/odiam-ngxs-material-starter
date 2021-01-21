@@ -3,6 +3,7 @@ import { TooltipTouchGestures } from '@angular/material/tooltip';
 import { ODM_TOOLTIP_SHOW_DELAY_IN_MS } from 'app/shared/mat-tooltip-settings';
 import { LogService } from 'app/core/logger/log.service';
 import { upDownFadeInAnimation, fadeInAnimation } from 'app/core/animations/element.animations';
+import { MatAccordionTogglePosition } from '@angular/material/expansion';
 
 /**
  * Two factor authentication codes component.
@@ -19,6 +20,9 @@ export class TwoFactorAuthenticationCodesComponent {
 	 * Event emitter when user requests to generate new recovery codes.
 	 */
 	@Output() generateNewRecoveryCodes = new EventEmitter<void>();
+
+	@Output() userCodesPanelClosed = new EventEmitter<void>();
+
 	/**
 	 * Recovery codes user has left to redeem for logging in.
 	 */
@@ -66,5 +70,10 @@ export class TwoFactorAuthenticationCodesComponent {
 	_onGenerateNewRecoveryCodes(): void {
 		this.logger.trace('_onGenerateNewRecoveryCodes fired.', this);
 		this.generateNewRecoveryCodes.emit();
+	}
+
+	_onUserCodesClosed(): void {
+		this.logger.trace('_onTogglePosition fired.', this);
+		this.userCodesPanelClosed.emit();
 	}
 }

@@ -29,12 +29,12 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	_routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
 
 	/**
-	 * Validation problem details$ of auth container component when form validations get passed angular but fail on the server.
+	 * Emitted when server responds with 40X error.
 	 */
 	_problemDetails$: Observable<ProblemDetails>;
 
 	/**
-	 * InternalServerErrorDetails for when server crashes and responds with 500 error.
+	 * InternalServerErrorDetails for when server crashes and responds with 50X error.
 	 */
 	_internalServerErrorDetails$: Observable<InternalServerErrorDetails>;
 
@@ -54,7 +54,7 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	private _rememberMe$: Observable<boolean>;
 
 	/**
-	 * Subscription of auth container component.
+	 * Subscriptions for this component.
 	 */
 	private _subscription = new Subscription();
 

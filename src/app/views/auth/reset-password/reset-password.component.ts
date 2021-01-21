@@ -31,7 +31,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
 	_resetPasswordForm: FormGroup;
 
 	/**
-	 * ProblemDetails for when server responds with validation error.
+	 * Emitted when server responds with 40X error.
 	 */
 	set problemDetails(value: Observable<ProblemDetails>) {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -49,7 +49,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
 	}
 
 	/**
-	 * InternalServerErrorDetails for when server crashes and responds with 500 error.
+	 * InternalServerErrorDetails for when server crashes and responds with 50X error.
 	 */
 	set internalServerErrorDetails(value: Observable<InternalServerErrorDetails>) {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -160,7 +160,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
 	private _problemDetails: ProblemDetails;
 
 	/**
-	 * Subscription for the reset password component.
+	 * Subscriptions for this component.
 	 */
 	private _subscription = new Subscription();
 

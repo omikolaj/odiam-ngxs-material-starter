@@ -31,7 +31,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	@Output() rememberMeChanged = new EventEmitter<boolean>();
 
 	/**
-	 * ProblemDetails for when server responds with validation error.
+	 * Emitted when server responds with 40X error.
 	 */
 	@Input() set problemDetails(value: ProblemDetails) {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -41,7 +41,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	}
 
 	/**
-	 * InternalServerErrorDetails for when server crashes and responds with 500 error.
+	 * InternalServerErrorDetails for when server crashes and responds with 50X error.
 	 */
 	@Input() internalServerErrorDetails: InternalServerErrorDetails;
 
@@ -181,7 +181,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	private _problemDetails: ProblemDetails;
 
 	/**
-	 * Subscription of auth component.
+	 * Subscriptions for this component.
 	 */
 	private _subscription: Subscription = new Subscription();
 

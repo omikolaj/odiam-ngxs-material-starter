@@ -9,7 +9,6 @@ import { AccountComponent } from './account/account.component';
 import { DashboardState } from './account/account.store.state';
 import { GeneralComponent } from './general/general.component';
 import { SecurityContainerComponent } from './security-container/security-container.component';
-import { TwoFactorAuthenticationDetailsComponent } from './security-container/two-factor-authentication-details/two-factor-authentication-details.component';
 import { TwoFactorAuthenticationCodesComponent } from './security-container/two-factor-authentication-codes/two-factor-authentication-codes.component';
 import { AccountSecurityState } from './security-container/security-container.store.state';
 import { TwoFactorAuthenticationSetupWizardComponent } from './security-container/two-factor-authentication-setup-wizard/two-factor-authentication-setup-wizard.component';
@@ -25,7 +24,6 @@ import { TwoFactorAuthenticationState } from './security-container/two-factor-au
 		GeneralComponent,
 		SecurityContainerComponent,
 		TwoFactorAuthenticationComponent,
-		TwoFactorAuthenticationDetailsComponent,
 		TwoFactorAuthenticationCodesComponent,
 		TwoFactorAuthenticationSetupWizardComponent
 	],

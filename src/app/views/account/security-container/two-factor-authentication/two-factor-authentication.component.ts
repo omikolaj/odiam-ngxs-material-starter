@@ -9,6 +9,7 @@ import { InternalServerErrorDetails } from 'app/core/models/internal-server-erro
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { fadeInAnimation, upDownFadeInAnimation } from 'app/core/animations/element.animations';
 import { implementsOdmWebApiException } from 'app/core/utilities/implements-odm-web-api-exception';
+import { MatAccordionTogglePosition } from '@angular/material/expansion';
 
 /**
  * Component responsible for handling two factor authentication settings.
@@ -21,29 +22,28 @@ import { implementsOdmWebApiException } from 'app/core/utilities/implements-odm-
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TwoFactorAuthenticationComponent {
+	/**
+	 * Emitted when server responds with 40X error.
+	 */
 	@Input() set problemDetails(value: ProblemDetails) {
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const _ = value ? this.logger.debug('Problem details emitted.', this) : null;
 		this._internalServerErrorDetails = null;
 		this._problemDetails = value;
 	}
 
-	/**
-	 * Validation problem details$ of auth container component when form validations get passed angular but fail on the server.
-	 */
 	_problemDetails: ProblemDetails;
 
 	/**
-	 * Internal server error details.
+	 * Emitted when server crashes and responds with 50X error.
 	 */
 	@Input() set internalServerErrorDetails(value: InternalServerErrorDetails) {
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const _ = value ? this.logger.debug('Internal server error emitted.', this) : null;
 		this._problemDetails = null;
 		this._internalServerErrorDetails = value;
 	}
 
-	/**
-	 * Internal server error details.
-	 */
 	_internalServerErrorDetails: InternalServerErrorDetails;
 
 	/**
@@ -52,7 +52,7 @@ export class TwoFactorAuthenticationComponent {
 	@Input() loading: boolean;
 
 	/**
-	 * Initial state of the user's two factor authentication setting.
+	 * User's two factor authentication setting state.
 	 */
 	@Input() twoFactorEnabled: boolean;
 
@@ -91,9 +91,6 @@ export class TwoFactorAuthenticationComponent {
 		}
 	}
 
-	/**
-	 * Two factor authentication setup information.
-	 */
 	_authenticatorSetup: TwoFactorAuthenticationSetup;
 
 	/**
@@ -162,7 +159,7 @@ export class TwoFactorAuthenticationComponent {
 	_showTwoFactorAuthSetupWizard = false;
 
 	/**
-	 * Checks if internal server error implements problem details.
+	 * Checks if internal server error implements OdmWebAPiException.
 	 */
 	private get _doesInternalServerErrorImplementOdmWebApiException(): boolean {
 		return implementsOdmWebApiException(this._internalServerErrorDetails);
@@ -170,8 +167,6 @@ export class TwoFactorAuthenticationComponent {
 
 	/**
 	 * Creates an instance of two factor authentication component.
-	 * @param facade
-	 * @param fb
 	 * @param logger
 	 */
 	constructor(private logger: LogService) {}
@@ -224,6 +219,11 @@ export class TwoFactorAuthenticationComponent {
 		this.verifyAuthenticatorClicked.emit(event);
 	}
 
+	_onUserCodesPanelClosed(): void {
+		this.logger.trace('_onToggleUserCodeExpasionPanel fired.', this);
+		this._removeServerErrors();
+	}
+
 	/**
 	 * Gets problem details error message.
 	 * @returns problem details error message
@@ -246,7 +246,11 @@ export class TwoFactorAuthenticationComponent {
 		return errorDescription;
 	}
 
+	/**
+	 * Clears all server errors.
+	 */
 	private _removeServerErrors(): void {
+		this.logger.trace('_removeServerErrors errors fired.', this);
 		this._problemDetails = null;
 		this._internalServerErrorDetails = null;
 	}

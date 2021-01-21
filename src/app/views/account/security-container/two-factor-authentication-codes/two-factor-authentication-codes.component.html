@@ -1,5 +1,5 @@
 <mat-accordion class="recovery-codes">
-	<mat-expansion-panel [disabled]="disabled">
+	<mat-expansion-panel [disabled]="disabled" (closed)="_onUserCodesClosed()">
 		<mat-expansion-panel-header>
 			<mat-panel-title>
 				{{ 'odm.account.security.two-step.recovery-codes.title' | translate }}

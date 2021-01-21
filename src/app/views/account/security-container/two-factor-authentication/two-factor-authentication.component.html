@@ -1,53 +1,54 @@
 <ng-container *ngIf="_showTwoFactorAuthSetupWizard === false; else twoFactorAuthenticationSetupWizard">
-	<div class="two-factor-settings" style="overflow: hidden;">
-		<div class="two-factor-settings__container">
-			<h3>{{ 'odm.account.security.two-step.title' | translate }}</h3>
-			<ng-container *ngIf="!loading; else loadingState">
-				<div [ngClass]="twoFactorEnabled ? 'two-factor-settings__extra-margin' : null" class="two-factor-settings__details" @fadeIn>
-					<div class="two-factor-settings__detail">
-						<span>{{ 'odm.account.security.two-step.subtitle' | translate }}</span>
-					</div>
-					<div class="two-factor-settings__detail" @fadeIn>
+	<div class="two-factor-settings">
+		<!-- <div class="two-factor-settings__container"> -->
+		<h3>{{ 'odm.account.security.two-step.title' | translate }}</h3>
+		<ng-container *ngIf="!loading; else loadingState">
+			<div [ngClass]="twoFactorEnabled ? 'two-factor-settings__extra-margin' : null" class="two-factor-settings__state" @fadeIn>
+				<div class="two-factor-settings__short-description">
+					<span>{{ 'odm.account.security.two-step.subtitle' | translate }}</span>
+				</div>
+				<div class="two-factor-settings__toggle-state" @fadeIn>
+					<div class="two-factor-settings__toggle-state-spinner-container">
 						<ng-container *ngIf="_twoFactorAuthToggleLoading">
-							<odm-spinner
-								class="two-factor-settings__disable-2fa"
-								[type]="'button'"
-								[diameter]="_twoFactorAuthToggleSpinnerDiameter"
-								[strokeWidth]="_twoFactorAuthToggleSpinnerStrokeWidth"
-							>
+							<odm-spinner [type]="'button'" [diameter]="_twoFactorAuthToggleSpinnerDiameter" [strokeWidth]="_twoFactorAuthToggleSpinnerStrokeWidth">
 							</odm-spinner>
 						</ng-container>
-						<mat-slide-toggle
-							#slideToggle
+					</div>
+					<mat-slide-toggle
+						#slideToggle
+						[disabled]="_twoFactorAuthToggleLoading"
+						[checked]="twoFactorEnabled"
+						(change)="_onTwoFactorAuthToggle($event)"
+						color="primary"
+					></mat-slide-toggle>
+				</div>
+			</div>
+			<ng-container *ngIf="twoFactorEnabled">
+				<div @fadeIn>
+					<div class="two-factor-settings__user-recovery-codes">
+						<odm-two-factor-authentication-codes
+							[codes]="userRecoveryCodes"
 							[disabled]="_twoFactorAuthToggleLoading"
-							[checked]="twoFactorEnabled"
-							(change)="_onTwoFactorAuthToggle($event)"
-							color="primary"
-						></mat-slide-toggle>
+							[generatingCodes]="generatingNewRecoveryCodes"
+							(generateNewRecoveryCodes)="_onGenerateNew2FaRecoveryCodes()"
+							(userCodesPanelClosed)="_onUserCodesPanelClosed()"
+						>
+						</odm-two-factor-authentication-codes>
 					</div>
 				</div>
-				<ng-container *ngIf="twoFactorEnabled">
-					<div @fadeIn>
-						<odm-two-factor-authentication-details
-							[recoveryCodes]="userRecoveryCodes"
-							[disabled]="_twoFactorAuthToggleLoading"
-							[generatingRecoveryCodes]="generatingNewRecoveryCodes"
-							(generateNewRecoveryCodes)="_onGenerateNew2FaRecoveryCodes()"
-						></odm-two-factor-authentication-details>
-					</div>
-				</ng-container>
 			</ng-container>
-			<div class="two-factor-settings__error">
-				<span *ngIf="_problemDetails" @upDownFadeIn>
-					<mat-icon class="two-factor-settings__req-not-met two-factor-settings__error-format-position" matPrefix>{{ 'clear' }}</mat-icon>
-					{{ _getProblemDetailsErrorMessage() }}
-				</span>
-				<span *ngIf="_internalServerErrorDetails" @upDownFadeIn>
-					<mat-icon class="two-factor-settings__req-not-met two-factor-settings__error-format-position" matPrefix>{{ 'clear' }}</mat-icon>
-					{{ _getInternalServerErrorMessage() }}
-				</span>
-			</div>
+		</ng-container>
+		<div class="two-factor-settings__error">
+			<span *ngIf="_problemDetails" @upDownFadeIn>
+				<mat-icon class="two-factor-settings__req-not-met two-factor-settings__error-format-position" matPrefix>{{ 'clear' }}</mat-icon>
+				{{ _getProblemDetailsErrorMessage() }}
+			</span>
+			<span *ngIf="_internalServerErrorDetails" @upDownFadeIn>
+				<mat-icon class="two-factor-settings__req-not-met two-factor-settings__error-format-position" matPrefix>{{ 'clear' }}</mat-icon>
+				{{ _getInternalServerErrorMessage() }}
+			</span>
 		</div>
+		<!-- </div> -->
 	</div>
 </ng-container>
 
@@ -66,10 +67,10 @@
 </ng-template>
 
 <ng-template #loadingState>
-	<div class="two-factor-settings__loading-detail-state">
+	<div class="two-factor-settings__ghost-loading-state">
 		<odm-ghost-block></odm-ghost-block>
 	</div>
-	<div class="two-factor-settings__loading-detail-codes">
+	<div class="two-factor-settings__ghost-loading-codes">
 		<odm-ghost-block></odm-ghost-block>
 	</div>
 </ng-template>

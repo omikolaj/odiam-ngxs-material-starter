@@ -2,52 +2,55 @@
 
 .two-factor-settings {
 	overflow: hidden;
+	width: 100%;
 
-	.two-factor-settings__container {
-		width: 100%;
+	.two-factor-settings__user-recovery-codes {
+		border: solid 1px rgba(0, 0, 0, 0.15);
+	}
 
-		.two-factor-settings__error {
-			padding-top: 8px;
-			display: block;
+	.two-factor-settings__error {
+		padding-top: 8px;
+		display: block;
+		font-size: 15px;
+
+		.two-factor-settings__error-format-position {
+			width: 15px;
+			height: 15px;
+			vertical-align: text-top;
 			font-size: 15px;
-
-			.two-factor-settings__error-format-position {
-				width: 15px;
-				height: 15px;
-				vertical-align: text-top;
-				font-size: 15px;
-			}
 		}
+	}
 
-		.two-factor-settings__loading-detail-state {
-			height: 56px;
-			padding: 8px 0;
-		}
+	.two-factor-settings__ghost-loading-state {
+		height: 56px;
+		padding: 8px 0;
+	}
 
-		.two-factor-settings__loading-detail-codes {
-			height: 40px;
-		}
+	.two-factor-settings__ghost-loading-codes {
+		height: 40px;
+	}
 
-		.two-factor-settings__extra-margin {
-			margin-bottom: 18.72px;
-		}
+	.two-factor-settings__extra-margin {
+		margin-bottom: 18.72px;
+	}
 
-		.two-factor-settings__details {
+	.two-factor-settings__state {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+
+		.two-factor-settings__short-description {
 			display: flex;
-			align-items: center;
-			justify-content: space-between;
+		}
 
-			.two-factor-settings__detail {
-				display: flex;
+		.two-factor-settings__toggle-state {
+			padding-right: 10px;
+			align-self: flex-end;
+			display: flex;
 
-				.two-factor-settings__disable-2fa {
-					padding-right: 10px;
-				}
-			}
-
-			.two-factor-settings__detail:last-child {
-				padding-right: 10px;
-				align-self: flex-end;
+			.two-factor-settings__toggle-state-spinner-container {
+				width: 24px;
+				margin: 0 10px;
 			}
 		}
 	}
@@ -71,3 +74,81 @@
 		overflow: hidden;
 	}
 }
+
+// @import '../../../../../styles-variables.scss';
+
+// .two-factor-settings {
+// 	overflow: hidden;
+
+// 	.two-factor-settings__container {
+// 		width: 100%;
+
+// 		.two-factor-settings__user-recovery-codes {
+// 			border: solid 1px rgba(0, 0, 0, 0.15);
+// 		}
+
+// 		.two-factor-settings__error {
+// 			padding-top: 8px;
+// 			display: block;
+// 			font-size: 15px;
+
+// 			.two-factor-settings__error-format-position {
+// 				width: 15px;
+// 				height: 15px;
+// 				vertical-align: text-top;
+// 				font-size: 15px;
+// 			}
+// 		}
+
+// 		.two-factor-settings__loading-detail-state {
+// 			height: 56px;
+// 			padding: 8px 0;
+// 		}
+
+// 		.two-factor-settings__loading-detail-codes {
+// 			height: 40px;
+// 		}
+
+// 		.two-factor-settings__extra-margin {
+// 			margin-bottom: 18.72px;
+// 		}
+
+// 		.two-factor-settings__details {
+// 			display: flex;
+// 			align-items: center;
+// 			justify-content: space-between;
+
+// 			.two-factor-settings__detail {
+// 				display: flex;
+
+// 				.two-factor-settings__disable-2fa {
+// 					padding-right: 10px;
+// 				}
+// 			}
+
+// 			.two-factor-settings__detail:last-child {
+// 				padding-right: 10px;
+// 				align-self: flex-end;
+// 			}
+// 		}
+// 	}
+// }
+
+// /* Ensures that mat-accordion can be animated. Without these css styles when animating mat-accordion it first loads on the page expands and collapses
+//    https://github.com/angular/components/issues/11765#issuecomment-447991348
+//    https://github.com/angular/components/issues/16534 */
+
+// ::ng-deep .ng-animating div mat-accordion mat-expansion-panel mat-expansion-panel-header {
+// 	height: 48px;
+// }
+
+// ::ng-deep .ng-animating div mat-accordion mat-expansion-panel div.mat-expansion-panel-content {
+// 	height: 0px;
+// 	visibility: hidden;
+// }
+
+// @media (min-width: map-get($grid-breakpoints, sm)) {
+// 	.two-factor-settings {
+// 		overflow: hidden;
+// 	}
+// }

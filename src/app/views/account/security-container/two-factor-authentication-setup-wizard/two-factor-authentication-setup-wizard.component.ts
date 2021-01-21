@@ -22,7 +22,7 @@ import { CdkStepper } from '@angular/cdk/stepper';
 })
 export class TwoFactorAuthenticationSetupWizardComponent {
 	/**
-	 * Validation problem details$ of auth container component when form validations get passed angular but fail on the server.
+	 * Emitted when server responds with 40X error.
 	 */
 	@Input() set problemDetails(value: ProblemDetails) {
 		this._serverErrorHandled = false;
@@ -40,7 +40,7 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 	_serverErrorHandled = false;
 
 	/**
-	 * InternalServerErrorDetails for when server crashes and responds with 500 error.
+	 * InternalServerErrorDetails for when server crashes and responds with 50X error.
 	 */
 	@Input() set internalServerErrorDetails(value: InternalServerErrorDetails) {
 		this._serverErrorHandled = false;
