@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { routeAnimations } from '../../../core/core.module';
 import { Store } from '@ngxs/store';
 import { AuthState } from 'app/core/auth/auth.store.state';
+import { LogService } from 'app/core/logger/log.service';
 
 /**
  * Examples component.
@@ -34,12 +35,13 @@ export class ExamplesComponent implements OnInit {
 	 * Creates an instance of examples component.
 	 * @param store
 	 */
-	constructor(private store: Store) {}
+	constructor(private store: Store, private logger: LogService) {}
 
 	/**
-	 * ngOnInit
+	 * NgOnInit life cycle.
 	 */
 	ngOnInit(): void {
+		this.logger.trace('Initialized.', this);
 		this.isAuthenticated$ = this.store.select(AuthState.selectIsAuthenticated);
 	}
 }

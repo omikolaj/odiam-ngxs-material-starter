@@ -1,5 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy, HostBinding } from '@angular/core';
 import { GhostAnimationService } from 'app/shared/services/ghost-animation.service';
+import { LogService } from 'app/core/logger/log.service';
 
 /**
  * GhostBLock component.
@@ -21,12 +22,13 @@ export class GhostBlockComponent implements OnInit {
 	 * Creates an instance of ghost block component.
 	 * @param ghostAnimationService
 	 */
-	constructor(private ghostAnimationService: GhostAnimationService) {}
+	constructor(private ghostAnimationService: GhostAnimationService, private logger: LogService) {}
 
 	/**
 	 * NgOnInit life cycle.
 	 */
 	ngOnInit(): void {
+		this.logger.trace('Initialized.', this);
 		this.ghostAnimationService.syncAnimation();
 	}
 }

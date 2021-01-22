@@ -58,7 +58,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
 			value
 				.pipe(
 					tap((value: InternalServerErrorDetails) => {
-						this._internalSErverErrorDetails = value;
+						this._internalServerErrorDetails = value;
 					})
 				)
 				.subscribe()
@@ -66,9 +66,9 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
 	}
 
 	/**
-	 * Internal server error details of reset password component
+	 * Emitted when server responds with 50X error.
 	 */
-	private _internalSErverErrorDetails: InternalServerErrorDetails;
+	private _internalServerErrorDetails: InternalServerErrorDetails;
 
 	/**
 	 * Field is required message.
@@ -147,7 +147,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
 	 * Checks if internal server error implements problem details
 	 */
 	private get _doesInternalServerErrorImplementOdmWebApiException(): boolean {
-		return implementsOdmWebApiException(this._internalSErverErrorDetails);
+		return implementsOdmWebApiException(this._internalServerErrorDetails);
 	}
 	/**
 	 * If server error occured, this property is used to determine if the error has been handled by the component in the template.
@@ -178,6 +178,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
 	 * NgOnInit life cycle.
 	 */
 	ngOnInit(): void {
+		this.logger.trace('Initialized.', this);
 		this._initForm();
 		this._resetPasswordFormEmailControlStatusChanges$ = this._resetPasswordForm.get('email').statusChanges.pipe(
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -186,16 +187,17 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
 					// null out internalServerErrorDetails when the email
 					// control statusChanges. Necessary to remove old message
 					// and display new one.
-					this._internalSErverErrorDetails = null;
+					this._internalServerErrorDetails = null;
 				}
 			})
 		);
 	}
 
 	/**
-	 * NgOnInit life cycle.
+	 * NgOnDestroy life cycle.
 	 */
 	ngOnDestroy(): void {
+		this.logger.trace('Destroyed.', this);
 		this._subscription.unsubscribe();
 	}
 
@@ -214,9 +216,9 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
 	_getInternalServerErrorMessage(): string {
 		let errorDescription = '';
 		if (this._doesInternalServerErrorImplementOdmWebApiException) {
-			errorDescription = this._internalSErverErrorDetails.detail;
+			errorDescription = this._internalServerErrorDetails.detail;
 		} else {
-			errorDescription = this._internalSErverErrorDetails.message;
+			errorDescription = this._internalServerErrorDetails.message;
 		}
 		return errorDescription;
 	}

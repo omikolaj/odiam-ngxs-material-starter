@@ -35,7 +35,7 @@ export class SecurityContainerComponent implements OnInit {
 	_problemDetails$: Observable<ProblemDetails>;
 
 	/**
-	 * Emitted when server crashes and responds with 50X error.
+	 * Emitted when server responds with 50X error.
 	 */
 	_internalServerErrorDetails$: Observable<InternalServerErrorDetails>;
 
@@ -55,7 +55,7 @@ export class SecurityContainerComponent implements OnInit {
 	_verificationCodeForm: FormGroup;
 
 	/**
-	 * Whether we are in the middle of a request to verify 2fa setup verification code.
+	 * Whether we are in the middle of a request to verify two factor authentication setup verification code.
 	 */
 	_codeVerificationInProgress: boolean;
 
@@ -70,7 +70,7 @@ export class SecurityContainerComponent implements OnInit {
 	_twoFactorAuthToggleLoading: boolean;
 
 	/**
-	 * Show two factor auth setup wizard.
+	 * Whether to show two factor authentication setup wizard.
 	 */
 	_showTwoFactorAuthSetupWizard: boolean;
 
@@ -95,7 +95,7 @@ export class SecurityContainerComponent implements OnInit {
 	_twoFactorAuthToggleLoading$ = this._twoFactorAuthToggleLoadingSub.asObservable();
 
 	/**
-	 * Subscriptions for this component.
+	 * Rxjs subscriptions for this component.
 	 */
 	private _subscription = new Subscription();
 
@@ -114,7 +114,7 @@ export class SecurityContainerComponent implements OnInit {
 	}
 
 	/**
-	 * NgOnInit life cycle.
+	 * NgOnInit life cycle. Emits loading value then fetches data for this component
 	 */
 	ngOnInit(): void {
 		this.logger.trace('Initialized.', this);

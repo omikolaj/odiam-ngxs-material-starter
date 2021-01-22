@@ -115,7 +115,7 @@ export class AccountFacadeService {
 	finish2faSetup(model: TwoFactorAuthenticationSetupResult): void {
 		this.store.dispatch([
 			new TwoFactorAuthentication.Reset2faSetupWizard(),
-			new SecurityContainer.UpdateTwoFactorAuthenticationSettings({
+			new SecurityContainer.UpdateAccountSecurityDetailsSettings({
 				hasAuthenticator: true,
 				recoveryCodes: model.recoveryCodes,
 				recoveryCodesLeft: model.recoveryCodes.items.length,
@@ -140,9 +140,7 @@ export class AccountFacadeService {
 	disable2Fa(): void {
 		this.twoFactorAuthenticationAsync
 			.disable2Fa()
-			.pipe(
-				tap(() => this.store.dispatch([new TwoFactorAuthentication.Reset2faSetupWizard(), new SecurityContainer.DisableTwoFactorAuthentication()]))
-			)
+			.pipe(tap(() => this.store.dispatch([new TwoFactorAuthentication.Reset2faSetupWizard(), new SecurityContainer.ResetAccountSecuritySettings()])))
 			.subscribe();
 	}
 }

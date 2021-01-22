@@ -3,6 +3,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { OdmValidators } from 'app/core/form-validators/odm-validators';
 import { AuthFacadeService } from '../auth-facade.service';
 import { ValidationMessage_Required, ValidationMessage_Email } from 'app/shared/validation-messages';
+import { LogService } from 'app/core/logger/log.service';
 
 /**
  * Forgot password component.
@@ -34,12 +35,13 @@ export class ForgotPasswordComponent implements OnInit {
 	 * @param fb
 	 * @param facade
 	 */
-	constructor(private fb: FormBuilder, private facade: AuthFacadeService) {}
+	constructor(private fb: FormBuilder, private facade: AuthFacadeService, private logger: LogService) {}
 
 	/**
 	 * NgOnInit life cycle.
 	 */
 	ngOnInit(): void {
+		this.logger.trace('Initialized.', this);
 		this._initForm();
 	}
 
@@ -47,6 +49,7 @@ export class ForgotPasswordComponent implements OnInit {
 	 * Event handler for when the form is submitted.
 	 */
 	_onFormSubmitted(): void {
+		this.logger.trace('_onFormSubmitted fired.', this);
 		const value = this._forgotPasswordForm.value as { email: string };
 		this.facade.onForgotPassword(value.email);
 	}

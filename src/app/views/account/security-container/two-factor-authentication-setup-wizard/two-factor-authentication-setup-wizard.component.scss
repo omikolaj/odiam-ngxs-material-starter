@@ -1,6 +1,6 @@
 @import '../../../../../styles-variables.scss';
 
-.overlay {
+.setup-wizard-overlay {
 	position: fixed;
 	top: 0px;
 	left: 0px;
@@ -14,24 +14,24 @@
 .setup-wizard {
 	position: relative;
 	z-index: 110;
-}
 
-.verification-form {
-	.verification-form__action-buttons {
-		margin-top: 20px;
+	.setup-wizard__verification-form {
+		.setup-wizard__action-buttons {
+			margin-top: 20px;
+		}
 	}
-}
 
-.final-step {
-	.final-step__format-codes {
-		columns: 2;
-		padding-left: 20px;
+	.setup-wizard__final-step {
+		.setup-wizard__format-codes {
+			columns: 2;
+			padding-left: 20px;
+		}
 	}
 }
 
 @media (min-width: map-get($grid-breakpoints, sm)) {
-	.final-step {
-		.final-step__format-codes {
+	.setup-wizard__final-step {
+		.setup-wizard__format-codes {
 			columns: 2;
 			max-width: 500px;
 		}

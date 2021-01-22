@@ -1,6 +1,5 @@
 <ng-container *ngIf="_showTwoFactorAuthSetupWizard === false; else twoFactorAuthenticationSetupWizard">
 	<div class="two-factor-settings">
-		<!-- <div class="two-factor-settings__container"> -->
 		<h3>{{ 'odm.account.security.two-step.title' | translate }}</h3>
 		<ng-container *ngIf="!loading; else loadingState">
 			<div [ngClass]="twoFactorEnabled ? 'two-factor-settings__extra-margin' : null" class="two-factor-settings__state" @fadeIn>
@@ -48,7 +47,6 @@
 				{{ _getInternalServerErrorMessage() }}
 			</span>
 		</div>
-		<!-- </div> -->
 	</div>
 </ng-container>
 

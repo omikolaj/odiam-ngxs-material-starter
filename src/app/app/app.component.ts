@@ -101,7 +101,7 @@ export class AppComponent implements OnInit {
 		private store: Store,
 		private log: LogService,
 		private router: Router,
-		private route: ActivatedRoute
+		private logger: LogService
 	) {
 		// Set up google analytics
 		router.events
@@ -128,6 +128,7 @@ export class AppComponent implements OnInit {
 	 * NgOnInit life cycle. Performs local storage test as well as sets the state of the application.
 	 */
 	ngOnInit(): void {
+		this.logger.trace('Initialized.', this);
 		this.storageService.testLocalStorage();
 
 		if (AppComponent.isIEorEdgeOrSafari()) {

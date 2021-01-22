@@ -20,14 +20,14 @@ export class SetAccountSecurityDetails {
 /**
  * Update account security details.
  */
-export class UpdateTwoFactorAuthenticationSettings {
+export class UpdateAccountSecurityDetailsSettings {
 	/**
 	 * Type of action.
 	 */
-	static readonly type = '[Security] Updates Two Factor Authentication Settings';
+	static readonly type = '[Security] Updates Account Security Details Settings';
 
 	/**
-	 * Creates an instance that updates two factor authentication settings.
+	 * Creates an instance that updates account security details.
 	 * @param payload
 	 */
 	constructor(public payload: AccountSecurityDetails) {}
@@ -36,11 +36,11 @@ export class UpdateTwoFactorAuthenticationSettings {
 /**
  * Disable two factor authentication.
  */
-export class DisableTwoFactorAuthentication {
+export class ResetAccountSecuritySettings {
 	/**
 	 * Type of action.
 	 */
-	static readonly type = '[Security] Disables Two Factor Authentication';
+	static readonly type = '[Security] Reset Account Security Settings';
 }
 
 /**
@@ -53,7 +53,7 @@ export class UpdateRecoveryCodes {
 	static readonly type = '[Security] Updates User Recovery Codes';
 
 	/**
-	 * Creates an instance of that updates recovery codes.
+	 * Creates an instance that updates recovery codes.
 	 * @param payload
 	 */
 	constructor(public payload: UserRecoveryCodes) {}

@@ -44,13 +44,14 @@ export class SettingsContainerComponent implements OnInit {
 	 * @param store
 	 * @param log
 	 */
-	constructor(private store: Store, private log: LogService) {}
+	constructor(private store: Store, private logger: LogService) {}
 
 	/**
-	 * Sets the settings state.
+	 * NgOnInit life cycle.
 	 */
 	ngOnInit(): void {
-		this._settings$ = this.store.select(SettingsState.selectSettings).pipe(tap((settings) => this.log.trace('Settings data.', this, settings)));
+		this.logger.trace('Initialized.', this);
+		this._settings$ = this.store.select(SettingsState.selectSettings).pipe(tap((settings) => this.logger.trace('Settings data.', this, settings)));
 	}
 
 	/**
@@ -58,7 +59,7 @@ export class SettingsContainerComponent implements OnInit {
 	 * @param event
 	 */
 	onLanguageSelect(event: MatSelectChange): void {
-		this.log.debug(`onLanguageSelect handler fired with: ${event.value as Language}.`, this);
+		this.logger.debug(`onLanguageSelect handler fired with: ${event.value as Language}.`, this);
 		const languageSelected = { language: event.value as Language };
 		this.store.dispatch(new Settings.ChangeLanguage(languageSelected));
 	}
@@ -68,7 +69,7 @@ export class SettingsContainerComponent implements OnInit {
 	 * @param event
 	 */
 	onThemeSelect(event: MatSelectChange): void {
-		this.log.debug(`onThemeSelect handler fired with: ${event.value as string}.`, this);
+		this.logger.debug(`onThemeSelect handler fired with: ${event.value as string}.`, this);
 		const themeSelected = { theme: event.value as string };
 		this.store.dispatch(new Settings.ChangeTheme(themeSelected));
 	}
@@ -78,7 +79,7 @@ export class SettingsContainerComponent implements OnInit {
 	 * @param event
 	 */
 	onAutoNightModeToggle(event: MatSlideToggle): void {
-		this.log.debug(`onAutoNightModeToggle handler fired with: ${String(event.checked)}.`, this);
+		this.logger.debug(`onAutoNightModeToggle handler fired with: ${String(event.checked)}.`, this);
 		const autoNightModeToggle = { autoNightMode: event.checked };
 		this.store.dispatch(new Settings.ChangeAutoNightMode(autoNightModeToggle));
 	}
@@ -88,7 +89,7 @@ export class SettingsContainerComponent implements OnInit {
 	 * @param event
 	 */
 	onStickyHeaderToggle(event: MatSlideToggle): void {
-		this.log.debug(`onStickyHeaderToggle handler fired with: ${String(event.checked)}.`, this);
+		this.logger.debug(`onStickyHeaderToggle handler fired with: ${String(event.checked)}.`, this);
 		const stickyHeaderToggle = { stickyHeader: event.checked };
 		this.store.dispatch(new Settings.ChangeStickyHeader(stickyHeaderToggle));
 	}
@@ -98,7 +99,7 @@ export class SettingsContainerComponent implements OnInit {
 	 * @param event
 	 */
 	onPageAnimationsToggle(event: MatSlideToggle): void {
-		this.log.debug(`onPageAnimationsToggle handler fired with: ${String(event.checked)}.`, this);
+		this.logger.debug(`onPageAnimationsToggle handler fired with: ${String(event.checked)}.`, this);
 		const pageAnimationToggle = { pageAnimations: event.checked };
 		this.store.dispatch(new Settings.ChangeAnimationsPage(pageAnimationToggle));
 	}
@@ -108,7 +109,7 @@ export class SettingsContainerComponent implements OnInit {
 	 * @param event
 	 */
 	onElementsAnimationsToggle(event: MatSlideToggle): void {
-		this.log.debug(`onElementsAnimationsToggle handler fired with: ${String(event.checked)}.`, this);
+		this.logger.debug(`onElementsAnimationsToggle handler fired with: ${String(event.checked)}.`, this);
 		const elementsAnimationsToggle = { elementsAnimations: event.checked };
 		this.store.dispatch(new Settings.ChangeAnimationsElements(elementsAnimationsToggle));
 	}

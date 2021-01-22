@@ -17,7 +17,7 @@ export class SetupTwoFactorAuthentication {
 }
 
 /**
- * Result of verification process for setting up 2fa.
+ * Result of verification process for setting up two factor authentication.
  */
 export class AuthenticatorVerificationResult {
 	/**
@@ -39,5 +39,5 @@ export class Reset2faSetupWizard {
 	/**
 	 * Type of action.
 	 */
-	static readonly type = '[2fa Setup] Resets Two Factor Authentication Setup';
+	static readonly type = '[2fa Setup] Reset Two Factor Authentication Setup';
 }

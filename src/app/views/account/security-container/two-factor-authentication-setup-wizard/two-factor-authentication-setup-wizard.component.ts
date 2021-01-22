@@ -29,31 +29,20 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 		this._problemDetails = value;
 	}
 
-	/**
-	 * Validation problem details of auth container component when form validations get passed angular but fail on the server.
-	 */
 	private _problemDetails: ProblemDetails;
 
 	/**
-	 * Server error handled property for two factor authentication setup wizard component.
-	 */
-	_serverErrorHandled = false;
-
-	/**
-	 * InternalServerErrorDetails for when server crashes and responds with 50X error.
+	 * Emitted when server responds with 50X error.
 	 */
 	@Input() set internalServerErrorDetails(value: InternalServerErrorDetails) {
 		this._serverErrorHandled = false;
 		this._internalServerErrorDetails = value;
 	}
 
-	/**
-	 * Internal server error details.
-	 */
 	_internalServerErrorDetails: InternalServerErrorDetails;
 
 	/**
-	 * Whether there is an active request to verify 2fa setup verification code.
+	 * Whether there is an outgoing request to verify two factor authentication setup verification code.
 	 */
 	@Input() codeVerificationInProgress: boolean;
 
@@ -66,6 +55,7 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 	 * Two factor authentication setup result.
 	 */
 	@Input() set twoFactorAuthenticationSetupResult(value: TwoFactorAuthenticationSetupResult) {
+		this.logger.debug('twoFactorAuthenticationSetupResult emitted.', this);
 		if (value.status === 'Succeeded') {
 			this._codeVerificationSucceeded = true;
 			this._is2faSetupCompleted = true;
@@ -76,16 +66,6 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 			}, 1500);
 		}
 	}
-
-	/**
-	 * Whether the verification code was successfully verfied.
-	 */
-	_codeVerificationSucceeded = false;
-
-	/**
-	 * Setup wizard stepper.
-	 */
-	@ViewChild('stepper') setupWizard: CdkStepper;
 
 	/**
 	 * Two factor authentication setup result.
@@ -102,7 +82,6 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 			this.verificationCodeForm.get('verificationCode').enable();
 		}
 	}
-
 	/**
 	 * Two factor authentication setup information.
 	 */
@@ -122,6 +101,21 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 	 * Event emitter when user finishes 2fa setup.
 	 */
 	@Output() finish2faSetupClicked = new EventEmitter<TwoFactorAuthenticationSetupResult>();
+
+	/**
+	 * Setup wizard stepper.
+	 */
+	@ViewChild('stepper') setupWizard: CdkStepper;
+
+	/**
+	 * Whether the verification code was successfully verfied.
+	 */
+	_codeVerificationSucceeded = false;
+
+	/**
+	 * Whether server errors were already displayed in the view.
+	 */
+	_serverErrorHandled = false;
 
 	/**
 	 * Whether the validity of previous steps should be checked or not.
@@ -174,7 +168,7 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 	_verificationCodeInputLength = 6;
 
 	/**
-	 * Checks if internal server error implements problem details.
+	 * Checks if internal server error implements OdmWebApiException.
 	 */
 	private get _doesInternalServerErrorImplementOdmWebApiException(): boolean {
 		return implementsOdmWebApiException(this._internalServerErrorDetails);
@@ -183,6 +177,7 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 	/**
 	 * Creates an instance of two factor authentication setup wizard component.
 	 * @param logger
+	 * @param cd
 	 */
 	constructor(private logger: LogService, private cd: ChangeDetectorRef) {}
 
@@ -273,7 +268,7 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 	}
 
 	/**
-	 * Servers error validation handler. Sets up control for being invalid.
+	 * Servers error validation handler. Sets control as invalid.
 	 * @param control
 	 */
 	private _abstractControlServerErrorHandler(control: AbstractControl): void {

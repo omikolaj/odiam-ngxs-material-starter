@@ -34,7 +34,7 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	_problemDetails$: Observable<ProblemDetails>;
 
 	/**
-	 * InternalServerErrorDetails for when server crashes and responds with 50X error.
+	 * Emitted when server responds with 50X error.
 	 */
 	_internalServerErrorDetails$: Observable<InternalServerErrorDetails>;
 
@@ -81,6 +81,7 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 * NgOnInit life cycle.
 	 */
 	ngOnInit(): void {
+		this.logger.trace('Initialized.', this);
 		this._initForms();
 		this._subscription = this._rememberMe$.pipe(tap((value) => this._signinForm.get('rememberMe').setValue(value))).subscribe();
 	}
@@ -89,6 +90,7 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 * NgOnDestroy life cycle.
 	 */
 	ngOnDestroy(): void {
+		this.logger.trace('Destroyed.', this);
 		this._subscription.unsubscribe();
 	}
 
@@ -96,7 +98,7 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 * Event handler for when user clicks forgot password.
 	 */
 	_onForgotPasswordClicked(): void {
-		this.logger.debug('_onForgotPasswordClicked fired.', this);
+		this.logger.trace('_onForgotPasswordClicked fired.', this);
 		void this.router.navigate(['forgot-password'], { relativeTo: this.route.parent });
 	}
 
@@ -105,7 +107,7 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 * @param event
 	 */
 	_onRememberMeChanged(event: boolean): void {
-		this.logger.info('onRememberMeChanged event handler fired.', this, event);
+		this.logger.trace('_onRememberMeChanged event handler fired.', this, event);
 		this.facade.onRememberMeChanged(event);
 	}
 
@@ -114,7 +116,7 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 * @param model
 	 */
 	_onSigninSubmitted(model: SigninUserModel): void {
-		this.logger.info('onSigninSubmitted event handler fired.', this);
+		this.logger.trace('_onSigninSubmitted event handler fired.', this);
 		this.facade.signinUser(model);
 	}
 
@@ -122,7 +124,7 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 * Event handler for when user signs in with google.
 	 */
 	_onSigninWithGoogleSubmitted(): void {
-		this.logger.info('onSigninWithGoogleSubmitted event handler fired.', this);
+		this.logger.trace('_onSigninWithGoogleSubmitted event handler fired.', this);
 		this.facade.signinUserWithGoogle();
 	}
 
@@ -130,7 +132,7 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 * Event handler for when user signs in with facebook.
 	 */
 	_onSigninWithFacebookSubmitted(): void {
-		this.logger.info('onSigninWithFacebookSubmitted event handler fired.', this);
+		this.logger.trace('_onSigninWithFacebookSubmitted event handler fired.', this);
 		this.facade.signinUserWithFacebook();
 	}
 
@@ -139,7 +141,7 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 * @param model
 	 */
 	_onSignupSubmitted(model: SignupUserModel): void {
-		this.logger.info('onSignupSubmitted event handler fired.', this);
+		this.logger.trace('_onSignupSubmitted event handler fired.', this);
 		this.facade.signupUser(model);
 	}
 

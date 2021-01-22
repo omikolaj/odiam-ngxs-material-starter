@@ -20,7 +20,7 @@ const ACCOUNT_SECURITY_STATE_TOKEN = new StateToken<SecurityContainerStateModel>
 })
 @Injectable()
 /**
- * Providers state for user account security tab.
+ * Provides state for user account security tab.
  */
 export class AccountSecurityState {
 	/**
@@ -34,7 +34,7 @@ export class AccountSecurityState {
 	}
 
 	/**
-	 * Action handler for initialzing account security details state.
+	 * Action handler for setting account security details state.
 	 * @param ctx
 	 * @param action
 	 */
@@ -53,10 +53,10 @@ export class AccountSecurityState {
 	 * @param ctx
 	 * @param action
 	 */
-	@Action(SecurityContainer.UpdateTwoFactorAuthenticationSettings)
-	updateTwoFactorAuthenticationSetting(
+	@Action(SecurityContainer.UpdateAccountSecurityDetailsSettings)
+	updateAccountSecurityDetailsSetting(
 		ctx: StateContext<SecurityContainerStateModel>,
-		action: SecurityContainer.UpdateTwoFactorAuthenticationSettings
+		action: SecurityContainer.UpdateAccountSecurityDetailsSettings
 	): void {
 		ctx.setState(
 			produce((draft: SecurityContainerStateModel) => {
@@ -88,12 +88,12 @@ export class AccountSecurityState {
 	}
 
 	/**
-	 * Actions handler that disables two factor authentication.
+	 * Actions handler that resets account security settings.
 	 * @param ctx
 	 * @param action
 	 */
-	@Action(SecurityContainer.DisableTwoFactorAuthentication)
-	disableTwoFactorAuthentication(ctx: StateContext<SecurityContainerStateModel>): void {
+	@Action(SecurityContainer.ResetAccountSecuritySettings)
+	resetAccountSecuritySettings(ctx: StateContext<SecurityContainerStateModel>): void {
 		const defaults: SecurityContainerStateModel = {
 			hasAuthenticator: false,
 			recoveryCodes: {

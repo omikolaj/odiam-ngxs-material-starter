@@ -1,5 +1,5 @@
 <div>
-	<div class="overlay"></div>
+	<div class="setup-wizard-overlay"></div>
 	<div class="setup-wizard">
 		<mat-vertical-stepper [linear]="_stepperIsLinear" #stepper odmMatVerticalStepperScroller>
 			<mat-step [editable]="_stepper2faSetupEditable" [completed]="_is2faSetupCompleted">
@@ -19,7 +19,7 @@
 				<p>
 					{{ 'odm.account.security.two-step.setup-wizard.verification-code-message' | translate }}
 				</p>
-				<div class="verification-form">
+				<div class="setup-wizard__verification-form">
 					<form [formGroup]="verificationCodeForm" (ngSubmit)="_onVerificationCodeSubmitted()">
 						<mat-form-field>
 							<mat-label>
@@ -36,7 +36,7 @@
 								_getVerificationCodeControlErrorMessage(verificationCodeForm.get('verificationCode').errors)
 							}}</mat-error>
 						</mat-form-field>
-						<div class="verification-form__action-buttons">
+						<div class="setup-wizard__action-buttons">
 							<button mat-button (click)="_onCancelClicked()" color="warn">
 								{{ 'odm.account.security.setup-wizard.cancel-button' | translate }}
 							</button>
@@ -62,13 +62,13 @@
 				</div>
 			</mat-step>
 			<mat-step>
-				<div class="final-step">
+				<div class="setup-wizard__final-step">
 					<ng-template matStepLabel>{{ 'odm.account.security.two-step.setup-wizard.last-step.title' | translate }}</ng-template>
 					<h3>{{ 'odm.account.security.two-step.setup-wizard.last-step.header' | translate }}</h3>
 					<p>{{ 'odm.account.security.two-step.setup-wizard.last-step.information' | translate }}</p>
 					<p>{{ 'odm.account.security.two-step.setup-wizard.last-step.save-codes' | translate }}</p>
 					<div>
-						<ol class="final-step__format-codes">
+						<ol class="setup-wizard__format-codes">
 							<li *ngFor="let code of _twoFactorAuthenticationSetupResult?.recoveryCodes?.items">{{ code }}</li>
 						</ol>
 					</div>

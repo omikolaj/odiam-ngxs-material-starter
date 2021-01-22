@@ -9,5 +9,8 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 export class GeneralComponent implements OnInit {
 	constructor() {}
 
+	/**
+	 * NgOnInit life cycle.
+	 */
 	ngOnInit(): void {}
 }

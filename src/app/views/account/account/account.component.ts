@@ -13,5 +13,8 @@ export class AccountComponent implements OnInit {
 
 	constructor() {}
 
+	/**
+	 * NgOnInit life cycle.
+	 */
 	ngOnInit(): void {}
 }

@@ -9,7 +9,6 @@ import { InternalServerErrorDetails } from 'app/core/models/internal-server-erro
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { fadeInAnimation, upDownFadeInAnimation } from 'app/core/animations/element.animations';
 import { implementsOdmWebApiException } from 'app/core/utilities/implements-odm-web-api-exception';
-import { MatAccordionTogglePosition } from '@angular/material/expansion';
 
 /**
  * Component responsible for handling two factor authentication settings.
@@ -26,8 +25,7 @@ export class TwoFactorAuthenticationComponent {
 	 * Emitted when server responds with 40X error.
 	 */
 	@Input() set problemDetails(value: ProblemDetails) {
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const _ = value ? this.logger.debug('Problem details emitted.', this) : null;
+		this.logger.debug('Problem details emitted.', this);
 		this._internalServerErrorDetails = null;
 		this._problemDetails = value;
 	}
@@ -35,11 +33,10 @@ export class TwoFactorAuthenticationComponent {
 	_problemDetails: ProblemDetails;
 
 	/**
-	 * Emitted when server crashes and responds with 50X error.
+	 * Emitted when server responds with 50X error.
 	 */
 	@Input() set internalServerErrorDetails(value: InternalServerErrorDetails) {
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const _ = value ? this.logger.debug('Internal server error emitted.', this) : null;
+		this.logger.debug('Internal server error emitted.', this);
 		this._problemDetails = null;
 		this._internalServerErrorDetails = value;
 	}
@@ -52,7 +49,7 @@ export class TwoFactorAuthenticationComponent {
 	@Input() loading: boolean;
 
 	/**
-	 * User's two factor authentication setting state.
+	 * User's two factor authentication setting state (enabled/disabled).
 	 */
 	@Input() twoFactorEnabled: boolean;
 
@@ -65,11 +62,10 @@ export class TwoFactorAuthenticationComponent {
 	 * Whether there is an outgoing request to enable/disable two factor authentication.
 	 */
 	@Input() set twoFactorAuthToggleLoading(value: boolean) {
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const _ = value ? this.logger.debug('twoFactorAuthToggleLoading emitted.', this) : null;
+		this.logger.debug('twoFactorAuthToggleLoading emitted.', this);
 		this._twoFactorAuthToggleLoading = value;
 
-		// allow for any problemDetails or InternalServerErrors to be emitted. This defers the execution.
+		// allow for any problemDetails or internalServerErrors to be emitted. This defers the execution.
 		setTimeout(() => {
 			if (this.twoFactorEnabledToggle && (this._problemDetails || this._internalServerErrorDetails)) {
 				this.twoFactorEnabledToggle.checked = this.twoFactorEnabled;
@@ -83,8 +79,7 @@ export class TwoFactorAuthenticationComponent {
 	 * Two factor authentication setup information.
 	 */
 	@Input() set authenticatorSetup(value: TwoFactorAuthenticationSetup) {
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const _ = value ? this.logger.debug('authenticatorSetup emitted.', this) : null;
+		this.logger.debug('authenticatorSetup emitted.', this);
 		this._authenticatorSetup = value;
 		if (value.authenticatorUri !== '' && value.sharedKey !== '') {
 			this._showTwoFactorAuthSetupWizard = true;
@@ -104,7 +99,7 @@ export class TwoFactorAuthenticationComponent {
 	@Input() authenticatorSetupResult: TwoFactorAuthenticationSetupResult;
 
 	/**
-	 * Whether we are in the middle of a request to verify 2fa setup verification code.
+	 * Whether we are in the middle of a request to verify two factor authentication setup verification code.
 	 */
 	@Input() codeVerificationInProgress: boolean;
 
@@ -124,7 +119,7 @@ export class TwoFactorAuthenticationComponent {
 	@Output() cancelSetupWizardClicked = new EventEmitter<void>();
 
 	/**
-	 * Event emitter when user finishes 2fa setup.
+	 * Event emitter when user finishes two factor authentication setup.
 	 */
 	@Output() finish2faSetupClicked = new EventEmitter<TwoFactorAuthenticationSetupResult>();
 
@@ -219,6 +214,9 @@ export class TwoFactorAuthenticationComponent {
 		this.verifyAuthenticatorClicked.emit(event);
 	}
 
+	/**
+	 * Event handler when user closes 'user codes' expansion panel.
+	 */
 	_onUserCodesPanelClosed(): void {
 		this.logger.trace('_onToggleUserCodeExpasionPanel fired.', this);
 		this._removeServerErrors();

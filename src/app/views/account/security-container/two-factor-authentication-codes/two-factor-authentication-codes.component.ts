@@ -3,7 +3,6 @@ import { TooltipTouchGestures } from '@angular/material/tooltip';
 import { ODM_TOOLTIP_SHOW_DELAY_IN_MS } from 'app/shared/mat-tooltip-settings';
 import { LogService } from 'app/core/logger/log.service';
 import { upDownFadeInAnimation, fadeInAnimation } from 'app/core/animations/element.animations';
-import { MatAccordionTogglePosition } from '@angular/material/expansion';
 
 /**
  * Two factor authentication codes component.
@@ -21,6 +20,9 @@ export class TwoFactorAuthenticationCodesComponent {
 	 */
 	@Output() generateNewRecoveryCodes = new EventEmitter<void>();
 
+	/**
+	 * Event emitter when user closes the 'user codes' expansion panel.
+	 */
 	@Output() userCodesPanelClosed = new EventEmitter<void>();
 
 	/**
@@ -29,7 +31,7 @@ export class TwoFactorAuthenticationCodesComponent {
 	@Input() codes: string[] = [];
 
 	/**
-	 * Determines whether there is an outgoing request to generate new recovery codes.
+	 * Whether there is an outgoing request to generate new recovery codes.
 	 */
 	@Input() generatingCodes = false;
 
@@ -44,7 +46,7 @@ export class TwoFactorAuthenticationCodesComponent {
 	_touchGestrues: TooltipTouchGestures = 'on';
 
 	/**
-	 * Show delay in ms for toolip.
+	 * Delay in ms for toolip.
 	 */
 	_showDelayInMs = ODM_TOOLTIP_SHOW_DELAY_IN_MS;
 
@@ -72,6 +74,9 @@ export class TwoFactorAuthenticationCodesComponent {
 		this.generateNewRecoveryCodes.emit();
 	}
 
+	/**
+	 * Event handler when user closes expansion panel.
+	 */
 	_onUserCodesClosed(): void {
 		this.logger.trace('_onTogglePosition fired.', this);
 		this.userCodesPanelClosed.emit();

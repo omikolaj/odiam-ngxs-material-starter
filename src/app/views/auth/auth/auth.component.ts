@@ -26,22 +26,18 @@ import * as newCredentialsHelpers from 'app/shared/new-credentials-functions';
 })
 export class AuthComponent implements OnInit, OnDestroy {
 	/**
-	 * Event emitter for when remember me option is changed.
-	 */
-	@Output() rememberMeChanged = new EventEmitter<boolean>();
-
-	/**
 	 * Emitted when server responds with 40X error.
 	 */
 	@Input() set problemDetails(value: ProblemDetails) {
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const _ = value ? this.logger.debug('Problem details emitted.', this) : null;
+		this.logger.debug('Problem details emitted.', this);
 		this._problemDetailsServerErrorHandled = false;
 		this._problemDetails = value;
 	}
 
+	private _problemDetails: ProblemDetails;
+
 	/**
-	 * InternalServerErrorDetails for when server crashes and responds with 50X error.
+	 * Emitted when server responds with 50X error.
 	 */
 	@Input() internalServerErrorDetails: InternalServerErrorDetails;
 
@@ -51,16 +47,10 @@ export class AuthComponent implements OnInit, OnDestroy {
 	@Input() signinForm: FormGroup;
 
 	/**
-	 * Event emitter for when the signup form is submitted.
-	 */
-	@Output() signupFormSubmitted = new EventEmitter<SignupUserModel>();
-
-	/**
 	 * Signup form of auth component.
 	 */
 	@Input() set signupForm(value: FormGroup) {
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const _ = value ? this.logger.info('Signup form emitted.', this) : null;
+		this.logger.debug('Signup form emitted.', this);
 		this._signupForm = value;
 		this._subscription.add(this._validateSignupFormPasswordField(value).subscribe());
 		this._subscription.add(this._validateSignupFormConfirmPasswordField(value).subscribe());
@@ -72,9 +62,14 @@ export class AuthComponent implements OnInit, OnDestroy {
 	_signupForm: FormGroup;
 
 	/**
-	 * Signup form email control status changes$ of auth component.
+	 * Event emitter for when remember me option is changed.
 	 */
-	_signupFormEmailControlStatusChanges$: Observable<string>;
+	@Output() rememberMeChanged = new EventEmitter<boolean>();
+
+	/**
+	 * Event emitter for when the signup form is submitted.
+	 */
+	@Output() signupFormSubmitted = new EventEmitter<SignupUserModel>();
 
 	/**
 	 * Event emitter for when the signin form is submitted.
@@ -95,6 +90,11 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 * Event emitter for when user clicks forgot password.
 	 */
 	@Output() forgotPasswordClicked = new EventEmitter<void>();
+
+	/**
+	 * Signup form email control status changes$ of auth component.
+	 */
+	_signupFormEmailControlStatusChanges$: Observable<string>;
 
 	/**
 	 * Property used to control if signin or signup view is displayed.
@@ -176,11 +176,6 @@ export class AuthComponent implements OnInit, OnDestroy {
 	private _problemDetailsServerErrorHandled: boolean;
 
 	/**
-	 * Validation problem details used to check server side validation errors.
-	 */
-	private _problemDetails: ProblemDetails;
-
-	/**
 	 * Subscriptions for this component.
 	 */
 	private _subscription: Subscription = new Subscription();
@@ -202,6 +197,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 * NgOnInit life cycle.
 	 */
 	ngOnInit(): void {
+		this.logger.trace('Initialized.', this);
 		this._signupFormEmailControlStatusChanges$ = this._signupForm.get('email').statusChanges.pipe(
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			tap((_: string) => {
@@ -219,6 +215,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 * NgOnDestroy life cycle.
 	 */
 	ngOnDestroy(): void {
+		this.logger.trace('Destroyed.', this);
 		this._subscription.unsubscribe();
 	}
 
@@ -226,7 +223,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 * Event handler for when user clicks forgot password button.
 	 */
 	_onForgotPassword(): void {
-		this.logger.debug('onForgotPassword fired.', this);
+		this.logger.trace('onForgotPassword fired.', this);
 		this.forgotPasswordClicked.emit();
 	}
 
@@ -235,7 +232,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 * @param event
 	 */
 	_onRememberMeChange(event: MatSlideToggleChange): void {
-		this.logger.debug('onRememberMeChanged event handler emitted.', this);
+		this.logger.trace('onRememberMeChanged event handler emitted.', this);
 		this.rememberMeChanged.emit(event.checked);
 	}
 
@@ -243,7 +240,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 * Event handler for when new user is attempting to sign up.
 	 */
 	_onSignup(): void {
-		this.logger.debug('onSignup event handler emitted.', this);
+		this.logger.trace('onSignup event handler emitted.', this);
 		const signupUserModel = this._signupForm.value as SignupUserModel;
 		this.signupFormSubmitted.emit(signupUserModel);
 	}
@@ -252,7 +249,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 * Used to switch view to signup context.
 	 */
 	_switchToSignup(formDirective: FormGroupDirective): void {
-		this.logger.debug('Switching to signup view.');
+		this.logger.trace('_switchToSignup fired.', this);
 		this._createAccount = 'right-panel-active';
 		// allow for the animation before cleaning up the form.
 		setTimeout(() => {
@@ -264,7 +261,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 * Event handler for when user is attempting to sign in.
 	 */
 	_onSignin(): void {
-		this.logger.debug('onSignin event handler emitted.', this);
+		this.logger.trace('_onSignin fired.', this);
 		const signinUserModel = this.signinForm.value as SigninUserModel;
 		this.signinFormSubmitted.emit(signinUserModel);
 	}
@@ -273,7 +270,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 * Event handler for when user is attempting to sign in with google.
 	 */
 	_onSigninWithGoogle(): void {
-		this.logger.debug('onSigninWithGoogle event handler emitted.', this);
+		this.logger.trace('_onSigninWithGoogle fired.', this);
 		this.signinWithGoogleSubmitted.emit();
 	}
 
@@ -281,7 +278,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 * Event handler for when user is attempting to sign in with facebook.
 	 */
 	_onSigninWithFacebook(): void {
-		this.logger.debug('onSigninWithFacebook event handler emitted.', this);
+		this.logger.trace('_onSigninWithFacebook fired.', this);
 		this.signinWithFacebookSubmitted.emit();
 	}
 
@@ -289,7 +286,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 * Used to switch view to signin context.
 	 */
 	_switchToSignin(formDirective: FormGroupDirective): void {
-		this.logger.debug('Switching to signin view.');
+		this.logger.trace('_switchToSignin fired.', this);
 		this._createAccount = '';
 		// allow for the animation before cleaning up the form.
 		setTimeout(() => {
