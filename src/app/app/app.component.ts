@@ -11,7 +11,7 @@ import { LogService } from 'app/core/logger/log.service';
 import { Language } from 'app/core/settings/settings-state.model';
 import { MatSelectChange } from '@angular/material/select';
 import { AuthState } from 'app/core/auth/auth.store.state';
-import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { filter, tap } from 'rxjs/operators';
 
 /**

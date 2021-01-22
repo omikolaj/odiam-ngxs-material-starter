@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, Input } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { InternalServerError } from 'app/core/error-handler/internal-server-error.decorator';
 import { Observable } from 'rxjs';
