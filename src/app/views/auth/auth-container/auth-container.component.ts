@@ -12,6 +12,8 @@ import { InternalServerErrorDetails } from 'app/core/models/internal-server-erro
 import { LogService } from 'app/core/logger/log.service';
 import { tap } from 'rxjs/operators';
 import { Router, ActivatedRoute } from '@angular/router';
+import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
+import { MinScreenSizeQuery } from 'app/shared/screen-size-queries';
 
 /**
  * AuthContainer component
@@ -49,6 +51,11 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	_signupForm: FormGroup;
 
 	/**
+	 * Whether specified screen width was matched.
+	 */
+	_breakpointStateScreenMatcher$: Observable<BreakpointState>;
+
+	/**
 	 * Remember me option selected by the user.
 	 */
 	private _rememberMe$: Observable<boolean>;
@@ -70,11 +77,13 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 		private fb: FormBuilder,
 		private logger: LogService,
 		private router: Router,
-		private route: ActivatedRoute
+		private route: ActivatedRoute,
+		breakpointObserver: BreakpointObserver
 	) {
 		this._problemDetails$ = facade.problemDetails$;
 		this._internalServerErrorDetails$ = facade.internalServerErrorDetails$;
 		this._rememberMe$ = facade.rememberMe$;
+		this._breakpointStateScreenMatcher$ = breakpointObserver.observe([MinScreenSizeQuery.md]);
 	}
 
 	/**

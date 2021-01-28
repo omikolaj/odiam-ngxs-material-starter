@@ -14,7 +14,7 @@ import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { ValidationMessage_Required } from 'app/shared/validation-messages';
 import { AuthControlType } from 'app/shared/auth-abstract-control-type';
 import * as newCredentialsHelpers from 'app/shared/new-credentials-functions';
-import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
+import { BreakpointState } from '@angular/cdk/layout';
 
 /**
  * Auth component handles displaying both sign in and sign up views.
@@ -56,6 +56,11 @@ export class AuthComponent implements OnInit, OnDestroy {
 		this._subscription.add(this._validateSignupFormPasswordField(value).subscribe());
 		this._subscription.add(this._validateSignupFormConfirmPasswordField(value).subscribe());
 	}
+
+	/**
+	 * Whether to show overlay. Used for desktop view
+	 */
+	@Input() matcher: BreakpointState;
 
 	/**
 	 * Signup form of auth component.
@@ -192,11 +197,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 * Creates an instance of auth component.
 	 * @param cd
 	 */
-	constructor(private cd: ChangeDetectorRef, private logger: LogService, breakpointObserver: BreakpointObserver) {
-		this._showOverlay$ = breakpointObserver.observe(['(min-width: 768px)']).pipe(tap((v) => console.log(v)));
-	}
-
-	_showOverlay$: Observable<BreakpointState>;
+	constructor(private cd: ChangeDetectorRef, private logger: LogService) {}
 
 	/**
 	 * NgOnInit life cycle.

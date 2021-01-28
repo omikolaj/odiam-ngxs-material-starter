@@ -9,10 +9,8 @@
 		/>
 	</div>
 
-	<div class="auth-container__content">
-		<div class="auth-container__header">
-			<!-- <h6 class="auth-container__heading" [ngClass]
-      ="_routeAnimationsElements">Welcome</h6> -->
+	<div *ngIf="_breakpointStateScreenMatcher$ | async as matcher" class="auth-container__content">
+		<div *ngIf="!matcher?.matches" class="auth-container__header">
 			<h1 class="auth-container__heading" [ngClass]="_routeAnimationsElements">Welcome</h1>
 			<p class="auth-container__welcome-text" [ngClass]="_routeAnimationsElements">
 				Lorem ipsum dolor sit amet, consectetur adipisicing elit. Saepe dignissimos officia sint animi voluptatum est praesentium nostrum, iusto earum
@@ -22,6 +20,7 @@
 		<odm-auth
 			[problemDetails]="_problemDetails$ | async"
 			[internalServerErrorDetails]="_internalServerErrorDetails$ | async"
+			[matcher]="matcher"
 			(rememberMeChanged)="_onRememberMeChanged($event)"
 			[signinForm]="_signinForm"
 			(signinFormSubmitted)="_onSigninSubmitted($event)"

@@ -7,6 +7,7 @@ $fa-font-path: '~@fortawesome/fontawesome-free-webfonts/webfonts';
 $link-hover-decoration: none;
 $label-margin-bottom: 0;
 
+// ANY CHANGES MADE HERE SHOULD ALSO BE UPDATED IN screen-size-queries.ts FILE
 $grid-breakpoints: (
 	xs: 0,
 	sm: 576px,
