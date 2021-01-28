@@ -7,7 +7,7 @@
 	$background: map-get($theme, background);
 
 	odm-auth {
-		.container .sign-in-container {
+		.auth__container .auth__sign-in-container {
 			h3 {
 				background-image: linear-gradient(to left, mat-color($accent, A400), mat-color($primary, 700));
 			}
@@ -17,25 +17,25 @@
 			background-image: linear-gradient(to right, mat-color($accent, A400), mat-color($primary, 700));
 		}
 
-		.req-not-met {
+		.auth__req-not-met {
 			color: mat-color($warn);
 		}
 
-		.forgot {
+		.auth__text-link {
 			color: mat-color($primary, A400);
 		}
 
-		.btn {
+		.auth__form-btn {
 			background-image: linear-gradient(to right, mat-color($accent, A200), mat-color($accent, 900));
 		}
 
-		.overlay {
+		.auth__overlay {
 			background: mat-color($primary, A400);
 			background: linear-gradient(to right, mat-color($accent, A400), mat-color($primary, 700));
 			background: -webkit-linear-gradient(to right, mat-color($accent, A200), mat-color($primary, 700));
 		}
 
-		.container {
+		.auth__container {
 			background-color: mat-color($background, background);
 
 			form {

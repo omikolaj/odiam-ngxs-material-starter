@@ -1,3 +1,5 @@
+@import '../../../../styles-variables.scss';
+
 :host {
 	margin: 0 16px;
 }
@@ -8,10 +10,9 @@ h1 {
 
 h3 {
 	margin: 0px;
-	margin-bottom: 10px;
+	// margin-bottom: 10px;
 	color: transparent;
 	-webkit-background-clip: text;
-	background-clip: text;
 }
 
 p {
@@ -37,20 +38,27 @@ button {
 	letter-spacing: 1px;
 }
 
-button.ghost {
+button.auth__form-btn-ghost {
 	background-color: transparent;
 	color: white;
 }
 
-.req-met {
+.auth__form-icon {
+	object-fit: contain;
+	width: 25px;
+	margin: 0 5px;
+	transition: 0.15s;
+}
+
+.auth__req-met {
 	color: green;
 }
 
-.password-field {
+.auth__password-field {
 	margin-bottom: 85px;
 }
 
-.btn {
+.auth__form-btn {
 	background-size: 200%;
 	width: 250px;
 	border: none;
@@ -59,11 +67,15 @@ button.ghost {
 	color: white;
 }
 
-.btn.signup-btn {
+.auth__text-align {
+	text-align: center;
+}
+
+.auth__form-btn.auth__form-signup-btn {
 	margin-top: 18px;
 }
 
-.btn:enabled:hover {
+.auth__form-btn:enabled:hover {
 	background-position: right;
 }
 
@@ -75,43 +87,92 @@ form {
 	height: 100%;
 }
 
-.container {
+.auth__container {
 	position: relative;
 	overflow: hidden;
-	width: 768px;
+	width: 480px;
 	max-width: 100%;
 	min-height: 480px;
+	margin-top: 20px;
+	margin: 0 auto;
+
+	.auth__form-container {
+		position: absolute;
+		top: 0;
+		transition: all 0.6s ease-in-out;
+	}
 }
 
-.form-container {
+@media (min-width: map-get($grid-breakpoints, md)) {
+	.auth__container {
+		width: 768px;
+	}
+}
+
+.auth__form-container {
 	position: absolute;
 	top: 0;
-	height: 100%;
+	// height: 100%;
 	transition: all 0.6s ease-in-out;
 }
 
-.sign-in-container {
+@media (min-width: map-get($grid-breakpoints, md)) {
+	.auth__form-container {
+		height: 100%;
+	}
+}
+
+.auth__sign-in-container {
 	left: 0;
-	width: 50%;
+	width: 100%;
 	z-index: 2;
 }
 
-.container.right-panel-active .sign-in-container {
+@media (min-width: map-get($grid-breakpoints, md)) {
+	.auth__sign-in-container {
+		width: 50%;
+	}
+}
+
+.auth__container.right-panel-active .auth__sign-in-container {
 	transform: translateX(100%);
 }
 
-.sign-up-container {
+.auth__sign-up-container {
 	left: 0;
-	width: 50%;
+	width: 100%;
 	opacity: 0;
 	z-index: 1;
+	transform: translateX(100%);
+
+	.auth__sign-up-header {
+		margin-bottom: 20px;
+	}
 }
 
-.container.right-panel-active .sign-up-container {
-	transform: translateX(100%);
+.auth__sign-in-header {
+	margin-bottom: 20px;
+}
+
+@media (min-width: map-get($grid-breakpoints, md)) {
+	.auth__sign-up-container {
+		width: 50%;
+		// remove transform value
+		transform: none;
+	}
+}
+
+.auth__container.right-panel-active .auth__sign-up-container {
+	transform: translateX(0);
 	opacity: 1;
 	z-index: 5;
 	animation: show 0.6s;
+}
+
+@media (min-width: map-get($grid-breakpoints, md)) {
+	.auth__container.right-panel-active .auth__sign-up-container {
+		transform: translateX(100%);
+	}
 }
 
 @keyframes show {
@@ -128,39 +189,59 @@ form {
 	}
 }
 
-.overlay-container {
+.auth__overlay-container {
 	position: absolute;
-	top: 0;
-	left: 50%;
-	width: 50%;
-	height: 100%;
+	top: 50%;
+	left: 0;
+	width: 100%;
+	height: 50%;
+	// height: 100%;
 	overflow: hidden;
 	transition: transform 0.6s ease-in-out;
-	z-index: 100;
+	// z-index: 100;
+	z-index: 5;
 }
 
-.container.right-panel-active .overlay-container {
+@media (min-width: map-get($grid-breakpoints, md)) {
+	.auth__overlay-container {
+		top: 0;
+		left: 50%;
+		width: 50%;
+		height: 100%;
+	}
+}
+
+.auth__container.right-panel-active .auth__overlay-container {
 	transform: translateX(-100%);
 }
 
-.overlay {
+.auth__overlay {
 	background-repeat: no-repeat;
 	background-size: cover;
 	background-position: 0 0;
 	color: #ffffff;
 	position: relative;
-	left: -100%;
-	height: 100%;
-	width: 200%;
+	top: -100%;
+	height: 200%;
+	width: 100%;
 	transform: translateX(0);
 	transition: transform 0.6s ease-in-out;
 }
 
-.container.right-panel-active .overlay {
+@media (min-width: map-get($grid-breakpoints, md)) {
+	.auth__overlay {
+		left: -100%;
+		top: 0;
+		height: 100%;
+		width: 200%;
+	}
+}
+
+.auth__container.right-panel-active .auth__overlay {
 	transform: translateX(50%);
 }
 
-.overlay-panel {
+.auth__overlay-panel {
 	position: absolute;
 	display: flex;
 	align-items: center;
@@ -168,100 +249,44 @@ form {
 	flex-direction: column;
 	padding: 0 40px;
 	text-align: center;
-	top: 0;
-	height: 100%;
-	width: 50%;
+	right: 0;
+	height: 50%;
+	width: 100%;
 	transform: translateX(0);
 	transition: transform 0.6s ease-in-out;
 }
 
-.overlay-left {
+@media (min-width: map-get($grid-breakpoints, md)) {
+	.auth__overlay-panel {
+		right: auto;
+		top: 0;
+		height: 100%;
+		width: 50%;
+	}
+}
+
+.auth__overlay-left {
 	transform: translateX(-20%);
 }
 
-.container.right-panel-active .overlay-left {
+.auth__container.right-panel-active .auth__overlay-left {
 	transform: translateX(0);
 }
 
-.overlay-right {
+.auth__overlay-right {
 	right: 0;
 	transform: translateX(0);
 }
 
-.container.right-panel-active .overlay-right {
+.auth__container.right-panel-active .auth__overlay-right {
 	transform: translateX(20%);
 }
 
-.forgot-remember {
+.auth__text-link {
 	font-size: 12px;
 	cursor: pointer;
 }
 
-.view-password {
+.auth__view-password {
 	cursor: pointer;
 }
-
-// @keyframes blink {
-// 	/**
-//      * At the start of the animation the dot
-//      * has an opacity of .2
-//      */
-// 	0% {
-// 		opacity: 0.2;
-// 	}
-// 	/**
-//      * At 20% the dot is fully visible and
-//      * then fades out slowly
-//      */
-// 	20% {
-// 		opacity: 1;
-// 	}
-// 	/**
-//      * Until it reaches an opacity of .2 and
-//      * the animation can start again
-//      */
-// 	100% {
-// 		opacity: 0.2;
-// 	}
-// }
-
-// .check-availability-animation span {
-// 	/**
-//      * Use the blink animation, which is defined above
-//      */
-// 	animation-name: blink;
-// 	/**
-//      * The animation should take 1.4 seconds
-//      */
-// 	animation-duration: 1.4s;
-// 	/**
-//      * It will repeat itself forever
-//      */
-// 	animation-iteration-count: infinite;
-// 	/**
-//      * This makes sure that the starting style (opacity: .2)
-//      * of the animation is applied before the animation starts.
-//      * Otherwise we would see a short flash or would have
-//      * to set the default styling of the dots to the same
-//      * as the animation. Same applies for the ending styles.
-//      */
-// 	animation-fill-mode: both;
-// }
-
-// .saving span:nth-child(2) {
-// 	/**
-//      * Starts the animation of the third dot
-//      * with a delay of .2s, otherwise all dots
-//      * would animate at the same time
-//      */
-// 	animation-delay: 0.2s;
-// }
-
-// .saving span:nth-child(3) {
-// 	/**
-//      * Starts the animation of the third dot
-//      * with a delay of .4s, otherwise all dots
-//      * would animate at the same time
-//      */
-// 	animation-delay: 0.4s;
-// }

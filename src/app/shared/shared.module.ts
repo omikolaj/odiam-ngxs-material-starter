@@ -23,6 +23,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule, ErrorStateMatcher, ShowOnDirtyErrorStateMatcher } from '@angular/material/core';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { LayoutModule } from '@angular/cdk/layout';
 
 import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import {
@@ -80,6 +81,7 @@ import { MatVerticalStepperScrollerDirective } from './directives/mat-vertical-s
 		MatDividerModule,
 		MatStepperModule,
 		MatExpansionModule,
+		LayoutModule,
 
 		FontAwesomeModule
 	],
@@ -110,6 +112,7 @@ import { MatVerticalStepperScrollerDirective } from './directives/mat-vertical-s
 		MatNativeDateModule,
 		MatStepperModule,
 		MatExpansionModule,
+		LayoutModule,
 
 		FontAwesomeModule,
 

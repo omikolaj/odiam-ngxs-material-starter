@@ -1,14 +1,24 @@
-<section class="section">
-	<div class="main">
-		<div class="intro-section">
-			<h6 class="intro-heading" [ngClass]="_routeAnimationsElements">Welcome</h6>
-			<p class="intro-text" [ngClass]="_routeAnimationsElements">
+<!-- <section class="section"> -->
+<div class="auth-container">
+	<div class="auth-container__img-section">
+		<img
+			class="auth-container__img"
+			src="https://res.cloudinary.com/hetfy/image/upload/v1603459311/laptop_hkaxzz.png"
+			[ngClass]="_routeAnimationsElements"
+			alt="Laptop"
+		/>
+	</div>
+
+	<div class="auth-container__content">
+		<div class="auth-container__header">
+			<!-- <h6 class="auth-container__heading" [ngClass]
+      ="_routeAnimationsElements">Welcome</h6> -->
+			<h1 class="auth-container__heading" [ngClass]="_routeAnimationsElements">Welcome</h1>
+			<p class="auth-container__welcome-text" [ngClass]="_routeAnimationsElements">
 				Lorem ipsum dolor sit amet, consectetur adipisicing elit. Saepe dignissimos officia sint animi voluptatum est praesentium nostrum, iusto earum
 				fugit.
 			</p>
-			<img src="https://res.cloudinary.com/hetfy/image/upload/v1603459311/laptop_hkaxzz.png" [ngClass]="_routeAnimationsElements" alt="Laptop" />
 		</div>
-
 		<odm-auth
 			[problemDetails]="_problemDetails$ | async"
 			[internalServerErrorDetails]="_internalServerErrorDetails$ | async"
@@ -22,4 +32,5 @@
 			(forgotPasswordClicked)="_onForgotPasswordClicked()"
 		></odm-auth>
 	</div>
-</section>
+</div>
+<!-- </section> -->

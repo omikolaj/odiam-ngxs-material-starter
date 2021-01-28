@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ROUTE_ANIMATIONS_ELEMENTS } from '../../../core/core.module';
 import { Store } from '@ngxs/store';
@@ -19,7 +19,7 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
 	styleUrls: ['./settings-container.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SettingsContainerComponent implements OnInit {
+export class SettingsContainerComponent {
 	_routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
 	_settings$: Observable<SettingsStateModel>;
 	_themes = [
@@ -52,6 +52,13 @@ export class SettingsContainerComponent implements OnInit {
 	ngOnInit(): void {
 		this.logger.trace('Initialized.', this);
 		this._settings$ = this.store.select(SettingsState.selectSettings).pipe(tap((settings) => this.logger.trace('Settings data.', this, settings)));
+	}
+
+	/**
+	 * NgOnDestroy life cycle.
+	 */
+	ngOnDestroy(): void {
+		this.logger.trace('Destroyed.', this);
 	}
 
 	/**

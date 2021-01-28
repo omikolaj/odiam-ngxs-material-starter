@@ -14,6 +14,7 @@ import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { ValidationMessage_Required } from 'app/shared/validation-messages';
 import { AuthControlType } from 'app/shared/auth-abstract-control-type';
 import * as newCredentialsHelpers from 'app/shared/new-credentials-functions';
+import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
 
 /**
  * Auth component handles displaying both sign in and sign up views.
@@ -191,7 +192,11 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 * Creates an instance of auth component.
 	 * @param cd
 	 */
-	constructor(private cd: ChangeDetectorRef, private logger: LogService) {}
+	constructor(private cd: ChangeDetectorRef, private logger: LogService, breakpointObserver: BreakpointObserver) {
+		this._showOverlay$ = breakpointObserver.observe(['(min-width: 768px)']).pipe(tap((v) => console.log(v)));
+	}
+
+	_showOverlay$: Observable<BreakpointState>;
 
 	/**
 	 * NgOnInit life cycle.
@@ -251,6 +256,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	_switchToSignup(formDirective: FormGroupDirective): void {
 		this.logger.trace('_switchToSignup fired.', this);
 		this._createAccount = 'right-panel-active';
+
 		// allow for the animation before cleaning up the form.
 		setTimeout(() => {
 			formDirective.resetForm();
