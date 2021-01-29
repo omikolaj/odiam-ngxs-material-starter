@@ -6,13 +6,9 @@ import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { implementsOdmWebApiException } from 'app/core/utilities/implements-odm-web-api-exception';
 import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
-import { LogService } from 'app/core/logger/log.service';
-
 import { Observable, Subscription } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { AuthControlType } from 'app/shared/auth-abstract-control-type';
-import * as newCredentialsHelpers from '../../../shared/new-credentials-functions';
-import { ValidationMessage_Required } from 'app/shared/validation-messages';
 import { OdmValidators } from 'app/core/form-validators/odm-validators';
 
 /**
@@ -34,8 +30,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
 	 * Emitted when server responds with 40X error.
 	 */
 	set problemDetails(value: Observable<ProblemDetails>) {
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const _ = value ? this.logger.debug('Problem details emitted.', this) : null;
+		this.facade.log.debug('Problem details emitted.', this);
 		this._problemDetailsServerErrorHandled = false;
 		this._subscription.add(
 			value
@@ -52,8 +47,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
 	 * InternalServerErrorDetails for when server crashes and responds with 50X error.
 	 */
 	set internalServerErrorDetails(value: Observable<InternalServerErrorDetails>) {
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const _ = value ? this.logger.debug('Problem details emitted.', this) : null;
+		this.facade.log.debug('Problem details emitted.', this);
 		this._subscription.add(
 			value
 				.pipe(
@@ -69,11 +63,6 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
 	 * Emitted when server responds with 50X error.
 	 */
 	private _internalServerErrorDetails: InternalServerErrorDetails;
-
-	/**
-	 * Field is required message.
-	 */
-	_fieldRequiredMessage = ValidationMessage_Required;
 
 	/**
 	 * Gets whether is internal server error occured.
@@ -169,7 +158,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
 	 * @param fb
 	 * @param facade
 	 */
-	constructor(private fb: FormBuilder, private facade: AuthFacadeService, private cd: ChangeDetectorRef, private logger: LogService) {
+	constructor(private fb: FormBuilder, private facade: AuthFacadeService, private cd: ChangeDetectorRef) {
 		this.problemDetails = this.facade.problemDetails$;
 		this.internalServerErrorDetails = this.facade.internalServerErrorDetails$;
 	}
@@ -178,7 +167,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
 	 * NgOnInit life cycle.
 	 */
 	ngOnInit(): void {
-		this.logger.trace('Initialized.', this);
+		this.facade.log.trace('Initialized.', this);
 		this._initForm();
 		this._resetPasswordFormEmailControlStatusChanges$ = this._resetPasswordForm.get('email').statusChanges.pipe(
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -197,7 +186,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
 	 * NgOnDestroy life cycle.
 	 */
 	ngOnDestroy(): void {
-		this.logger.trace('Destroyed.', this);
+		this.facade.log.trace('Destroyed.', this);
 		this._subscription.unsubscribe();
 	}
 
@@ -224,12 +213,21 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
 	}
 
 	/**
-	 * Gets password error message.
+	 * Gets translated password error message.
 	 * @param errors
-	 * @returns password error message
+	 * @returns translated password error message
 	 */
-	_getPasswordErrorMessage(errors: ValidationErrors): string {
-		return newCredentialsHelpers.getPasswordErrorMessage(errors);
+	_getTranslatedPasswordErrorMessage$(errors: ValidationErrors): Observable<string> {
+		return this.facade.translateError.translatePasswordErrorMessage$(errors);
+	}
+
+	/**
+	 * Gets translated email error message.
+	 * @param errors
+	 * @returns email error message
+	 */
+	_getTranslatedEmailErrorMessage$(errors: ValidationErrors): Observable<string> {
+		return this.facade.translateError.translateEmailErrorMessage$(errors);
 	}
 
 	/**
@@ -274,15 +272,6 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
 		} else {
 			return this._ifControlFieldIsInvalidatedByServer(control, controlType);
 		}
-	}
-
-	/**
-	 * Gets email error message.
-	 * @param errors
-	 * @returns email error message
-	 */
-	_getEmailErrorMessage(errors: ValidationErrors): string {
-		return newCredentialsHelpers.getEmailErrorMessage(errors);
 	}
 
 	/**

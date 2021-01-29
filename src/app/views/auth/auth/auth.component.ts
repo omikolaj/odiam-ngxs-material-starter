@@ -9,12 +9,11 @@ import { Observable, Subscription } from 'rxjs';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { implementsOdmWebApiException } from 'app/core/utilities/implements-odm-web-api-exception';
-import { LogService } from 'app/core/logger/log.service';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { ValidationMessage_Required } from 'app/shared/validation-messages';
 import { AuthControlType } from 'app/shared/auth-abstract-control-type';
-import * as newCredentialsHelpers from 'app/shared/new-credentials-functions';
 import { BreakpointState } from '@angular/cdk/layout';
+import { AuthFacadeService } from '../auth-facade.service';
 
 /**
  * Auth component handles displaying both sign in and sign up views.
@@ -30,7 +29,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 * Emitted when server responds with 40X error.
 	 */
 	@Input() set problemDetails(value: ProblemDetails) {
-		this.logger.debug('Problem details emitted.', this);
+		this.facade.log.debug('Problem details emitted.', this);
 		this._problemDetailsServerErrorHandled = false;
 		this._problemDetails = value;
 	}
@@ -51,7 +50,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 * Signup form of auth component.
 	 */
 	@Input() set signupForm(value: FormGroup) {
-		this.logger.debug('Signup form emitted.', this);
+		this.facade.log.debug('Signup form emitted.', this);
 		this._signupForm = value;
 		this._subscription.add(this._validateSignupFormPasswordField(value).subscribe());
 		this._subscription.add(this._validateSignupFormConfirmPasswordField(value).subscribe());
@@ -163,6 +162,16 @@ export class AuthComponent implements OnInit, OnDestroy {
 	_confirmPasswordNotMatchReqMet = false;
 
 	/**
+	 * Facebook login icon.
+	 */
+	_facebookLoginIcon = (require('../../../../assets/facebook_icon_color.svg') as { default: string }).default;
+
+	/**
+	 * Google login icon.
+	 */
+	_googleLoginIcon = (require('../../../../assets/google_icon_color.svg') as { default: string }).default;
+
+	/**
 	 * Gets whether is internal server error occured.
 	 */
 	get _isInternalServerError(): boolean {
@@ -197,13 +206,13 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 * Creates an instance of auth component.
 	 * @param cd
 	 */
-	constructor(private cd: ChangeDetectorRef, private logger: LogService) {}
+	constructor(private facade: AuthFacadeService, private cd: ChangeDetectorRef) {}
 
 	/**
 	 * NgOnInit life cycle.
 	 */
 	ngOnInit(): void {
-		this.logger.trace('Initialized.', this);
+		this.facade.log.trace('Initialized.', this);
 		this._signupFormEmailControlStatusChanges$ = this._signupForm.get('email').statusChanges.pipe(
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			tap((_: string) => {
@@ -221,7 +230,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 * NgOnDestroy life cycle.
 	 */
 	ngOnDestroy(): void {
-		this.logger.trace('Destroyed.', this);
+		this.facade.log.trace('Destroyed.', this);
 		this._subscription.unsubscribe();
 	}
 
@@ -229,7 +238,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 * Event handler for when user clicks forgot password button.
 	 */
 	_onForgotPassword(): void {
-		this.logger.trace('onForgotPassword fired.', this);
+		this.facade.log.trace('onForgotPassword fired.', this);
 		this.forgotPasswordClicked.emit();
 	}
 
@@ -238,7 +247,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 * @param event
 	 */
 	_onRememberMeChange(event: MatSlideToggleChange): void {
-		this.logger.trace('onRememberMeChanged event handler emitted.', this);
+		this.facade.log.trace('onRememberMeChanged event handler emitted.', this);
 		this.rememberMeChanged.emit(event.checked);
 	}
 
@@ -246,7 +255,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 * Event handler for when new user is attempting to sign up.
 	 */
 	_onSignup(): void {
-		this.logger.trace('onSignup event handler emitted.', this);
+		this.facade.log.trace('onSignup event handler emitted.', this);
 		const signupUserModel = this._signupForm.value as SignupUserModel;
 		this.signupFormSubmitted.emit(signupUserModel);
 	}
@@ -255,7 +264,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 * Used to switch view to signup context.
 	 */
 	_switchToSignup(formDirective: FormGroupDirective): void {
-		this.logger.trace('_switchToSignup fired.', this);
+		this.facade.log.trace('_switchToSignup fired.', this);
 		this._createAccount = 'right-panel-active';
 
 		// allow for the animation before cleaning up the form.
@@ -268,7 +277,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 * Event handler for when user is attempting to sign in.
 	 */
 	_onSignin(): void {
-		this.logger.trace('_onSignin fired.', this);
+		this.facade.log.trace('_onSignin fired.', this);
 		const signinUserModel = this.signinForm.value as SigninUserModel;
 		this.signinFormSubmitted.emit(signinUserModel);
 	}
@@ -277,7 +286,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 * Event handler for when user is attempting to sign in with google.
 	 */
 	_onSigninWithGoogle(): void {
-		this.logger.trace('_onSigninWithGoogle fired.', this);
+		this.facade.log.trace('_onSigninWithGoogle fired.', this);
 		this.signinWithGoogleSubmitted.emit();
 	}
 
@@ -285,7 +294,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 * Event handler for when user is attempting to sign in with facebook.
 	 */
 	_onSigninWithFacebook(): void {
-		this.logger.trace('_onSigninWithFacebook fired.', this);
+		this.facade.log.trace('_onSigninWithFacebook fired.', this);
 		this.signinWithFacebookSubmitted.emit();
 	}
 
@@ -293,7 +302,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 	 * Used to switch view to signin context.
 	 */
 	_switchToSignin(formDirective: FormGroupDirective): void {
-		this.logger.trace('_switchToSignin fired.', this);
+		this.facade.log.trace('_switchToSignin fired.', this);
 		this._createAccount = '';
 		// allow for the animation before cleaning up the form.
 		setTimeout(() => {
@@ -302,22 +311,42 @@ export class AuthComponent implements OnInit, OnDestroy {
 		}, 600);
 	}
 
+	// TODO Should no longer be in use. Keeping in case new method is broken.
 	/**
 	 * Gets email error message.
 	 * @param errors
 	 * @returns email error message
 	 */
-	_getEmailErrorMessage(errors: ValidationErrors): string {
-		return newCredentialsHelpers.getEmailErrorMessage(errors);
+	// _getEmailErrorMessage(errors: ValidationErrors): string {
+	// 	return newCredentialsHelpers.getEmailErrorMessage(errors);
+	// }
+
+	/**
+	 * Gets translated email error message.
+	 * @param errors
+	 * @returns translated email error message
+	 */
+	_getTranslatedEmailErrorMessage$(errors: ValidationErrors): Observable<string> {
+		return this.facade.translateError.translateEmailErrorMessage$(errors);
 	}
 
+	// TODO Should no longer be in use. Keeping in case new method is broken.
 	/**
 	 * Gets password error message.
 	 * @param errors
 	 * @returns password error message
 	 */
-	_getPasswordErrorMessage(errors: ValidationErrors): string {
-		return newCredentialsHelpers.getPasswordErrorMessage(errors);
+	// _getPasswordErrorMessage(errors: ValidationErrors): string {
+	// 	return newCredentialsHelpers.getPasswordErrorMessage(errors);
+	// }
+
+	/**
+	 * Gets translated password error message.
+	 * @param errors
+	 * @returns translated password error message
+	 */
+	_getTranslatedPasswordErrorMessage$(errors: ValidationErrors): Observable<string> {
+		return this.facade.translateError.translatePasswordErrorMessage$(errors);
 	}
 
 	/**

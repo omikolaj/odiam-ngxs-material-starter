@@ -45,6 +45,11 @@ form {
 	height: 100%;
 }
 
+.auth--btn {
+	color: white;
+	text-transform: uppercase;
+}
+
 .auth__container {
 	position: relative;
 	overflow: hidden;
@@ -53,6 +58,11 @@ form {
 	min-height: 500px;
 	margin-top: 20px;
 	margin: 0 auto;
+
+	.auth--btn {
+		color: white;
+		text-transform: uppercase;
+	}
 
 	// FORM CONTAINER
 	.auth__form-container {
@@ -90,7 +100,6 @@ form {
 			border: none;
 			transition: 0.3s ease-in-out;
 			margin-top: 21.5px;
-			color: white;
 		}
 
 		.auth__form-btn:enabled:hover {
@@ -204,7 +213,6 @@ form {
 
 			.auth__form-btn-ghost {
 				background-color: transparent;
-				color: white;
 			}
 		}
 	}

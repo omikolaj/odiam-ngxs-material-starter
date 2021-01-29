@@ -1,5 +1,8 @@
 {
 	"odm.about.change-theme": "Thema ändern",
+	"odm.auth.sign-up.subheader": "Melden Sie sich an, um ein Konto zu erstellen.",
+	"odm.auth.sign-up.validation.non-unique-email": "ist bereits registriert.",
+	"odm.auth.validation.field-required": "Dieses Feld wird benötigt.",
 	"odm.features.angular": "Modernes und leistungsfähiges Framework",
 	"odm.features.angular-cli": "Eine Befehlszeilenschnittstelle für Angular",
 	"odm.features.angular-material": "Material Design-Komponente",

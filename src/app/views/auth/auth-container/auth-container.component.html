@@ -1,20 +1,13 @@
-<!-- <section class="section"> -->
 <div class="auth-container">
 	<div class="auth-container__img-section">
-		<img
-			class="auth-container__img"
-			src="https://res.cloudinary.com/hetfy/image/upload/v1603459311/laptop_hkaxzz.png"
-			[ngClass]="_routeAnimationsElements"
-			alt="Laptop"
-		/>
+		<img class="auth-container__img" [src]="_laptopImgUrl" [ngClass]="_routeAnimationsElements" alt="Laptop" />
 	</div>
 
 	<div *ngIf="_breakpointStateScreenMatcher$ | async as matcher" class="auth-container__content">
 		<div *ngIf="!matcher?.matches" class="auth-container__header">
-			<h1 class="auth-container__heading" [ngClass]="_routeAnimationsElements">Welcome</h1>
+			<h1 class="auth-container__heading" [ngClass]="_routeAnimationsElements">{{ 'odm.auth.sign-up.header' | translate }}</h1>
 			<p class="auth-container__welcome-text" [ngClass]="_routeAnimationsElements">
-				Lorem ipsum dolor sit amet, consectetur adipisicing elit. Saepe dignissimos officia sint animi voluptatum est praesentium nostrum, iusto earum
-				fugit.
+				{{ 'odm.auth.sign-up.subheader' | translate }}
 			</p>
 		</div>
 		<odm-auth
@@ -32,4 +25,3 @@
 		></odm-auth>
 	</div>
 </div>
-<!-- </section> -->

@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { AuthFacadeService } from '../auth-facade.service';
 import { Observable, Subscription } from 'rxjs';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { OdmValidators } from 'app/core/form-validators/odm-validators';
 import { AsyncValidatorsService } from 'app/core/form-validators/validators-async.service';
 import { SignupUserModel } from 'app/core/auth/signup-user.model';
@@ -9,9 +9,8 @@ import { SigninUserModel } from 'app/core/auth/signin-user.model';
 import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
-import { LogService } from 'app/core/logger/log.service';
 import { tap } from 'rxjs/operators';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { MinScreenSizeQuery } from 'app/shared/screen-size-queries';
 
@@ -56,6 +55,11 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	_breakpointStateScreenMatcher$: Observable<BreakpointState>;
 
 	/**
+	 * Laptop img url.
+	 */
+	_laptopImgUrl = 'https://res.cloudinary.com/hetfy/image/upload/v1603459311/laptop_hkaxzz.png';
+
+	/**
 	 * Remember me option selected by the user.
 	 */
 	private _rememberMe$: Observable<boolean>;
@@ -74,9 +78,6 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	constructor(
 		private facade: AuthFacadeService,
 		private asyncValidators: AsyncValidatorsService,
-		private fb: FormBuilder,
-		private logger: LogService,
-		private router: Router,
 		private route: ActivatedRoute,
 		breakpointObserver: BreakpointObserver
 	) {
@@ -90,7 +91,7 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 * NgOnInit life cycle.
 	 */
 	ngOnInit(): void {
-		this.logger.trace('Initialized.', this);
+		this.facade.log.trace('Initialized.', this);
 		this._initForms();
 		this._subscription = this._rememberMe$.pipe(tap((value) => this._signinForm.get('rememberMe').setValue(value))).subscribe();
 	}
@@ -99,7 +100,7 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 * NgOnDestroy life cycle.
 	 */
 	ngOnDestroy(): void {
-		this.logger.trace('Destroyed.', this);
+		this.facade.log.trace('Destroyed.', this);
 		this._subscription.unsubscribe();
 	}
 
@@ -107,8 +108,8 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 * Event handler for when user clicks forgot password.
 	 */
 	_onForgotPasswordClicked(): void {
-		this.logger.trace('_onForgotPasswordClicked fired.', this);
-		void this.router.navigate(['forgot-password'], { relativeTo: this.route.parent });
+		this.facade.log.trace('_onForgotPasswordClicked fired.', this);
+		void this.facade.router.navigate(['forgot-password'], { relativeTo: this.route.parent });
 	}
 
 	/**
@@ -116,7 +117,7 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 * @param event
 	 */
 	_onRememberMeChanged(event: boolean): void {
-		this.logger.trace('_onRememberMeChanged event handler fired.', this, event);
+		this.facade.log.trace('_onRememberMeChanged event handler fired.', this, event);
 		this.facade.onRememberMeChanged(event);
 	}
 
@@ -125,7 +126,7 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 * @param model
 	 */
 	_onSigninSubmitted(model: SigninUserModel): void {
-		this.logger.trace('_onSigninSubmitted event handler fired.', this);
+		this.facade.log.trace('_onSigninSubmitted event handler fired.', this);
 		this.facade.signinUser(model);
 	}
 
@@ -133,7 +134,7 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 * Event handler for when user signs in with google.
 	 */
 	_onSigninWithGoogleSubmitted(): void {
-		this.logger.trace('_onSigninWithGoogleSubmitted event handler fired.', this);
+		this.facade.log.trace('_onSigninWithGoogleSubmitted event handler fired.', this);
 		this.facade.signinUserWithGoogle();
 	}
 
@@ -141,7 +142,7 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 * Event handler for when user signs in with facebook.
 	 */
 	_onSigninWithFacebookSubmitted(): void {
-		this.logger.trace('_onSigninWithFacebookSubmitted event handler fired.', this);
+		this.facade.log.trace('_onSigninWithFacebookSubmitted event handler fired.', this);
 		this.facade.signinUserWithFacebook();
 	}
 
@@ -150,7 +151,7 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 * @param model
 	 */
 	_onSignupSubmitted(model: SignupUserModel): void {
-		this.logger.trace('_onSignupSubmitted event handler fired.', this);
+		this.facade.log.trace('_onSignupSubmitted event handler fired.', this);
 		this.facade.signupUser(model);
 	}
 
@@ -167,13 +168,13 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 * @returns signin form
 	 */
 	private _initSigninForm(): FormGroup {
-		return this.fb.group({
-			email: this.fb.control('', {
+		return this.facade.fb.group({
+			email: this.facade.fb.control('', {
 				validators: [OdmValidators.required, OdmValidators.email],
 				updateOn: 'blur'
 			}),
-			password: this.fb.control('', [OdmValidators.required]),
-			rememberMe: this.fb.control(false)
+			password: this.facade.fb.control('', [OdmValidators.required]),
+			rememberMe: this.facade.fb.control(false)
 		});
 	}
 
@@ -182,14 +183,14 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 * @returns signup form
 	 */
 	private _initSignupForm(): FormGroup {
-		return this.fb.group(
+		return this.facade.fb.group(
 			{
-				email: this.fb.control('', {
+				email: this.facade.fb.control('', {
 					validators: [OdmValidators.required, OdmValidators.email],
 					asyncValidators: [this.asyncValidators.checkIfEmailIsUnique()],
 					updateOn: 'blur'
 				}),
-				password: this.fb.control('', {
+				password: this.facade.fb.control('', {
 					validators: [
 						OdmValidators.required,
 						OdmValidators.minLength(8),
@@ -201,7 +202,7 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 					],
 					updateOn: 'change'
 				}),
-				confirmPassword: this.fb.control('')
+				confirmPassword: this.facade.fb.control('')
 			},
 			{
 				validators: OdmValidators.requireConfirmPassword,

@@ -18,6 +18,9 @@ import { SocialAuthService, SocialUser, GoogleLoginProvider, FacebookLoginProvid
 import { UsersAsyncService } from 'app/core/services/users-async.service';
 import { PasswordResetModel } from 'app/core/auth/password-reset.model';
 import { JsonWebTokenService } from 'app/core/services/json-web-token.service';
+import { TranslateErrorsService } from 'app/shared/services/translate-errors.service';
+import { LogService } from 'app/core/logger/log.service';
+import { FormBuilder } from '@angular/forms';
 
 /**
  * Auth facade service.
@@ -39,8 +42,11 @@ export class AuthFacadeService {
 		private authAsyncService: AuthAsyncService,
 		private usersAsyncService: UsersAsyncService,
 		private notification: NotificationService,
+		public translateError: TranslateErrorsService,
 		private store: Store,
-		private router: Router,
+		public log: LogService,
+		public fb: FormBuilder,
+		public router: Router,
 		private socialAuthService: SocialAuthService,
 		private jwtService: JsonWebTokenService
 	) {}

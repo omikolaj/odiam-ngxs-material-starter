@@ -1,25 +1,25 @@
 <div [ngClass]="_createAccount" class="auth__container">
 	<div class="auth__form-container auth__sign-up-container">
 		<form [formGroup]="_signupForm" #signupFormDirective="ngForm" (ngSubmit)="_onSignup()" role="form" novalidate>
-			<h3 class="auth__sign-up-header">Create Account</h3>
+			<h3 class="auth__sign-up-header">{{ 'odm.auth.sign-up.title' | translate }}</h3>
 
 			<div>
-				<img (click)="_onSigninWithFacebook()" class="auth__form-icon" src="../../../../assets/facebook_icon_color.svg" alt="facebook" />
-				<img (click)="_onSigninWithGoogle()" class="auth__form-icon" src="../../../../assets/google_icon_color.svg" alt="google" />
+				<img (click)="_onSigninWithFacebook()" class="auth__form-icon" [src]="_facebookLoginIcon" alt="facebook" />
+				<img (click)="_onSigninWithGoogle()" class="auth__form-icon" [src]="_googleLoginIcon" alt="google" />
 			</div>
 
 			<div>
 				<mat-form-field appearance="standard">
-					<mat-label>E-mail</mat-label>
+					<mat-label>{{ 'odm.auth.email-label' | translate }}</mat-label>
 					<input formControlName="email" matInput placeholder="example@gmail.com" type="email" autocomplete="email" required />
 					<mat-hint>
 						<ng-container *ngIf="_signupFormEmailControlStatusChanges$ | async as status">
 							<span *ngIf="status === 'PENDING' && !_isInternalServerError" class="loading-dots-animation"
-								>Checking availability<span>.</span><span>.</span><span>.</span>
+								>{{ 'odm.auth.checking-availability' | translate }}<span>.</span><span>.</span><span>.</span>
 							</span>
 							<span *ngIf="status === 'VALID'">
 								<mat-icon class="auth--req-met" matPrefix>{{ 'task_alt' }}</mat-icon>
-								E-mail is not registered.
+								{{ 'odm.auth.validation.valid-email' | translate }}
 							</span>
 							<span *ngIf="_isInternalServerError">
 								<mat-icon class="auth--req-not-met" matPrefix>{{ 'clear' }}</mat-icon>
@@ -29,14 +29,14 @@
 					</mat-hint>
 					<mat-icon matSuffix>email</mat-icon>
 					<mat-error *ngIf="_ifControlFieldIsInvalid(_signupForm?.get('email'), 'email')">{{
-						_getEmailErrorMessage(_signupForm?.get('email').errors)
+						_getTranslatedEmailErrorMessage$(_signupForm?.get('email').errors) | async
 					}}</mat-error>
 				</mat-form-field>
 			</div>
 
 			<div class="auth__password-field">
 				<mat-form-field appearance="standard">
-					<mat-label>Password</mat-label>
+					<mat-label>{{ 'odm.auth.password-label' | translate }}</mat-label>
 					<input matInput formControlName="password" [type]="_hide ? 'password' : 'text'" autocomplete="new-password" required />
 					<mat-icon class="auth__view-password" matSuffix (click)="_hide = !_hide">{{ _hide ? 'visibility_off' : 'visibility' }}</mat-icon>
 					<mat-hint>
@@ -46,7 +46,7 @@
 									_passwordLengthReqMet ? 'task_alt' : 'clear'
 								}}</mat-icon>
 							</ng-container>
-							Must be 8 characters long
+							{{ 'odm.auth.requirement.eight-chars-long' | translate }}
 						</span>
 						<br />
 						<span>
@@ -55,7 +55,7 @@
 									_passwordUppercaseReqMet ? 'task_alt' : 'clear'
 								}}</mat-icon>
 							</ng-container>
-							Must contain 1 upper case letter
+							{{ 'odm.auth.requirement.one-upper-case' | translate }}
 						</span>
 						<br />
 						<span>
@@ -64,7 +64,7 @@
 									_passwordLowercaseReqMet ? 'task_alt' : 'clear'
 								}}</mat-icon>
 							</ng-container>
-							Must contain 1 lower case letter
+							{{ 'odm.auth.requirement.one-lower-case' | translate }}
 						</span>
 						<br />
 						<span>
@@ -73,7 +73,7 @@
 									_passwordDigitReqMet ? 'task_alt' : 'clear'
 								}}</mat-icon>
 							</ng-container>
-							Must contain 1 digit
+							{{ 'odm.auth.requirement.one-digit' | translate }}
 						</span>
 						<br />
 						<span>
@@ -82,7 +82,7 @@
 									_passwordThreeUniqueCharacterCountReqMet ? 'task_alt' : 'clear'
 								}}</mat-icon>
 							</ng-container>
-							Must contain 3 unique characters
+							{{ 'odm.auth.requirement.three-unique-chars' | translate }}
 						</span>
 						<br />
 						<span>
@@ -91,18 +91,18 @@
 									_passwordSpecialCharacterReqMet ? 'task_alt' : 'clear'
 								}}</mat-icon>
 							</ng-container>
-							Must contain (! @ # $ % & * _ ?)
+							{{ 'odm.auth.requirement.one-special-char' | translate }}
 						</span>
 					</mat-hint>
 					<mat-error *ngIf="_ifControlFieldIsInvalidatedByServer(_signupForm?.get('password'), 'password')">{{
-						_getPasswordErrorMessage(_signupForm?.get('password').errors)
+						_getTranslatedPasswordErrorMessage$(_signupForm?.get('password').errors) | async
 					}}</mat-error>
 				</mat-form-field>
 			</div>
 
 			<div>
 				<mat-form-field appearance="standard">
-					<mat-label>Confirm Password</mat-label>
+					<mat-label>{{ 'odm.auth.confirm-password-label' | translate }}</mat-label>
 					<input matInput formControlName="confirmPassword" [type]="_hide ? 'password' : 'text'" autocomplete="new-password" />
 					<mat-icon class="auth__view-password" matSuffix (click)="_hide = !_hide">{{ _hide ? 'visibility_off' : 'visibility' }}</mat-icon>
 					<mat-hint>
@@ -112,7 +112,7 @@
 									_confirmPasswordNotMatchReqMet ? 'task_alt' : 'clear'
 								}}</mat-icon>
 							</ng-container>
-							Passwords must match
+							{{ 'odm.auth.requirement.pass-must-match' | translate }}
 						</span>
 					</mat-hint>
 					<mat-error *ngIf="_signupForm?.get('confirmPassword').invalid">{{ _fieldRequiredMessage }}</mat-error>
@@ -120,9 +120,13 @@
 			</div>
 
 			<div>
-				<button mat-raised-button type="submit" class="auth__form-btn auth__form-signup-btn" [disabled]="!_signupForm?.valid">SIGN UP</button>
+				<button mat-raised-button type="submit" class="auth__form-btn auth__form-signup-btn auth--btn" [disabled]="!_signupForm?.valid">
+					{{ 'odm.auth.sign-up.sign-up-button' | translate }}
+				</button>
 				<div class="auth__text-align">
-					<span *ngIf="!matcher?.matches" class="auth__text-link" (click)="_switchToSignin(signinFormDirective)">Sign in</span>
+					<span *ngIf="!matcher?.matches" class="auth__text-link" (click)="_switchToSignin(signinFormDirective)">{{
+						'odm.auth.sign-in.sign-in-button' | translate
+					}}</span>
 				</div>
 			</div>
 		</form>
@@ -130,7 +134,7 @@
 
 	<div class="auth__form-container auth__sign-in-container" [ngClass]="_routeAnimationsElements">
 		<form [formGroup]="signinForm" #signinFormDirective="ngForm" (ngSubmit)="_onSignin()" role="form" novalidate>
-			<h3 class="auth__sign-in-header">Sign In</h3>
+			<h3 class="auth__sign-in-header">{{ 'odm.auth.sign-in.title' | translate }}</h3>
 
 			<div>
 				<img (click)="_onSigninWithFacebook()" class="auth__form-icon" src="../../../../assets/facebook_icon_color.svg" alt="facebook" />
@@ -139,18 +143,18 @@
 
 			<div>
 				<mat-form-field appearance="standard">
-					<mat-label>E-mail</mat-label>
+					<mat-label>{{ 'odm.auth.email-label' | translate }}</mat-label>
 					<input matInput formControlName="email" type="email" autocomplete="email" required />
 					<mat-icon matSuffix>email</mat-icon>
 					<mat-error *ngIf="_ifControlFieldIsInvalid(signinForm?.get('email'), 'email')">{{
-						_getEmailErrorMessage(signinForm?.get('email').errors)
+						_getTranslatedEmailErrorMessage$(signinForm?.get('email').errors) | async
 					}}</mat-error>
 				</mat-form-field>
 			</div>
 
 			<div>
 				<mat-form-field appearance="standard">
-					<mat-label>Password</mat-label>
+					<mat-label>{{ 'odm.auth.password-label' | translate }}</mat-label>
 					<input matInput formControlName="password" [type]="_hide ? 'password' : 'text'" type="password" autocomplete="current-password" required />
 					<mat-icon class="auth__view-password" matSuffix (click)="_hide = !_hide">{{ _hide ? 'visibility_off' : 'visibility' }}</mat-icon>
 					<mat-error *ngIf="signinForm?.get('password').invalid">{{ _fieldRequiredMessage }}</mat-error>
@@ -158,16 +162,20 @@
 			</div>
 
 			<div>
-				<button mat-raised-button type="submit" class="auth__form-btn" [disabled]="!signinForm?.valid">SIGN IN</button>
+				<button mat-raised-button type="submit" class="auth__form-btn auth--btn" [disabled]="!signinForm?.valid">
+					{{ 'odm.auth.sign-in.sign-in-button' | translate }}
+				</button>
 			</div>
 
 			<div>
-				<span class="auth__text-link" (click)="_onForgotPassword()">Forgot password? </span>
-				<span *ngIf="!matcher?.matches" class="auth__text-link" (click)="_switchToSignup(signinFormDirective)">Sign up</span>
+				<span class="auth__text-link" (click)="_onForgotPassword()">{{ 'odm.auth.sign-in.forgot-password' | translate }} </span>
+				<span *ngIf="!matcher?.matches" class="auth__text-link" (click)="_switchToSignup(signinFormDirective)">{{
+					'odm.auth.sign-up.sign-up-button' | translate
+				}}</span>
 			</div>
 			<div>
 				<mat-slide-toggle [checked]="signinForm.get('rememberMe').value" (change)="_onRememberMeChange($event)" formControlName="rememberMe"
-					><span class="auth__text-link">Remember me</span></mat-slide-toggle
+					><span class="auth__text-link">{{ 'odm.auth.sign-in.remember-me' | translate }}</span></mat-slide-toggle
 				>
 			</div>
 		</form>
@@ -177,17 +185,20 @@
 		<div class="auth__overlay-container">
 			<div class="auth__overlay" [ngClass]="_routeAnimationsElements">
 				<div class="auth__overlay-panel auth__overlay-left">
-					<h1>Welcome Back!</h1>
-					<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod</p>
-					<button mat-raised-button (click)="_switchToSignin(signupFormDirective)" class="auth__form-btn-ghost">SIGN IN</button>
+					<h1>{{ 'odm.auth.sign-in.header' | translate }}</h1>
+					<p>{{ 'odm.auth.sign-in.subheader' | translate }}</p>
+					<button mat-raised-button (click)="_switchToSignin(signupFormDirective)" class="auth__form-btn-ghost auth--btn">
+						{{ 'odm.auth.sign-in.sign-in-button' | translate }}
+					</button>
 				</div>
 				<div class="auth__overlay-panel auth__overlay-right">
-					<h1>Hello World!</h1>
+					<h1>{{ 'odm.auth.sign-up.header' | translate }}</h1>
 					<p>
-						Lorem ipsum dolor sit amet,<br />
-						sed do eiusmod tempor incididunt.
+						{{ 'odm.auth.sign-up.subheader' | translate }}
 					</p>
-					<button mat-raised-button (click)="_switchToSignup(signinFormDirective)" class="auth__form-btn-ghost">CREATE ACCOUNT</button>
+					<button mat-raised-button (click)="_switchToSignup(signinFormDirective)" class="auth__form-btn-ghost auth--btn">
+						{{ 'odm.auth.sign-up.create-account-button' | translate }}
+					</button>
 				</div>
 			</div>
 		</div>

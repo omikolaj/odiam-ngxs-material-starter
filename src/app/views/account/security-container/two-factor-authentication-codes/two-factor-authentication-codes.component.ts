@@ -1,8 +1,8 @@
 import { Component, ChangeDetectionStrategy, Output, EventEmitter, Input } from '@angular/core';
 import { TooltipTouchGestures } from '@angular/material/tooltip';
 import { ODM_TOOLTIP_SHOW_DELAY_IN_MS } from 'app/shared/mat-tooltip-settings';
-import { LogService } from 'app/core/logger/log.service';
 import { upDownFadeInAnimation, fadeInAnimation } from 'app/core/animations/element.animations';
+import { AccountFacadeService } from '../../account-facade.service';
 
 /**
  * Two factor authentication codes component.
@@ -62,15 +62,15 @@ export class TwoFactorAuthenticationCodesComponent {
 
 	/**
 	 * Creates an instance of two factor authentication codes component.
-	 * @param logger
+	 * @param facade
 	 */
-	constructor(private logger: LogService) {}
+	constructor(private facade: AccountFacadeService) {}
 
 	/**
 	 * Event handler when user requests to generate new recovery codes.
 	 */
 	_onGenerateNewRecoveryCodes(): void {
-		this.logger.trace('_onGenerateNewRecoveryCodes fired.', this);
+		this.facade.log.trace('_onGenerateNewRecoveryCodes fired.', this);
 		this.generateNewRecoveryCodes.emit();
 	}
 
@@ -78,7 +78,7 @@ export class TwoFactorAuthenticationCodesComponent {
 	 * Event handler when user closes expansion panel.
 	 */
 	_onUserCodesClosed(): void {
-		this.logger.trace('_onTogglePosition fired.', this);
+		this.facade.log.trace('_onTogglePosition fired.', this);
 		this.userCodesPanelClosed.emit();
 	}
 }

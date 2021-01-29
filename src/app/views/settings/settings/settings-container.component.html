@@ -1,97 +1,102 @@
 <div class="_container">
-  <div class="_row">
-    <div class="column-sm-12">
-      <h1>{{ 'odm.settings.title' | translate }}</h1>
-    </div>
-  </div>
-  <br>
-  <ng-container *ngIf="_settings$ | async as settings">
-    <div class="_row">
-      <div class="column-md-6 group" [ngClass]="_routeAnimationsElements">
-        <h2>{{ 'odm.settings.general.title' | translate }}</h2>
-        <div class="icon-form-field">
-          <mat-icon color="accent">
-            <fa-icon icon="language" color="accent"></fa-icon>
-          </mat-icon>
-          <mat-form-field>
-            <mat-select [placeholder]="'odm.settings.general.placeholder' | translate" [ngModel]="settings.language"
-              (selectionChange)="onLanguageSelect($event)" name="language">
-              <ng-container *ngFor="let l of _languages">
-                <!-- ngFor hack of missing ngLet of Angular -->
-                <mat-option *ngFor="let title of ['odm.settings.general.language.' + l.value | translate]"
-                  [value]="l.value" [title]="title !== l.label
-                    ? title
-                    : ''">
-                  {{ l.label }}
-                </mat-option>
-              </ng-container>
-            </mat-select>
-          </mat-form-field>
-        </div>
-        <div class="icon-form-field">
-          <mat-icon color="accent">
-            <fa-icon icon="bars" color="accent"></fa-icon>
-          </mat-icon>
-          <mat-placeholder>{{ 'odm.settings.themes.sticky-header' | translate }}
-          </mat-placeholder>
-          <mat-slide-toggle [checked]="settings.stickyHeader" (change)="onStickyHeaderToggle($event)">
-          </mat-slide-toggle>
-        </div>
-      </div>
-    </div>
-    <div class="_row">
-      <div class="column-md-6 group" [ngClass]="_routeAnimationsElements">
-        <h2>{{ 'odm.settings.themes.title' | translate }}</h2>
-        <div class="icon-form-field">
-          <mat-icon color="accent">
-            <fa-icon icon="paint-brush" color="accent"></fa-icon>
-          </mat-icon>
-          <mat-form-field>
-            <mat-select [placeholder]="'odm.settings.themes.placeholder' | translate" [ngModel]="settings.theme"
-              (selectionChange)="onThemeSelect($event)" name="themes">
-              <mat-option *ngFor="let t of _themes" [value]="t.value">
-                {{ 'odm.settings.themes.' + t.label | translate }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-        <div class="icon-form-field">
-          <mat-icon color="accent">
-            <fa-icon icon="lightbulb" color="accent"></fa-icon>
-          </mat-icon>
-          <mat-placeholder>{{ 'odm.settings.themes.night-mode' | translate }}
-          </mat-placeholder>
-          <mat-slide-toggle [checked]="settings.autoNightMode" (change)="onAutoNightModeToggle($event)">
-          </mat-slide-toggle>
-        </div>
-      </div>
-      <div class="column-md-6 group" [ngClass]="_routeAnimationsElements">
-        <h2>{{ 'odm.settings.animations.title' | translate }}</h2>
-        <div class="icon-form-field">
-          <mat-icon color="accent">
-            <mat-icon color="accent">
-              <fa-icon icon="window-maximize"></fa-icon>
-            </mat-icon>
-          </mat-icon>
-          <mat-placeholder>{{ 'odm.settings.animations.page' | translate }}
-          </mat-placeholder>
-          <mat-slide-toggle matTooltip="Sorry, this feature is disabled in IE, EDGE and Safari"
-            matTooltipPosition="before" *ngIf="settings.pageAnimationsDisabled" disabled>
-          </mat-slide-toggle>
-          <mat-slide-toggle *ngIf="!settings.pageAnimationsDisabled" [checked]="settings.pageAnimations"
-            (change)="onPageAnimationsToggle($event)">
-          </mat-slide-toggle>
-        </div>
-        <div class="icon-form-field">
-          <mat-icon color="accent">
-            <fa-icon icon="stream" color="accent"></fa-icon>
-          </mat-icon>
-          <mat-placeholder>{{ 'odm.settings.animations.elements' | translate }}
-          </mat-placeholder>
-          <mat-slide-toggle [checked]="settings.elementsAnimations" (change)="onElementsAnimationsToggle($event)">
-          </mat-slide-toggle>
-        </div>
-      </div>
-    </div>
-  </ng-container>
+	<div class="_row">
+		<div class="column-sm-12">
+			<h1>{{ 'odm.settings.title' | translate }}</h1>
+		</div>
+	</div>
+	<br />
+	<ng-container *ngIf="_settings$ | async as settings">
+		<div class="_row">
+			<div class="column-md-6 group" [ngClass]="_routeAnimationsElements">
+				<h2>{{ 'odm.settings.general.title' | translate }}</h2>
+				<div class="icon-form-field">
+					<mat-icon color="accent">
+						<fa-icon icon="language" color="accent"></fa-icon>
+					</mat-icon>
+					<mat-form-field>
+						<mat-select
+							[placeholder]="'odm.settings.general.placeholder' | translate"
+							[ngModel]="settings.language"
+							(selectionChange)="_onLanguageSelect($event)"
+							name="language"
+						>
+							<ng-container *ngFor="let l of _languages">
+								<!-- ngFor hack of missing ngLet of Angular -->
+								<mat-option
+									*ngFor="let title of ['odm.settings.general.language.' + l.value | translate]"
+									[value]="l.value"
+									[title]="title !== l.label ? title : ''"
+								>
+									{{ l.label }}
+								</mat-option>
+							</ng-container>
+						</mat-select>
+					</mat-form-field>
+				</div>
+				<div class="icon-form-field">
+					<mat-icon color="accent">
+						<fa-icon icon="bars" color="accent"></fa-icon>
+					</mat-icon>
+					<mat-placeholder>{{ 'odm.settings.themes.sticky-header' | translate }} </mat-placeholder>
+					<mat-slide-toggle [checked]="settings.stickyHeader" (change)="_onStickyHeaderToggle($event)"> </mat-slide-toggle>
+				</div>
+			</div>
+		</div>
+		<div class="_row">
+			<div class="column-md-6 group" [ngClass]="_routeAnimationsElements">
+				<h2>{{ 'odm.settings.themes.title' | translate }}</h2>
+				<div class="icon-form-field">
+					<mat-icon color="accent">
+						<fa-icon icon="paint-brush" color="accent"></fa-icon>
+					</mat-icon>
+					<mat-form-field>
+						<mat-select
+							[placeholder]="'odm.settings.themes.placeholder' | translate"
+							[ngModel]="settings.theme"
+							(selectionChange)="_onThemeSelect($event)"
+							name="themes"
+						>
+							<mat-option *ngFor="let t of _themes" [value]="t.value">
+								{{ 'odm.settings.themes.' + t.label | translate }}
+							</mat-option>
+						</mat-select>
+					</mat-form-field>
+				</div>
+				<div class="icon-form-field">
+					<mat-icon color="accent">
+						<fa-icon icon="lightbulb" color="accent"></fa-icon>
+					</mat-icon>
+					<mat-placeholder>{{ 'odm.settings.themes.night-mode' | translate }} </mat-placeholder>
+					<mat-slide-toggle [checked]="settings.autoNightMode" (change)="_onAutoNightModeToggle($event)"> </mat-slide-toggle>
+				</div>
+			</div>
+			<div class="column-md-6 group" [ngClass]="_routeAnimationsElements">
+				<h2>{{ 'odm.settings.animations.title' | translate }}</h2>
+				<div class="icon-form-field">
+					<mat-icon color="accent">
+						<mat-icon color="accent">
+							<fa-icon icon="window-maximize"></fa-icon>
+						</mat-icon>
+					</mat-icon>
+					<mat-placeholder>{{ 'odm.settings.animations.page' | translate }} </mat-placeholder>
+					<mat-slide-toggle
+						matTooltip="Sorry, this feature is disabled in IE, EDGE and Safari"
+						matTooltipPosition="before"
+						*ngIf="settings.pageAnimationsDisabled"
+						disabled
+					>
+					</mat-slide-toggle>
+					<mat-slide-toggle *ngIf="!settings.pageAnimationsDisabled" [checked]="settings.pageAnimations" (change)="_onPageAnimationsToggle($event)">
+					</mat-slide-toggle>
+				</div>
+				<div class="icon-form-field">
+					<mat-icon color="accent">
+						<fa-icon icon="stream" color="accent"></fa-icon>
+					</mat-icon>
+					<mat-placeholder>{{ 'odm.settings.animations.elements' | translate }} </mat-placeholder>
+					<mat-slide-toggle [checked]="settings.elementsAnimations" (change)="_onElementsAnimationsToggle($event)"> </mat-slide-toggle>
+				</div>
+			</div>
+		</div>
+	</ng-container>
 </div>

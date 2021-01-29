@@ -1,7 +1,6 @@
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { FormGroup, ValidationErrors, AbstractControl } from '@angular/forms';
 import { TwoFactorAuthenticationSetupResult } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-setup-result.model';
-import { LogService } from 'app/core/logger/log.service';
 import { TwoFactorAuthenticationVerificationCode } from '../two-factor-authentication/models/two-factor-authentication-verification-code.model';
 import { TwoFactorAuthenticationSetup } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-setup.model';
 import { ValidationMessage_Required } from 'app/shared/validation-messages';
@@ -10,6 +9,7 @@ import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { implementsOdmWebApiException } from 'app/core/utilities/implements-odm-web-api-exception';
 import { CdkStepper } from '@angular/cdk/stepper';
+import { AccountFacadeService } from '../../account-facade.service';
 
 /**
  * Two factor authentication setup wizard component.
@@ -55,7 +55,7 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 	 * Two factor authentication setup result.
 	 */
 	@Input() set twoFactorAuthenticationSetupResult(value: TwoFactorAuthenticationSetupResult) {
-		this.logger.debug('twoFactorAuthenticationSetupResult emitted.', this);
+		this.facade.log.debug('twoFactorAuthenticationSetupResult emitted.', this);
 		if (value.status === 'Succeeded') {
 			this._codeVerificationSucceeded = true;
 			this._is2faSetupCompleted = true;
@@ -176,16 +176,16 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 
 	/**
 	 * Creates an instance of two factor authentication setup wizard component.
-	 * @param logger
+	 * @param facade
 	 * @param cd
 	 */
-	constructor(private logger: LogService, private cd: ChangeDetectorRef) {}
+	constructor(private facade: AccountFacadeService, private cd: ChangeDetectorRef) {}
 
 	/**
 	 * Event handler when user submits two factor authentication setup verification code.
 	 */
 	_onVerificationCodeSubmitted(): void {
-		this.logger.trace('_onVerificationCodeSubmitted fired.', this);
+		this.facade.log.trace('_onVerificationCodeSubmitted fired.', this);
 		const code = this.verificationCodeForm.value as TwoFactorAuthenticationVerificationCode;
 		this.verificationCodeSubmitted.emit(code);
 	}
@@ -195,7 +195,7 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 	 * @param stepper
 	 */
 	_onFinishSetup(): void {
-		this.logger.trace('_onRestartOrFinishClicked fired.', this);
+		this.facade.log.trace('_onRestartOrFinishClicked fired.', this);
 		this.finish2faSetupClicked.emit(this._twoFactorAuthenticationSetupResult);
 	}
 
@@ -203,7 +203,7 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 	 * Event handler when user clicks to cancel the setup wizard.
 	 */
 	_onCancelClicked(): void {
-		this.logger.trace('_onCancelClicked fired.', this);
+		this.facade.log.trace('_onCancelClicked fired.', this);
 		this.cancelSetupWizardClicked.emit();
 	}
 

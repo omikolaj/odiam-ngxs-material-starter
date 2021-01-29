@@ -3,12 +3,12 @@ import { MatSlideToggleChange, MatSlideToggle } from '@angular/material/slide-to
 import { TwoFactorAuthenticationSetup } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-setup.model';
 import { FormGroup } from '@angular/forms';
 import { TwoFactorAuthenticationSetupResult } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-setup-result.model';
-import { LogService } from 'app/core/logger/log.service';
 import { TwoFactorAuthenticationVerificationCode } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-verification-code.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { fadeInAnimation, upDownFadeInAnimation } from 'app/core/animations/element.animations';
 import { implementsOdmWebApiException } from 'app/core/utilities/implements-odm-web-api-exception';
+import { AccountFacadeService } from '../../account-facade.service';
 
 /**
  * Component responsible for handling two factor authentication settings.
@@ -25,7 +25,7 @@ export class TwoFactorAuthenticationComponent {
 	 * Emitted when server responds with 40X error.
 	 */
 	@Input() set problemDetails(value: ProblemDetails) {
-		this.logger.debug('Problem details emitted.', this);
+		this.facade.log.debug('Problem details emitted.', this);
 		this._internalServerErrorDetails = null;
 		this._problemDetails = value;
 	}
@@ -36,7 +36,7 @@ export class TwoFactorAuthenticationComponent {
 	 * Emitted when server responds with 50X error.
 	 */
 	@Input() set internalServerErrorDetails(value: InternalServerErrorDetails) {
-		this.logger.debug('Internal server error emitted.', this);
+		this.facade.log.debug('Internal server error emitted.', this);
 		this._problemDetails = null;
 		this._internalServerErrorDetails = value;
 	}
@@ -62,7 +62,7 @@ export class TwoFactorAuthenticationComponent {
 	 * Whether there is an outgoing request to enable/disable two factor authentication.
 	 */
 	@Input() set twoFactorAuthToggleLoading(value: boolean) {
-		this.logger.debug('twoFactorAuthToggleLoading emitted.', this);
+		this.facade.log.debug('twoFactorAuthToggleLoading emitted.', this);
 		this._twoFactorAuthToggleLoading = value;
 
 		// allow for any problemDetails or internalServerErrors to be emitted. This defers the execution.
@@ -79,7 +79,7 @@ export class TwoFactorAuthenticationComponent {
 	 * Two factor authentication setup information.
 	 */
 	@Input() set authenticatorSetup(value: TwoFactorAuthenticationSetup) {
-		this.logger.debug('authenticatorSetup emitted.', this);
+		this.facade.log.debug('authenticatorSetup emitted.', this);
 		this._authenticatorSetup = value;
 		if (value.authenticatorUri !== '' && value.sharedKey !== '') {
 			this._showTwoFactorAuthSetupWizard = true;
@@ -162,16 +162,16 @@ export class TwoFactorAuthenticationComponent {
 
 	/**
 	 * Creates an instance of two factor authentication component.
-	 * @param logger
+	 * @param facade
 	 */
-	constructor(private logger: LogService) {}
+	constructor(private facade: AccountFacadeService) {}
 
 	/**
 	 * Event handler when user requests to enable/disable two factor authentication.
 	 * @param event
 	 */
 	_onTwoFactorAuthToggle(event: MatSlideToggleChange): void {
-		this.logger.trace('_onTwoFactorAuthToggle fired.', this);
+		this.facade.log.trace('_onTwoFactorAuthToggle fired.', this);
 		this._removeServerErrors();
 		this.twoFactorAuthToggleChanged.emit(event);
 	}
@@ -180,7 +180,7 @@ export class TwoFactorAuthenticationComponent {
 	 * Event handler when user cancels the two factor authentication setup wizard.
 	 */
 	_onCancelSetupWizard(): void {
-		this.logger.trace('_onCancelSetupWizard fired.', this);
+		this.facade.log.trace('_onCancelSetupWizard fired.', this);
 		this._showTwoFactorAuthSetupWizard = false;
 		this._removeServerErrors();
 		this.cancelSetupWizardClicked.emit();
@@ -190,7 +190,7 @@ export class TwoFactorAuthenticationComponent {
 	 * Event handler when user finishes two factor authentication setup.
 	 */
 	_onFinish2faSetup(event: TwoFactorAuthenticationSetupResult): void {
-		this.logger.trace('_onFinish2faSetup fired.', this);
+		this.facade.log.trace('_onFinish2faSetup fired.', this);
 		this._showTwoFactorAuthSetupWizard = false;
 		this.finish2faSetupClicked.emit(event);
 	}
@@ -199,7 +199,7 @@ export class TwoFactorAuthenticationComponent {
 	 * Event handler when user requests to generate new recovery codes.
 	 */
 	_onGenerateNew2FaRecoveryCodes(): void {
-		this.logger.trace('_onGenerateNew2FaRecoveryCodes fired.', this);
+		this.facade.log.trace('_onGenerateNew2FaRecoveryCodes fired.', this);
 		this._removeServerErrors();
 		this.generateNew2faRecoveryCodesClicked.emit();
 	}
@@ -209,7 +209,7 @@ export class TwoFactorAuthenticationComponent {
 	 * @param event
 	 */
 	_onVerifyAuthenticator(event: TwoFactorAuthenticationVerificationCode): void {
-		this.logger.trace('_onVerifyAuthenticator fired.', this);
+		this.facade.log.trace('_onVerifyAuthenticator fired.', this);
 		this._removeServerErrors();
 		this.verifyAuthenticatorClicked.emit(event);
 	}
@@ -218,7 +218,7 @@ export class TwoFactorAuthenticationComponent {
 	 * Event handler when user closes 'user codes' expansion panel.
 	 */
 	_onUserCodesPanelClosed(): void {
-		this.logger.trace('_onToggleUserCodeExpasionPanel fired.', this);
+		this.facade.log.trace('_onToggleUserCodeExpasionPanel fired.', this);
 		this._removeServerErrors();
 	}
 
@@ -248,7 +248,7 @@ export class TwoFactorAuthenticationComponent {
 	 * Clears all server errors.
 	 */
 	private _removeServerErrors(): void {
-		this.logger.trace('_removeServerErrors errors fired.', this);
+		this.facade.log.trace('_removeServerErrors errors fired.', this);
 		this._problemDetails = null;
 		this._internalServerErrorDetails = null;
 	}

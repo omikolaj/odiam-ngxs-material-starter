@@ -2,14 +2,13 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { AccountFacadeService } from '../account-facade.service';
 import { Observable, Subscription, merge, BehaviorSubject } from 'rxjs';
 import { AccountSecurityDetails } from 'app/core/models/account-security-details.model';
-import { LogService } from 'app/core/logger/log.service';
 import { tap } from 'rxjs/internal/operators/tap';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { skip, filter } from 'rxjs/operators';
 import { TwoFactorAuthenticationSetupResult } from './two-factor-authentication/models/two-factor-authentication-setup-result.model';
 import { TwoFactorAuthenticationSetup } from './two-factor-authentication/models/two-factor-authentication-setup.model';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { OdmValidators } from 'app/core/form-validators/odm-validators';
 import { TwoFactorAuthenticationVerificationCode } from './two-factor-authentication/models/two-factor-authentication-verification-code.model';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
@@ -102,10 +101,8 @@ export class SecurityContainerComponent implements OnInit {
 	/**
 	 * Creates an instance of security container component.
 	 * @param facade
-	 * @param logger
-	 * @param fb
 	 */
-	constructor(private facade: AccountFacadeService, private logger: LogService, private fb: FormBuilder) {
+	constructor(private facade: AccountFacadeService) {
 		this._accountSecurityDetails$ = facade.accountSecurityDetails$;
 		this._authenticatorSetup$ = facade.twoFactorAuthenticationSetup$;
 		this._authenticatorSetupResult$ = facade.twoFactorAuthenticationSetupResult$;
@@ -117,7 +114,7 @@ export class SecurityContainerComponent implements OnInit {
 	 * NgOnInit life cycle. Emits loading value then fetches data for this component
 	 */
 	ngOnInit(): void {
-		this.logger.trace('Initialized.', this);
+		this.facade.log.trace('Initialized.', this);
 
 		this._loadingSub.next(true);
 		this.facade.getAccountSecurityInfo();
@@ -159,15 +156,15 @@ export class SecurityContainerComponent implements OnInit {
 	 * @param event
 	 */
 	_onTwoFactorAuthToggle(event: MatSlideToggleChange): void {
-		this.logger.trace('_onTwoFactorAuthToggle fired.', this);
+		this.facade.log.trace('_onTwoFactorAuthToggle fired.', this);
 		this._twoFactorAuthToggleLoadingSub.next(true);
 
 		if (event.checked) {
-			this.logger.trace('_onTwoFactorAuthToggle: enter 2fa setup.', this);
+			this.facade.log.trace('_onTwoFactorAuthToggle: enter 2fa setup.', this);
 			this.facade.setupAuthenticator();
 			// this._showTwoFactorAuthSetupWizard = event.checked;
 		} else {
-			this.logger.trace('_onTwoFactorAuthToggle: disable 2fa.', this);
+			this.facade.log.trace('_onTwoFactorAuthToggle: disable 2fa.', this);
 			this.facade.disable2Fa();
 		}
 	}
@@ -177,7 +174,7 @@ export class SecurityContainerComponent implements OnInit {
 	 * @param event
 	 */
 	_verifyAuthenticatorClicked(event: TwoFactorAuthenticationVerificationCode): void {
-		this.logger.trace('_onVerifyAuthenticator fired.', this);
+		this.facade.log.trace('_onVerifyAuthenticator fired.', this);
 		this._codeVerificationInProgress = true;
 		this.facade.verifyAuthenticator(event);
 	}
@@ -186,7 +183,7 @@ export class SecurityContainerComponent implements OnInit {
 	 * Event handler when user cancels the two factor authentication setup wizard.
 	 */
 	_cancelSetupWizardClicked(): void {
-		this.logger.trace('_onCancelSetupWizard fired.', this);
+		this.facade.log.trace('_onCancelSetupWizard fired.', this);
 		this._showTwoFactorAuthSetupWizard = false;
 		this._verificationCodeForm.reset();
 		this.facade.cancel2faSetupWizard();
@@ -196,7 +193,7 @@ export class SecurityContainerComponent implements OnInit {
 	 * Event handler when user finishes two factor authentication setup.
 	 */
 	_finish2faSetupClicked(event: TwoFactorAuthenticationSetupResult): void {
-		this.logger.trace('_onFinish2faSetup fired.', this);
+		this.facade.log.trace('_onFinish2faSetup fired.', this);
 		this._showTwoFactorAuthSetupWizard = false;
 		this._verificationCodeForm.reset();
 		this.facade.finish2faSetup(event);
@@ -206,7 +203,7 @@ export class SecurityContainerComponent implements OnInit {
 	 * Event handler when user requests to generate new recovery codes.
 	 */
 	_generateNew2faRecoveryCodesClicked(): void {
-		this.logger.trace('_onGenerateNew2FaRecoveryCodes fired.', this);
+		this.facade.log.trace('_onGenerateNew2FaRecoveryCodes fired.', this);
 		this._generatingNewRecoveryCodes = true;
 		this.facade.generateRecoveryCodes();
 	}
@@ -215,8 +212,8 @@ export class SecurityContainerComponent implements OnInit {
 	 * Initializes verification code form.
 	 */
 	private _initVerificationCodeForm(): void {
-		this._verificationCodeForm = this.fb.group({
-			verificationCode: this.fb.control(
+		this._verificationCodeForm = this.facade.fb.group({
+			verificationCode: this.facade.fb.control(
 				{ value: '', disabled: true },
 				{
 					validators: [OdmValidators.required, OdmValidators.minLength(6), OdmValidators.maxLength(6)],

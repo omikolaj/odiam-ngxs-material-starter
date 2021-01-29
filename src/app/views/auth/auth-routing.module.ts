@@ -12,11 +12,13 @@ const routes: Routes = [
 	},
 	{
 		path: 'forgot-password',
-		component: ForgotPasswordComponent
+		component: ForgotPasswordComponent,
+		data: { title: 'odm.auth' }
 	},
 	{
 		path: 'reset-password',
-		component: ResetPasswordComponent
+		component: ResetPasswordComponent,
+		data: { title: 'odm.auth' }
 	}
 ];
 

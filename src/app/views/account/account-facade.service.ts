@@ -17,6 +17,8 @@ import { InternalServerError } from 'app/core/error-handler/internal-server-erro
 import { ProblemDetailsError } from 'app/core/error-handler/problem-details-error.decorator';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
+import { LogService } from 'app/core/logger/log.service';
+import { FormBuilder } from '@angular/forms';
 
 /**
  * User account facade service.
@@ -58,7 +60,9 @@ export class AccountFacadeService {
 		private twoFactorAuthenticationAsync: TwoFactorAuthenticationAsyncService,
 		private store: Store,
 		private userAsyncService: UsersAsyncService,
-		private actions$: Actions
+		private actions$: Actions,
+		public log: LogService,
+		public fb: FormBuilder
 	) {}
 
 	getUserProfile(): void {
