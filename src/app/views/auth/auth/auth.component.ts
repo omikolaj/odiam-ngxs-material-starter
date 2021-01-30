@@ -311,44 +311,14 @@ export class AuthComponent implements OnInit, OnDestroy {
 		}, 600);
 	}
 
-	// TODO Should no longer be in use. Keeping in case new method is broken.
 	/**
-	 * Gets email error message.
+	 * Gets translated error message.
 	 * @param errors
-	 * @returns email error message
+	 * @returns translated error message$
 	 */
-	// _getEmailErrorMessage(errors: ValidationErrors): string {
-	// 	return newCredentialsHelpers.getEmailErrorMessage(errors);
-	// }
-
-	/**
-	 * Gets translated email error message.
-	 * @param errors
-	 * @returns translated email error message
-	 */
-	_getTranslatedEmailErrorMessage$(errors: ValidationErrors): Observable<string> {
-		return this.facade.translateError.translateEmailErrorMessage$(errors);
+	_getTranslatedErrorMessage$(errors: ValidationErrors): Observable<string> {
+		return this.facade.translateError.translateErrorMessage$(errors);
 	}
-
-	// TODO Should no longer be in use. Keeping in case new method is broken.
-	/**
-	 * Gets password error message.
-	 * @param errors
-	 * @returns password error message
-	 */
-	// _getPasswordErrorMessage(errors: ValidationErrors): string {
-	// 	return newCredentialsHelpers.getPasswordErrorMessage(errors);
-	// }
-
-	/**
-	 * Gets translated password error message.
-	 * @param errors
-	 * @returns translated password error message
-	 */
-	_getTranslatedPasswordErrorMessage$(errors: ValidationErrors): Observable<string> {
-		return this.facade.translateError.translatePasswordErrorMessage$(errors);
-	}
-
 	/**
 	 * Gets internal server error message.
 	 * @returns internal server error message

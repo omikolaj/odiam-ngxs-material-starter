@@ -7,18 +7,15 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
 const routes: Routes = [
 	{
 		path: '',
-		component: AuthContainerComponent,
-		data: { title: 'odm.auth' }
+		component: AuthContainerComponent
 	},
 	{
 		path: 'forgot-password',
-		component: ForgotPasswordComponent,
-		data: { title: 'odm.auth' }
+		component: ForgotPasswordComponent
 	},
 	{
 		path: 'reset-password',
-		component: ResetPasswordComponent,
-		data: { title: 'odm.auth' }
+		component: ResetPasswordComponent
 	}
 ];
 

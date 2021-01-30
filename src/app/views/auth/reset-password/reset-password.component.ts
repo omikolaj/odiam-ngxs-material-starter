@@ -213,21 +213,12 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
 	}
 
 	/**
-	 * Gets translated password error message.
+	 * Gets translated error message.
 	 * @param errors
-	 * @returns translated password error message
+	 * @returns translated error message$
 	 */
-	_getTranslatedPasswordErrorMessage$(errors: ValidationErrors): Observable<string> {
-		return this.facade.translateError.translatePasswordErrorMessage$(errors);
-	}
-
-	/**
-	 * Gets translated email error message.
-	 * @param errors
-	 * @returns email error message
-	 */
-	_getTranslatedEmailErrorMessage$(errors: ValidationErrors): Observable<string> {
-		return this.facade.translateError.translateEmailErrorMessage$(errors);
+	_getTranslatedErrorMessage$(errors: ValidationErrors): Observable<string> {
+		return this.facade.translateError.translateErrorMessage$(errors);
 	}
 
 	/**

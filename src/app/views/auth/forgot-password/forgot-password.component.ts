@@ -42,24 +42,14 @@ export class ForgotPasswordComponent implements OnInit {
 		const value = this._forgotPasswordForm.value as { email: string };
 		this.facade.onForgotPassword(value.email);
 	}
-
-	// TODO remove if current way of handling displaying messages works
 	/**
-	 * Gets email input field error message.
-	 * @returns error message
+	 * Gets translated error message.
+	 * @param errors
+	 * @returns translated error message$
 	 */
-	// _getErrorMessage(): string {
-	// 	const control = this._forgotPasswordForm.get('email');
-	// 	if (control.hasError('required')) {
-	// 		return this._fieldRequiredMessage;
-	// 	} else if (control.hasError('email')) {
-	// 		return this._invalidEmailFormatMessage;
-	// 	}
-	// }
-
-	_getTranslatedEmailErrorMessage$(): Observable<string> {
+	_getTranslatedErrorMessage$(): Observable<string> {
 		const control = this._forgotPasswordForm.get('email');
-		return this.facade.translateError.translateEmailErrorMessage$(control.errors);
+		return this.facade.translateError.translateErrorMessage$(control.errors);
 	}
 
 	/**

@@ -6,7 +6,7 @@
 // import { ValidationErrors } from '@angular/forms';
 // import { ValidationMessage_Invalid, ValidationMessage_Required, ValidationMessage_Email } from './validation-messages';
 // import { TranslateError } from 'app/core/models/translate-error.model';
-// import { ValidationError } from 'app/core/models/validation-error.enum';
+// import { ValidationErrorType } from 'app/core/models/validation-error.enum';
 
 // /**
 //  * Gets email error message.
