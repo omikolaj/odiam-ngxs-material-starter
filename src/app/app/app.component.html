@@ -35,7 +35,7 @@
 						</button>
 					</span>
 					<button mat-button mat-stroked-button color="accent" *ngIf="!(_isAuthenticated$ | async)" (click)="_onSigninClick()">
-						{{ 'odm.menu.login' | translate }}
+						{{ 'odm.menu.signin' | translate }}
 					</button>
 
 					<button *ngIf="_isAuthenticated$ | async" mat-icon-button [matMenuTriggerFor]="toolbarUserMenu">
@@ -52,7 +52,7 @@
 							<mat-icon>
 								<fa-icon icon="power-off"></fa-icon>
 							</mat-icon>
-							<span>{{ 'odm.menu.logout' | translate }}</span>
+							<span>{{ 'odm.menu.signout' | translate }}</span>
 						</button>
 					</mat-menu>
 

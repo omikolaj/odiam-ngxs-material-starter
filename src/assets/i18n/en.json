@@ -1,126 +1,158 @@
 {
-	"odm.about.change-theme": "Change Theme",
-	"odm.account.header": "Personal account",
-	"odm.account.general.title": "General",
-	"odm.account.security.title": "Security",
-	"odm.account.security.two-step.title": "Two-step verification",
-	"odm.account.security.two-step.subtitle": "Require security code in addition to your password",
-	"odm.account.security.two-step.recovery-codes.title": "Recovery codes",
-	"odm.account.security.two-step.recovery-codes.description": "Get security codes to use when you can't access your phone",
-	"odm.account.security.two-step.recovery-codes.header": "Backup codes",
-	"odm.account.security.two-step.setup-wizard.first-step-title": "Setup",
-	"odm.account.security.two-step.setup-wizard.instructions": "Scan the QR Code or enter the following key into your two factor authenticator app such as Google Authenticator or Microsoft Authenticator. Spaces and casing do not matter",
-	"odm.account.security.two-step.setup-wizard.verification-code-message": "Once you have scanned the QR code or entered the key above, your two factor authentication app will provide you with a unique code. Enter that code in the confirmation box below",
-	"odm.account.security.two-step.setup-wizard.verification-code-placeholder": "6-digit verification code",
-	"odm.account.security.two-step.setup-wizard.verify-button": "Verify",
-	"odm.account.security.two-step.setup-wizard.verifing-button": "Verifing",
-	"odm.account.security.two-step.setup-wizard.verified-button": "Verified",
-	"odm.account.security.two-step.setup-wizard.finish-button": "Finish",
-	"odm.account.security.two-step.setup-wizard.last-step.title": "Finished",
-	"odm.account.security.two-step.setup-wizard.last-step.header": "Succeeded",
-	"odm.account.security.two-step.setup-wizard.last-step.information": "Next time you log in you will be prompted to use two factor authentication",
-	"odm.account.security.two-step.setup-wizard.last-step.save-codes": "Save below one time access codes in case you do not have access to your phone",
-	"odm.account.security.two-step.recovery-codes.subheader": "You can use these one time codes to access your account",
-	"odm.account.security.two-step.recovery-codes.user-message": "Write these down and keep them safe",
-	"odm.account.security.two-step.recovery-codes.generate": "Generate new codes",
-	"odm.auth": {
-		"checking-availability": "Checking availability",
-		"sign-in": {
-			"title": "Sign in",
-			"header": "Welcome Back!",
-			"subheader": "Sign in to view your account",
-			"forgot-password": "Forgot password?",
-			"remember-me": "Remember me"
-		},
-		"sign-up": {
-			"title": "Create Account",
-			"header": "Welcome",
-			"subheader": "Sign up to create an account."
-		},
-		"form": {
-			"label": {
-				"email": "E-mail",
-				"password": "Password",
-				"confirm-password": "Confirm Password"
+	"odm": {
+		"title.long": "Odiam Ngxs Material Starter",
+		"title.short": "Angular Starter",
+		"header.github": "Project Github Repository",
+		"account": {
+			"header": "Personal account",
+			"general": {
+				"title": "General"
 			},
-			"requirements": {
-				"pass-must-match": "Passwords must match",
-				"one-upper-case": "Must contain 1 upper case letter",
-				"one-lower-case": "Must contain 1 lower case letter",
-				"eight-chars-long": "Must be 8 characters long",
-				"one-digit": "Must contain 1 digit",
-				"three-unique-chars": "Must contain 3 unique characters",
-				"one-special-char": "Must contain one (! @ # $ % & * _ ?)"
-			},
-			"failed-validation": {
-				"non-unique-email": "{email} is already registered.",
-				"invalid-email-format": "Invalid e-mail format.",
-				"input-error": "Input validation error.",
-				"field-required": "This field is required."
-			},
-			"passed-validation": {
-				"valid-email": "E-mail is not registered."
+			"security": {
+				"title": "Security",
+				"two-step": {
+					"title": "Two-step verification",
+					"description": "Require security code in addition to your password",
+					"recovery-codes": {
+						"title": "Recovery codes",
+						"description": "Get security codes to use when you can't access your phone",
+						"backup-codes": {
+							"title": "Backup codes",
+							"description": "You can use these one time codes to access your account"
+						}
+					},
+					"setup-wizard": {
+						"first-step": {
+							"title": "Setup",
+							"instructions": {
+								"qr-code": "Scan the QR Code or enter the following key into your two factor authenticator app such as Google Authenticator or Microsoft Authenticator. Spaces and casing do not matter",
+								"verification-code": "Once you have scanned the QR code or entered the key above, your two factor authentication app will provide you with a unique code. Enter that code in the confirmation box below"
+							},
+							"verification-code-placeholder": "6-digit verification code"
+						},
+						"last-step": {
+							"title": "Finished",
+							"header": "Succeeded",
+							"information": "Next time you log in you will be prompted to use two factor authentication",
+							"save-codes": "Save below one time access codes in case you do not have access to your phone"
+						}
+					}
+				}
 			}
 		},
-		"button": {
+		"auth": {
+			"checking-availability": "Checking availability",
+			"sign-in": {
+				"title": "Sign in",
+				"header": "Welcome Back!",
+				"subheader": "Sign in to view your account",
+				"forgot-password": "Forgot password?",
+				"remember-me": "Remember me"
+			},
+			"sign-up": {
+				"title": "Create Account",
+				"header": "Welcome",
+				"subheader": "Sign up to create an account."
+			},
+			"form": {
+				"label": {
+					"email": "E-mail",
+					"password": "Password",
+					"confirm-password": "Confirm Password"
+				},
+				"requirements": {
+					"pass-must-match": "Passwords must match",
+					"one-upper-case": "Must contain 1 upper case letter",
+					"one-lower-case": "Must contain 1 lower case letter",
+					"eight-chars-long": "Must be 8 characters long",
+					"one-digit": "Must contain 1 digit",
+					"three-unique-chars": "Must contain 3 unique characters",
+					"one-special-char": "Must contain one (! @ # $ % & * _ ?)"
+				},
+				"validations": {
+					"non-unique-email": "{email} is already registered.",
+					"invalid-email-format": "Invalid e-mail format.",
+					"input-error": "Input validation error.",
+					"field-required": "This field is required.",
+					"valid-email": "E-mail is not registered."
+				}
+			}
+		},
+		"settings": {
+			"title": "Settings",
+			"animations": {
+				"elements": "Navigation page elements slide up",
+				"page": "Navigation whole page transition",
+				"title": "Animations"
+			},
+			"general": {
+				"title": "General",
+				"placeholder": "Language",
+				"language": {
+					"de": "German",
+					"en": "English",
+					"es": "Spanish",
+					"fr": "French",
+					"he": "Hebrew",
+					"pt-br": "Portuguese",
+					"sk": "Slovak",
+					"zh-cn": "Simple Chinese"
+				}
+			},
+			"themes": {
+				"blue": "Blue",
+				"dark": "Dark",
+				"light": "Light",
+				"nature": "Nature",
+				"night-mode": "Auto night mode (from 21:00 to 7:00)",
+				"placeholder": "Color Theme",
+				"saneago": "",
+				"sticky-header": "Sticky header",
+				"title": "Themes"
+			}
+		},
+		"menu": {
+			"about": "About",
+			"examples": "Examples",
+			"features": "Features",
+			"signin": "Sign in",
+			"signout": "Sign out",
+			"account": "Account",
+			"settings": "Settings"
+		},
+		"features": {
+			"angular": "Modern powerful framework",
+			"angular-cli": "A command line interface for Angular",
+			"angular-material": "Material design component library",
+			"bootstrap": "Responsive layout from battle tested, world most famous UI library",
+			"cypress": "Cypress is a next generation front end testing tool built for the modern web.",
+			"documentation": "Docs",
+			"fontawesome": "Easy to use vector icons and social logos",
+			"guide": "Guide",
+			"lazyloading": {
+				"title": "Lazy loading",
+				"description": "Faster startup time with lazy loaded feature modules"
+			},
+			"ngxs": "One way data flow powered by RxJS Observables",
+			"ngxtranslate": "An internationalization library for Angular",
+			"rxjs": "Reactive programming with async collections using Observables",
+			"description": "Flexible theming support for provided and custom components",
+			"themes.title": "Themes",
+			"title": "Features",
+			"typescript": "Superior developer experience, code completion, refactoring and less bugs"
+		},
+		"buttons": {
 			"reset-password": "Reset Password",
 			"sign-up": "Sign up",
 			"sign-in": "Sign in",
-			"create-account": "Create Account"
+			"create-account": "Create Account",
+			"verify": "Verify",
+			"verifing": "Verifing",
+			"verified": "Verified",
+			"finish": "Finish",
+			"generate": "Generate new codes",
+			"cancel": "Cancel",
+			"change-theme": "Change Theme"
 		}
-	},
-	"odm.button": {
-		"cancel": "Cancel"
-	},
-	"odm.features.angular": "Modern powerful framework",
-	"odm.features.angular-cli": "A command line interface for Angular",
-	"odm.features.angular-material": "Material design component library",
-	"odm.features.bootstrap": "Responsive layout from battle tested, world most famous UI library",
-	"odm.features.cypress": "Cypress is a next generation front end testing tool built for the modern web.",
-	"odm.features.documentation": "Docs",
-	"odm.features.fontawesome": "Easy to use vector icons and social logos",
-	"odm.features.guide": "Guide",
-	"odm.features.lazyloading.description": "Faster startup time with lazy loaded feature modules",
-	"odm.features.lazyloading.title": "Lazy loading",
-	"odm.features.ngrx": "One way data flow powered by RxJS Observables",
-	"odm.features.ngxtranslate": "An internationalization library for Angular",
-	"odm.features.rxjs": "Reactive programming with async collections using Observables",
-	"odm.features.themes.description": "Flexible theming support for provided and custom components",
-	"odm.features.themes.title": "Themes",
-	"odm.features.title": "Features",
-	"odm.features.typescript": "Superior developer experience, code completion, refactoring and less bugs",
-	"odm.footer.changelog": "Show changelog",
-	"odm.header.github": "Project Github Repository",
-	"odm.menu.about": "About",
-	"odm.menu.examples": "Examples",
-	"odm.menu.features": "Features",
-	"odm.menu.login": "Sign in",
-	"odm.menu.logout": "Logout",
-	"odm.menu.account": "Account",
-	"odm.menu.settings": "Settings",
-	"odm.settings.animations.elements": "Navigation page elements slide up",
-	"odm.settings.animations.page": "Navigation whole page transition",
-	"odm.settings.animations.title": "Animations",
-	"odm.settings.general.language.de": "German",
-	"odm.settings.general.language.en": "English",
-	"odm.settings.general.language.es": "Spanish",
-	"odm.settings.general.language.fr": "French",
-	"odm.settings.general.language.he": "Hebrew",
-	"odm.settings.general.language.pt-br": "Portuguese",
-	"odm.settings.general.language.sk": "Slovak",
-	"odm.settings.general.language.zh-cn": "Simple Chinese",
-	"odm.settings.general.placeholder": "Language",
-	"odm.settings.general.title": "General",
-	"odm.settings.themes.blue": "Blue",
-	"odm.settings.themes.dark": "Dark",
-	"odm.settings.themes.light": "Light",
-	"odm.settings.themes.nature": "Nature",
-	"odm.settings.themes.night-mode": "Auto night mode (from 21:00 to 7:00)",
-	"odm.settings.themes.placeholder": "Color Theme",
-	"odm.settings.themes.saneago": "",
-	"odm.settings.themes.sticky-header": "Sticky header",
-	"odm.settings.themes.title": "Themes",
-	"odm.settings.title": "Settings",
-	"odm.title.long": "Odiam Ngxs Material Starter",
-	"odm.title.short": "Angular Starter"
+	}
 }

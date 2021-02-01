@@ -3,9 +3,9 @@
 	<div class="setup-wizard">
 		<mat-vertical-stepper [linear]="_stepperIsLinear" #stepper odmMatVerticalStepperScroller>
 			<mat-step [editable]="_stepper2faSetupEditable" [completed]="_is2faSetupCompleted">
-				<ng-template matStepLabel>{{ 'odm.account.security.two-step.setup-wizard.first-step-title' | translate }}</ng-template>
+				<ng-template matStepLabel>{{ 'odm.account.security.two-step.setup-wizard.first-step.title' | translate }}</ng-template>
 				<p>
-					{{ 'odm.account.security.two-step.setup-wizard.instructions' | translate }}
+					{{ 'odm.account.security.two-step.setup-wizard.first-step.instructions.qr-code' | translate }}
 				</p>
 				<h3>{{ _twoFactorAuthenticationSetup?.sharedKey }}</h3>
 				<div>
@@ -17,13 +17,13 @@
 					></qrcode>
 				</div>
 				<p>
-					{{ 'odm.account.security.two-step.setup-wizard.verification-code-message' | translate }}
+					{{ 'odm.account.security.two-step.setup-wizard.first-step.instructions.verification-code' | translate }}
 				</p>
 				<div class="setup-wizard__verification-form">
 					<form [formGroup]="verificationCodeForm" (ngSubmit)="_onVerificationCodeSubmitted()">
 						<mat-form-field>
 							<mat-label>
-								{{ 'odm.account.security.two-step.setup-wizard.verification-code-placeholder' | translate }}
+								{{ 'odm.account.security.two-step.setup-wizard.first-step.verification-code-placeholder' | translate }}
 							</mat-label>
 							<input matInput type="text" formControlName="verificationCode" [maxlength]="_verificationCodeInputLength" />
 							<mat-hint>
@@ -38,11 +38,11 @@
 						</mat-form-field>
 						<div class="setup-wizard__action-buttons">
 							<button mat-button (click)="_onCancelClicked()" color="warn">
-								{{ 'odm.button.cancel' | translate }}
+								{{ 'odm.buttons..cancel' | translate }}
 							</button>
 							<button mat-button color="primary" type="submit" [disabled]="!verificationCodeForm.valid || codeVerificationInProgress">
 								<ng-container *ngIf="!codeVerificationInProgress && _codeVerificationSucceeded">
-									{{ 'odm.account.security.two-step.setup-wizard.verified-button' | translate }}
+									{{ 'odm.buttons.verified' | translate }}
 									<mat-icon class="req-met" matSuffix>{{ 'task_alt' }}</mat-icon>
 									<odm-spinner
 										[type]="'button'"
@@ -51,10 +51,10 @@
 									></odm-spinner>
 								</ng-container>
 								<span *ngIf="codeVerificationInProgress" class="loading-dots-animation"
-									>{{ 'odm.account.security.two-step.setup-wizard.verifing-button' | translate }}<span>.</span><span>.</span><span>.</span>
+									>{{ 'odm.buttons.verifing' | translate }}<span>.</span><span>.</span><span>.</span>
 								</span>
 								<ng-container *ngIf="!codeVerificationInProgress && !_codeVerificationSucceeded">
-									{{ 'odm.account.security.two-step.setup-wizard.verify-button' | translate }}
+									{{ 'odm.buttons.verify' | translate }}
 								</ng-container>
 							</button>
 						</div>
@@ -74,7 +74,7 @@
 					</div>
 					<div>
 						<button mat-button (click)="_onFinishSetup()" color="primary">
-							{{ 'odm.account.security.two-step.setup-wizard.finish-button' | translate }}
+							{{ 'odm.buttons.finish' | translate }}
 						</button>
 					</div>
 				</div>

@@ -16,8 +16,8 @@
 		</mat-expansion-panel-header>
 
 		<div>
-			<h3>{{ 'odm.account.security.two-step.recovery-codes.header' | translate }}</h3>
-			<p>{{ 'odm.account.security.two-step.recovery-codes.subheader' | translate }}</p>
+			<h3>{{ 'odm.account.security.two-step.recovery-codes.backup-codes.title' | translate }}</h3>
+			<p>{{ 'odm.account.security.two-step.recovery-codes.backup-codes.description' | translate }}</p>
 			<ol class="recovery-codes__format-codes blink">
 				<li *ngFor="let code of codes" @fadeIn>
 					{{ code }}
@@ -25,7 +25,7 @@
 			</ol>
 			<div>
 				<button mat-raised-button color="accent" (click)="_onGenerateNewRecoveryCodes()" [disabled]="generatingCodes">
-					{{ 'odm.account.security.two-step.recovery-codes.generate' | translate }}
+					{{ 'odm.buttons.generate' | translate }}
 					<ng-container *ngIf="generatingCodes">
 						<odm-spinner [type]="'button'" [diameter]="_generatingCodesSpinnerDiameter" [strokeWidth]="_generatingCodesSpinnerStrokeWidth">
 						</odm-spinner>

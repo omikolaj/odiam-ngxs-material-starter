@@ -41,18 +41,18 @@ export class TranslateErrorsService {
 	private _mapErrorToTranslation(errors: ValidationErrors): TranslateError {
 		if (errors['required']) {
 			return {
-				translationKey: 'odm.auth.form.failed-validation.field-required',
+				translationKey: 'odm.auth.form.validations.field-required',
 				validationErrorType: ValidationErrorType.Required
 			};
 		} else if (errors['email']) {
 			return {
-				translationKey: 'odm.auth.form.failed-validation.invalid-email-format',
+				translationKey: 'odm.auth.form.validations.invalid-email-format',
 				validationErrorType: ValidationErrorType.InvalidEmailFormat
 			};
 		} else if (errors['nonUnique']) {
 			// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
 			return {
-				translationKey: 'odm.auth.form.failed-validation.non-unique-email',
+				translationKey: 'odm.auth.form.validations.non-unique-email',
 				extras: errors['nonUnique'] as string,
 				validationErrorType: ValidationErrorType.NonUniqueEmail
 			};
@@ -71,7 +71,7 @@ export class TranslateErrorsService {
 			};
 		} else {
 			return {
-				translationKey: 'odm.auth.form.failed-validation.input-error',
+				translationKey: 'odm.auth.form.validations.input-error',
 				validationErrorType: ValidationErrorType.InputValidationError
 			};
 		}
@@ -106,7 +106,7 @@ export class TranslateErrorsService {
 	// private _mapPasswordErrorToTranslation(errors: ValidationErrors): TranslateError {
 	// if (errors['required']) {
 	// 	return {
-	// 		translationKey: 'odm.auth.form.failed-validation.field-required',
+	// 		translationKey: 'odm.auth.form.validations.field-required',
 	// 		validationErrorType: ValidationErrorType.Required
 	// 	};
 	// } else if (errors['number']) {
@@ -152,7 +152,7 @@ export class TranslateErrorsService {
 	// 		return errors['errorDescription'];
 	// 	} else {
 	// 		return {
-	// 			translationKey: 'odm.auth.form.failed-validation.input-error',
+	// 			translationKey: 'odm.auth.form.validations.input-error',
 	// 			validationErrorType: ValidationErrorType.InputValidationError
 	// 		};
 	// 	}

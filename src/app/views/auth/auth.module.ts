@@ -9,12 +9,13 @@ import { AuthFacadeService } from './auth-facade.service';
 import { SocialLoginModule, SocialAuthServiceConfig, GoogleLoginProvider, FacebookLoginProvider } from 'angularx-social-login';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { SignInComponent } from './sign-in/sign-in.component';
 
 /**
  * Auth module.
  */
 @NgModule({
-	declarations: [AuthContainerComponent, AuthComponent, ForgotPasswordComponent, ResetPasswordComponent],
+	declarations: [AuthContainerComponent, AuthComponent, ForgotPasswordComponent, ResetPasswordComponent, SignInComponent],
 	imports: [CommonModule, AuthRoutingModule, SharedModule, SocialLoginModule],
 	providers: [
 		AuthFacadeService,

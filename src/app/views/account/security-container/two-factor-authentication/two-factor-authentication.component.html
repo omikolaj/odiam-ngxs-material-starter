@@ -4,7 +4,7 @@
 		<ng-container *ngIf="!loading; else loadingState">
 			<div [ngClass]="twoFactorEnabled ? 'two-factor-settings__extra-margin' : null" class="two-factor-settings__state" @fadeIn>
 				<div class="two-factor-settings__short-description">
-					<span>{{ 'odm.account.security.two-step.subtitle' | translate }}</span>
+					<span>{{ 'odm.account.security.two-step.description' | translate }}</span>
 				</div>
 				<div class="two-factor-settings__toggle-state" @fadeIn>
 					<div class="two-factor-settings__toggle-state-spinner-container">

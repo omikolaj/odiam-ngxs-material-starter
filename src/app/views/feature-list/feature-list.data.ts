@@ -36,11 +36,11 @@ export const features: Feature[] = [
 		documentation: 'https://cli.angular.io/'
 	},
 	{
-		name: 'NgRx',
-		version: env.versions.ngrx,
-		description: 'odm.features.ngrx',
-		github: 'https://github.com/ngrx/platform',
-		documentation: 'http://ngrx.github.io/',
+		name: 'NGXS',
+		version: env.versions.ngxs,
+		description: 'odm.features.ngxs',
+		github: 'https://github.com/ngxs/store',
+		documentation: 'http://ngxs.io/',
 		medium: 'https://medium.com/@tomastrajan/object-assign-vs-object-spread-in-angular-ngrx-reducers-3d62ecb4a4b0'
 	},
 	{

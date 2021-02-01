@@ -1,5 +1,5 @@
 /**
- * Validation error type. Used for specific cases when placeholder values need to be replaced.
+ * Validation error type. Used for specific cases when placeholder values need to be replaced within the translation string.
  */
 export enum ValidationErrorType {
 	None,

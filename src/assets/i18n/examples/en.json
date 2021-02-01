@@ -1,11 +1,17 @@
 {
-	"odm.examples.menu.auth": "Auth",
-	"odm.examples.menu.crud": "CRUD",
-	"odm.examples.menu.form": "Form",
-	"odm.examples.menu.notifications": "Notifications",
-	"odm.examples.menu.stocks": "Stocks",
-	"odm.examples.menu.theming": "Theming",
-	"odm.examples.menu.todos": "Todos",
-	"odm.examples.menu.elements": "Elements",
-	"odm.examples.menu.simple-state-management": "Simple State Management"
+	"odm": {
+		"examples": {
+			"menu": {
+				"auth": "Auth",
+				"crud": "CRUD",
+				"form": "Form",
+				"notifications": "Notifications",
+				"stocks": "Stocks",
+				"theming": "Theming",
+				"todos": "Todos",
+				"elements": "Elements",
+				"simple-state-management": "Simple State Management"
+			}
+		}
+	}
 }
