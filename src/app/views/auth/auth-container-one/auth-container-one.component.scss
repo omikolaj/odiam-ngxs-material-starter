@@ -72,18 +72,17 @@ button {
 	margin: 0 auto;
 }
 
-// transitions sign in component to the right when switching to sign up component
 ::ng-deep .auth-container__routes.sign-up-active .auth__sign-in-container {
-	transform: translateX(100%);
+	transform: translateX(100%) !important;
 }
 
 ::ng-deep .auth-container__routes.sign-up-active .auth__sign-up-container {
-	transform: translateX(0);
+	transform: translateX(0) !important;
 	opacity: 1 !important;
 }
 
 ::ng-deep .auth-container__routes.sign-in-active .auth__sign-in-container {
-	transform: translateX(0);
+	transform: translateX(0) !important;
 	opacity: 1 !important;
 }
 

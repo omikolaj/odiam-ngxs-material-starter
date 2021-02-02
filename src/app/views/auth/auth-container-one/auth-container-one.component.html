@@ -12,7 +12,7 @@
 		</div>
 		<div [ngClass]="_activeAuthType$ | async" class="auth-container__routes">
 			<div [ngClass]="_routeAnimationsElements">
-				<router-outlet #o="outlet"></router-outlet>
+				<router-outlet></router-outlet>
 			</div>
 			<div *ngIf="!_forgotPasswordIsDisplayed">
 				<ng-container *ngIf="matcher?.matches">
