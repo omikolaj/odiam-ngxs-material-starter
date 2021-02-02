@@ -2,8 +2,6 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
-import { SignInComponent } from './sign-in/sign-in.component';
-import { SignUpComponent } from './sign-up/sign-up.component';
 import { AuthContainerOneComponent } from './auth-container-one/auth-container-one.component';
 import { AuthContainerComponent } from './auth-container/auth-container.component';
 import { SignInContainerComponent } from './sign-in-container/sign-in-container.component';
@@ -21,16 +19,20 @@ const routes: Routes = [
 			{
 				path: 'sign-up',
 				component: SignUpContainerComponent
+			},
+			{
+				path: 'forgot-password',
+				component: ForgotPasswordComponent
+			},
+			{
+				path: 'reset-password',
+				component: ResetPasswordComponent
+			},
+			{
+				path: '**',
+				redirectTo: 'sign-in'
 			}
 		]
-	},
-	{
-		path: 'forgot-password',
-		component: ForgotPasswordComponent
-	},
-	{
-		path: 'reset-password',
-		component: ResetPasswordComponent
 	}
 ];
 

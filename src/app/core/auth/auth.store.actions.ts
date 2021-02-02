@@ -1,4 +1,5 @@
 import { AccessTokenModel } from './access-token.model';
+import { ActivePanel } from './active-panel.model';
 
 /**
  * Init auth state from local storage.
@@ -8,7 +9,6 @@ export class InitStateFromLocalStorage {
 	 * Type of action.
 	 */
 	static readonly type = '[Settings] Init Settings from Local Storage';
-	constructor() {}
 }
 
 /**
@@ -65,5 +65,20 @@ export class Signout {
 	 * Type of action.
 	 */
 	static readonly type = '[Auth] Signout';
-	constructor() {}
+}
+
+/**
+ * Toggles between sign-in and sign-up auth types.
+ */
+export class SwitchAuthType {
+	/**
+	 * Type of action.
+	 */
+	static readonly type = '[Auth] Switch Auth Type';
+
+	/**
+	 * Creates an instance of switch auth type.
+	 * @param payload
+	 */
+	constructor(public payload: { activeAuthType: ActivePanel }) {}
 }

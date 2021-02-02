@@ -12,14 +12,11 @@ p {
 	margin: 20px 0 30px;
 }
 
-.auth__container {
-	position: relative;
-	overflow: hidden;
-	width: 480px;
-	max-width: 100%;
-	min-height: 500px;
-	margin-top: 20px;
-	margin: 0 auto;
+button {
+	border: 1px solid;
+	font-weight: bold;
+	padding: 0px 45px;
+	letter-spacing: 1px;
 }
 
 .auth-container {
@@ -65,35 +62,37 @@ p {
 	}
 }
 
-::ng-deep .auth__container.right-panel-active .auth__sign-in-container {
-	transform: translateX(100%) !important;
-	// animation: hide 0.6s;
+.auth-container__routes {
+	position: relative;
+	overflow: hidden;
+	width: 480px;
+	max-width: 100%;
+	min-height: 500px;
+	margin-top: 20px;
+	margin: 0 auto;
 }
 
-::ng-deep .auth__container.right-panel-active .auth__sign-up-container {
-	transform: translateX(0);
-	opacity: 1 !important;
-	z-index: 5 !important;
-	animation: show 0.6s !important;
+// transitions sign in component to the right when switching to sign up component
+::ng-deep .auth-container__routes.sign-up-active .auth__sign-in-container {
+	transform: translateX(100%);
 }
 
-::ng-deep .auth__container.left-panel-active .auth__sign-in-container {
+::ng-deep .auth-container__routes.sign-up-active .auth__sign-up-container {
 	transform: translateX(0);
 	opacity: 1 !important;
-	// z-index: 5 !important;
-	animation: show 0.6s !important;
+}
+
+::ng-deep .auth-container__routes.sign-in-active .auth__sign-in-container {
+	transform: translateX(0);
+	opacity: 1 !important;
 }
 
 @media (min-width: map-get($grid-breakpoints, md)) {
-	::ng-deep .auth__container.right-panel-active .auth__sign-up-container {
+	::ng-deep .auth-container__routes.sign-up-active .auth__sign-up-container {
 		transform: translateX(100%) !important;
 	}
 
-	// .auth__container.right-panel-active .auth__sign-up-container {
-	// 	transform: translateX(100%);
-	// }
-
-	.auth__container {
+	.auth-container__routes {
 		width: 768px;
 	}
 }
@@ -115,7 +114,6 @@ p {
 		background-size: cover;
 		background-position: 0 0;
 		color: #ffffff;
-		background: grey;
 		position: relative;
 		top: -100%;
 		height: 200%;
@@ -138,16 +136,25 @@ p {
 			.auth__form-btn-ghost {
 				background-color: transparent;
 			}
+
+			.auth--btn {
+				color: white;
+				text-transform: uppercase;
+			}
 		}
 	}
 }
 
 @media (min-width: map-get($grid-breakpoints, md)) {
-	.auth__container.right-panel-active .auth__overlay {
+	.auth-container__img-section {
+		margin-top: 20px;
+	}
+
+	.auth-container__routes.sign-up-active .auth__overlay {
 		transform: translateX(50%);
 	}
 
-	.auth__container.right-panel-active .auth__overlay-container {
+	.auth-container__routes.sign-up-active .auth__overlay-container {
 		transform: translateX(-100%);
 	}
 
@@ -170,48 +177,14 @@ p {
 				width: 50%;
 			}
 
-			.auth__overlay-right {
+			.auth__overlay-sign-up {
 				right: 0;
 				transform: translateX(0);
 			}
 
-			.auth__overlay-left {
+			.auth__overlay-sign-in {
 				transform: translateX(0);
 			}
 		}
-	}
-}
-
-@media (min-width: map-get($grid-breakpoints, md)) {
-	.auth-container__img-section {
-		margin-top: 20px;
-	}
-}
-
-@keyframes show {
-	0%,
-	49.99% {
-		opacity: 0;
-		z-index: 1;
-	}
-
-	50%,
-	100% {
-		opacity: 1;
-		z-index: 5;
-	}
-}
-
-@keyframes hide {
-	100%,
-	50% {
-		opacity: 1;
-		z-index: 5;
-	}
-
-	49.99%,
-	0% {
-		opacity: 0;
-		z-index: 1;
 	}
 }

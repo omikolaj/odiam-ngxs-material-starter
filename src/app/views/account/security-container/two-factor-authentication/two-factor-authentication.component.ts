@@ -6,9 +6,9 @@ import { TwoFactorAuthenticationSetupResult } from 'app/views/account/security-c
 import { TwoFactorAuthenticationVerificationCode } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-verification-code.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
-import { fadeInAnimation, upDownFadeInAnimation } from 'app/core/animations/element.animations';
 import { implementsOdmWebApiException } from 'app/core/utilities/implements-odm-web-api-exception';
 import { AccountFacadeService } from '../../account-facade.service';
+import { upDownFadeInAnimation, fadeInAnimation } from 'app/core/core.module';
 
 /**
  * Component responsible for handling two factor authentication settings.

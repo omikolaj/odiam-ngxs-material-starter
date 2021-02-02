@@ -96,8 +96,7 @@ form {
 		width: 100%;
 		opacity: 0;
 		z-index: 1;
-		// transform: translateX(100%);
-		transform: translateX(0);
+		transform: translateX(100%);
 
 		.auth__sign-up-header {
 			margin-bottom: 20px;

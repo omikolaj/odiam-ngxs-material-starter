@@ -21,6 +21,8 @@ import { JsonWebTokenService } from 'app/core/services/json-web-token.service';
 import { TranslateErrorsService } from 'app/shared/services/translate-errors.service';
 import { LogService } from 'app/core/logger/log.service';
 import { FormBuilder } from '@angular/forms';
+import { ActivePanel } from 'app/core/auth/active-panel.model';
+import { AuthTypeRouteUrl } from 'app/core/auth/auth-type-route-url.model';
 
 /**
  * Auth facade service.
@@ -30,6 +32,7 @@ export class AuthFacadeService {
 	@ProblemDetailsError() problemDetails$: Observable<ProblemDetails>;
 	@InternalServerError() internalServerErrorDetails$: Observable<InternalServerErrorDetails>;
 	@Select(AuthState.selectRememberMe) rememberMe$: Observable<boolean>;
+	@Select(AuthState.selectActiveAuthType) activeAuthType$: Observable<string>;
 
 	/**
 	 * Creates an instance of auth facade service.
@@ -50,6 +53,17 @@ export class AuthFacadeService {
 		private socialAuthService: SocialAuthService,
 		private jwtService: JsonWebTokenService
 	) {}
+
+	/**
+	 * Whether user wants to sign-in or sign-up.
+	 * @param activePanel
+	 */
+	onSwitchAuth(activePanel: { activeAuthType: ActivePanel }, routeUrl: AuthTypeRouteUrl): void {
+		this.store.dispatch(new Auth.SwitchAuthType(activePanel));
+		setTimeout(() => {
+			void this.router.navigate(['/auth', routeUrl]);
+		}, 600);
+	}
 
 	/**
 	 * Changes remember me state.

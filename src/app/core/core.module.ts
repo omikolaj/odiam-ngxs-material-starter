@@ -43,8 +43,21 @@ import { BACKEND_API_URL } from './api-url-injection-token';
 import { ServerErrorService } from './error-handler/server-error.service';
 import { HttpStatusInterceptor } from './http-interceptors/http-status.interceptor';
 import { HttpAccessTokenModelInterceptor } from './http-interceptors/http-access-token.interceptor';
+import { rightLeftFadeInAnimation, leftRightFadeInAnimation, upDownFadeInAnimation, fadeInAnimation } from 'app/core/animations/element.animations';
 
-export { TitleService, routeAnimations, LocalStorageService, ROUTE_ANIMATIONS_ELEMENTS, AnimationsService, AuthGuardService, NotificationService };
+export {
+	TitleService,
+	routeAnimations,
+	LocalStorageService,
+	ROUTE_ANIMATIONS_ELEMENTS,
+	rightLeftFadeInAnimation,
+	leftRightFadeInAnimation,
+	upDownFadeInAnimation,
+	fadeInAnimation,
+	AnimationsService,
+	AuthGuardService,
+	NotificationService
+};
 
 /**
  * Returns custom translations file.

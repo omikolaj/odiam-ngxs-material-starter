@@ -2,7 +2,6 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { AuthFacadeService } from '../auth-facade.service';
 import { AsyncValidatorsService } from 'app/core/form-validators/validators-async.service';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
-import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
 import { Observable } from 'rxjs';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
@@ -10,6 +9,9 @@ import { FormGroup } from '@angular/forms';
 import { MinScreenSizeQuery } from 'app/shared/screen-size-queries';
 import { OdmValidators } from 'app/core/form-validators/odm-validators';
 import { SignupUserModel } from 'app/core/auth/signup-user.model';
+import { ActivePanel } from 'app/core/auth/active-panel.model';
+import { AuthTypeRouteUrl } from 'app/core/auth/auth-type-route-url.model';
+import { rightLeftFadeInAnimation } from 'app/core/core.module';
 
 /**
  * Signup component.
@@ -18,14 +20,10 @@ import { SignupUserModel } from 'app/core/auth/signup-user.model';
 	selector: 'odm-sign-up-container',
 	templateUrl: './sign-up-container.component.html',
 	styleUrls: ['./sign-up-container.component.scss'],
+	animations: [rightLeftFadeInAnimation],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SignUpContainerComponent implements OnInit {
-	/**
-	 * Route animations elements of auth container component.
-	 */
-	_routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
-
 	/**
 	 * Emitted when server responds with 40X error.
 	 */
@@ -94,8 +92,11 @@ export class SignUpContainerComponent implements OnInit {
 	/**
 	 * Used to switch view to signup context.
 	 */
-	_onSwitchToSignup(event: 'right-panel-active' | ''): void {
+	_onSwitchToSignup(event: ActivePanel): void {
 		this.facade.log.trace('_switchToSignup fired.', this);
+		const activeAuthType = { activeAuthType: event };
+		const routeUrl: AuthTypeRouteUrl = event === 'sign-in-active' ? 'sign-in' : 'sign-up';
+		this.facade.onSwitchAuth(activeAuthType, routeUrl);
 
 		// allow for the animation before cleaning up the form.
 		// setTimeout(() => {

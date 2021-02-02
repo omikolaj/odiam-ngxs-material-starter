@@ -1,3 +1,5 @@
+import { ActivePanel } from './active-panel.model';
+
 /**
  * Key used as a key for user auth object when persisting to local storage.
  */
@@ -31,4 +33,9 @@ export interface AuthStateModel {
 	 * Time when the access token will expire.
 	 */
 	expires_at: number;
+
+	/**
+	 * Whether sign-in or sign-up component should be displayed.
+	 */
+	activeAuthType: ActivePanel;
 }

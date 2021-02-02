@@ -1,8 +1,8 @@
 import { Component, ChangeDetectionStrategy, Output, EventEmitter, Input } from '@angular/core';
 import { TooltipTouchGestures } from '@angular/material/tooltip';
 import { ODM_TOOLTIP_SHOW_DELAY_IN_MS } from 'app/shared/mat-tooltip-settings';
-import { upDownFadeInAnimation, fadeInAnimation } from 'app/core/animations/element.animations';
 import { AccountFacadeService } from '../../account-facade.service';
+import { fadeInAnimation, upDownFadeInAnimation } from 'app/core/core.module';
 
 /**
  * Two factor authentication codes component.

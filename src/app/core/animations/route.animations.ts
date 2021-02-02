@@ -28,7 +28,7 @@ const STEPS_ALL: any[] = [
 					opacity: 0,
 					position: 'static'
 				}),
-				animate('0.5s ease-in-out', style({ transform: 'translateY(0%)', opacity: 1 }))
+				animate('.5s ease-in-out', style({ transform: 'translateY(0%)', opacity: 1 }))
 			],
 			{ optional: true }
 		)

@@ -5,12 +5,12 @@ import { SignupUserModel } from 'app/core/auth/signup-user.model';
 import { implementsOdmWebApiException } from 'app/core/utilities/implements-odm-web-api-exception';
 import { Subscription, Observable } from 'rxjs';
 import { ValidationMessage_Required } from 'app/shared/validation-messages';
-import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { FormGroup, ValidationErrors, AbstractControl } from '@angular/forms';
 import { BreakpointState } from '@angular/cdk/layout';
 import { AuthControlType } from 'app/shared/auth-abstract-control-type';
+import { ActivePanel } from 'app/core/auth/active-panel.model';
 
 /**
  * Signup component.
@@ -76,7 +76,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
 	/**
 	 * Event emitter for when user clicks sign up button.
 	 */
-	@Output() switchToSigninClicked = new EventEmitter<'right-panel-active' | ''>();
+	@Output() switchToSigninClicked = new EventEmitter<ActivePanel>();
 
 	/**
 	 * Signup form email control status changes$ of auth component.
@@ -87,11 +87,6 @@ export class SignUpComponent implements OnInit, OnDestroy {
 	 * Field is required message.
 	 */
 	_fieldRequiredMessage = ValidationMessage_Required;
-
-	/**
-	 * Route animations elements of auth component.
-	 */
-	_routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
 
 	/**
 	 * Hide/show password.
@@ -236,7 +231,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
 	 */
 	_switchToSignin(): void {
 		this.facade.log.trace('_switchToSignin fired.', this);
-		this.switchToSigninClicked.emit('');
+		this.switchToSigninClicked.emit('sign-in-active');
 		// allow for the animation before cleaning up the form.
 		setTimeout(() => {
 			this.internalServerErrorDetails = null;

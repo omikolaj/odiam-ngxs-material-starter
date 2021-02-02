@@ -1,4 +1,4 @@
-import { StateToken, StateContext, State, Selector, Action, NgxsOnInit } from '@ngxs/store';
+import { StateToken, StateContext, State, Selector, Action } from '@ngxs/store';
 import { AuthStateModel, AUTH_KEY } from './auth-state-model';
 import { Injectable } from '@angular/core';
 import produce from 'immer';
@@ -6,7 +6,6 @@ import * as Auth from './auth.store.actions';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import { isBefore, add, getUnixTime, fromUnixTime } from 'date-fns';
 import { LogService } from '../logger/log.service';
-import { JsonWebTokenService } from '../services/json-web-token.service';
 
 const AUTH_STATE_TOKEN = new StateToken<AuthStateModel>('auth');
 
@@ -17,7 +16,8 @@ const AUTH_STATE_TOKEN = new StateToken<AuthStateModel>('auth');
 		access_token: '',
 		expires_at: 0,
 		rememberMe: false,
-		userId: ''
+		userId: '',
+		activeAuthType: 'sign-in-active'
 	}
 })
 @Injectable()
@@ -67,13 +67,23 @@ export class AuthState {
 	}
 
 	/**
-	 * Selects whether user selected remember me option
+	 * Selects whether user selected remember me option.
 	 * @param state
 	 * @returns true if remember me
 	 */
 	@Selector([AUTH_STATE_TOKEN])
 	static selectRememberMe(state: AuthStateModel): boolean {
 		return state.rememberMe;
+	}
+
+	/**
+	 * Selects active auth type, either sign-in or sign-up.
+	 * @param state
+	 * @returns active auth type
+	 */
+	@Selector([AUTH_STATE_TOKEN])
+	static selectActiveAuthType(state: AuthStateModel): string {
+		return state.activeAuthType;
 	}
 
 	/**
@@ -145,7 +155,7 @@ export class AuthState {
 	}
 
 	/**
-	 * Action handler that Logs user out.
+	 * Action handler that logs user out.
 	 * @param ctx
 	 * @returns action to persist auth state.
 	 */
@@ -162,5 +172,21 @@ export class AuthState {
 		const auth = { isAuthenticated: false, rememberMe };
 		this.localStorageService.setItem(AUTH_KEY, auth);
 		this.logger.debug('User has been signed out.');
+	}
+
+	/**
+	 * Action handler that switches active panel.
+	 * @param ctx
+	 * @param action
+	 */
+	@Action(Auth.SwitchAuthType)
+	switchAuthType(ctx: StateContext<AuthStateModel>, action: Auth.SwitchAuthType): void {
+		this.logger.debug('Changing auth type.');
+		ctx.setState(
+			produce((draft: AuthStateModel) => {
+				draft = { ...draft, ...action.payload };
+				return draft;
+			})
+		);
 	}
 }

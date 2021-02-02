@@ -10,32 +10,34 @@
 				{{ 'odm.auth.sign-up.subheader' | translate }}
 			</p>
 		</div>
-		<div [ngClass]="_signUp" class="auth__container">
-			<div [@routeAnimations]="o.isActivated && o.activatedRoute.routeConfig.path">
+		<div [ngClass]="_activeAuthType$ | async" class="auth-container__routes">
+			<div [ngClass]="_routeAnimationsElements">
 				<router-outlet #o="outlet"></router-outlet>
 			</div>
-			<ng-container *ngIf="matcher?.matches">
-				<div class="auth__overlay-container">
-					<div class="auth__overlay" [ngClass]="_routeAnimationsElements">
-						<div class="auth__overlay-panel auth__overlay-left">
-							<h1>{{ 'odm.auth.sign-in.header' | translate }}</h1>
-							<p>{{ 'odm.auth.sign-in.subheader' | translate }}</p>
-							<button mat-raised-button (click)="_switchToSignin()" class="auth__form-btn-ghost auth--btn">
-								{{ 'odm.buttons.sign-in' | translate }}
-							</button>
-						</div>
-						<div class="auth__overlay-panel auth__overlay-right">
-							<h1>{{ 'odm.auth.sign-up.header' | translate }}</h1>
-							<p>
-								{{ 'odm.auth.sign-up.subheader' | translate }}
-							</p>
-							<button mat-raised-button (click)="_switchToSignup()" class="auth__form-btn-ghost auth--btn">
-								{{ 'odm.buttons.create-account' | translate }}
-							</button>
+			<div *ngIf="!_forgotPasswordIsDisplayed">
+				<ng-container *ngIf="matcher?.matches">
+					<div class="auth__overlay-container">
+						<div class="auth__overlay" [ngClass]="_routeAnimationsElements">
+							<div class="auth__overlay-panel auth__overlay-sign-in">
+								<h1>{{ 'odm.auth.sign-in.header' | translate }}</h1>
+								<p>{{ 'odm.auth.sign-in.subheader' | translate }}</p>
+								<button mat-raised-button (click)="_switchToSignin()" class="auth__form-btn-ghost auth--btn">
+									{{ 'odm.buttons.sign-in' | translate }}
+								</button>
+							</div>
+							<div class="auth__overlay-panel auth__overlay-sign-up">
+								<h1>{{ 'odm.auth.sign-up.header' | translate }}</h1>
+								<p>
+									{{ 'odm.auth.sign-up.subheader' | translate }}
+								</p>
+								<button mat-raised-button (click)="_switchToSignup()" class="auth__form-btn-ghost auth--btn">
+									{{ 'odm.buttons.create-account' | translate }}
+								</button>
+							</div>
 						</div>
 					</div>
-				</div>
-			</ng-container>
+				</ng-container>
+			</div>
 		</div>
 	</div>
 </div>

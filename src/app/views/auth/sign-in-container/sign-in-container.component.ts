@@ -4,13 +4,15 @@ import { ActivatedRoute } from '@angular/router';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { Observable, Subscription } from 'rxjs';
 import { FormGroup } from '@angular/forms';
-import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { MinScreenSizeQuery } from 'app/shared/screen-size-queries';
 import { tap } from 'rxjs/operators';
 import { OdmValidators } from 'app/core/form-validators/odm-validators';
 import { SigninUserModel } from 'app/core/auth/signin-user.model';
+import { ActivePanel } from 'app/core/auth/active-panel.model';
+import { AuthTypeRouteUrl } from 'app/core/auth/auth-type-route-url.model';
+import { leftRightFadeInAnimation } from 'app/core/core.module';
 
 /**
  * Sign in container.
@@ -19,14 +21,10 @@ import { SigninUserModel } from 'app/core/auth/signin-user.model';
 	selector: 'odm-sign-in-container',
 	templateUrl: './sign-in-container.component.html',
 	styleUrls: ['./sign-in-container.component.scss'],
+	animations: [leftRightFadeInAnimation],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SignInContainerComponent implements OnInit, OnDestroy {
-	/**
-	 * Route animations elements of auth container component.
-	 */
-	_routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
-
 	/**
 	 * Emitted when server responds with 40X error.
 	 */
@@ -130,8 +128,11 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 		this.facade.onRememberMeChanged(event);
 	}
 
-	_onSwitchToSignupClicked(event: 'right-panel-active' | ''): void {
+	_onSwitchToSignupClicked(event: ActivePanel): void {
 		this.facade.log.trace('__onSwitchToSignupClicked event handler fired', this, event);
+		const activeAuthType = { activeAuthType: event };
+		const routeUrl: AuthTypeRouteUrl = event === 'sign-in-active' ? 'sign-in' : 'sign-up';
+		this.facade.onSwitchAuth(activeAuthType, routeUrl);
 	}
 
 	/**

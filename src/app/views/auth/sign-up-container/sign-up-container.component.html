@@ -1,8 +1,8 @@
-<div>
+<div @rightLeftFadeIn>
 	<odm-sign-up
 		[problemDetails]="_problemDetails$ | async"
 		[internalServerErrorDetails]="_internalServerErrorDetails$ | async"
-		[matcher]="_breakpointStateScreenMatcher$"
+		[matcher]="_breakpointStateScreenMatcher$ | async"
 		[signupForm]="_signupForm"
 		(signupFormSubmitted)="_onSignupSubmitted($event)"
 		(signinWithGoogleSubmitted)="_onSigninWithGoogleSubmitted()"

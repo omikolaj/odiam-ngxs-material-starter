@@ -2,7 +2,6 @@ import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, Change
 import { FormGroup, ValidationErrors, AbstractControl } from '@angular/forms';
 import { SigninUserModel } from 'app/core/auth/signin-user.model';
 import { ValidationMessage_Required } from 'app/shared/validation-messages';
-import { AuthBase } from '../auth-base';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { BreakpointState } from '@angular/cdk/layout';
@@ -13,6 +12,7 @@ import { TranslateErrorsService } from 'app/shared/services/translate-errors.ser
 import { Observable } from 'rxjs';
 import { AuthControlType } from 'app/shared/auth-abstract-control-type';
 import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
+import { ActivePanel } from 'app/core/auth/active-panel.model';
 
 /**
  * Sign in component.
@@ -23,7 +23,7 @@ import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
 	styleUrls: ['./sign-in.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SignInComponent extends AuthBase {
+export class SignInComponent {
 	/**
 	 * Emitted when server responds with 40X error.
 	 */
@@ -78,7 +78,7 @@ export class SignInComponent extends AuthBase {
 	/**
 	 * Event emitter for when user clicks sign up button.
 	 */
-	@Output() switchToSignup = new EventEmitter<'right-panel-active' | ''>();
+	@Output() switchToSignupClicked = new EventEmitter<ActivePanel>();
 
 	/**
 	 * Hide/show password.
@@ -137,9 +137,7 @@ export class SignInComponent extends AuthBase {
 	 * @param log
 	 * @param cd
 	 */
-	constructor(private translateError: TranslateErrorsService, private log: LogService, private cd: ChangeDetectorRef) {
-		super();
-	}
+	constructor(private translateError: TranslateErrorsService, private log: LogService, private cd: ChangeDetectorRef) {}
 
 	/**
 	 * Event handler for when user clicks forgot password button.
@@ -188,7 +186,7 @@ export class SignInComponent extends AuthBase {
 	 */
 	_switchToSignup(): void {
 		this.log.trace('_switchToSignup fired.', this);
-		this.switchToSignup.emit('right-panel-active');
+		this.switchToSignupClicked.emit('sign-up-active');
 
 		// allow for the animation before cleaning up the form.
 		// setTimeout(() => {
