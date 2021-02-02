@@ -1,1 +1,48 @@
-<p>sign-in works!</p>
+<div class="auth__container">
+	<div class="auth__form-container auth__sign-in-container" [ngClass]="_routeAnimationsElements">
+		<form [formGroup]="signinForm" (ngSubmit)="_onSignin()" role="form" novalidate>
+			<h3 class="auth__sign-in-header">{{ 'odm.auth.sign-in.title' | translate }}</h3>
+
+			<div>
+				<img (click)="_onSigninWithFacebook()" class="auth__form-icon" [src]="_facebookLoginIcon" alt="facebook" />
+				<img (click)="_onSigninWithGoogle()" class="auth__form-icon" [src]="_googleLoginIcon" alt="google" />
+			</div>
+
+			<div>
+				<mat-form-field appearance="standard">
+					<mat-label>{{ 'odm.auth.form.label.email' | translate }}</mat-label>
+					<input matInput formControlName="email" type="email" autocomplete="email" required />
+					<mat-icon matSuffix>email</mat-icon>
+					<mat-error *ngIf="_ifControlFieldIsInvalid(signinForm?.get('email'), 'email')">{{
+						_getTranslatedErrorMessage$(signinForm?.get('email').errors) | async
+					}}</mat-error>
+				</mat-form-field>
+			</div>
+
+			<div>
+				<mat-form-field appearance="standard">
+					<mat-label>{{ 'odm.auth.form.label.password' | translate }}</mat-label>
+					<input matInput formControlName="password" [type]="_hide ? 'password' : 'text'" type="password" autocomplete="current-password" required />
+					<mat-icon class="auth__view-password" matSuffix (click)="_hide = !_hide">{{ _hide ? 'visibility_off' : 'visibility' }}</mat-icon>
+					<mat-error *ngIf="signinForm?.get('password').invalid">{{ _fieldRequiredMessage }}</mat-error>
+				</mat-form-field>
+			</div>
+
+			<div>
+				<button mat-raised-button type="submit" class="auth__form-btn auth--btn" [disabled]="!signinForm?.valid">
+					{{ 'odm.buttons.sign-in' | translate }}
+				</button>
+			</div>
+
+			<div>
+				<span class="auth__text-link" (click)="_onForgotPassword()">{{ 'odm.auth.sign-in.forgot-password' | translate }} </span>
+				<span *ngIf="!matcher?.matches" class="auth__text-link" (click)="_switchToSignup()">{{ 'odm.buttons.sign-up' | translate }}</span>
+			</div>
+			<div class="auth__remember-me">
+				<mat-slide-toggle [checked]="signinForm.get('rememberMe').value" (change)="_onRememberMeChange($event)" formControlName="rememberMe"
+					><span class="auth__text-link">{{ 'odm.auth.sign-in.remember-me' | translate }}</span></mat-slide-toggle
+				>
+			</div>
+		</form>
+	</div>
+</div>

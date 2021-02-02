@@ -1,0 +1,12 @@
+<div>
+	<odm-sign-up
+		[problemDetails]="_problemDetails$ | async"
+		[internalServerErrorDetails]="_internalServerErrorDetails$ | async"
+		[matcher]="_breakpointStateScreenMatcher$"
+		[signupForm]="_signupForm"
+		(signupFormSubmitted)="_onSignupSubmitted($event)"
+		(signinWithGoogleSubmitted)="_onSigninWithGoogleSubmitted()"
+		(signinWithFacebookSubmitted)="_onSigninWithFacebookSubmitted()"
+		(switchToSigninClicked)="_onSwitchToSignup($event)"
+	></odm-sign-up>
+</div>

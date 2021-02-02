@@ -1,0 +1,41 @@
+<div class="auth-container">
+	<div class="auth-container__img-section">
+		<img class="auth-container__img" [src]="_laptopImgUrl" [ngClass]="_routeAnimationsElements" alt="Laptop" />
+	</div>
+
+	<div *ngIf="_breakpointStateScreenMatcher$ | async as matcher" class="auth-container__content">
+		<div *ngIf="!matcher?.matches" class="auth-container__header">
+			<h1 class="auth-container__heading" [ngClass]="_routeAnimationsElements">{{ 'odm.auth.sign-up.header' | translate }}</h1>
+			<p class="auth-container__welcome-text" [ngClass]="_routeAnimationsElements">
+				{{ 'odm.auth.sign-up.subheader' | translate }}
+			</p>
+		</div>
+		<div [ngClass]="_signUp" class="auth__container">
+			<div [@routeAnimations]="o.isActivated && o.activatedRoute.routeConfig.path">
+				<router-outlet #o="outlet"></router-outlet>
+			</div>
+			<ng-container *ngIf="matcher?.matches">
+				<div class="auth__overlay-container">
+					<div class="auth__overlay" [ngClass]="_routeAnimationsElements">
+						<div class="auth__overlay-panel auth__overlay-left">
+							<h1>{{ 'odm.auth.sign-in.header' | translate }}</h1>
+							<p>{{ 'odm.auth.sign-in.subheader' | translate }}</p>
+							<button mat-raised-button (click)="_switchToSignin()" class="auth__form-btn-ghost auth--btn">
+								{{ 'odm.buttons.sign-in' | translate }}
+							</button>
+						</div>
+						<div class="auth__overlay-panel auth__overlay-right">
+							<h1>{{ 'odm.auth.sign-up.header' | translate }}</h1>
+							<p>
+								{{ 'odm.auth.sign-up.subheader' | translate }}
+							</p>
+							<button mat-raised-button (click)="_switchToSignup()" class="auth__form-btn-ghost auth--btn">
+								{{ 'odm.buttons.create-account' | translate }}
+							</button>
+						</div>
+					</div>
+				</div>
+			</ng-container>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,15 @@
+<div>
+	<odm-sign-in
+		[problemDetails]="_problemDetails$ | async"
+		[internalServerErrorDetails]="_internalServerErrorDetails$ | async"
+		[matcher]="_breakpointStateScreenMatcher$ | async"
+		(rememberMeChanged)="_onRememberMeChanged($event)"
+		[signinForm]="_signinForm"
+		(signinFormSubmitted)="_onSigninSubmitted($event)"
+		(signinWithGoogleSubmitted)="_onSigninWithGoogleSubmitted()"
+		(signinWithFacebookSubmitted)="_onSigninWithFacebookSubmitted()"
+		(forgotPasswordClicked)="_onForgotPasswordClicked()"
+		(switchToSignupClicked)="_onSwitchToSignupClicked($event)"
+	>
+	</odm-sign-in>
+</div>

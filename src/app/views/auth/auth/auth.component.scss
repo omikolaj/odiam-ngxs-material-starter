@@ -148,7 +148,9 @@ form {
 	transform: translateX(100%);
 }
 
+// responsible for moving .auth__sign-up-container to the right
 .auth__container.right-panel-active .auth__sign-up-container {
+	// mobile view
 	transform: translateX(0);
 	opacity: 1;
 	z-index: 5;
@@ -156,6 +158,7 @@ form {
 }
 
 @media (min-width: map-get($grid-breakpoints, md)) {
+	// responsible for moving .auth__sign-up-container to the right
 	.auth__container.right-panel-active .auth__sign-up-container {
 		transform: translateX(100%);
 	}
