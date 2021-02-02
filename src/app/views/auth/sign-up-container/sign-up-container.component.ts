@@ -45,6 +45,11 @@ export class SignUpContainerComponent implements OnInit {
 	_breakpointStateScreenMatcher$: Observable<BreakpointState>;
 
 	/**
+	 * Whether to display sign-in or sign-up component.
+	 */
+	_activeAuthType$: Observable<string>;
+
+	/**
 	 * Creates an instance of sign up container component.
 	 * @param facade
 	 * @param asyncValidators
@@ -54,6 +59,7 @@ export class SignUpContainerComponent implements OnInit {
 		this._problemDetails$ = facade.problemDetails$;
 		this._internalServerErrorDetails$ = facade.internalServerErrorDetails$;
 		this._breakpointStateScreenMatcher$ = breakpointObserver.observe([MinScreenSizeQuery.md]);
+		this._activeAuthType$ = facade.activeAuthType$;
 	}
 
 	/**

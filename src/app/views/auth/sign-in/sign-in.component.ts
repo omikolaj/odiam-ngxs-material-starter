@@ -50,6 +50,8 @@ export class SignInComponent {
 	 */
 	@Input() matcher: BreakpointState;
 
+	@Input() activeAuthType: ActivePanel = 'sign-in-active';
+
 	/**
 	 * Event emitter for when remember me option is changed.
 	 */

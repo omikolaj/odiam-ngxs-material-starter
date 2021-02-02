@@ -58,6 +58,8 @@ export class SignUpComponent implements OnInit, OnDestroy {
 	 */
 	_signupForm: FormGroup;
 
+	@Input() activeAuthType: ActivePanel = 'sign-up-active';
+
 	/**
 	 * Event emitter for when the signup form is submitted.
 	 */

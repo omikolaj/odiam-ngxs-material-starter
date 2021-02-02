@@ -2,6 +2,7 @@
 	<odm-sign-in
 		[problemDetails]="_problemDetails$ | async"
 		[internalServerErrorDetails]="_internalServerErrorDetails$ | async"
+		[activeAuthType]="_activeAuthType$ | async"
 		[matcher]="_breakpointStateScreenMatcher$ | async"
 		(rememberMeChanged)="_onRememberMeChanged($event)"
 		[signinForm]="_signinForm"

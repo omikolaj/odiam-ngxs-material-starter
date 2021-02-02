@@ -104,7 +104,16 @@ form {
 	}
 }
 
+.auth__container.sign-up-active .auth__sign-up-container {
+	transform: translateX(0);
+	opacity: 1;
+}
+
 @media (min-width: map-get($grid-breakpoints, md)) {
+	.auth__container.sign-up-active .auth__sign-up-container {
+		transform: translateX(100%) !important;
+	}
+
 	.auth__container {
 		width: 768px;
 

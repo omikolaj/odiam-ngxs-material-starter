@@ -46,6 +46,11 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 	_breakpointStateScreenMatcher$: Observable<BreakpointState>;
 
 	/**
+	 * Whether to display sign-in or sign-up component.
+	 */
+	_activeAuthType$: Observable<string>;
+
+	/**
 	 * Remember me option selected by the user.
 	 */
 	private _rememberMe$: Observable<boolean>;
@@ -67,6 +72,7 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 		this._internalServerErrorDetails$ = facade.internalServerErrorDetails$;
 		this._rememberMe$ = facade.rememberMe$;
 		this._breakpointStateScreenMatcher$ = breakpointObserver.observe([MinScreenSizeQuery.md]);
+		this._activeAuthType$ = facade.activeAuthType$;
 	}
 
 	/**
