@@ -9,7 +9,7 @@ import { FormGroup } from '@angular/forms';
 import { MinScreenSizeQuery } from 'app/shared/screen-size-queries';
 import { OdmValidators } from 'app/core/form-validators/odm-validators';
 import { SignupUserModel } from 'app/core/auth/signup-user.model';
-import { ActivePanel } from 'app/core/auth/active-panel.model';
+import { ActiveAuthType } from 'app/core/auth/active-auth-type.model';
 import { AuthTypeRouteUrl } from 'app/core/auth/auth-type-route-url.model';
 import { rightLeftFadeInAnimation } from 'app/core/core.module';
 
@@ -96,9 +96,9 @@ export class SignUpContainerComponent implements OnInit {
 	}
 
 	/**
-	 * Used to switch view to signup context.
+	 * Used to switch view to signin context.
 	 */
-	_onSwitchToSigninClicked(event: ActivePanel): void {
+	_onSwitchToSigninClicked(event: ActiveAuthType): void {
 		this.facade.log.trace('_switchToSignup fired.', this);
 		const activeAuthType = { activeAuthType: event };
 		const routeUrl: AuthTypeRouteUrl = event === 'sign-in-active' ? 'sign-in' : 'sign-up';

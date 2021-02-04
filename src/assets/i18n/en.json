@@ -42,6 +42,10 @@
 		},
 		"auth": {
 			"checking-availability": "Checking availability",
+			"forgot-password": {
+				"header": "Forgot your password?",
+				"subheader": "Enter your email address to reset your password."
+			},
 			"sign-in": {
 				"title": "Sign in",
 				"header": "Welcome Back!",

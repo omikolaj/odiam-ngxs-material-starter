@@ -6,6 +6,7 @@ import * as Auth from './auth.store.actions';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import { isBefore, add, getUnixTime, fromUnixTime } from 'date-fns';
 import { LogService } from '../logger/log.service';
+import { ActiveAuthType } from './active-auth-type.model';
 
 const AUTH_STATE_TOKEN = new StateToken<AuthStateModel>('auth');
 
@@ -82,7 +83,7 @@ export class AuthState {
 	 * @returns active auth type
 	 */
 	@Selector([AUTH_STATE_TOKEN])
-	static selectActiveAuthType(state: AuthStateModel): string {
+	static selectActiveAuthType(state: AuthStateModel): ActiveAuthType {
 		return state.activeAuthType;
 	}
 

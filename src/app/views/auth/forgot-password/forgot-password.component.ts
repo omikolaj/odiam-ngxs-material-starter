@@ -42,6 +42,16 @@ export class ForgotPasswordComponent implements OnInit {
 		const value = this._forgotPasswordForm.value as { email: string };
 		this.facade.onForgotPassword(value.email);
 	}
+
+	/**
+	 * Event handler for when forgot-password form is cancelled.
+	 */
+	_onCancelClicked(): void {
+		this.facade.log.trace('_onCancelClicked fired.', this);
+		this.facade.onUpdateActiveAuthType({ activeAuthType: 'sign-in-active' });
+		void this.facade.router.navigate(['auth']);
+	}
+
 	/**
 	 * Gets translated error message.
 	 * @param errors

@@ -10,7 +10,7 @@ import { MinScreenSizeQuery } from 'app/shared/screen-size-queries';
 import { tap } from 'rxjs/operators';
 import { OdmValidators } from 'app/core/form-validators/odm-validators';
 import { SigninUserModel } from 'app/core/auth/signin-user.model';
-import { ActivePanel } from 'app/core/auth/active-panel.model';
+import { ActiveAuthType } from 'app/core/auth/active-auth-type.model';
 import { AuthTypeRouteUrl } from 'app/core/auth/auth-type-route-url.model';
 import { leftRightFadeInAnimation } from 'app/core/core.module';
 
@@ -97,6 +97,7 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 	 */
 	_onForgotPasswordClicked(): void {
 		this.facade.log.trace('_onForgotPasswordClicked fired.', this);
+		this.facade.onUpdateActiveAuthType({ activeAuthType: 'forgot-password-active' });
 		void this.facade.router.navigate(['forgot-password'], { relativeTo: this.route.parent });
 	}
 
@@ -138,7 +139,7 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 	 * Event handler for when user clicks sign up button.
 	 * @param event
 	 */
-	_onSwitchToSignupClicked(event: ActivePanel): void {
+	_onSwitchToSignupClicked(event: ActiveAuthType): void {
 		this.facade.log.trace('__onSwitchToSignupClicked event handler fired', this, event);
 		const activeAuthType = { activeAuthType: event };
 		const routeUrl: AuthTypeRouteUrl = event === 'sign-in-active' ? 'sign-in' : 'sign-up';

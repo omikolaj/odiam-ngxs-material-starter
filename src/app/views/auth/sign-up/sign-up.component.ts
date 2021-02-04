@@ -10,7 +10,7 @@ import { InternalServerErrorDetails } from 'app/core/models/internal-server-erro
 import { FormGroup, ValidationErrors, AbstractControl } from '@angular/forms';
 import { BreakpointState } from '@angular/cdk/layout';
 import { AuthControlType } from 'app/shared/auth-abstract-control-type';
-import { ActivePanel } from 'app/core/auth/active-panel.model';
+import { ActiveAuthType } from 'app/core/auth/active-auth-type.model';
 
 /**
  * Signup component.
@@ -61,7 +61,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
 	/**
 	 * Whether sign-in or sign-up component is active.
 	 */
-	@Input() activeAuthType: ActivePanel = 'sign-up-active';
+	@Input() activeAuthType: ActiveAuthType = 'sign-up-active';
 
 	/**
 	 * Event emitter for when the signup form is submitted.
@@ -81,7 +81,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
 	/**
 	 * Event emitter for when user clicks sign up button.
 	 */
-	@Output() switchToSigninClicked = new EventEmitter<ActivePanel>();
+	@Output() switchToSigninClicked = new EventEmitter<ActiveAuthType>();
 
 	/**
 	 * Signup form email control status changes$ of auth component.

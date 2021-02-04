@@ -1,10 +1,11 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BreakpointState, BreakpointObserver } from '@angular/cdk/layout';
 import { MinScreenSizeQuery } from 'app/shared/screen-size-queries';
 import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
 import { AuthFacadeService } from '../auth-facade.service';
 import { tap } from 'rxjs/operators';
+import { ActiveAuthType } from 'app/core/auth/active-auth-type.model';
 
 /**
  * Auth container component.
@@ -15,7 +16,7 @@ import { tap } from 'rxjs/operators';
 	styleUrls: ['./auth-container.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AuthContainerComponent {
+export class AuthContainerComponent implements OnInit {
 	/**
 	 * Route animations elements of auth container component.
 	 */
@@ -34,7 +35,7 @@ export class AuthContainerComponent {
 	/**
 	 * Whether to display sign-in or sign-up component.
 	 */
-	_activeAuthType$: Observable<string>;
+	_activeAuthType$: Observable<ActiveAuthType>;
 
 	/**
 	 * Whether user is on forgot-password route.
@@ -50,10 +51,21 @@ export class AuthContainerComponent {
 	 */
 	constructor(breakpointObserver: BreakpointObserver, private facade: AuthFacadeService) {
 		this._breakpointStateScreenMatcher$ = breakpointObserver.observe([MinScreenSizeQuery.md]);
-		this._activeAuthType$ = facade.activeAuthType$.pipe(tap((value) => console.log('logging from constructor', value)));
-		this.facade.router.url === '/auth/sign-in'
-			? this.facade.onSwitchAuth({ activeAuthType: 'sign-in-active' }, 'sign-in')
-			: this.facade.onSwitchAuth({ activeAuthType: 'sign-up-active' }, 'sign-up');
+		this._activeAuthType$ = facade.activeAuthType$;
+	}
+
+	/**
+	 * NgOnInit life cycle.
+	 */
+	ngOnInit(): void {
+		this.facade.log.trace('Initialized.', this);
+		if (this.facade.router.url === '/auth/sign-in') {
+			this.facade.onSwitchAuth({ activeAuthType: 'sign-in-active' }, 'sign-in');
+		} else if (this.facade.router.url === '/auth/sign-up') {
+			this.facade.onSwitchAuth({ activeAuthType: 'sign-up-active' }, 'sign-up');
+		} else if (this.facade.router.url === '/auth/forgot-password') {
+			this.facade.onUpdateActiveAuthType({ activeAuthType: 'forgot-password-active' });
+		}
 	}
 
 	/**
@@ -68,5 +80,14 @@ export class AuthContainerComponent {
 	 */
 	_switchToSignup(): void {
 		this.facade.onSwitchAuth({ activeAuthType: 'sign-up-active' }, 'sign-up');
+	}
+
+	_setActiveAuthCssClass(authType: ActiveAuthType, matcher: BreakpointState): string {
+		let cssClasses: string = authType;
+		if (!matcher.matches) {
+			cssClasses += authType === 'sign-in-active' ? ' ' + 'auth-container__sign-in' : '';
+		}
+		console.log('css', cssClasses);
+		return cssClasses;
 	}
 }

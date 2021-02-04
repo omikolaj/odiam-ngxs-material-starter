@@ -12,7 +12,7 @@ import { TranslateErrorsService } from 'app/shared/services/translate-errors.ser
 import { Observable } from 'rxjs';
 import { AuthControlType } from 'app/shared/auth-abstract-control-type';
 import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
-import { ActivePanel } from 'app/core/auth/active-panel.model';
+import { ActiveAuthType } from 'app/core/auth/active-auth-type.model';
 
 /**
  * Sign in component.
@@ -53,7 +53,7 @@ export class SignInComponent {
 	/**
 	 * Whether sign-in or sign-up component is active.
 	 */
-	@Input() activeAuthType: ActivePanel = 'sign-in-active';
+	@Input() activeAuthType: ActiveAuthType = 'sign-in-active';
 
 	/**
 	 * Event emitter for when remember me option is changed.
@@ -83,7 +83,7 @@ export class SignInComponent {
 	/**
 	 * Event emitter for when user clicks sign up button.
 	 */
-	@Output() switchToSignupClicked = new EventEmitter<ActivePanel>();
+	@Output() switchToSignupClicked = new EventEmitter<ActiveAuthType>();
 
 	/**
 	 * Hide/show password.

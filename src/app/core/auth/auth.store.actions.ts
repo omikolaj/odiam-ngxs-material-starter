@@ -1,5 +1,5 @@
 import { AccessTokenModel } from './access-token.model';
-import { ActivePanel } from './active-panel.model';
+import { ActiveAuthType } from './active-auth-type.model';
 
 /**
  * Init auth state from local storage.
@@ -80,5 +80,5 @@ export class SwitchAuthType {
 	 * Creates an instance of switch auth type.
 	 * @param payload
 	 */
-	constructor(public payload: { activeAuthType: ActivePanel }) {}
+	constructor(public payload: { activeAuthType: ActiveAuthType }) {}
 }

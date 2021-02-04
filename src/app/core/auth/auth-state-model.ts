@@ -1,4 +1,4 @@
-import { ActivePanel } from './active-panel.model';
+import { ActiveAuthType } from './active-auth-type.model';
 
 /**
  * Key used as a key for user auth object when persisting to local storage.
@@ -35,7 +35,7 @@ export interface AuthStateModel {
 	expires_at: number;
 
 	/**
-	 * Whether sign-in or sign-up component should be displayed.
+	 * Whether sign-in or sign-up component should be displayed or forgot-password styles should be applied.
 	 */
-	activeAuthType: ActivePanel;
+	activeAuthType: ActiveAuthType;
 }

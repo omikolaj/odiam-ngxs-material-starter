@@ -4,14 +4,6 @@ h1 {
 	margin: 0px;
 }
 
-p {
-	font-size: 14px;
-	font-weight: 100;
-	line-height: 20px;
-	letter-spacing: 0.5px;
-	margin: 20px 0 30px;
-}
-
 button {
 	border: 1px solid;
 	font-weight: bold;
@@ -33,7 +25,9 @@ button {
 	.auth-container__img-section {
 		flex-basis: 60%;
 		text-align: center;
-		margin-bottom: 20px;
+		margin-top: 10px;
+		margin-left: -15px;
+		margin-right: -15px;
 
 		.auth-container__img {
 			width: 100%;
@@ -72,6 +66,16 @@ button {
 	margin: 0 auto;
 }
 
+.auth-container__sign-in {
+	min-height: 370px;
+	height: 370px;
+	transition: all 0.6s ease-in-out;
+}
+
+.auth-container__routes.forgot-password-active {
+	min-height: 350px;
+}
+
 @media (min-width: map-get($grid-breakpoints, md)) {
 	.auth-container__routes {
 		width: 768px;
@@ -79,6 +83,11 @@ button {
 }
 
 // OVERLAY STYLES
+
+// disables over lay container when viewing forgot-password component
+.auth-container__routes.forgot-password-active .auth__overlay-container {
+	display: none;
+}
 
 .auth__overlay-container {
 	position: absolute;
