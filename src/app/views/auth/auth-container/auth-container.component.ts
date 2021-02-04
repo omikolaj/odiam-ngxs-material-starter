@@ -4,7 +4,6 @@ import { BreakpointState, BreakpointObserver } from '@angular/cdk/layout';
 import { MinScreenSizeQuery } from 'app/shared/screen-size-queries';
 import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
 import { AuthFacadeService } from '../auth-facade.service';
-import { tap } from 'rxjs/operators';
 import { ActiveAuthType } from 'app/core/auth/active-auth-type.model';
 
 /**
@@ -82,12 +81,19 @@ export class AuthContainerComponent implements OnInit {
 		this.facade.onSwitchAuth({ activeAuthType: 'sign-up-active' }, 'sign-up');
 	}
 
+	/**
+	 * Sets the active auth css class which dictates if we are displaying sign-in/sign-up component.
+	 * and it also sets specific css class for sign-in component to account for extra blank space between
+	 * login component and the image.
+	 * @param authType
+	 * @param matcher
+	 * @returns active auth css class
+	 */
 	_setActiveAuthCssClass(authType: ActiveAuthType, matcher: BreakpointState): string {
 		let cssClasses: string = authType;
 		if (!matcher.matches) {
 			cssClasses += authType === 'sign-in-active' ? ' ' + 'auth-container__sign-in' : '';
 		}
-		console.log('css', cssClasses);
 		return cssClasses;
 	}
 }
