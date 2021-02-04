@@ -188,5 +188,7 @@ export class AuthState {
 				return draft;
 			})
 		);
+		const auth = ctx.getState();
+		this.localStorageService.setItem(AUTH_KEY, auth);
 	}
 }

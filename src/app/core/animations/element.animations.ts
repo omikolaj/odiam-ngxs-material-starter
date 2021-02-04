@@ -26,13 +26,13 @@ export const upDownFadeInAnimation = trigger('upDownFadeIn', [
 export const rightLeftFadeInAnimation = trigger('rightLeftFadeIn', [
 	transition(':enter', [
 		animate(
-			300,
+			200,
 			keyframes([style({ opacity: 0, transform: 'translateX(-20px)', offset: 0 }), style({ opacity: 1, transform: 'translateX(0)', offset: 1 })])
 		)
 	]),
 	transition(':leave', [
 		animate(
-			300,
+			200,
 			keyframes([style({ opacity: 1, transform: 'translateX(0)', offset: 0 }), style({ opacity: 0, transform: 'translateX(-20px)', offset: 1 })])
 		)
 	])
@@ -45,13 +45,13 @@ export const rightLeftFadeInAnimation = trigger('rightLeftFadeIn', [
 export const leftRightFadeInAnimation = trigger('leftRightFadeIn', [
 	transition(':enter', [
 		animate(
-			300,
+			200,
 			keyframes([style({ opacity: 0, transform: 'translateX(20px)', offset: 0 }), style({ opacity: 1, transform: 'translateX(0)', offset: 1 })])
 		)
 	]),
 	transition(':leave', [
 		animate(
-			300,
+			200,
 			keyframes([style({ opacity: 1, transform: 'translateX(0px)', offset: 0 }), style({ opacity: 0, transform: 'translateX(-20px)', offset: 1 })])
 		)
 	])

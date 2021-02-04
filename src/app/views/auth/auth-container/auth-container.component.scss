@@ -1,5 +1,24 @@
 @import '../../../../styles-variables.scss';
 
+h1 {
+	margin: 0px;
+}
+
+p {
+	font-size: 14px;
+	font-weight: 100;
+	line-height: 20px;
+	letter-spacing: 0.5px;
+	margin: 20px 0 30px;
+}
+
+button {
+	border: 1px solid;
+	font-weight: bold;
+	padding: 0px 45px;
+	letter-spacing: 1px;
+}
+
 .auth-container {
 	margin-top: 20px;
 	display: flex;
@@ -43,8 +62,110 @@
 	}
 }
 
+.auth-container__routes {
+	position: relative;
+	overflow: hidden;
+	width: 480px;
+	max-width: 100%;
+	min-height: 500px;
+	margin-top: 20px;
+	margin: 0 auto;
+}
+
+@media (min-width: map-get($grid-breakpoints, md)) {
+	.auth-container__routes {
+		width: 768px;
+	}
+}
+
+// OVERLAY STYLES
+
+.auth__overlay-container {
+	position: absolute;
+	top: 50%;
+	left: 0;
+	width: 100%;
+	height: 50%;
+	overflow: hidden;
+	transition: transform 0.6s ease-in-out;
+	z-index: 5;
+
+	.auth__overlay {
+		background-repeat: no-repeat;
+		background-size: cover;
+		background-position: 0 0;
+		color: #ffffff;
+		position: relative;
+		top: -100%;
+		height: 200%;
+		width: 100%;
+		transition: transform 0.6s ease-in-out;
+
+		.auth__overlay-panel {
+			position: absolute;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-direction: column;
+			padding: 0 40px;
+			text-align: center;
+			right: 0;
+			height: 50%;
+			width: 100%;
+			transition: transform 0.6s ease-in-out;
+
+			.auth__form-btn-ghost {
+				background-color: transparent;
+			}
+
+			.auth--btn {
+				color: white;
+				text-transform: uppercase;
+			}
+		}
+	}
+}
+
 @media (min-width: map-get($grid-breakpoints, md)) {
 	.auth-container__img-section {
 		margin-top: 20px;
+	}
+
+	.auth-container__routes.sign-up-active .auth__overlay {
+		transform: translateX(50%);
+	}
+
+	.auth-container__routes.sign-up-active .auth__overlay-container {
+		transform: translateX(-100%);
+	}
+
+	.auth__overlay-container {
+		top: 0;
+		left: 50%;
+		width: 50%;
+		height: 100%;
+
+		.auth__overlay {
+			left: -100%;
+			top: 0;
+			height: 100%;
+			width: 200%;
+
+			.auth__overlay-panel {
+				right: auto;
+				top: 0;
+				height: 100%;
+				width: 50%;
+			}
+
+			.auth__overlay-sign-up {
+				right: 0;
+				transform: translateX(0);
+			}
+
+			.auth__overlay-sign-in {
+				transform: translateX(0);
+			}
+		}
 	}
 }

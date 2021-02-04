@@ -1,32 +1,27 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { AuthRoutingModule } from './auth-routing.module';
-import { AuthContainerComponent } from './auth-container/auth-container.component';
 import { SharedModule } from 'app/shared/shared.module';
-import { AuthComponent } from './auth/auth.component';
 import { AuthFacadeService } from './auth-facade.service';
 import { SocialLoginModule, SocialAuthServiceConfig, GoogleLoginProvider, FacebookLoginProvider } from 'angularx-social-login';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { SignInComponent } from './sign-in/sign-in.component';
-import { AuthContainerOneComponent } from './auth-container-one/auth-container-one.component';
 import { SignInContainerComponent } from './sign-in-container/sign-in-container.component';
 import { SignUpContainerComponent } from './sign-up-container/sign-up-container.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
+import { AuthContainerComponent } from './auth-container/auth-container.component';
 
 /**
  * Auth module.
  */
 @NgModule({
 	declarations: [
-		AuthContainerComponent,
-		AuthComponent,
 		ForgotPasswordComponent,
 		ResetPasswordComponent,
 		SignInComponent,
 		SignUpComponent,
-		AuthContainerOneComponent,
+		AuthContainerComponent,
 		SignInContainerComponent,
 		SignUpContainerComponent
 	],

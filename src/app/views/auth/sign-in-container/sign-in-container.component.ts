@@ -134,6 +134,10 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 		this.facade.onRememberMeChanged(event);
 	}
 
+	/**
+	 * Event handler for when user clicks sign up button.
+	 * @param event
+	 */
 	_onSwitchToSignupClicked(event: ActivePanel): void {
 		this.facade.log.trace('__onSwitchToSignupClicked event handler fired', this, event);
 		const activeAuthType = { activeAuthType: event };

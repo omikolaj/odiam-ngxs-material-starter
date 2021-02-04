@@ -3,6 +3,42 @@
 @mixin odm-auth-container-component-theme($theme) {
 	$primary: map-get($theme, primary);
 	$accent: map-get($theme, accent);
-	$foreground: map-get($theme, foreground);
+	$warn: map-get($theme, warn);
 	$background: map-get($theme, background);
+
+	odm-sign-in-container odm-sign-in,
+	odm-sign-up-container odm-sign-up {
+		h3 {
+			background-image: linear-gradient(to right, mat-color($accent, A400), mat-color($primary, 700));
+		}
+
+		form {
+			background-color: mat-color($background, background);
+		}
+
+		.auth__container {
+			background-color: mat-color($background, background);
+
+			.auth__form-container {
+				.auth__text-link {
+					color: mat-color($primary, A400);
+				}
+
+				.auth--req-not-met {
+					color: mat-color($warn);
+				}
+
+				.auth__form-btn {
+					background-image: linear-gradient(to right, mat-color($accent, A200), mat-color($accent, 900));
+				}
+			}
+		}
+	}
+	.auth__overlay-container {
+		.auth__overlay {
+			background: mat-color($primary, A400);
+			background: linear-gradient(to right, mat-color($accent, A400), mat-color($primary, 700));
+			background: -webkit-linear-gradient(to right, mat-color($accent, A200), mat-color($primary, 700));
+		}
+	}
 }

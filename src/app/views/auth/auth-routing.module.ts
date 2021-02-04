@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
-import { AuthContainerOneComponent } from './auth-container-one/auth-container-one.component';
 import { AuthContainerComponent } from './auth-container/auth-container.component';
 import { SignInContainerComponent } from './sign-in-container/sign-in-container.component';
 import { SignUpContainerComponent } from './sign-up-container/sign-up-container.component';
@@ -10,7 +9,7 @@ import { SignUpContainerComponent } from './sign-up-container/sign-up-container.
 const routes: Routes = [
 	{
 		path: '',
-		component: AuthContainerOneComponent,
+		component: AuthContainerComponent,
 		children: [
 			{
 				path: 'sign-in',

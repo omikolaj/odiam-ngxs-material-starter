@@ -1,21 +1,13 @@
-import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
-import { AuthFacadeService } from '../auth-facade.service';
-import { Observable, Subscription } from 'rxjs';
-import { FormGroup } from '@angular/forms';
-import { OdmValidators } from 'app/core/form-validators/odm-validators';
-import { AsyncValidatorsService } from 'app/core/form-validators/validators-async.service';
-import { SignupUserModel } from 'app/core/auth/signup-user.model';
-import { SigninUserModel } from 'app/core/auth/signin-user.model';
-import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
-import { ProblemDetails } from 'app/core/models/problem-details.model';
-import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
-import { tap } from 'rxjs/operators';
-import { ActivatedRoute } from '@angular/router';
-import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Observable } from 'rxjs';
+import { BreakpointState, BreakpointObserver } from '@angular/cdk/layout';
 import { MinScreenSizeQuery } from 'app/shared/screen-size-queries';
+import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
+import { AuthFacadeService } from '../auth-facade.service';
+import { tap } from 'rxjs/operators';
 
 /**
- * AuthContainer component
+ * Auth container component.
  */
 @Component({
 	selector: 'odm-auth-container',
@@ -23,36 +15,11 @@ import { MinScreenSizeQuery } from 'app/shared/screen-size-queries';
 	styleUrls: ['./auth-container.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AuthContainerComponent implements OnInit, OnDestroy {
+export class AuthContainerComponent {
 	/**
 	 * Route animations elements of auth container component.
 	 */
 	_routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
-
-	/**
-	 * Emitted when server responds with 40X error.
-	 */
-	_problemDetails$: Observable<ProblemDetails>;
-
-	/**
-	 * Emitted when server responds with 50X error.
-	 */
-	_internalServerErrorDetails$: Observable<InternalServerErrorDetails>;
-
-	/**
-	 * Signin form of auth component.
-	 */
-	_signinForm: FormGroup;
-
-	/**
-	 * Signup form of auth component.
-	 */
-	_signupForm: FormGroup;
-
-	/**
-	 * Whether specified screen width was matched.
-	 */
-	_breakpointStateScreenMatcher$: Observable<BreakpointState>;
 
 	/**
 	 * Laptop img url.
@@ -60,154 +27,46 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	_laptopImgUrl = 'https://res.cloudinary.com/hetfy/image/upload/v1603459311/laptop_hkaxzz.png';
 
 	/**
-	 * Remember me option selected by the user.
+	 * Whether specified screen width was matched.
 	 */
-	private _rememberMe$: Observable<boolean>;
+	_breakpointStateScreenMatcher$: Observable<BreakpointState>;
 
 	/**
-	 * Subscriptions for this component.
+	 * Whether to display sign-in or sign-up component.
 	 */
-	private _subscription = new Subscription();
+	_activeAuthType$: Observable<string>;
+
+	/**
+	 * Whether user is on forgot-password route.
+	 */
+	get _forgotPasswordIsDisplayed(): boolean {
+		return this.facade.router.url === '/auth/forgot-password';
+	}
 
 	/**
 	 * Creates an instance of auth container component.
+	 * @param breakpointObserver
 	 * @param facade
-	 * @param asyncValidators
-	 * @param fb
 	 */
-	constructor(
-		private facade: AuthFacadeService,
-		private asyncValidators: AsyncValidatorsService,
-		private route: ActivatedRoute,
-		breakpointObserver: BreakpointObserver
-	) {
-		this._problemDetails$ = facade.problemDetails$;
-		this._internalServerErrorDetails$ = facade.internalServerErrorDetails$;
-		this._rememberMe$ = facade.rememberMe$;
+	constructor(breakpointObserver: BreakpointObserver, private facade: AuthFacadeService) {
 		this._breakpointStateScreenMatcher$ = breakpointObserver.observe([MinScreenSizeQuery.md]);
+		this._activeAuthType$ = facade.activeAuthType$.pipe(tap((value) => console.log('logging from constructor', value)));
+		this.facade.router.url === '/auth/sign-in'
+			? this.facade.onSwitchAuth({ activeAuthType: 'sign-in-active' }, 'sign-in')
+			: this.facade.onSwitchAuth({ activeAuthType: 'sign-up-active' }, 'sign-up');
 	}
 
 	/**
-	 * NgOnInit life cycle.
+	 * Switchs to signin.
 	 */
-	ngOnInit(): void {
-		this.facade.log.trace('Initialized.', this);
-		this._initForms();
-		this._subscription = this._rememberMe$.pipe(tap((value) => this._signinForm.get('rememberMe').setValue(value))).subscribe();
+	_switchToSignin(): void {
+		this.facade.onSwitchAuth({ activeAuthType: 'sign-in-active' }, 'sign-in');
 	}
 
 	/**
-	 * NgOnDestroy life cycle.
+	 * Switchs to signup.
 	 */
-	ngOnDestroy(): void {
-		this.facade.log.trace('Destroyed.', this);
-		this._subscription.unsubscribe();
-	}
-
-	/**
-	 * Event handler for when user clicks forgot password.
-	 */
-	_onForgotPasswordClicked(): void {
-		this.facade.log.trace('_onForgotPasswordClicked fired.', this);
-		void this.facade.router.navigate(['forgot-password'], { relativeTo: this.route.parent });
-	}
-
-	/**
-	 * Event handler for when user changes remember me option.
-	 * @param event
-	 */
-	_onRememberMeChanged(event: boolean): void {
-		this.facade.log.trace('_onRememberMeChanged event handler fired.', this, event);
-		this.facade.onRememberMeChanged(event);
-	}
-
-	/**
-	 * Event handler for when user signs in.
-	 * @param model
-	 */
-	_onSigninSubmitted(model: SigninUserModel): void {
-		this.facade.log.trace('_onSigninSubmitted event handler fired.', this);
-		this.facade.signinUser(model);
-	}
-
-	/**
-	 * Event handler for when user signs in with google.
-	 */
-	_onSigninWithGoogleSubmitted(): void {
-		this.facade.log.trace('_onSigninWithGoogleSubmitted event handler fired.', this);
-		this.facade.signinUserWithGoogle();
-	}
-
-	/**
-	 * Event handler for when user signs in with facebook.
-	 */
-	_onSigninWithFacebookSubmitted(): void {
-		this.facade.log.trace('_onSigninWithFacebookSubmitted event handler fired.', this);
-		this.facade.signinUserWithFacebook();
-	}
-
-	/**
-	 * Event handler for when user signs up.
-	 * @param model
-	 */
-	_onSignupSubmitted(model: SignupUserModel): void {
-		this.facade.log.trace('_onSignupSubmitted event handler fired.', this);
-		this.facade.signupUser(model);
-	}
-
-	/**
-	 * Inits singin and signup forms.
-	 */
-	private _initForms(): void {
-		this._signinForm = this._initSigninForm();
-		this._signupForm = this._initSignupForm();
-	}
-
-	/**
-	 * Creates FormGroup for signin form.
-	 * @returns signin form
-	 */
-	private _initSigninForm(): FormGroup {
-		return this.facade.fb.group({
-			email: this.facade.fb.control('', {
-				validators: [OdmValidators.required, OdmValidators.email],
-				updateOn: 'blur'
-			}),
-			password: this.facade.fb.control('', [OdmValidators.required]),
-			rememberMe: this.facade.fb.control(false)
-		});
-	}
-
-	/**
-	 * Creates FormGroup for signup form.
-	 * @returns signup form
-	 */
-	private _initSignupForm(): FormGroup {
-		return this.facade.fb.group(
-			{
-				email: this.facade.fb.control('', {
-					validators: [OdmValidators.required, OdmValidators.email],
-					asyncValidators: [this.asyncValidators.checkIfEmailIsUnique()],
-					updateOn: 'blur'
-				}),
-				password: this.facade.fb.control('', {
-					validators: [
-						OdmValidators.required,
-						OdmValidators.minLength(8),
-						OdmValidators.requireDigit,
-						OdmValidators.requireLowercase,
-						OdmValidators.requireUppercase,
-						OdmValidators.requireNonAlphanumeric,
-						OdmValidators.requireThreeUniqueCharacters
-					],
-					updateOn: 'change'
-				}),
-				confirmPassword: this.facade.fb.control('')
-			},
-			{
-				validators: OdmValidators.requireConfirmPassword,
-				updateOn: 'change'
-			}
-		);
+	_switchToSignup(): void {
+		this.facade.onSwitchAuth({ activeAuthType: 'sign-up-active' }, 'sign-up');
 	}
 }

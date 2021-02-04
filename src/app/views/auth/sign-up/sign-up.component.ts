@@ -58,6 +58,9 @@ export class SignUpComponent implements OnInit, OnDestroy {
 	 */
 	_signupForm: FormGroup;
 
+	/**
+	 * Whether sign-in or sign-up component is active.
+	 */
 	@Input() activeAuthType: ActivePanel = 'sign-up-active';
 
 	/**
@@ -175,6 +178,12 @@ export class SignUpComponent implements OnInit, OnDestroy {
 	private get _isServerValidationError(): boolean {
 		return !!this._problemDetails.errors;
 	}
+
+	/**
+	 * Creates an instance of sign up component.
+	 * @param facade
+	 * @param cd
+	 */
 	constructor(private facade: AuthFacadeService, private cd: ChangeDetectorRef) {}
 
 	/**

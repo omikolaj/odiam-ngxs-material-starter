@@ -98,16 +98,11 @@ export class SignUpContainerComponent implements OnInit {
 	/**
 	 * Used to switch view to signup context.
 	 */
-	_onSwitchToSignup(event: ActivePanel): void {
+	_onSwitchToSigninClicked(event: ActivePanel): void {
 		this.facade.log.trace('_switchToSignup fired.', this);
 		const activeAuthType = { activeAuthType: event };
 		const routeUrl: AuthTypeRouteUrl = event === 'sign-in-active' ? 'sign-in' : 'sign-up';
 		this.facade.onSwitchAuth(activeAuthType, routeUrl);
-
-		// allow for the animation before cleaning up the form.
-		// setTimeout(() => {
-		// 	formDirective.resetForm();
-		// }, 600);
 	}
 
 	/**

@@ -50,6 +50,9 @@ export class SignInComponent {
 	 */
 	@Input() matcher: BreakpointState;
 
+	/**
+	 * Whether sign-in or sign-up component is active.
+	 */
 	@Input() activeAuthType: ActivePanel = 'sign-in-active';
 
 	/**
@@ -189,11 +192,6 @@ export class SignInComponent {
 	_switchToSignup(): void {
 		this.log.trace('_switchToSignup fired.', this);
 		this.switchToSignupClicked.emit('sign-up-active');
-
-		// allow for the animation before cleaning up the form.
-		// setTimeout(() => {
-		// 	formDirective.resetForm();
-		// }, 600);
 	}
 
 	/**
