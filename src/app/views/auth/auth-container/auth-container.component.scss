@@ -22,17 +22,18 @@ button {
 	margin-right: auto;
 	margin-left: auto;
 
-	.auth-container__img-section {
-		flex-basis: 60%;
-		text-align: center;
-		margin-top: 10px;
-		margin-left: -15px;
-		margin-right: -15px;
+	// .auth-container__img-section {
+	// 	flex-basis: 60%;
+	// 	text-align: center;
+	// 	margin-top: 20px;
+	// 	margin-left: -15px;
+	// 	margin-right: -15px;
 
-		.auth-container__img {
-			width: 100%;
-		}
-	}
+	// 	.auth-container__img {
+	// 		width: 100%;
+	// 		max-height: 300px;
+	// 	}
+	// }
 
 	.auth-container__content {
 		width: 100%;
@@ -61,19 +62,20 @@ button {
 	overflow: hidden;
 	width: 480px;
 	max-width: 100%;
-	min-height: 500px;
+	height: 518px;
 	margin-top: 20px;
 	margin: 0 auto;
+	// animates the auth image height adjustment between 500px(.auth-container__routes) and 370px (.auth-container__sign-in)
+	transition: height 0.6s ease-out;
+	transition-delay: 0.2s;
 }
 
 .auth-container__sign-in {
-	min-height: 370px;
-	height: 370px;
-	transition: all 0.6s ease-in-out;
+	height: 390px;
 }
 
 .auth-container__routes.forgot-password-active {
-	min-height: 350px;
+	height: 270px;
 }
 
 @media (min-width: map-get($grid-breakpoints, md)) {
@@ -136,9 +138,9 @@ button {
 }
 
 @media (min-width: map-get($grid-breakpoints, md)) {
-	.auth-container__img-section {
-		margin-top: 20px;
-	}
+	// .auth-container__img-section {
+	// 	margin-top: 20px;
+	// }
 
 	.auth-container__routes.sign-up-active .auth__overlay {
 		transform: translateX(50%);

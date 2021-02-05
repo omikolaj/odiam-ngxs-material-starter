@@ -1,8 +1,9 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, EventEmitter, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { OdmValidators } from 'app/core/form-validators/odm-validators';
-import { AuthFacadeService } from '../auth-facade.service';
 import { Observable } from 'rxjs';
+import { LogService } from 'app/core/logger/log.service';
+import { TranslateErrorsService } from 'app/shared/services/translate-errors.service';
+import { leftRightFadeInAnimation } from 'app/core/core.module';
 
 /**
  * Forgot password component.
@@ -11,71 +12,74 @@ import { Observable } from 'rxjs';
 	selector: 'odm-forgot-password',
 	templateUrl: './forgot-password.component.html',
 	styleUrls: ['./forgot-password.component.scss'],
+	animations: [leftRightFadeInAnimation],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ForgotPasswordComponent implements OnInit {
+export class ForgotPasswordComponent {
 	/**
-	 * Forgot password form of forgot password component.
+	 * Forgot password form collects user entered email.
 	 */
-	_forgotPasswordForm: FormGroup;
+	@Input() forgotPasswordForm: FormGroup;
+
+	/**
+	 * Whether user has submitted forgot-password form.
+	 */
+	@Input() formSubmitted = false;
+
+	/**
+	 * Event emitter when user clicks forgot-password button.
+	 */
+	@Output() submitFormClicked = new EventEmitter<{ email: string }>();
+
+	/**
+	 * Event emitter when user clicks cancel button.
+	 */
+	@Output() cancelClicked = new EventEmitter<void>();
+
+	/**
+	 * Event emitter when user clicks finish button.
+	 */
+	@Output() finishClicked = new EventEmitter<void>();
 
 	/**
 	 * Creates an instance of forgot password component.
 	 * @param fb
 	 * @param facade
 	 */
-	constructor(private facade: AuthFacadeService) {}
-
-	/**
-	 * NgOnInit life cycle.
-	 */
-	ngOnInit(): void {
-		this.facade.log.trace('Initialized.', this);
-		this._initForm();
-	}
+	constructor(private log: LogService, private translateError: TranslateErrorsService) {}
 
 	/**
 	 * Event handler for when the form is submitted.
 	 */
 	_onFormSubmitted(): void {
-		this.facade.log.trace('_onFormSubmitted fired.', this);
-		const value = this._forgotPasswordForm.value as { email: string };
-		this.facade.onForgotPassword(value.email);
+		this.log.trace('_onFormSubmitted fired.', this);
+		const model = this.forgotPasswordForm.value as { email: string };
+		this.submitFormClicked.emit(model);
+	}
+
+	/**
+	 * Event handler for when user clicks finish on forgot password component.
+	 */
+	_onFinishClicked(): void {
+		this.log.trace('_onFinishClicked fired.', this);
+		this.finishClicked.emit();
 	}
 
 	/**
 	 * Event handler for when forgot-password form is cancelled.
 	 */
 	_onCancelClicked(): void {
-		this.facade.log.trace('_onCancelClicked fired.', this);
-		this.facade.onUpdateActiveAuthType({ activeAuthType: 'sign-in-active' });
-		void this.facade.router.navigate(['auth']);
+		this.log.trace('_onCancelClicked fired.', this);
+		this.cancelClicked.emit();
 	}
 
 	/**
 	 * Gets translated error message.
 	 * @param errors
-	 * @returns translated error message$
+	 * @returns translated error message
 	 */
 	_getTranslatedErrorMessage$(): Observable<string> {
-		const control = this._forgotPasswordForm.get('email');
-		return this.facade.translateError.translateErrorMessage$(control.errors);
-	}
-
-	/**
-	 * Initializes forms for forgot-password component.
-	 */
-	private _initForm(): void {
-		this._forgotPasswordForm = this._initForgotPasswordForm();
-	}
-
-	/**
-	 * Returns form group for forgot-password form.
-	 * @returns forgot password form
-	 */
-	private _initForgotPasswordForm(): FormGroup {
-		return this.facade.fb.group({
-			email: this.facade.fb.control('', [OdmValidators.required, OdmValidators.email])
-		});
+		const control = this.forgotPasswordForm.get('email');
+		return this.translateError.translateErrorMessage$(control.errors);
 	}
 }

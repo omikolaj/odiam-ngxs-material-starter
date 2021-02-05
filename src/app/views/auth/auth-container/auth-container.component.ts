@@ -1,10 +1,12 @@
-import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Component, ChangeDetectionStrategy, OnInit, OnDestroy } from '@angular/core';
+import { Observable, Subscription } from 'rxjs';
 import { BreakpointState, BreakpointObserver } from '@angular/cdk/layout';
 import { MinScreenSizeQuery } from 'app/shared/screen-size-queries';
-import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
+import { ROUTE_ANIMATIONS_ELEMENTS, routeAnimations } from 'app/core/core.module';
 import { AuthFacadeService } from '../auth-facade.service';
 import { ActiveAuthType } from 'app/core/auth/active-auth-type.model';
+import { tap, startWith } from 'rxjs/operators';
+import { NavigationEnd } from '@angular/router';
 
 /**
  * Auth container component.
@@ -13,18 +15,20 @@ import { ActiveAuthType } from 'app/core/auth/active-auth-type.model';
 	selector: 'odm-auth-container',
 	templateUrl: './auth-container.component.html',
 	styleUrls: ['./auth-container.component.scss'],
+	animations: [routeAnimations],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AuthContainerComponent implements OnInit {
+export class AuthContainerComponent implements OnInit, OnDestroy {
 	/**
 	 * Route animations elements of auth container component.
 	 */
 	_routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
 
 	/**
-	 * Laptop img url.
+	 * Image located at the bottom of this component.
 	 */
-	_laptopImgUrl = 'https://res.cloudinary.com/hetfy/image/upload/v1603459311/laptop_hkaxzz.png';
+
+	_authContainerImg = (require('../../../../assets/auth_bottom.jpg') as { default: string }).default;
 
 	/**
 	 * Whether specified screen width was matched.
@@ -44,6 +48,11 @@ export class AuthContainerComponent implements OnInit {
 	}
 
 	/**
+	 * Rxjs subscriptions for this component.
+	 */
+	private _subscription = new Subscription();
+
+	/**
 	 * Creates an instance of auth container component.
 	 * @param breakpointObserver
 	 * @param facade
@@ -58,11 +67,42 @@ export class AuthContainerComponent implements OnInit {
 	 */
 	ngOnInit(): void {
 		this.facade.log.trace('Initialized.', this);
-		if (this.facade.router.url === '/auth/sign-in') {
+
+		this._subscription.add(
+			this.facade.router.events
+				.pipe(
+					startWith(this._setActiveAuthTypeBasedOnUrl(this.facade.router.url)),
+					// we need to always respond to route events when this component is loaded.
+					// That's what loads sign-in/sign-up/forgot-password components based on the current url.
+					tap((event) => {
+						if (event instanceof NavigationEnd) {
+							this._setActiveAuthTypeBasedOnUrl(event.url);
+						}
+					})
+				)
+				.subscribe()
+		);
+	}
+
+	/**
+	 * NgOnDestroy life cycle.
+	 */
+	ngOnDestroy(): void {
+		this.facade.log.trace('Destroyed.', this);
+		this._subscription.unsubscribe();
+	}
+
+	/**
+	 * Sets active auth type based on url.
+	 * @param url
+	 */
+	private _setActiveAuthTypeBasedOnUrl(url: string): void {
+		console.log(url);
+		if (url === '/auth/sign-in' || url === '/auth') {
 			this.facade.onSwitchAuth({ activeAuthType: 'sign-in-active' }, 'sign-in');
-		} else if (this.facade.router.url === '/auth/sign-up') {
+		} else if (url === '/auth/sign-up') {
 			this.facade.onSwitchAuth({ activeAuthType: 'sign-up-active' }, 'sign-up');
-		} else if (this.facade.router.url === '/auth/forgot-password') {
+		} else if (url === '/auth/forgot-password') {
 			this.facade.onUpdateActiveAuthType({ activeAuthType: 'forgot-password-active' });
 		}
 	}

@@ -146,7 +146,7 @@ export class AppComponent implements OnInit {
 	 */
 	_onSigninClick(): void {
 		this.log.debug('onSigninClick handler fired.', this);
-		void this.router.navigate(['auth']);
+		void this.router.navigate(['auth/sign-in']);
 	}
 
 	/**
@@ -163,7 +163,7 @@ export class AppComponent implements OnInit {
 	_onSignoutClick(): void {
 		this.log.debug('onSignoutClick handler fired.', this);
 		this.store.dispatch(new Auth.Signout());
-		void this.router.navigate(['auth']);
+		void this.router.navigate(['auth/sign-in']);
 	}
 
 	/**

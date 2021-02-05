@@ -1,7 +1,7 @@
 <div class="auth-container">
-	<div class="auth-container__img-section">
-		<img class="auth-container__img" [src]="_laptopImgUrl" [ngClass]="_routeAnimationsElements" alt="Laptop" />
-	</div>
+	<!-- <div class="auth-container__img-section">
+		<img class="auth-container__img" [src]="_authContainerImg" [ngClass]="_routeAnimationsElements" alt="Laptop" />
+	</div> -->
 
 	<div *ngIf="_breakpointStateScreenMatcher$ | async as matcher" class="auth-container__content">
 		<ng-container *ngIf="!_forgotPasswordIsDisplayed">
@@ -14,7 +14,7 @@
 		</ng-container>
 		<div [ngClass]="_setActiveAuthCssClass(_activeAuthType$ | async, matcher)" class="auth-container__routes" #scrollContainer>
 			<div>
-				<router-outlet></router-outlet>
+				<router-outlet @routeAnimations></router-outlet>
 			</div>
 			<ng-container *ngIf="matcher?.matches">
 				<div class="auth__overlay-container">

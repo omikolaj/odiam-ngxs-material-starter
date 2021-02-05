@@ -85,7 +85,7 @@ export class AuthFacadeService {
 	 * Sends reset password link to the passed in email.
 	 * @param email
 	 */
-	onForgotPassword(email: string): void {
+	forgotPassword(email: string): void {
 		this.usersAsyncService.forgotPassword(email).subscribe();
 	}
 
