@@ -1,7 +1,7 @@
 /**
  * Signin user model.
  */
-export interface SigninUserModel {
+export interface SigninUser {
 	email: string;
 	password: string;
 	rememberMe: boolean;

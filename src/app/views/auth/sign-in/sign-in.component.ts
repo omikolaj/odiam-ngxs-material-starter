@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { FormGroup, ValidationErrors, AbstractControl } from '@angular/forms';
-import { SigninUserModel } from 'app/core/auth/signin-user.model';
+import { SigninUser } from 'app/core/auth/signin-user.model';
 import { ValidationMessage_Required } from 'app/shared/validation-messages';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
@@ -63,7 +63,7 @@ export class SignInComponent {
 	/**
 	 * Event emitter for when the signin form is submitted.
 	 */
-	@Output() signinFormSubmitted = new EventEmitter<SigninUserModel>();
+	@Output() signinFormSubmitted = new EventEmitter<SigninUser>();
 
 	/**
 	 * Event emitter for when user signs in with google.
@@ -166,7 +166,7 @@ export class SignInComponent {
 	 */
 	_onSignin(): void {
 		this.log.trace('_onSignin fired.', this);
-		const signinUserModel = this.signinForm.value as SigninUserModel;
+		const signinUserModel = this.signinForm.value as SigninUser;
 		this.signinFormSubmitted.emit(signinUserModel);
 	}
 

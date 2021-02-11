@@ -1,4 +1,4 @@
-import { AccessTokenModel } from './access-token.model';
+import { AccessToken } from './access-token.model';
 import { ActiveAuthType } from './active-auth-type.model';
 
 /**
@@ -38,7 +38,7 @@ export class Signin {
 	 * Creates an instance of signin action.
 	 * @param payload
 	 */
-	constructor(public payload: { AccessTokenModel: AccessTokenModel; rememberMe: boolean; userId: string }) {}
+	constructor(public payload: { accessToken: AccessToken; rememberMe: boolean; userId: string }) {}
 }
 
 /**

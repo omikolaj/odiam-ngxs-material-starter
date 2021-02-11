@@ -1,9 +1,9 @@
-import { AccessTokenModel } from './access-token.model';
+import { AccessToken } from './access-token.model';
 
 /**
  * Result of renew access token operation.
  */
-export interface RenewAccessTokenModelResult {
+export interface RenewAccessTokenResult {
 	/**
 	 * Whether the renewal was successful
 	 */
@@ -12,5 +12,5 @@ export interface RenewAccessTokenModelResult {
 	/**
 	 * New access token
 	 */
-	AccessTokenModel: AccessTokenModel;
+	accessToken: AccessToken;
 }

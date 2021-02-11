@@ -1,7 +1,7 @@
 /**
  * Signup user model.
  */
-export interface SignupUserModel {
+export interface SignupUser {
 	email: string;
 	password: string;
 	confirmPassword: string;

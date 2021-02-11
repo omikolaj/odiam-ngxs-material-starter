@@ -13,6 +13,7 @@ button {
 
 .auth-container {
 	margin-top: 20px;
+	margin-bottom: 20px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -38,6 +39,7 @@ button {
 	.auth-container__content {
 		width: 100%;
 		padding-top: 10px;
+		padding-bottom: 10px;
 
 		.auth-container__header {
 			text-align: center;
@@ -62,7 +64,7 @@ button {
 	overflow: hidden;
 	width: 480px;
 	max-width: 100%;
-	height: 518px;
+	height: 500px;
 	margin-top: 20px;
 	margin: 0 auto;
 	// animates the auth image height adjustment between 500px(.auth-container__routes) and 370px (.auth-container__sign-in)
@@ -71,7 +73,7 @@ button {
 }
 
 .auth-container__sign-in {
-	height: 390px;
+	height: 370px;
 }
 
 .auth-container__routes.forgot-password-active {

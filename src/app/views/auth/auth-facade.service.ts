@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-import { SignupUserModel } from 'app/core/auth/signup-user.model';
+import { SignupUser } from 'app/core/auth/signup-user.model';
 import { AuthAsyncService } from 'app/core/auth/auth-async.service';
 import { Observable } from 'rxjs';
-import { NotificationService } from 'app/core/core.module';
-import { SigninUserModel } from 'app/core/auth/signin-user.model';
+import { SigninUser } from 'app/core/auth/signin-user.model';
 import { ProblemDetailsError } from 'app/core/error-handler/problem-details-error.decorator';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerError } from 'app/core/error-handler/internal-server-error.decorator';
@@ -12,26 +11,43 @@ import { tap } from 'rxjs/operators';
 import { Store, Select } from '@ngxs/store';
 import * as Auth from '../../core/auth/auth.store.actions';
 import { Router } from '@angular/router';
-import { AccessTokenModel } from 'app/core/auth/access-token.model';
+import { AccessToken } from 'app/core/auth/access-token.model';
 import { AuthState } from 'app/core/auth/auth.store.state';
 import { SocialAuthService, SocialUser, GoogleLoginProvider, FacebookLoginProvider } from 'angularx-social-login';
 import { UsersAsyncService } from 'app/core/services/users-async.service';
-import { PasswordResetModel } from 'app/core/auth/password-reset.model';
+import { PasswordReset } from 'app/core/auth/password-reset.model';
 import { JsonWebTokenService } from 'app/core/services/json-web-token.service';
 import { TranslateErrorsService } from 'app/shared/services/translate-errors.service';
 import { LogService } from 'app/core/logger/log.service';
 import { FormBuilder } from '@angular/forms';
 import { ActiveAuthType } from 'app/core/auth/active-auth-type.model';
 import { AuthTypeRouteUrl } from 'app/core/auth/auth-type-route-url.model';
+import { NotificationService } from 'app/core/core.module';
+import { AuthService } from './auth.service';
 
 /**
  * Auth facade service.
  */
 @Injectable()
 export class AuthFacadeService {
+	/**
+	 * Emitted when server responds with 40X error.
+	 */
 	@ProblemDetailsError() problemDetails$: Observable<ProblemDetails>;
+
+	/**
+	 * Emitted when server responds with 50X error.
+	 */
 	@InternalServerError() internalServerErrorDetails$: Observable<InternalServerErrorDetails>;
+
+	/**
+	 * Whether rememberMe option is checked.
+	 */
 	@Select(AuthState.selectRememberMe) rememberMe$: Observable<boolean>;
+
+	/**
+	 * Selects active auth type. Either sign-in/sign-up or forgot-password.
+	 */
 	@Select(AuthState.selectActiveAuthType) activeAuthType$: Observable<ActiveAuthType>;
 
 	/**
@@ -42,16 +58,17 @@ export class AuthFacadeService {
 	 * @param router
 	 */
 	constructor(
-		private authAsyncService: AuthAsyncService,
-		private usersAsyncService: UsersAsyncService,
-		private notification: NotificationService,
 		public translateError: TranslateErrorsService,
-		private store: Store,
 		public log: LogService,
 		public fb: FormBuilder,
 		public router: Router,
+		private authAsyncService: AuthAsyncService,
+		private usersAsyncService: UsersAsyncService,
+		private store: Store,
+		private notification: NotificationService,
 		private socialAuthService: SocialAuthService,
-		private jwtService: JsonWebTokenService
+		private jwtService: JsonWebTokenService,
+		private authService: AuthService
 	) {}
 
 	/**
@@ -93,7 +110,7 @@ export class AuthFacadeService {
 	 * Resets user password.
 	 * @param model
 	 */
-	onResetPassword(model: PasswordResetModel): void {
+	onResetPassword(model: PasswordReset): void {
 		this.usersAsyncService.resetPassword(model).subscribe();
 	}
 
@@ -101,7 +118,7 @@ export class AuthFacadeService {
 	 * Signs user up.
 	 * @param model
 	 */
-	signupUser(model: SignupUserModel): void {
+	signupUser(model: SignupUser): void {
 		this.authAsyncService
 			.signup(model)
 			.pipe(tap((access_token) => this._authenticate(access_token)))
@@ -112,7 +129,7 @@ export class AuthFacadeService {
 	 * Signs user in.
 	 * @param model
 	 */
-	signinUser(model: SigninUserModel): void {
+	signinUser(model: SigninUser): void {
 		this.authAsyncService
 			.signin(model)
 			.pipe(tap((access_token) => this._authenticate(access_token, model.rememberMe)))
@@ -146,36 +163,9 @@ export class AuthFacadeService {
 	/**
 	 * Authenticates user that has signed in or signed up.
 	 * @param token
+	 * @param [rememberMe]
 	 */
-	private _authenticate(token: AccessTokenModel, rememberMe?: boolean): void {
-		const userId = this.jwtService.getSubClaim(token.access_token);
-		this.store.dispatch(new Auth.Signin({ AccessTokenModel: token, rememberMe: rememberMe || false, userId: userId }));
-		void this.router.navigate(['account']);
-		setTimeout(() => {
-			this._signoutOrRenewAccessTokenModel();
-		}, token.expires_in * 1000);
-	}
-
-	/**
-	 * Attempts to refresh access token, otherwise signs user out.
-	 */
-	private _signoutOrRenewAccessTokenModel(): void {
-		// try renew token
-		this.authAsyncService
-			.tryRenewAccessTokenModel()
-			.pipe(
-				tap((renewAccessTokenModelResult) =>
-					renewAccessTokenModelResult.succeeded ? this._authenticate(renewAccessTokenModelResult.AccessTokenModel) : this._initiateSignout()
-				)
-			)
-			.subscribe();
-	}
-
-	/**
-	 * Initiates signout procedure.
-	 */
-	private _initiateSignout(): void {
-		this.store.dispatch(new Auth.Signout());
-		void this.router.navigate(['auth']);
+	private _authenticate(token: AccessToken, rememberMe?: boolean): void {
+		this.authService.authenticate(token, rememberMe);
 	}
 }

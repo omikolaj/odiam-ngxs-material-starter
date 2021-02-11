@@ -5,6 +5,7 @@ import { CoreModule } from '../app/core/core.module';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app/app.component';
 import { setRootInjector } from './root-injector';
+import { MatDialogModule } from '@angular/material/dialog';
 
 /**
  * App module.
@@ -14,6 +15,8 @@ import { setRootInjector } from './root-injector';
 		// angular
 		BrowserAnimationsModule,
 		BrowserModule,
+		// Has to be added here, injector error if its added in SharedModule.
+		MatDialogModule,
 
 		// core
 		CoreModule,

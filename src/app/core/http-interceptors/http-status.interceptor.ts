@@ -8,6 +8,9 @@ import { ProblemDetails } from '../models/problem-details.model';
 import { InternalServerErrorDetails } from '../models/internal-server-error-details.model';
 import { implementsOdmWebApiException } from '../utilities/implements-odm-web-api-exception';
 
+/**
+ * Http status interceptor. Controls if ProblemDetails or InternalServerErrorDetails emit errors.
+ */
 @Injectable({
 	providedIn: 'root'
 })

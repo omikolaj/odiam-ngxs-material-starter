@@ -2,7 +2,7 @@ import { Injectable, Inject } from '@angular/core';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { BACKEND_API_URL } from '../api-url-injection-token';
 import { Observable } from 'rxjs';
-import { PasswordResetModel } from '../auth/password-reset.model';
+import { PasswordReset } from '../auth/password-reset.model';
 import { AccountDetails } from '../models/account-details.model';
 import { AccountSecurityDetails } from '../models/account-security-details.model';
 
@@ -60,7 +60,7 @@ export class UsersAsyncService {
 	 * @param model
 	 * @returns password
 	 */
-	resetPassword(model: PasswordResetModel): Observable<void> {
+	resetPassword(model: PasswordReset): Observable<void> {
 		return this.http.put<void>(`${this.apiUrl}/users/password`, JSON.stringify(model), { headers: this._headers });
 	}
 }

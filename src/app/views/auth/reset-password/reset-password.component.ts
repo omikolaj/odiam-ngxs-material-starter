@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, AbstractControl, ValidationErrors } from '@angular/forms';
 import { AuthFacadeService } from '../auth-facade.service';
-import { PasswordResetModel } from 'app/core/auth/password-reset.model';
+import { PasswordReset } from 'app/core/auth/password-reset.model';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { implementsOdmWebApiException } from 'app/core/utilities/implements-odm-web-api-exception';
 import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
@@ -194,7 +194,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
 	 * Event handler for when user submits password reset form.
 	 */
 	_onSubmit(): void {
-		const model = this._resetPasswordForm.value as PasswordResetModel;
+		const model = this._resetPasswordForm.value as PasswordReset;
 		this.facade.onResetPassword(model);
 	}
 

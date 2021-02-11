@@ -9,7 +9,7 @@ import { InternalServerErrorDetails } from 'app/core/models/internal-server-erro
 import { MinScreenSizeQuery } from 'app/shared/screen-size-queries';
 import { tap } from 'rxjs/operators';
 import { OdmValidators } from 'app/core/form-validators/odm-validators';
-import { SigninUserModel } from 'app/core/auth/signin-user.model';
+import { SigninUser } from 'app/core/auth/signin-user.model';
 import { ActiveAuthType } from 'app/core/auth/active-auth-type.model';
 import { AuthTypeRouteUrl } from 'app/core/auth/auth-type-route-url.model';
 import { leftRightFadeInAnimation } from 'app/core/core.module';
@@ -121,7 +121,7 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 	 * Event handler for when user signs in.
 	 * @param model
 	 */
-	_onSigninSubmitted(model: SigninUserModel): void {
+	_onSigninSubmitted(model: SigninUser): void {
 		this.facade.log.trace('_onSigninSubmitted event handler fired.', this);
 		this.facade.signinUser(model);
 	}

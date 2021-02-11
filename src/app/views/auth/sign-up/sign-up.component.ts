@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, Output, EventEmitter, Input, OnDestroy } from '@angular/core';
 import { AuthFacadeService } from '../auth-facade.service';
 import { tap } from 'rxjs/operators';
-import { SignupUserModel } from 'app/core/auth/signup-user.model';
+import { SignupUser } from 'app/core/auth/signup-user.model';
 import { implementsOdmWebApiException } from 'app/core/utilities/implements-odm-web-api-exception';
 import { Subscription, Observable } from 'rxjs';
 import { ValidationMessage_Required } from 'app/shared/validation-messages';
@@ -66,7 +66,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
 	/**
 	 * Event emitter for when the signup form is submitted.
 	 */
-	@Output() signupFormSubmitted = new EventEmitter<SignupUserModel>();
+	@Output() signupFormSubmitted = new EventEmitter<SignupUser>();
 
 	/**
 	 * Event emitter for when user signs in with google.
@@ -217,7 +217,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
 	 */
 	_onSignup(): void {
 		this.facade.log.trace('onSignup event handler emitted.', this);
-		const model = this._signupForm.value as SignupUserModel;
+		const model = this._signupForm.value as SignupUser;
 		this.signupFormSubmitted.emit(model);
 	}
 

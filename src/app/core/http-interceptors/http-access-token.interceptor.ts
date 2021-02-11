@@ -4,8 +4,11 @@ import { Observable } from 'rxjs';
 import { Store } from '@ngxs/store';
 import { AuthState } from '../auth/auth.store.state';
 
+/**
+ * HttpAccessToken interceptor.
+ */
 @Injectable()
-export class HttpAccessTokenModelInterceptor implements HttpInterceptor {
+export class HttpAccessTokenInterceptor implements HttpInterceptor {
 	/**
 	 * Creates an instance of http access token interceptor.
 	 * @param store

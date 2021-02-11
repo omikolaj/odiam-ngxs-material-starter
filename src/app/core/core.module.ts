@@ -42,7 +42,7 @@ import { CustomSerializer } from './router/custom-serializer';
 import { BACKEND_API_URL } from './api-url-injection-token';
 import { ServerErrorService } from './error-handler/server-error.service';
 import { HttpStatusInterceptor } from './http-interceptors/http-status.interceptor';
-import { HttpAccessTokenModelInterceptor } from './http-interceptors/http-access-token.interceptor';
+import { HttpAccessTokenInterceptor } from './http-interceptors/http-access-token.interceptor';
 import { rightLeftFadeInAnimation, leftRightFadeInAnimation, upDownFadeInAnimation, fadeInAnimation } from 'app/core/animations/element.animations';
 
 export {
@@ -122,7 +122,7 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
 	providers: [
 		{ provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
 		{ provide: HTTP_INTERCEPTORS, useClass: HttpStatusInterceptor, multi: true, deps: [ServerErrorService] },
-		{ provide: HTTP_INTERCEPTORS, useClass: HttpAccessTokenModelInterceptor, multi: true },
+		{ provide: HTTP_INTERCEPTORS, useClass: HttpAccessTokenInterceptor, multi: true },
 		{ provide: ErrorHandler, useClass: AppErrorHandler },
 		{ provide: RouterStateSerializer, useClass: CustomSerializer },
 		{ provide: NGXS_PLUGINS, useValue: initStateFromLocalStorage, multi: true },

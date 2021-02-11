@@ -8,7 +8,7 @@ import { InternalServerErrorDetails } from 'app/core/models/internal-server-erro
 import { FormGroup } from '@angular/forms';
 import { MinScreenSizeQuery } from 'app/shared/screen-size-queries';
 import { OdmValidators } from 'app/core/form-validators/odm-validators';
-import { SignupUserModel } from 'app/core/auth/signup-user.model';
+import { SignupUser } from 'app/core/auth/signup-user.model';
 import { ActiveAuthType } from 'app/core/auth/active-auth-type.model';
 import { AuthTypeRouteUrl } from 'app/core/auth/auth-type-route-url.model';
 import { rightLeftFadeInAnimation } from 'app/core/core.module';
@@ -74,7 +74,7 @@ export class SignUpContainerComponent implements OnInit {
 	 * Event handler for when user signs up.
 	 * @param model
 	 */
-	_onSignupSubmitted(model: SignupUserModel): void {
+	_onSignupSubmitted(model: SignupUser): void {
 		this.facade.log.trace('_onSignupSubmitted event handler fired.', this);
 		this.facade.signupUser(model);
 	}

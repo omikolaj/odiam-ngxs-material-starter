@@ -1,7 +1,7 @@
 /**
  * Password reset model.
  */
-export interface PasswordResetModel {
+export interface PasswordReset {
 	email: string;
 	password: string;
 }
