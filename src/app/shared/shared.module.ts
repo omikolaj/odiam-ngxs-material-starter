@@ -64,6 +64,7 @@ import { MatVerticalStepperScrollerDirective } from './directives/mat-vertical-s
 
 		TranslateModule,
 
+		// Angular material
 		MatButtonModule,
 		MatSelectModule,
 		MatTabsModule,
@@ -92,6 +93,7 @@ import { MatVerticalStepperScrollerDirective } from './directives/mat-vertical-s
 
 		TranslateModule,
 
+		// Angular material
 		MatButtonModule,
 		MatMenuModule,
 		MatTabsModule,
@@ -116,8 +118,11 @@ import { MatVerticalStepperScrollerDirective } from './directives/mat-vertical-s
 
 		FontAwesomeModule,
 
+		// Components
 		GhostBlockComponent,
 		OdmSpinnerComponent,
+
+		// Directives
 		MatVerticalStepperScrollerDirective
 	]
 })

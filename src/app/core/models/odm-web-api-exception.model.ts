@@ -1,3 +1,6 @@
+/**
+ * Odm web api exception model.
+ */
 export interface OdmWebApiException {
 	type: string;
 	title: string;

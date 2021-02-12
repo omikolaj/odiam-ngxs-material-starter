@@ -44,6 +44,14 @@ export class AuthAsyncService {
 	}
 
 	/**
+	 * Signs users out.
+	 * @returns void
+	 */
+	signout(): Observable<void> {
+		return this.http.delete<void>(`${this.apiUrl}/auth/signout`, { headers: this._headers });
+	}
+
+	/**
 	 * Signs user in with google.
 	 * @param model
 	 * @returns access token

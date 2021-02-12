@@ -139,11 +139,11 @@ export class AuthFacadeService {
 	/**
 	 * Signs user in with google.
 	 */
-	signinUserWithGoogle(): void {
+	signinUserWithGoogle(rememberMe: boolean): void {
 		void this.socialAuthService.signIn(GoogleLoginProvider.PROVIDER_ID).then((model: SocialUser) => {
 			this.authAsyncService
 				.signinWithGoogle(model)
-				.pipe(tap((token) => this._authenticate(token)))
+				.pipe(tap((token) => this._authenticate(token, rememberMe)))
 				.subscribe();
 		});
 	}
@@ -151,11 +151,11 @@ export class AuthFacadeService {
 	/**
 	 * Signs user in with facebook.
 	 */
-	signinUserWithFacebook(): void {
+	signinUserWithFacebook(rememberMe: boolean): void {
 		void this.socialAuthService.signIn(FacebookLoginProvider.PROVIDER_ID).then((model: SocialUser) => {
 			this.authAsyncService
 				.signinWithFacebook(model)
-				.pipe(tap((token) => this._authenticate(token)))
+				.pipe(tap((token) => this._authenticate(token, rememberMe)))
 				.subscribe();
 		});
 	}

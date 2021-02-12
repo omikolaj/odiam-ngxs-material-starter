@@ -6,6 +6,9 @@ import { PasswordReset } from '../auth/password-reset.model';
 import { AccountDetails } from '../models/account-details.model';
 import { AccountSecurityDetails } from '../models/account-security-details.model';
 
+/**
+ * User async service.
+ */
 @Injectable({
 	providedIn: 'root'
 })
@@ -24,6 +27,11 @@ export class UsersAsyncService {
 	 */
 	constructor(@Inject(BACKEND_API_URL) private apiUrl: string, private http: HttpClient) {}
 
+	/**
+	 * Gets user profile.
+	 * @param id
+	 * @returns user profile
+	 */
 	getUserProfile(id: string): Observable<AccountDetails> {
 		return this.http.get<AccountDetails>(`${this.apiUrl}/users/${id}`);
 	}

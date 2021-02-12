@@ -71,12 +71,12 @@ export class SignUpComponent implements OnInit, OnDestroy {
 	/**
 	 * Event emitter for when user signs in with google.
 	 */
-	@Output() signinWithGoogleSubmitted = new EventEmitter<void>();
+	@Output() signinWithGoogleSubmitted = new EventEmitter<{ rememberMe: boolean }>();
 
 	/**
 	 * Event emitter for when user signs in with google.
 	 */
-	@Output() signinWithFacebookSubmitted = new EventEmitter<void>();
+	@Output() signinWithFacebookSubmitted = new EventEmitter<{ rememberMe: boolean }>();
 
 	/**
 	 * Event emitter for when user clicks sign up button.

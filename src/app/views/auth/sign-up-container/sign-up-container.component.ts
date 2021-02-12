@@ -82,17 +82,17 @@ export class SignUpContainerComponent implements OnInit {
 	/**
 	 * Event handler for when user signs in with google.
 	 */
-	_onSigninWithGoogleSubmitted(): void {
+	_onSigninWithGoogleSubmitted(event: { rememberMe: boolean }): void {
 		this.facade.log.trace('_onSigninWithGoogleSubmitted event handler fired.', this);
-		this.facade.signinUserWithGoogle();
+		this.facade.signinUserWithGoogle(event.rememberMe);
 	}
 
 	/**
 	 * Event handler for when user signs in with facebook.
 	 */
-	_onSigninWithFacebookSubmitted(): void {
+	_onSigninWithFacebookSubmitted(event: { rememberMe: boolean }): void {
 		this.facade.log.trace('_onSigninWithFacebookSubmitted event handler fired.', this);
-		this.facade.signinUserWithFacebook();
+		this.facade.signinUserWithFacebook(event.rememberMe);
 	}
 
 	/**

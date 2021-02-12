@@ -1,3 +1,6 @@
+/**
+ * Account details model.
+ */
 export interface AccountDetails {
 	email: string;
 	emailConfirmed: boolean;

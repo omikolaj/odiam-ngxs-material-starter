@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import jwt_decode from 'jwt-decode';
-import { JsonWebTokenModel } from '../models/json-web-token-model';
+import { JsonWebToken } from '../models/json-web-token-model';
 import { LogService } from '../logger/log.service';
 
 /**
@@ -34,7 +34,7 @@ export class JsonWebTokenService {
 	 * @param jwt
 	 * @returns raw jwt
 	 */
-	private _getRawJwt(jwt: string): JsonWebTokenModel {
+	private _getRawJwt(jwt: string): JsonWebToken {
 		return this._decodeJwt(jwt);
 	}
 
@@ -43,7 +43,7 @@ export class JsonWebTokenService {
 	 * @param jwt
 	 * @returns jwt
 	 */
-	private _decodeJwt(jwt: string): JsonWebTokenModel {
+	private _decodeJwt(jwt: string): JsonWebToken {
 		try {
 			return jwt_decode(jwt);
 		} catch (error) {

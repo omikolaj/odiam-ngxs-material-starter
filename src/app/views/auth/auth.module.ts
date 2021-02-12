@@ -12,6 +12,7 @@ import { SignUpContainerComponent } from './sign-up-container/sign-up-container.
 import { SignUpComponent } from './sign-up/sign-up.component';
 import { AuthContainerComponent } from './auth-container/auth-container.component';
 import { ForgotPasswordContainerComponent } from './forgot-password-container/forgot-password-container.component';
+import { AuthDialogComponent } from './auth-dialog/auth-dialog.component';
 
 /**
  * Auth module.
@@ -25,7 +26,8 @@ import { ForgotPasswordContainerComponent } from './forgot-password-container/fo
 		AuthContainerComponent,
 		SignInContainerComponent,
 		SignUpContainerComponent,
-		ForgotPasswordContainerComponent
+		ForgotPasswordContainerComponent,
+		AuthDialogComponent
 	],
 	imports: [CommonModule, AuthRoutingModule, SharedModule, SocialLoginModule],
 	providers: [

@@ -68,12 +68,12 @@ export class SignInComponent {
 	/**
 	 * Event emitter for when user signs in with google.
 	 */
-	@Output() signinWithGoogleSubmitted = new EventEmitter<void>();
+	@Output() signinWithGoogleSubmitted = new EventEmitter<{ rememberMe: boolean }>();
 
 	/**
 	 * Event emitter for when user signs in with google.
 	 */
-	@Output() signinWithFacebookSubmitted = new EventEmitter<void>();
+	@Output() signinWithFacebookSubmitted = new EventEmitter<{ rememberMe: boolean }>();
 
 	/**
 	 * Event emitter for when user clicks forgot password.
@@ -175,7 +175,8 @@ export class SignInComponent {
 	 */
 	_onSigninWithGoogle(): void {
 		this.log.trace('_onSigninWithGoogle fired.', this);
-		this.signinWithGoogleSubmitted.emit();
+		const rememberMe = (this.signinForm.value as SigninUser).rememberMe;
+		this.signinWithGoogleSubmitted.emit({ rememberMe });
 	}
 
 	/**
@@ -183,7 +184,8 @@ export class SignInComponent {
 	 */
 	_onSigninWithFacebook(): void {
 		this.log.trace('_onSigninWithFacebook fired.', this);
-		this.signinWithFacebookSubmitted.emit();
+		const rememberMe = (this.signinForm.value as SigninUser).rememberMe;
+		this.signinWithFacebookSubmitted.emit({ rememberMe });
 	}
 
 	/**
