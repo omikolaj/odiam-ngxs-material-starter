@@ -13,6 +13,8 @@ import { AuthDialogComponent } from './auth-dialog/auth-dialog.component';
 import { AuthDialogData } from 'app/core/auth/auth-dialog-data.model';
 import { AuthState } from 'app/core/auth/auth.store.state';
 import { Subscription, timer } from 'rxjs';
+import { SigninUser } from 'app/core/auth/signin-user.model';
+import { UsersAsyncService } from 'app/core/services/users-async.service';
 
 /**
  * Auth service.
@@ -37,6 +39,7 @@ export class AuthService {
 	 */
 	constructor(
 		private authAsyncService: AuthAsyncService,
+		private userAsyncService: UsersAsyncService,
 		private router: Router,
 		private log: LogService,
 		private store: Store,
@@ -46,30 +49,53 @@ export class AuthService {
 	) {}
 
 	/**
+	 * Signs user in.
+	 * @param model
+	 */
+	signinUser(model: SigninUser): void {
+		this.authAsyncService
+			.signin(model)
+			.pipe(
+				// only update remember user upon successful signin.
+				tap(() => this._updateRememberUser(model.rememberMe, model.email)),
+				tap((access_token) => this.authenticate(access_token, model.staySignedIn))
+			)
+			.subscribe();
+	}
+
+	/**
+	 * Persists username.
+	 */
+	private _updateRememberUser(rememberMe: boolean, username: string): void {
+		const user = rememberMe ? username : '';
+		this.store.dispatch(new Auth.UpdateRememberUsername(user));
+	}
+
+	/**
 	 * Authenticates user that has signed in or signed up.
 	 * @param token
-	 * @param [rememberMe]
+	 * @param [staySignedIn]
 	 */
-	authenticate(token: AccessToken, rememberMe?: boolean): void {
+	authenticate(token: AccessToken, staySignedIn?: boolean): void {
 		const userId = this.jwtService.getSubClaim(token.access_token);
-		const remember = rememberMe || false;
-		this.store.dispatch(new Auth.Signin({ accessToken: token, rememberMe: remember, userId: userId }));
+		const signedin = staySignedIn || false;
+		this.store.dispatch(new Auth.Signin({ accessToken: token, userId: userId }));
 		void this.router.navigate(['account']);
-		this._maintainSession(remember, token.expires_in);
+		this._maintainSession(signedin, token.expires_in);
 	}
 
 	/**
 	 * Maintains current session.
-	 * @param rememberMe
+	 * @param staySignedIn
 	 * @param expires_in
 	 */
-	private _maintainSession(rememberMe: boolean, expires_in: number): void {
+	private _maintainSession(staySignedIn: boolean, expires_in: number): void {
 		const sessionTimeout = timer(expires_in * 1000 - this._timeOutInMs);
 		sessionTimeout
 			.pipe(
 				takeUntil(this.actions$.pipe(ofActionCompleted(Auth.Signout))),
 				tap(() => {
-					if (rememberMe) {
+					if (staySignedIn) {
 						this._signoutOrRenewAccessTokenModel();
 					} else {
 						this._initiateSignout();
@@ -88,11 +114,11 @@ export class AuthService {
 			.tryRenewAccessTokenModel()
 			.pipe(
 				tap((renewAccessTokenModelResult: RenewAccessTokenResult) => {
-					const rememberMe = this.store.selectSnapshot(AuthState.selectRememberMe);
+					const staySignedIn = this.store.selectSnapshot(AuthState.selectStaySignedIn);
 					if (renewAccessTokenModelResult.succeeded) {
-						this.authenticate(renewAccessTokenModelResult.accessToken, rememberMe);
+						this.authenticate(renewAccessTokenModelResult.accessToken, staySignedIn);
 					} else {
-						this._initiateSignout(rememberMe);
+						this._initiateSignout(staySignedIn);
 					}
 				})
 			)
@@ -102,13 +128,13 @@ export class AuthService {
 	/**
 	 * Initiates signout procedure.
 	 */
-	private _initiateSignout(rememberMe?: boolean): void {
+	private _initiateSignout(staySignedIn?: boolean): void {
 		this.log.trace('_initiateSignout fired.', this);
 		// if remember me is true and were here, that would indicate that something
 		// went wrong on the server when rewnewing jwt.
-		if (rememberMe) {
+		if (staySignedIn) {
 			this.log.debug(
-				`RememberMe option was set to ${rememberMe.toString()}, but we are in executing _initiateSignout method. This indicates renewing of jwt failed on the server. Check server logs.`
+				`StaySignedin option was set to ${staySignedIn.toString()}, but we are in executing _initiateSignout method. This indicates renewing of jwt failed on the server. Check server logs.`
 			);
 			this.signOut();
 		} else {

@@ -43,6 +43,16 @@
 					><span class="auth__text-link">{{ 'odm.auth.sign-in.remember-me' | translate }}</span></mat-slide-toggle
 				>
 			</div>
+			<div class="auth__stay-signed-in">
+				<mat-checkbox
+					formControlName="staySignedIn"
+					(change)="_onStaySignedInChange($event)"
+					[value]="signinForm.get('staySignedIn').value"
+					[labelPosition]="_labelPosition"
+				>
+					<span class="auth__text-link">{{ 'odm.auth.sign-in.stay-signed-in' | translate }}</span>
+				</mat-checkbox>
+			</div>
 		</form>
 	</div>
 </div>

@@ -46,6 +46,16 @@ export class AuthFacadeService {
 	@Select(AuthState.selectRememberMe) rememberMe$: Observable<boolean>;
 
 	/**
+	 * Username saved in local storage.
+	 */
+	@Select(AuthState.selectUsername) username$: Observable<string>;
+
+	/**
+	 * Whether stay signed in option is checked.
+	 */
+	@Select(AuthState.selectStaySignedIn) staySignedIn$: Observable<string>;
+
+	/**
 	 * Selects active auth type. Either sign-in/sign-up or forgot-password.
 	 */
 	@Select(AuthState.selectActiveAuthType) activeAuthType$: Observable<ActiveAuthType>;
@@ -99,6 +109,14 @@ export class AuthFacadeService {
 	}
 
 	/**
+	 * Changes stay signed in state.
+	 * @param event
+	 */
+	onStaySignedinChanged(event: boolean): void {
+		this.store.dispatch(new Auth.StaySignedinOptionChange(event));
+	}
+
+	/**
 	 * Sends reset password link to the passed in email.
 	 * @param email
 	 */
@@ -130,20 +148,17 @@ export class AuthFacadeService {
 	 * @param model
 	 */
 	signinUser(model: SigninUser): void {
-		this.authAsyncService
-			.signin(model)
-			.pipe(tap((access_token) => this._authenticate(access_token, model.rememberMe)))
-			.subscribe();
+		this.authService.signinUser(model);
 	}
 
 	/**
 	 * Signs user in with google.
 	 */
-	signinUserWithGoogle(rememberMe: boolean): void {
+	signinUserWithGoogle(staySignedIn: boolean): void {
 		void this.socialAuthService.signIn(GoogleLoginProvider.PROVIDER_ID).then((model: SocialUser) => {
 			this.authAsyncService
 				.signinWithGoogle(model)
-				.pipe(tap((token) => this._authenticate(token, rememberMe)))
+				.pipe(tap((token) => this._authenticate(token, staySignedIn)))
 				.subscribe();
 		});
 	}
@@ -151,11 +166,11 @@ export class AuthFacadeService {
 	/**
 	 * Signs user in with facebook.
 	 */
-	signinUserWithFacebook(rememberMe: boolean): void {
+	signinUserWithFacebook(staySignedIn: boolean): void {
 		void this.socialAuthService.signIn(FacebookLoginProvider.PROVIDER_ID).then((model: SocialUser) => {
 			this.authAsyncService
 				.signinWithFacebook(model)
-				.pipe(tap((token) => this._authenticate(token, rememberMe)))
+				.pipe(tap((token) => this._authenticate(token, staySignedIn)))
 				.subscribe();
 		});
 	}
@@ -163,9 +178,9 @@ export class AuthFacadeService {
 	/**
 	 * Authenticates user that has signed in or signed up.
 	 * @param token
-	 * @param [rememberMe]
+	 * @param [staySignedIn]
 	 */
-	private _authenticate(token: AccessToken, rememberMe?: boolean): void {
-		this.authService.authenticate(token, rememberMe);
+	private _authenticate(token: AccessToken, staySignedIn?: boolean): void {
+		this.authService.authenticate(token, staySignedIn);
 	}
 }

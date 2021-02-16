@@ -17,6 +17,8 @@ const AUTH_STATE_TOKEN = new StateToken<AuthStateModel>('auth');
 		access_token: '',
 		expires_at: 0,
 		rememberMe: false,
+		username: '',
+		staySignedIn: false,
 		userId: '',
 		activeAuthType: 'sign-in-active'
 	}
@@ -78,6 +80,26 @@ export class AuthState {
 	}
 
 	/**
+	 * Selects whether user selected to stay signed in option.
+	 * @param state
+	 * @returns true if stay signed in is selected
+	 */
+	@Selector([AUTH_STATE_TOKEN])
+	static selectStaySignedIn(state: AuthStateModel): boolean {
+		return state.staySignedIn;
+	}
+
+	/**
+	 * Selects username from the store.
+	 * @param state
+	 * @returns username
+	 */
+	@Selector([AUTH_STATE_TOKEN])
+	static selectUsername(state: AuthStateModel): string {
+		return state.username;
+	}
+
+	/**
 	 * Selects active auth type, either sign-in or sign-up.
 	 * @param state
 	 * @returns active auth type
@@ -112,6 +134,40 @@ export class AuthState {
 	}
 
 	/**
+	 * Action handler that remembers username in local storage.
+	 * @param ctx
+	 * @param action
+	 */
+	@Action(Auth.UpdateRememberUsername)
+	updateRememberUsername(ctx: StateContext<AuthStateModel>, action: Auth.UpdateRememberUsername): void {
+		this.logger.debug('Update Remember username action fired.', this);
+		ctx.setState(
+			produce((draft: AuthStateModel) => {
+				draft.username = action.payload;
+			})
+		);
+		const auth = ctx.getState();
+		this.localStorageService.setItem(AUTH_KEY, auth);
+	}
+
+	/**
+	 * Action handler that updates stay signed in option.
+	 * @param ctx
+	 * @param action
+	 */
+	@Action(Auth.StaySignedinOptionChange)
+	staySignedIn(ctx: StateContext<AuthStateModel>, action: Auth.StaySignedinOptionChange): void {
+		this.logger.debug('Stay signed in action fired.', this);
+		ctx.setState(
+			produce((draft: AuthStateModel) => {
+				draft.staySignedIn = action.payload;
+			})
+		);
+		const auth = ctx.getState();
+		this.localStorageService.setItem(AUTH_KEY, auth);
+	}
+
+	/**
 	 * Action handler that Logs user in.
 	 * @param ctx
 	 * @returns action to persist auth state.
@@ -121,22 +177,16 @@ export class AuthState {
 		this.logger.debug(`Jwt token expires in: ${action.payload.accessToken.expires_in} seconds.`, this);
 		this.logger.debug(`Jwt token expirey date`, this, add(new Date(), { seconds: action.payload.accessToken.expires_in }));
 		const expires_at = getUnixTime(add(new Date(), { seconds: action.payload.accessToken.expires_in }));
-		const auth = {
-			isAuthenticated: true,
-			access_token: action.payload.accessToken.access_token,
-			expires_at,
-			rememberMe: action.payload.rememberMe,
-			userId: action.payload.userId
-		};
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft.isAuthenticated = true;
 				draft.access_token = action.payload.accessToken.access_token;
 				draft.expires_at = expires_at;
-				draft.rememberMe = action.payload.rememberMe;
 				draft.userId = action.payload.userId;
 			})
 		);
+
+		const auth = ctx.getState();
 		this.localStorageService.setItem(AUTH_KEY, auth);
 	}
 
@@ -167,10 +217,11 @@ export class AuthState {
 				draft.isAuthenticated = false;
 				draft.access_token = '';
 				draft.expires_at = 0;
+				draft.userId = '';
+				draft.username = '';
 			})
 		);
-		const rememberMe = ctx.getState().rememberMe;
-		const auth = { isAuthenticated: false, rememberMe };
+		const auth = { isAuthenticated: false };
 		this.localStorageService.setItem(AUTH_KEY, auth);
 		this.logger.debug('User has been signed out.');
 	}

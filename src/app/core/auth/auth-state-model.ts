@@ -25,6 +25,16 @@ export interface AuthStateModel {
 	rememberMe: boolean;
 
 	/**
+	 * If remember me is set to true this is user's username used to sign in.
+	 */
+	username: string;
+
+	/**
+	 * Determines if stay signed in option is selected.
+	 */
+	staySignedIn: boolean;
+
+	/**
 	 * Encode json web token.
 	 */
 	access_token: string;

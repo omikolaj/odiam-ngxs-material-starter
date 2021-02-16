@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, ChangeDetectorRef, OnInit } from '@angular/core';
 import { FormGroup, ValidationErrors, AbstractControl } from '@angular/forms';
 import { SigninUser } from 'app/core/auth/signin-user.model';
 import { ValidationMessage_Required } from 'app/shared/validation-messages';
@@ -13,6 +13,7 @@ import { Observable } from 'rxjs';
 import { AuthControlType } from 'app/shared/auth-abstract-control-type';
 import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
 import { ActiveAuthType } from 'app/core/auth/active-auth-type.model';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 
 /**
  * Sign in component.
@@ -23,7 +24,7 @@ import { ActiveAuthType } from 'app/core/auth/active-auth-type.model';
 	styleUrls: ['./sign-in.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SignInComponent {
+export class SignInComponent implements OnInit {
 	/**
 	 * Emitted when server responds with 40X error.
 	 */
@@ -56,9 +57,37 @@ export class SignInComponent {
 	@Input() activeAuthType: ActiveAuthType = 'sign-in-active';
 
 	/**
+	 * Whether to keep user signed in and automatically refresh the session.
+	 */
+	@Input() staySignedIn = false;
+
+	/**
+	 * Whether to remember username.
+	 */
+	@Input() rememberMe = false;
+
+	/**
+	 * Username value. Empty string if remember me is false.
+	 */
+	@Input() set username(value: string) {
+		this._username = value;
+		// in case we fetch user's email from the server. Ensures fresh copy is reflected in the UI.
+		if (this.signinForm) {
+			this.signinForm.get('email').setValue(value);
+		}
+	}
+
+	private _username = '';
+
+	/**
 	 * Event emitter for when remember me option is changed.
 	 */
 	@Output() rememberMeChanged = new EventEmitter<boolean>();
+
+	/**
+	 * Event emitter for when stay signed in option is changed.
+	 */
+	@Output() staySignedinChanged = new EventEmitter<boolean>();
 
 	/**
 	 * Event emitter for when the signin form is submitted.
@@ -68,12 +97,12 @@ export class SignInComponent {
 	/**
 	 * Event emitter for when user signs in with google.
 	 */
-	@Output() signinWithGoogleSubmitted = new EventEmitter<{ rememberMe: boolean }>();
+	@Output() signinWithGoogleSubmitted = new EventEmitter<{ staySignedIn: boolean }>();
 
 	/**
 	 * Event emitter for when user signs in with google.
 	 */
-	@Output() signinWithFacebookSubmitted = new EventEmitter<{ rememberMe: boolean }>();
+	@Output() signinWithFacebookSubmitted = new EventEmitter<{ staySignedIn: boolean }>();
 
 	/**
 	 * Event emitter for when user clicks forgot password.
@@ -111,6 +140,11 @@ export class SignInComponent {
 	_googleLoginIcon = (require('../../../../assets/google_icon_color.svg') as { default: string }).default;
 
 	/**
+	 * Label position of stay signed in checkbox.
+	 */
+	_labelPosition: 'before' | 'after' = 'after';
+
+	/**
 	 * Gets whether is internal server error occured.
 	 */
 	get _isInternalServerError(): boolean {
@@ -145,10 +179,19 @@ export class SignInComponent {
 	constructor(private translateError: TranslateErrorsService, private log: LogService, private cd: ChangeDetectorRef) {}
 
 	/**
+	 * NgOnInit life cycle.
+	 */
+	ngOnInit(): void {
+		this.signinForm.get('rememberMe').setValue(this.rememberMe);
+		this.signinForm.get('staySignedIn').setValue(this.staySignedIn);
+		this.signinForm.get('email').setValue(this._username);
+	}
+
+	/**
 	 * Event handler for when user clicks forgot password button.
 	 */
 	_onForgotPassword(): void {
-		this.log.trace('onForgotPassword fired.', this);
+		this.log.trace('_onForgotPassword event handler fired.', this);
 		this.forgotPasswordClicked.emit();
 	}
 
@@ -157,15 +200,24 @@ export class SignInComponent {
 	 * @param event
 	 */
 	_onRememberMeChange(event: MatSlideToggleChange): void {
-		this.log.trace('onRememberMeChanged event handler emitted.', this);
+		this.log.trace('_onRememberMeChange event handler emitted.', this);
 		this.rememberMeChanged.emit(event.checked);
+	}
+
+	/**
+	 * Event handler for when stay signed in options is changed.
+	 * @param event
+	 */
+	_onStaySignedInChange(event: MatCheckboxChange): void {
+		this.log.trace('_onStaySignedInChange event handler fired.', this);
+		this.staySignedinChanged.emit(event.checked);
 	}
 
 	/**
 	 * Event handler for when user is attempting to sign in.
 	 */
 	_onSignin(): void {
-		this.log.trace('_onSignin fired.', this);
+		this.log.trace('_onSignin event handler fired.', this);
 		const signinUserModel = this.signinForm.value as SigninUser;
 		this.signinFormSubmitted.emit(signinUserModel);
 	}
@@ -174,25 +226,25 @@ export class SignInComponent {
 	 * Event handler for when user is attempting to sign in with google.
 	 */
 	_onSigninWithGoogle(): void {
-		this.log.trace('_onSigninWithGoogle fired.', this);
-		const rememberMe = (this.signinForm.value as SigninUser).rememberMe;
-		this.signinWithGoogleSubmitted.emit({ rememberMe });
+		this.log.trace('_onSigninWithGoogle event handler fired.', this);
+		const staySignedIn = (this.signinForm.value as SigninUser).staySignedIn;
+		this.signinWithGoogleSubmitted.emit({ staySignedIn });
 	}
 
 	/**
 	 * Event handler for when user is attempting to sign in with facebook.
 	 */
 	_onSigninWithFacebook(): void {
-		this.log.trace('_onSigninWithFacebook fired.', this);
-		const rememberMe = (this.signinForm.value as SigninUser).rememberMe;
-		this.signinWithFacebookSubmitted.emit({ rememberMe });
+		this.log.trace('_onSigninWithFacebook event handler fired.', this);
+		const staySignedIn = (this.signinForm.value as SigninUser).staySignedIn;
+		this.signinWithFacebookSubmitted.emit({ staySignedIn });
 	}
 
 	/**
 	 * Used to switch view to signup context.
 	 */
 	_switchToSignup(): void {
-		this.log.trace('_switchToSignup fired.', this);
+		this.log.trace('_switchToSignup event handler fired.', this);
 		this.switchToSignupClicked.emit('sign-up-active');
 	}
 

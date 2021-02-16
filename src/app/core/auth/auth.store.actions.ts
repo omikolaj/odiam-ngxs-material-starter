@@ -27,6 +27,36 @@ export class RememberMeOptionChange {
 }
 
 /**
+ * Update remember username. Updates username value in localstorage.
+ */
+export class UpdateRememberUsername {
+	/**
+	 * Type of action.
+	 */
+	static readonly type = '[Auth] Update Remember Username';
+	/**
+	 * Creates an instance of remember username action.
+	 * @param payload
+	 */
+	constructor(public payload: string) {}
+}
+
+/**
+ * Updates stay signed in option.
+ */
+export class StaySignedinOptionChange {
+	/**
+	 * Type of action.
+	 */
+	static readonly type = '[Auth] Stay Signed in';
+	/**
+	 * Creates an instance of stay signed in option change action.
+	 * @param payload
+	 */
+	constructor(public payload: boolean) {}
+}
+
+/**
  * Signs user in.
  */
 export class Signin {
@@ -38,7 +68,7 @@ export class Signin {
 	 * Creates an instance of signin action.
 	 * @param payload
 	 */
-	constructor(public payload: { accessToken: AccessToken; rememberMe: boolean; userId: string }) {}
+	constructor(public payload: { accessToken: AccessToken; userId: string }) {}
 }
 
 /**

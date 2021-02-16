@@ -51,7 +51,8 @@
 				"header": "Welcome Back!",
 				"subheader": "Sign in to view your account",
 				"forgot-password": "Forgot password?",
-				"remember-me": "Remember me"
+				"remember-me": "Remember me",
+				"stay-signed-in": "Stay signed in"
 			},
 			"sign-up": {
 				"title": "Create Account",

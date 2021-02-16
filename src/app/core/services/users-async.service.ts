@@ -71,4 +71,13 @@ export class UsersAsyncService {
 	resetPassword(model: PasswordReset): Observable<void> {
 		return this.http.put<void>(`${this.apiUrl}/users/password`, JSON.stringify(model), { headers: this._headers });
 	}
+
+	/**
+	 * Fetchs username for remember me option.
+	 * @param id
+	 * @returns username for remember me
+	 */
+	fetchUsernameForRememberMe(id: string): Observable<string> {
+		return this.http.get<string>(`${this.apiUrl}/users/${id}/username`, { headers: this._headers });
+	}
 }

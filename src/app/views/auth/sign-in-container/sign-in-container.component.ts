@@ -2,12 +2,11 @@ import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/
 import { AuthFacadeService } from '../auth-facade.service';
 import { ActivatedRoute } from '@angular/router';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
-import { Observable, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import { FormGroup } from '@angular/forms';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { MinScreenSizeQuery } from 'app/shared/screen-size-queries';
-import { tap } from 'rxjs/operators';
 import { OdmValidators } from 'app/core/form-validators/odm-validators';
 import { SigninUser } from 'app/core/auth/signin-user.model';
 import { ActiveAuthType } from 'app/core/auth/active-auth-type.model';
@@ -53,12 +52,17 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 	/**
 	 * Remember me option selected by the user.
 	 */
-	private _rememberMe$: Observable<boolean>;
+	_rememberMe$: Observable<boolean>;
 
 	/**
-	 * Subscriptions for this component.
+	 * Saved username value if remember me was set to true, else empty string.
 	 */
-	private _subscription = new Subscription();
+	_username$: Observable<string>;
+
+	/**
+	 * Stay signed in option selected by the user.
+	 */
+	_staySignedIn$: Observable<string>;
 
 	/**
 	 * Creates an instance of sign in container component.
@@ -71,6 +75,8 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 		this._problemDetails$ = facade.problemDetails$;
 		this._internalServerErrorDetails$ = facade.internalServerErrorDetails$;
 		this._rememberMe$ = facade.rememberMe$;
+		this._username$ = facade.username$;
+		this._staySignedIn$ = facade.staySignedIn$;
 		this._breakpointStateScreenMatcher$ = breakpointObserver.observe([MinScreenSizeQuery.md]);
 		this._activeAuthType$ = facade.activeAuthType$;
 	}
@@ -81,7 +87,6 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 	ngOnInit(): void {
 		this.facade.log.trace('Initialized.', this);
 		this._initForms();
-		this._subscription = this._rememberMe$.pipe(tap((value) => this._signinForm.get('rememberMe').setValue(value))).subscribe();
 	}
 
 	/**
@@ -89,7 +94,6 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 	 */
 	ngOnDestroy(): void {
 		this.facade.log.trace('Destroyed.', this);
-		this._subscription.unsubscribe();
 	}
 
 	/**
@@ -104,17 +108,17 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 	/**
 	 * Event handler for when user signs in with facebook.
 	 */
-	_onSigninWithFacebookSubmitted(event: { rememberMe: boolean }): void {
+	_onSigninWithFacebookSubmitted(event: { staySignedIn: boolean }): void {
 		this.facade.log.trace('_onSigninWithFacebookSubmitted event handler fired.', this);
-		this.facade.signinUserWithFacebook(event.rememberMe);
+		this.facade.signinUserWithFacebook(event.staySignedIn);
 	}
 
 	/**
 	 * Event handler for when user signs in with google.
 	 */
-	_onSigninWithGoogleSubmitted(event: { rememberMe: boolean }): void {
+	_onSigninWithGoogleSubmitted(event: { staySignedIn: boolean }): void {
 		this.facade.log.trace('_onSigninWithGoogleSubmitted event handler fired.', this);
-		this.facade.signinUserWithGoogle(event.rememberMe);
+		this.facade.signinUserWithGoogle(event.staySignedIn);
 	}
 
 	/**
@@ -133,6 +137,15 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 	_onRememberMeChanged(event: boolean): void {
 		this.facade.log.trace('_onRememberMeChanged event handler fired.', this, event);
 		this.facade.onRememberMeChanged(event);
+	}
+
+	/**
+	 * Event handler for when user changes stay signed in option.
+	 * @param event
+	 */
+	_onStaySignedinChanged(event: boolean): void {
+		this.facade.log.trace('_staySignedinChanged event handler fired.', this, event);
+		this.facade.onStaySignedinChanged(event);
 	}
 
 	/**
@@ -164,7 +177,8 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 				updateOn: 'blur'
 			}),
 			password: this.facade.fb.control('', [OdmValidators.required]),
-			rememberMe: this.facade.fb.control(false)
+			rememberMe: this.facade.fb.control(false),
+			staySignedIn: this.facade.fb.control(false)
 		});
 	}
 }
