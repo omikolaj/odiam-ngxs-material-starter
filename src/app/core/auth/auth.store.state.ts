@@ -1,4 +1,4 @@
-import { StateToken, StateContext, State, Selector, Action } from '@ngxs/store';
+import { StateToken, StateContext, State, Selector, Action, NgxsOnInit } from '@ngxs/store';
 import { AuthStateModel, AUTH_KEY } from './auth-state-model';
 import { Injectable } from '@angular/core';
 import produce from 'immer';
@@ -7,6 +7,8 @@ import { LocalStorageService } from '../local-storage/local-storage.service';
 import { isBefore, add, getUnixTime, fromUnixTime } from 'date-fns';
 import { LogService } from '../logger/log.service';
 import { ActiveAuthType } from './active-auth-type.model';
+import { AuthService } from 'app/views/auth/auth.service';
+import { AccessToken } from './access-token.model';
 
 const AUTH_STATE_TOKEN = new StateToken<AuthStateModel>('auth');
 
@@ -28,15 +30,26 @@ const AUTH_STATE_TOKEN = new StateToken<AuthStateModel>('auth');
 /**
  * Provides all action handlers for user authentication.
  */
-export class AuthState {
+export class AuthState implements NgxsOnInit {
 	/**
 	 * Selects user authentication status.
 	 * @param state
 	 * @returns true if is authenticated.
 	 */
+	@Selector([AuthState.selectIsTokenValid])
+	static selectIsAuthenticated(state: AuthStateModel, isTokenValid: boolean): boolean {
+		return state.isAuthenticated && isTokenValid;
+	}
+
+	/**
+	 * Selects access token expiry status.
+	 * @param state
+	 * @param expiresAt
+	 * @returns true if is token expired
+	 */
 	@Selector([AuthState.selectExpiresAt])
-	static selectIsAuthenticated(state: AuthStateModel, expiresAt: Date): boolean {
-		return state.isAuthenticated && isBefore(new Date(), expiresAt);
+	static selectIsTokenValid(state: AuthStateModel, expiresAt: Date): boolean {
+		return isBefore(new Date(), expiresAt);
 	}
 
 	/**
@@ -55,7 +68,7 @@ export class AuthState {
 	 * @returns date of expires at
 	 */
 	@Selector([AUTH_STATE_TOKEN])
-	private static selectExpiresAt(state: AuthStateModel): Date {
+	static selectExpiresAt(state: AuthStateModel): Date {
 		return fromUnixTime(state.expires_at || 0);
 	}
 
@@ -65,7 +78,7 @@ export class AuthState {
 	 * @returns access token
 	 */
 	@Selector([AUTH_STATE_TOKEN])
-	static selectAccessTokenModel(state: AuthStateModel): string {
+	static selectAccessToken(state: AuthStateModel): string {
 		return state.access_token || '';
 	}
 
@@ -114,7 +127,22 @@ export class AuthState {
 	 * @param router
 	 * @param localStorageService
 	 */
-	constructor(private localStorageService: LocalStorageService, private logger: LogService) {}
+	constructor(private localStorageService: LocalStorageService, private log: LogService) {}
+
+	/**
+	 * Ngxs on init will be invoked after all states from state's module definition have been initialized and pushed into the state stream.
+	 * @param ctx
+	 */
+	ngxsOnInit(ctx: StateContext<AuthStateModel>): void {
+		this.log.trace('ngxsOnInit invoked.', this);
+		// const isTokenValid = AuthState.selectIsTokenValid(ctx.getState(), AuthState.selectExpiresAt(ctx.getState()));
+		// const staySignedIn = ctx.getState().staySignedIn;
+		// const accessToken: AccessToken = {
+		// 	access_token: ctx.getState().access_token,
+		// 	expires_in: fromUnixTime(ctx.getState().expires_at).getSeconds() - new Date().getSeconds()
+		// };
+		// this.authService.onInitAuthenticate(accessToken, staySignedIn);
+	}
 
 	/**
 	 * Action handler that updates remember me option.
@@ -123,7 +151,7 @@ export class AuthState {
 	 */
 	@Action(Auth.RememberMeOptionChange)
 	rememberMe(ctx: StateContext<AuthStateModel>, action: Auth.RememberMeOptionChange): void {
-		this.logger.debug('Remember me action fired.', this);
+		this.log.debug('Remember me action fired.', this);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft.rememberMe = action.payload;
@@ -140,7 +168,7 @@ export class AuthState {
 	 */
 	@Action(Auth.UpdateRememberUsername)
 	updateRememberUsername(ctx: StateContext<AuthStateModel>, action: Auth.UpdateRememberUsername): void {
-		this.logger.debug('Update Remember username action fired.', this);
+		this.log.debug('Update Remember username action fired.', this);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft.username = action.payload;
@@ -157,7 +185,7 @@ export class AuthState {
 	 */
 	@Action(Auth.StaySignedinOptionChange)
 	staySignedIn(ctx: StateContext<AuthStateModel>, action: Auth.StaySignedinOptionChange): void {
-		this.logger.debug('Stay signed in action fired.', this);
+		this.log.debug('Stay signed in action fired.', this);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft.staySignedIn = action.payload;
@@ -174,8 +202,8 @@ export class AuthState {
 	 */
 	@Action(Auth.Signin)
 	signin(ctx: StateContext<AuthStateModel>, action: Auth.Signin): void {
-		this.logger.debug(`Jwt token expires in: ${action.payload.accessToken.expires_in} seconds.`, this);
-		this.logger.debug(`Jwt token expirey date`, this, add(new Date(), { seconds: action.payload.accessToken.expires_in }));
+		this.log.debug(`Jwt token expires in: ${action.payload.accessToken.expires_in} seconds.`, this);
+		this.log.debug(`Jwt token expirey date`, this, add(new Date(), { seconds: action.payload.accessToken.expires_in }));
 		const expires_at = getUnixTime(add(new Date(), { seconds: action.payload.accessToken.expires_in }));
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
@@ -197,7 +225,7 @@ export class AuthState {
 	 */
 	@Action(Auth.SetCurrentUserId)
 	setCurrentUserId(ctx: StateContext<AuthStateModel>, action: Auth.SetCurrentUserId): void {
-		this.logger.debug('Setting current user id', this, action.payload);
+		this.log.debug('Setting current user id', this, action.payload);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft.userId = action.payload;
@@ -221,9 +249,9 @@ export class AuthState {
 				draft.username = '';
 			})
 		);
-		const auth = { isAuthenticated: false };
+		const auth = ctx.getState();
 		this.localStorageService.setItem(AUTH_KEY, auth);
-		this.logger.debug('User has been signed out.');
+		this.log.debug('User has been signed out.');
 	}
 
 	/**
@@ -233,7 +261,7 @@ export class AuthState {
 	 */
 	@Action(Auth.SwitchAuthType)
 	switchAuthType(ctx: StateContext<AuthStateModel>, action: Auth.SwitchAuthType): void {
-		this.logger.debug('Changing auth type.');
+		this.log.debug('Changing auth type.');
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft = { ...draft, ...action.payload };

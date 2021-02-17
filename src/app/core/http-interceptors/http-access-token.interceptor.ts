@@ -22,7 +22,7 @@ export class HttpAccessTokenInterceptor implements HttpInterceptor {
 	 * @returns intercept
 	 */
 	intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-		const access_token = this.store.selectSnapshot(AuthState.selectAccessTokenModel);
+		const access_token = this.store.selectSnapshot(AuthState.selectAccessToken);
 		request = request.clone({
 			setHeaders: {
 				Authorization: `Bearer ${access_token}`

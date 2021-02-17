@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AuthAsyncService } from 'app/core/auth/auth-async.service';
-import { tap, takeUntil } from 'rxjs/operators';
+import { tap, takeUntil, skip, skipWhile } from 'rxjs/operators';
 import { RenewAccessTokenResult } from 'app/core/auth/renew-access-token-result.model';
 import { AccessToken } from 'app/core/auth/access-token.model';
 import * as Auth from '../../core/auth/auth.store.actions';
@@ -12,9 +12,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { AuthDialogComponent } from './auth-dialog/auth-dialog.component';
 import { AuthDialogData } from 'app/core/auth/auth-dialog-data.model';
 import { AuthState } from 'app/core/auth/auth.store.state';
-import { Subscription, timer } from 'rxjs';
+import { Subscription, timer, Subject } from 'rxjs';
 import { SigninUser } from 'app/core/auth/signin-user.model';
-import { UsersAsyncService } from 'app/core/services/users-async.service';
 
 /**
  * Auth service.
@@ -39,7 +38,6 @@ export class AuthService {
 	 */
 	constructor(
 		private authAsyncService: AuthAsyncService,
-		private userAsyncService: UsersAsyncService,
 		private router: Router,
 		private log: LogService,
 		private store: Store,
@@ -58,7 +56,8 @@ export class AuthService {
 			.pipe(
 				// only update remember user upon successful signin.
 				tap(() => this._updateRememberUser(model.rememberMe, model.email)),
-				tap((access_token) => this.authenticate(access_token, model.staySignedIn))
+				tap((access_token) => this.authenticate(access_token, model.staySignedIn)),
+				tap(() => void this.router.navigate(['account']))
 			)
 			.subscribe();
 	}
@@ -80,8 +79,30 @@ export class AuthService {
 		const userId = this.jwtService.getSubClaim(token.access_token);
 		const signedin = staySignedIn || false;
 		this.store.dispatch(new Auth.Signin({ accessToken: token, userId: userId }));
-		void this.router.navigate(['account']);
-		this._maintainSession(signedin, token.expires_in);
+		return this._maintainSession(signedin, token.expires_in);
+	}
+
+	/**
+	 * Initializes and sets user's session.
+	 * @param access_token
+	 * @param staySignedIn
+	 * @param isTokenValid
+	 */
+	onInitSession(access_token: AccessToken, staySignedIn: boolean, isTokenValid: boolean): void {
+		// If token is valid treat as a successful sign in
+		if (isTokenValid) {
+			this.authenticate(access_token, staySignedIn);
+		}
+		// if staySignedIn is true and token is not empty. User has not explicitly signed out. Treat as renew current session.
+		else if (staySignedIn && access_token.access_token !== '') {
+			this._maintainSession(staySignedIn, access_token.expires_in);
+		}
+		// else if token is not empty sign out and all above conditions are false, treat as user abandoned session.
+		else {
+			if (access_token.access_token !== '') {
+				this.signOut();
+			}
+		}
 	}
 
 	/**
@@ -96,7 +117,7 @@ export class AuthService {
 				takeUntil(this.actions$.pipe(ofActionCompleted(Auth.Signout))),
 				tap(() => {
 					if (staySignedIn) {
-						this._signoutOrRenewAccessTokenModel();
+						this._signoutOrRenewAccessToken();
 					} else {
 						this._initiateSignout();
 					}
@@ -108,10 +129,9 @@ export class AuthService {
 	/**
 	 * Attempts to refresh access token, otherwise signs user out.
 	 */
-	private _signoutOrRenewAccessTokenModel(): void {
+	private _signoutOrRenewAccessToken(): void {
 		this.authAsyncService
-			// try renew token
-			.tryRenewAccessTokenModel()
+			.tryRenewAccessToken()
 			.pipe(
 				tap((renewAccessTokenModelResult: RenewAccessTokenResult) => {
 					const staySignedIn = this.store.selectSnapshot(AuthState.selectStaySignedIn);
@@ -130,12 +150,7 @@ export class AuthService {
 	 */
 	private _initiateSignout(staySignedIn?: boolean): void {
 		this.log.trace('_initiateSignout fired.', this);
-		// if remember me is true and were here, that would indicate that something
-		// went wrong on the server when rewnewing jwt.
 		if (staySignedIn) {
-			this.log.debug(
-				`StaySignedin option was set to ${staySignedIn.toString()}, but we are in executing _initiateSignout method. This indicates renewing of jwt failed on the server. Check server logs.`
-			);
 			this.signOut();
 		} else {
 			this._signoutWithDialogPrompt();
@@ -157,7 +172,7 @@ export class AuthService {
 		const subscription = new Subscription();
 		subscription.add(
 			dialogRef.componentInstance.staySignedInClicked.subscribe(() => {
-				this._signoutOrRenewAccessTokenModel();
+				this._signoutOrRenewAccessToken();
 				autoSignout = false;
 				this.dialog.closeAll();
 			})
@@ -188,6 +203,6 @@ export class AuthService {
 	signOut(): void {
 		this.authAsyncService.signout().subscribe();
 		this.store.dispatch(new Auth.Signout());
-		void this.router.navigate(['auth']);
+		void this.router.navigate(['/auth/sign-in']);
 	}
 }

@@ -182,5 +182,6 @@ export class AuthFacadeService {
 	 */
 	private _authenticate(token: AccessToken, staySignedIn?: boolean): void {
 		this.authService.authenticate(token, staySignedIn);
+		void this.router.navigate(['account']);
 	}
 }

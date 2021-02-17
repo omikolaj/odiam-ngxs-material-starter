@@ -73,7 +73,7 @@ export class AuthAsyncService {
 	 * Trys to renew access token.
 	 * @returns renew access token
 	 */
-	tryRenewAccessTokenModel(): Observable<RenewAccessTokenResult> {
+	tryRenewAccessToken(): Observable<RenewAccessTokenResult> {
 		return this.http.post<RenewAccessTokenResult>(`${this.apiUrl}/auth/refresh-token`, { headers: this._headers });
 	}
 }

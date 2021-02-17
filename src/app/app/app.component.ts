@@ -143,10 +143,8 @@ export class AppComponent implements OnInit, OnDestroy {
 			this.store.dispatch(new Settings.ChangeAnimationsPageDisabled({ pageAnimationsDisabled: true }));
 		}
 
-		this._isAuthenticated$ = this.store.select(AuthState.selectIsAuthenticated);
-		this._stickyHeader$ = this.store.select(SettingsState.selectStickyHeaderSettings);
-		this._language$ = this.store.select(SettingsState.selectLanguageSettings);
-		this._theme$ = this.store.select(SettingsState.selectEffectiveTheme);
+		this._onInitSetSession();
+		this._onInitSetSettingOptions();
 	}
 
 	/**
@@ -154,6 +152,28 @@ export class AppComponent implements OnInit, OnDestroy {
 	 */
 	ngOnDestroy(): void {
 		this._subscription.unsubscribe();
+	}
+
+	/**
+	 * Initializes and sets user's session.
+	 */
+	private _onInitSetSession(): void {
+		const staySignedIn = this.store.selectSnapshot(AuthState.selectStaySignedIn);
+		const expires_in = this.store.selectSnapshot(AuthState.selectExpiresAt).getSeconds() - new Date().getSeconds();
+		const access_token = this.store.selectSnapshot(AuthState.selectAccessToken);
+		const isTokenValid = this.store.selectSnapshot(AuthState.selectIsTokenValid);
+		// TODO when session is set we must navigate.
+		this.authService.onInitSession({ access_token, expires_in }, staySignedIn, isTokenValid);
+	}
+
+	/**
+	 * Initializes settings options from the store.
+	 */
+	private _onInitSetSettingOptions(): void {
+		this._isAuthenticated$ = this.store.select(AuthState.selectIsAuthenticated);
+		this._stickyHeader$ = this.store.select(SettingsState.selectStickyHeaderSettings);
+		this._language$ = this.store.select(SettingsState.selectLanguageSettings);
+		this._theme$ = this.store.select(SettingsState.selectEffectiveTheme);
 	}
 
 	/**

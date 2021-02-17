@@ -97,7 +97,6 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 * @param url
 	 */
 	private _setActiveAuthTypeBasedOnUrl(url: string): void {
-		console.log(url);
 		if (url === '/auth/sign-in' || url === '/auth') {
 			this.facade.onSwitchAuth({ activeAuthType: 'sign-in-active' }, 'sign-in');
 		} else if (url === '/auth/sign-up') {
