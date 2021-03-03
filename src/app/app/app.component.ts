@@ -6,7 +6,6 @@ import { routeAnimations, LocalStorageService } from '../core/core.module';
 import { Store } from '@ngxs/store';
 import { SettingsState } from 'app/core/settings/settings.store.state';
 import * as Settings from 'app/core/settings/settings.store.actions';
-import * as Auth from 'app/core/auth/auth.store.actions';
 import { LogService } from 'app/core/logger/log.service';
 import { Language } from 'app/core/settings/settings-state.model';
 import { MatSelectChange } from '@angular/material/select';
@@ -143,7 +142,6 @@ export class AppComponent implements OnInit, OnDestroy {
 			this.store.dispatch(new Settings.ChangeAnimationsPageDisabled({ pageAnimationsDisabled: true }));
 		}
 
-		this._onInitSetSession();
 		this._onInitSetSettingOptions();
 	}
 
@@ -152,18 +150,6 @@ export class AppComponent implements OnInit, OnDestroy {
 	 */
 	ngOnDestroy(): void {
 		this._subscription.unsubscribe();
-	}
-
-	/**
-	 * Initializes and sets user's session.
-	 */
-	private _onInitSetSession(): void {
-		const staySignedIn = this.store.selectSnapshot(AuthState.selectStaySignedIn);
-		const expires_in = this.store.selectSnapshot(AuthState.selectExpiresAt).getSeconds() - new Date().getSeconds();
-		const access_token = this.store.selectSnapshot(AuthState.selectAccessToken);
-		const isTokenValid = this.store.selectSnapshot(AuthState.selectIsTokenValid);
-		// TODO when session is set we must navigate.
-		this.authService.onInitSession({ access_token, expires_in }, staySignedIn, isTokenValid);
 	}
 
 	/**
@@ -197,7 +183,7 @@ export class AppComponent implements OnInit, OnDestroy {
 	 */
 	_onSignoutClick(): void {
 		this.log.debug('onSignoutClick handler fired.', this);
-		this.authService.signOut();
+		this.authService.signUserOut();
 	}
 
 	/**

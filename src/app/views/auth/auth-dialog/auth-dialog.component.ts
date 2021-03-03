@@ -4,6 +4,7 @@ import { AuthDialogData } from 'app/core/auth/auth-dialog-data.model';
 import { Observable, timer } from 'rxjs';
 import { take, map } from 'rxjs/operators';
 import { LogService } from 'app/core/logger/log.service';
+import { AuthDialogUserDecision } from './auth-dialog-user-decision.enum';
 
 /**
  * Auth dialog component.
@@ -28,12 +29,12 @@ export class AuthDialogComponent implements OnInit {
 	/**
 	 * Event emitter for when user requests to stay signed in.
 	 */
-	@Output() staySignedInClicked = new EventEmitter<void>();
+	@Output() staySignedInClicked = new EventEmitter<AuthDialogUserDecision>();
 
 	/**
 	 * Event emitter for when user requests to sign out.
 	 */
-	@Output() signOutClicked = new EventEmitter<void>();
+	@Output() signOutClicked = new EventEmitter<AuthDialogUserDecision>();
 
 	/**
 	 * Creates an instance of auth dialog component.
@@ -58,7 +59,7 @@ export class AuthDialogComponent implements OnInit {
 	 */
 	_onStaySignedIn(): void {
 		this.log.trace('_onStaySignedIn fired.', this);
-		this.staySignedInClicked.emit();
+		this.staySignedInClicked.emit(AuthDialogUserDecision.staySignedIn);
 	}
 
 	/**
@@ -66,6 +67,6 @@ export class AuthDialogComponent implements OnInit {
 	 */
 	_onSignOut(): void {
 		this.log.trace('_onSignOut fired.', this);
-		this.signOutClicked.emit();
+		this.signOutClicked.emit(AuthDialogUserDecision.signOut);
 	}
 }

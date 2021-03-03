@@ -1,4 +1,4 @@
-import { StateToken, StateContext, State, Selector, Action, NgxsOnInit } from '@ngxs/store';
+import { StateToken, StateContext, State, Selector, Action } from '@ngxs/store';
 import { AuthStateModel, AUTH_KEY } from './auth-state-model';
 import { Injectable } from '@angular/core';
 import produce from 'immer';
@@ -7,8 +7,7 @@ import { LocalStorageService } from '../local-storage/local-storage.service';
 import { isBefore, add, getUnixTime, fromUnixTime } from 'date-fns';
 import { LogService } from '../logger/log.service';
 import { ActiveAuthType } from './active-auth-type.model';
-import { AuthService } from 'app/views/auth/auth.service';
-import { AccessToken } from './access-token.model';
+import { Router } from '@angular/router';
 
 const AUTH_STATE_TOKEN = new StateToken<AuthStateModel>('auth');
 
@@ -30,26 +29,16 @@ const AUTH_STATE_TOKEN = new StateToken<AuthStateModel>('auth');
 /**
  * Provides all action handlers for user authentication.
  */
-export class AuthState implements NgxsOnInit {
+export class AuthState {
 	/**
-	 * Selects user authentication status.
-	 * @param state
-	 * @returns true if is authenticated.
-	 */
-	@Selector([AuthState.selectIsTokenValid])
-	static selectIsAuthenticated(state: AuthStateModel, isTokenValid: boolean): boolean {
-		return state.isAuthenticated && isTokenValid;
-	}
-
-	/**
-	 * Selects access token expiry status.
+	 * Selects state of user's token. User explicitly signed out if access token is empty string.
 	 * @param state
 	 * @param expiresAt
 	 * @returns true if is token expired
 	 */
-	@Selector([AuthState.selectExpiresAt])
-	static selectIsTokenValid(state: AuthStateModel, expiresAt: Date): boolean {
-		return isBefore(new Date(), expiresAt);
+	@Selector([AUTH_STATE_TOKEN])
+	static selectDidUserExplicitlySignout(state: AuthStateModel): boolean {
+		return state.access_token === '';
 	}
 
 	/**
@@ -60,16 +49,6 @@ export class AuthState implements NgxsOnInit {
 	@Selector([AUTH_STATE_TOKEN])
 	static selectCurrentUserId(state: AuthStateModel): string {
 		return state.userId;
-	}
-
-	/**
-	 * Selects expires_at value from local storage and converts it to Date.
-	 * @param state
-	 * @returns date of expires at
-	 */
-	@Selector([AUTH_STATE_TOKEN])
-	static selectExpiresAt(state: AuthStateModel): Date {
-		return fromUnixTime(state.expires_at || 0);
 	}
 
 	/**
@@ -123,26 +102,42 @@ export class AuthState implements NgxsOnInit {
 	}
 
 	/**
+	 * Selects user authentication status.
+	 * @param state
+	 * @returns true if is authenticated.
+	 */
+	@Selector([AuthState.selectExpiresAt])
+	static selectIsAuthenticated(state: AuthStateModel, exires_at: Date): boolean {
+		return state.isAuthenticated && isBefore(new Date(), exires_at);
+	}
+
+	/**
+	 * Selectors the time in seconds when the token will expire in.
+	 * @param state
+	 * @param expires_at
+	 * @returns expires in seconds
+	 */
+	@Selector([AuthState.selectExpiresAt])
+	static selectExpiresInSeconds(state: AuthStateModel, expires_at: Date): number {
+		return expires_at.getSeconds() - new Date().getSeconds();
+	}
+
+	/**
+	 * Selects expires_at value from local storage and converts it to Date.
+	 * @param state
+	 * @returns date of expires at
+	 */
+	@Selector([AUTH_STATE_TOKEN])
+	private static selectExpiresAt(state: AuthStateModel): Date {
+		return fromUnixTime(state.expires_at || 0);
+	}
+
+	/**
 	 * Creates an instance of auth state.
 	 * @param router
 	 * @param localStorageService
 	 */
-	constructor(private localStorageService: LocalStorageService, private log: LogService) {}
-
-	/**
-	 * Ngxs on init will be invoked after all states from state's module definition have been initialized and pushed into the state stream.
-	 * @param ctx
-	 */
-	ngxsOnInit(ctx: StateContext<AuthStateModel>): void {
-		this.log.trace('ngxsOnInit invoked.', this);
-		// const isTokenValid = AuthState.selectIsTokenValid(ctx.getState(), AuthState.selectExpiresAt(ctx.getState()));
-		// const staySignedIn = ctx.getState().staySignedIn;
-		// const accessToken: AccessToken = {
-		// 	access_token: ctx.getState().access_token,
-		// 	expires_in: fromUnixTime(ctx.getState().expires_at).getSeconds() - new Date().getSeconds()
-		// };
-		// this.authService.onInitAuthenticate(accessToken, staySignedIn);
-	}
+	constructor(private localStorageService: LocalStorageService, private log: LogService, private router: Router) {}
 
 	/**
 	 * Action handler that updates remember me option.
@@ -157,7 +152,7 @@ export class AuthState implements NgxsOnInit {
 				draft.rememberMe = action.payload;
 			})
 		);
-		const auth = ctx.getState();
+		const auth = this._getAuthStorageState(ctx);
 		this.localStorageService.setItem(AUTH_KEY, auth);
 	}
 
@@ -174,7 +169,7 @@ export class AuthState implements NgxsOnInit {
 				draft.username = action.payload;
 			})
 		);
-		const auth = ctx.getState();
+		const auth = this._getAuthStorageState(ctx);
 		this.localStorageService.setItem(AUTH_KEY, auth);
 	}
 
@@ -191,7 +186,7 @@ export class AuthState implements NgxsOnInit {
 				draft.staySignedIn = action.payload;
 			})
 		);
-		const auth = ctx.getState();
+		const auth = this._getAuthStorageState(ctx);
 		this.localStorageService.setItem(AUTH_KEY, auth);
 	}
 
@@ -214,7 +209,7 @@ export class AuthState implements NgxsOnInit {
 			})
 		);
 
-		const auth = ctx.getState();
+		const auth = this._getAuthStorageState(ctx);
 		this.localStorageService.setItem(AUTH_KEY, auth);
 	}
 
@@ -249,7 +244,7 @@ export class AuthState implements NgxsOnInit {
 				draft.username = '';
 			})
 		);
-		const auth = ctx.getState();
+		const auth = this._getAuthStorageState(ctx);
 		this.localStorageService.setItem(AUTH_KEY, auth);
 		this.log.debug('User has been signed out.');
 	}
@@ -268,7 +263,26 @@ export class AuthState implements NgxsOnInit {
 				return draft;
 			})
 		);
-		const auth = ctx.getState();
+		const auth = this._getAuthStorageState(ctx);
 		this.localStorageService.setItem(AUTH_KEY, auth);
+	}
+
+	/**
+	 * Gets auth storage state.
+	 * @param ctx
+	 * @returns auth storage state
+	 */
+	private _getAuthStorageState(ctx: StateContext<AuthStateModel>): AuthStateModel {
+		const state = ctx.getState();
+		return {
+			access_token: state.access_token,
+			activeAuthType: state.activeAuthType,
+			expires_at: state.expires_at,
+			userId: state.userId,
+			isAuthenticated: state.isAuthenticated,
+			rememberMe: state.rememberMe,
+			staySignedIn: state.staySignedIn,
+			username: state.username
+		} as AuthStateModel;
 	}
 }

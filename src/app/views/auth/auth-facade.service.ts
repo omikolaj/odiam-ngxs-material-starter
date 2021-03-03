@@ -7,7 +7,7 @@ import { ProblemDetailsError } from 'app/core/error-handler/problem-details-erro
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerError } from 'app/core/error-handler/internal-server-error.decorator';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
-import { tap } from 'rxjs/operators';
+import { tap, filter } from 'rxjs/operators';
 import { Store, Select } from '@ngxs/store';
 import * as Auth from '../../core/auth/auth.store.actions';
 import { Router } from '@angular/router';
@@ -16,7 +16,6 @@ import { AuthState } from 'app/core/auth/auth.store.state';
 import { SocialAuthService, SocialUser, GoogleLoginProvider, FacebookLoginProvider } from 'angularx-social-login';
 import { UsersAsyncService } from 'app/core/services/users-async.service';
 import { PasswordReset } from 'app/core/auth/password-reset.model';
-import { JsonWebTokenService } from 'app/core/services/json-web-token.service';
 import { TranslateErrorsService } from 'app/shared/services/translate-errors.service';
 import { LogService } from 'app/core/logger/log.service';
 import { FormBuilder } from '@angular/forms';
@@ -77,7 +76,6 @@ export class AuthFacadeService {
 		private store: Store,
 		private notification: NotificationService,
 		private socialAuthService: SocialAuthService,
-		private jwtService: JsonWebTokenService,
 		private authService: AuthService
 	) {}
 
@@ -139,7 +137,12 @@ export class AuthFacadeService {
 	signupUser(model: SignupUser): void {
 		this.authAsyncService
 			.signup(model)
-			.pipe(tap((access_token) => this._authenticate(access_token)))
+			.pipe(
+				tap((token) => {
+					this._authenticate(token);
+					void this.router.navigate(['account']);
+				})
+			)
 			.subscribe();
 	}
 
@@ -148,7 +151,17 @@ export class AuthFacadeService {
 	 * @param model
 	 */
 	signinUser(model: SigninUser): void {
-		this.authService.signinUser(model);
+		this.authAsyncService
+			.signin(model)
+			.pipe(
+				tap((token) => {
+					this._authenticate(token, model.staySignedIn);
+					void this.router.navigate(['account']);
+				}),
+				filter(() => model.rememberMe),
+				tap(() => this.store.dispatch(new Auth.UpdateRememberUsername(model.email)))
+			)
+			.subscribe();
 	}
 
 	/**
@@ -158,7 +171,12 @@ export class AuthFacadeService {
 		void this.socialAuthService.signIn(GoogleLoginProvider.PROVIDER_ID).then((model: SocialUser) => {
 			this.authAsyncService
 				.signinWithGoogle(model)
-				.pipe(tap((token) => this._authenticate(token, staySignedIn)))
+				.pipe(
+					tap((token) => {
+						this._authenticate(token, staySignedIn);
+						void this.router.navigate(['account']);
+					})
+				)
 				.subscribe();
 		});
 	}
@@ -170,7 +188,12 @@ export class AuthFacadeService {
 		void this.socialAuthService.signIn(FacebookLoginProvider.PROVIDER_ID).then((model: SocialUser) => {
 			this.authAsyncService
 				.signinWithFacebook(model)
-				.pipe(tap((token) => this._authenticate(token, staySignedIn)))
+				.pipe(
+					tap((token) => {
+						this._authenticate(token, staySignedIn);
+						void this.router.navigate(['account']);
+					})
+				)
 				.subscribe();
 		});
 	}
@@ -181,7 +204,6 @@ export class AuthFacadeService {
 	 * @param [staySignedIn]
 	 */
 	private _authenticate(token: AccessToken, staySignedIn?: boolean): void {
-		this.authService.authenticate(token, staySignedIn);
-		void this.router.navigate(['account']);
+		return this.authService.authenticate(token, staySignedIn);
 	}
 }
