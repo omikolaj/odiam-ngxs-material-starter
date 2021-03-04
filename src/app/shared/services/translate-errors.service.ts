@@ -4,7 +4,7 @@ import { ValidationErrors } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 import { TranslateError } from 'app/core/models/translate-error.model';
 import { ValidationErrorType } from 'app/core/models/validation-error.enum';
-import { map } from 'rxjs/internal/operators/map';
+import { map } from 'rxjs/operators';
 
 /**
  * Translate errors service.
