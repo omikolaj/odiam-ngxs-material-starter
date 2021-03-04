@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import jwt_decode from 'jwt-decode';
-import { JsonWebToken } from '../models/json-web-token-model';
+import { JsonWebToken } from '../models/json-web-token.model';
 import { LogService } from '../logger/log.service';
 
 /**
