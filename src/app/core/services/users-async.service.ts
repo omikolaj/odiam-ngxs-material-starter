@@ -2,7 +2,7 @@ import { Injectable, Inject } from '@angular/core';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { BACKEND_API_URL } from '../api-url-injection-token';
 import { Observable } from 'rxjs';
-import { PasswordReset } from '../auth/password-reset.model';
+import { PasswordReset } from '../auth/models/password-reset.model';
 import { AccountDetails } from '../models/account-details.model';
 import { AccountSecurityDetails } from '../models/account-security-details.model';
 

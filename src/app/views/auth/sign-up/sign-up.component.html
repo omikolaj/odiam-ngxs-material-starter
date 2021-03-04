@@ -115,7 +115,7 @@
 							{{ 'odm.auth.form.requirements.pass-must-match' | translate }}
 						</span>
 					</mat-hint>
-					<mat-error *ngIf="_signupForm?.get('confirmPassword').invalid">{{ _fieldRequiredMessage }}</mat-error>
+					<mat-error *ngIf="_signupForm?.get('confirmPassword').invalid">{{ _getTranslatedRequiredErrorMessage$() | async }}</mat-error>
 				</mat-form-field>
 			</div>
 

@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, AbstractControl, ValidationErrors } from '@angular/forms';
 import { AuthFacadeService } from '../auth-facade.service';
-import { PasswordReset } from 'app/core/auth/password-reset.model';
+import { PasswordReset } from 'app/core/auth/models/password-reset.model';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { implementsOdmWebApiException } from 'app/core/utilities/implements-odm-web-api-exception';
 import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';

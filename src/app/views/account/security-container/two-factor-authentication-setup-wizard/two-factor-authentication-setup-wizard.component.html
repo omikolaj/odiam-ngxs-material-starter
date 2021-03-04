@@ -33,7 +33,7 @@
 								</span>
 							</mat-hint>
 							<mat-error *ngIf="_ifControlFieldIsInvalid()">{{
-								_getVerificationCodeControlErrorMessage(verificationCodeForm.get('verificationCode').errors)
+								_getTranslatedErrorMessage$(verificationCodeForm.get('verificationCode').errors) | async
 							}}</mat-error>
 						</mat-form-field>
 						<div class="setup-wizard__action-buttons">

@@ -47,8 +47,8 @@ import {
 	faUserSecret
 } from '@fortawesome/free-solid-svg-icons';
 import { faMediumM, faGithub } from '@fortawesome/free-brands-svg-icons';
-import { GhostBlockComponent } from './components/ghost-block/ghost-block.component';
-import { GhostAnimationService } from './services/ghost-animation.service';
+import { OdmGhostBlockComponent } from './components/odm-ghost-block/odm-ghost-block.component';
+import { OdmGhostAnimationService } from './services/odm-ghost-animation.service';
 import { OdmSpinnerComponent } from './components/odm-spinner/odm-spinner.component';
 import { MatVerticalStepperScrollerDirective } from './directives/mat-vertical-stepper-scroller.directive';
 
@@ -56,8 +56,8 @@ import { MatVerticalStepperScrollerDirective } from './directives/mat-vertical-s
  * Shared module.
  */
 @NgModule({
-	declarations: [GhostBlockComponent, OdmSpinnerComponent, MatVerticalStepperScrollerDirective],
-	providers: [GhostAnimationService, { provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher }],
+	declarations: [OdmGhostBlockComponent, OdmSpinnerComponent, MatVerticalStepperScrollerDirective],
+	providers: [OdmGhostAnimationService, { provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher }],
 	imports: [
 		CommonModule,
 		FormsModule,
@@ -119,7 +119,7 @@ import { MatVerticalStepperScrollerDirective } from './directives/mat-vertical-s
 		FontAwesomeModule,
 
 		// Components
-		GhostBlockComponent,
+		OdmGhostBlockComponent,
 		OdmSpinnerComponent,
 
 		// Directives

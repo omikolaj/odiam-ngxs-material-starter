@@ -8,9 +8,9 @@ import { InternalServerErrorDetails } from 'app/core/models/internal-server-erro
 import { FormGroup } from '@angular/forms';
 import { MinScreenSizeQuery } from 'app/shared/screen-size-queries';
 import { OdmValidators } from 'app/core/form-validators/odm-validators';
-import { SignupUser } from 'app/core/auth/signup-user.model';
-import { ActiveAuthType } from 'app/core/auth/active-auth-type.model';
-import { AuthTypeRouteUrl } from 'app/core/auth/auth-type-route-url.model';
+import { SignupUser } from 'app/core/auth/models/signup-user.model';
+import { ActiveAuthType } from 'app/core/auth/models/active-auth-type.model';
+import { AuthTypeRouteUrl } from 'app/core/auth/models/auth-type-route-url.model';
 import { rightLeftFadeInAnimation } from 'app/core/core.module';
 
 /**

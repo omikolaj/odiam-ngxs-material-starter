@@ -1,5 +1,5 @@
-import { AccessToken } from './access-token.model';
-import { ActiveAuthType } from './active-auth-type.model';
+import { AccessToken } from './models/access-token.model';
+import { ActiveAuthType } from './models/active-auth-type.model';
 
 /**
  * Init auth state from local storage.
@@ -27,18 +27,28 @@ export class RememberMeOptionChange {
 }
 
 /**
- * Update remember username. Updates username value in localstorage.
+ * Persists user's username in local storage.
  */
-export class UpdateRememberUsername {
+export class UpdateRememberMeUsername {
 	/**
 	 * Type of action.
 	 */
-	static readonly type = '[Auth] Update Remember Username';
+	static readonly type = '[Auth] Update Remember My Email Username';
 	/**
 	 * Creates an instance of remember username action.
 	 * @param payload
 	 */
 	constructor(public payload: string) {}
+}
+
+/**
+ * Keep or remove remember me username. Based on 'Remember my email' option.
+ */
+export class KeepOrRemoveRememberMeUsername {
+	/**
+	 * Type of action.
+	 */
+	static readonly type = '[Auth] Keep or Remove Remember My Email Username';
 }
 
 /**

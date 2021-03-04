@@ -4,7 +4,7 @@ import { BreakpointState, BreakpointObserver } from '@angular/cdk/layout';
 import { MinScreenSizeQuery } from 'app/shared/screen-size-queries';
 import { ROUTE_ANIMATIONS_ELEMENTS, routeAnimations } from 'app/core/core.module';
 import { AuthFacadeService } from '../auth-facade.service';
-import { ActiveAuthType } from 'app/core/auth/active-auth-type.model';
+import { ActiveAuthType } from 'app/core/auth/models/active-auth-type.model';
 import { tap, startWith } from 'rxjs/operators';
 import { NavigationEnd } from '@angular/router';
 

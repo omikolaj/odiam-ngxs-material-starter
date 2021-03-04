@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, Output, EventEmitter, Input } from '@angular/core';
 import { TooltipTouchGestures } from '@angular/material/tooltip';
-import { ODM_TOOLTIP_SHOW_DELAY_IN_MS } from 'app/shared/mat-tooltip-settings';
+import { ODM_TOOLTIP_SHOW_DELAY_IN_MS } from 'app/shared/global-settings/mat-tooltip-settings';
 import { AccountFacadeService } from '../../account-facade.service';
 import { fadeInAnimation, upDownFadeInAnimation } from 'app/core/core.module';
 

@@ -1,16 +1,16 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, Output, EventEmitter, Input, OnDestroy } from '@angular/core';
 import { AuthFacadeService } from '../auth-facade.service';
 import { tap } from 'rxjs/operators';
-import { SignupUser } from 'app/core/auth/signup-user.model';
+import { SignupUser } from 'app/core/auth/models/signup-user.model';
 import { implementsOdmWebApiException } from 'app/core/utilities/implements-odm-web-api-exception';
 import { Subscription, Observable } from 'rxjs';
-import { ValidationMessage_Required } from 'app/shared/validation-messages';
+import { ValidationMessage_Required } from 'app/shared/required-validation-message';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { FormGroup, ValidationErrors, AbstractControl } from '@angular/forms';
 import { BreakpointState } from '@angular/cdk/layout';
 import { AuthControlType } from 'app/shared/auth-abstract-control-type';
-import { ActiveAuthType } from 'app/core/auth/active-auth-type.model';
+import { ActiveAuthType } from 'app/core/auth/models/active-auth-type.model';
 
 /**
  * Signup component.
@@ -87,11 +87,6 @@ export class SignUpComponent implements OnInit, OnDestroy {
 	 * Signup form email control status changes$ of auth component.
 	 */
 	_signupFormEmailControlStatusChanges$: Observable<string>;
-
-	/**
-	 * Field is required message.
-	 */
-	_fieldRequiredMessage = ValidationMessage_Required;
 
 	/**
 	 * Hide/show password.
@@ -171,6 +166,11 @@ export class SignUpComponent implements OnInit, OnDestroy {
 	 * Subscriptions for this component.
 	 */
 	private _subscription: Subscription = new Subscription();
+
+	/**
+	 * Field is required message.
+	 */
+	private _fieldRequiredMessage = ValidationMessage_Required;
 
 	/**
 	 * Determines whether the problem details error is validation related to model validations.
@@ -257,6 +257,17 @@ export class SignUpComponent implements OnInit, OnDestroy {
 	 */
 	_getTranslatedErrorMessage$(errors: ValidationErrors): Observable<string> {
 		return this.facade.translateError.translateErrorMessage$(errors);
+	}
+
+	/**
+	 * Gets translated required error message.
+	 * @returns translated required error message
+	 */
+	_getTranslatedRequiredErrorMessage$(): Observable<string> {
+		const requiredError: ValidationErrors = {
+			required: this._fieldRequiredMessage
+		};
+		return this._getTranslatedErrorMessage$(requiredError);
 	}
 
 	/**

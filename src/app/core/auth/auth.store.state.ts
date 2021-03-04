@@ -1,12 +1,12 @@
 import { StateToken, StateContext, State, Selector, Action } from '@ngxs/store';
-import { AuthStateModel, AUTH_KEY } from './auth-state-model';
+import { AuthStateModel, AUTH_KEY } from './models/auth-state-model';
 import { Injectable } from '@angular/core';
 import produce from 'immer';
 import * as Auth from './auth.store.actions';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import { isBefore, add, getUnixTime, fromUnixTime } from 'date-fns';
 import { LogService } from '../logger/log.service';
-import { ActiveAuthType } from './active-auth-type.model';
+import { ActiveAuthType } from './models/active-auth-type.model';
 import { Router } from '@angular/router';
 
 const AUTH_STATE_TOKEN = new StateToken<AuthStateModel>('auth');
@@ -150,9 +150,11 @@ export class AuthState {
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft.rememberMe = action.payload;
+				// clear out username everytime this option changes. It is set only when user successfully logs in.
+				draft.username = '';
 			})
 		);
-		const auth = this._getAuthStorageState(ctx);
+		const auth = this._getAuthStateForLocalStorage(ctx);
 		this.localStorageService.setItem(AUTH_KEY, auth);
 	}
 
@@ -161,15 +163,15 @@ export class AuthState {
 	 * @param ctx
 	 * @param action
 	 */
-	@Action(Auth.UpdateRememberUsername)
-	updateRememberUsername(ctx: StateContext<AuthStateModel>, action: Auth.UpdateRememberUsername): void {
+	@Action(Auth.UpdateRememberMeUsername)
+	updateRememberMeUsername(ctx: StateContext<AuthStateModel>, action: Auth.UpdateRememberMeUsername): void {
 		this.log.debug('Update Remember username action fired.', this);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft.username = action.payload;
 			})
 		);
-		const auth = this._getAuthStorageState(ctx);
+		const auth = this._getAuthStateForLocalStorage(ctx);
 		this.localStorageService.setItem(AUTH_KEY, auth);
 	}
 
@@ -186,7 +188,7 @@ export class AuthState {
 				draft.staySignedIn = action.payload;
 			})
 		);
-		const auth = this._getAuthStorageState(ctx);
+		const auth = this._getAuthStateForLocalStorage(ctx);
 		this.localStorageService.setItem(AUTH_KEY, auth);
 	}
 
@@ -209,7 +211,7 @@ export class AuthState {
 			})
 		);
 
-		const auth = this._getAuthStorageState(ctx);
+		const auth = this._getAuthStateForLocalStorage(ctx);
 		this.localStorageService.setItem(AUTH_KEY, auth);
 	}
 
@@ -220,7 +222,7 @@ export class AuthState {
 	 */
 	@Action(Auth.SetCurrentUserId)
 	setCurrentUserId(ctx: StateContext<AuthStateModel>, action: Auth.SetCurrentUserId): void {
-		this.log.debug('Setting current user id', this, action.payload);
+		this.log.debug('Setting current user id.', this, action.payload);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft.userId = action.payload;
@@ -241,12 +243,29 @@ export class AuthState {
 				draft.access_token = '';
 				draft.expires_at = 0;
 				draft.userId = '';
-				draft.username = '';
 			})
 		);
-		const auth = this._getAuthStorageState(ctx);
+		const auth = this._getAuthStateForLocalStorage(ctx);
 		this.localStorageService.setItem(AUTH_KEY, auth);
-		this.log.debug('User has been signed out.');
+		this.log.debug('User has been signed out.', this);
+	}
+
+	/**
+	 * Actions handler that updates username saved in local storage based on remember me option.
+	 * @param ctx
+	 */
+	@Action(Auth.KeepOrRemoveRememberMeUsername)
+	keepOrRemoveRememberMeUsername(ctx: StateContext<AuthStateModel>): void {
+		const rememberMe = ctx.getState().rememberMe;
+		this.log.debug('keepOrRemoveRememberMeUsername fired. Remember me options is set to:', this, rememberMe);
+		ctx.setState(
+			produce((draft: AuthStateModel) => {
+				draft.username = rememberMe ? draft.username : '';
+			})
+		);
+		const auth = this._getAuthStateForLocalStorage(ctx);
+		this.localStorageService.setItem(AUTH_KEY, auth);
+		this.log.debug('Username for remember me option has been updated.', this);
 	}
 
 	/**
@@ -256,14 +275,14 @@ export class AuthState {
 	 */
 	@Action(Auth.SwitchAuthType)
 	switchAuthType(ctx: StateContext<AuthStateModel>, action: Auth.SwitchAuthType): void {
-		this.log.debug('Changing auth type.');
+		this.log.debug('Changing auth type.', this);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft = { ...draft, ...action.payload };
 				return draft;
 			})
 		);
-		const auth = this._getAuthStorageState(ctx);
+		const auth = this._getAuthStateForLocalStorage(ctx);
 		this.localStorageService.setItem(AUTH_KEY, auth);
 	}
 
@@ -272,7 +291,7 @@ export class AuthState {
 	 * @param ctx
 	 * @returns auth storage state
 	 */
-	private _getAuthStorageState(ctx: StateContext<AuthStateModel>): AuthStateModel {
+	private _getAuthStateForLocalStorage(ctx: StateContext<AuthStateModel>): AuthStateModel {
 		const state = ctx.getState();
 		return {
 			access_token: state.access_token,

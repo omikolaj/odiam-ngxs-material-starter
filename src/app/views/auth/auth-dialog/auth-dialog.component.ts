@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy, Inject, Output, EventEmitter } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { AuthDialogData } from 'app/core/auth/auth-dialog-data.model';
+import { AuthDialogData } from 'app/core/auth/models/auth-dialog-data.model';
 import { Observable, timer } from 'rxjs';
 import { take, map } from 'rxjs/operators';
 import { LogService } from 'app/core/logger/log.service';

@@ -3,13 +3,13 @@ import { FormGroup, ValidationErrors, AbstractControl } from '@angular/forms';
 import { TwoFactorAuthenticationSetupResult } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-setup-result.model';
 import { TwoFactorAuthenticationVerificationCode } from '../two-factor-authentication/models/two-factor-authentication-verification-code.model';
 import { TwoFactorAuthenticationSetup } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-setup.model';
-import { ValidationMessage_Required } from 'app/shared/validation-messages';
-import { ODM_SPINNER_DIAMETER, ODM_SPINNER_STROKE_WIDTH } from 'app/shared/mat-spinner-settings';
+import { ODM_SPINNER_DIAMETER, ODM_SPINNER_STROKE_WIDTH } from 'app/shared/global-settings/mat-spinner-settings';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { implementsOdmWebApiException } from 'app/core/utilities/implements-odm-web-api-exception';
 import { CdkStepper } from '@angular/cdk/stepper';
 import { AccountFacadeService } from '../../account-facade.service';
+import { Observable } from 'rxjs';
 
 /**
  * Two factor authentication setup wizard component.
@@ -126,11 +126,6 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 	 * Whether the user can return to this step once it has been marked as completed.
 	 */
 	_stepper2faSetupEditable = false;
-
-	/**
-	 * Field is required message.
-	 */
-	_fieldRequiredMessage = ValidationMessage_Required;
 
 	/**
 	 * Verified next step spinner diameter.
@@ -292,25 +287,11 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 	}
 
 	/**
-	 * Gets verification code control error message.
+	 * Gets translated error message.
 	 * @param errors
-	 * @returns verification code error message
+	 * @returns translated error message$
 	 */
-	_getVerificationCodeControlErrorMessage(errors: ValidationErrors): string {
-		if (errors['required']) {
-			return this._fieldRequiredMessage;
-		} else if (errors['minlength']) {
-			const error = errors['minlength'] as { requiredLength: number };
-			return `Verification code is ${error['requiredLength']} characters long.`;
-		} else if (errors['maxlength']) {
-			const error = errors['maxlength'] as { requiredLength: number };
-			return `Verification code must not exceed ${error['requiredLength']} characters.`;
-		} else if (errors['verificationCode']) {
-			const error = errors['verificationCode'] as { errorDescription: string };
-			return error['errorDescription'];
-		} else if (errors['internalServerError']) {
-			const error = errors['internalServerError'] as { errorDescription: string };
-			return error['errorDescription'];
-		}
+	_getTranslatedErrorMessage$(errors: ValidationErrors): Observable<string> {
+		return this.facade.translateError.translateErrorMessage$(errors);
 	}
 }

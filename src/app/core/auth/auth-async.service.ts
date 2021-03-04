@@ -1,11 +1,11 @@
 import { Injectable, Inject } from '@angular/core';
 import { BACKEND_API_URL } from '../api-url-injection-token';
-import { AccessToken } from './access-token.model';
+import { AccessToken } from './models/access-token.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { SignupUser } from './signup-user.model';
+import { SignupUser } from './models/signup-user.model';
 import { Observable } from 'rxjs';
-import { SigninUser } from './signin-user.model';
-import { RenewAccessTokenResult } from './renew-access-token-result.model';
+import { SigninUser } from './models/signin-user.model';
+import { RenewAccessTokenResult } from './models/renew-access-token-result.model';
 import { SocialUser } from 'angularx-social-login';
 
 /**

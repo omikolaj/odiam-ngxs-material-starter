@@ -8,7 +8,7 @@ const ACTIVE_GHOST = 'odm-ghost-active';
  * GhostAnimationService injectable.
  */
 @Injectable()
-export class GhostAnimationService {
+export class OdmGhostAnimationService {
 	/**
 	 * Body HTML of the entire app.
 	 */

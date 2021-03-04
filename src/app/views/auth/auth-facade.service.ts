@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { SignupUser } from 'app/core/auth/signup-user.model';
+import { SignupUser } from 'app/core/auth/models/signup-user.model';
 import { AuthAsyncService } from 'app/core/auth/auth-async.service';
 import { Observable } from 'rxjs';
-import { SigninUser } from 'app/core/auth/signin-user.model';
+import { SigninUser } from 'app/core/auth/models/signin-user.model';
 import { ProblemDetailsError } from 'app/core/error-handler/problem-details-error.decorator';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerError } from 'app/core/error-handler/internal-server-error.decorator';
@@ -11,18 +11,18 @@ import { tap, filter } from 'rxjs/operators';
 import { Store, Select } from '@ngxs/store';
 import * as Auth from '../../core/auth/auth.store.actions';
 import { Router } from '@angular/router';
-import { AccessToken } from 'app/core/auth/access-token.model';
+import { AccessToken } from 'app/core/auth/models/access-token.model';
 import { AuthState } from 'app/core/auth/auth.store.state';
 import { SocialAuthService, SocialUser, GoogleLoginProvider, FacebookLoginProvider } from 'angularx-social-login';
 import { UsersAsyncService } from 'app/core/services/users-async.service';
-import { PasswordReset } from 'app/core/auth/password-reset.model';
+import { PasswordReset } from 'app/core/auth/models/password-reset.model';
 import { TranslateErrorsService } from 'app/shared/services/translate-errors.service';
 import { LogService } from 'app/core/logger/log.service';
 import { FormBuilder } from '@angular/forms';
-import { ActiveAuthType } from 'app/core/auth/active-auth-type.model';
-import { AuthTypeRouteUrl } from 'app/core/auth/auth-type-route-url.model';
+import { ActiveAuthType } from 'app/core/auth/models/active-auth-type.model';
+import { AuthTypeRouteUrl } from 'app/core/auth/models/auth-type-route-url.model';
 import { NotificationService } from 'app/core/core.module';
-import { AuthService } from './auth.service';
+import { AuthService } from '../../core/auth/auth.service';
 
 /**
  * Auth facade service.
@@ -159,7 +159,7 @@ export class AuthFacadeService {
 					void this.router.navigate(['account']);
 				}),
 				filter(() => model.rememberMe),
-				tap(() => this.store.dispatch(new Auth.UpdateRememberUsername(model.email)))
+				tap(() => this.store.dispatch(new Auth.UpdateRememberMeUsername(model.email)))
 			)
 			.subscribe();
 	}

@@ -8,9 +8,9 @@ import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { MinScreenSizeQuery } from 'app/shared/screen-size-queries';
 import { OdmValidators } from 'app/core/form-validators/odm-validators';
-import { SigninUser } from 'app/core/auth/signin-user.model';
-import { ActiveAuthType } from 'app/core/auth/active-auth-type.model';
-import { AuthTypeRouteUrl } from 'app/core/auth/auth-type-route-url.model';
+import { SigninUser } from 'app/core/auth/models/signin-user.model';
+import { ActiveAuthType } from 'app/core/auth/models/active-auth-type.model';
+import { AuthTypeRouteUrl } from 'app/core/auth/models/auth-type-route-url.model';
 import { leftRightFadeInAnimation } from 'app/core/core.module';
 
 /**

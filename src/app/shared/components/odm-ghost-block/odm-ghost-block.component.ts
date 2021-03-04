@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy, HostBinding } from '@angular/core';
-import { GhostAnimationService } from 'app/shared/services/ghost-animation.service';
+import { OdmGhostAnimationService } from 'app/shared/services/odm-ghost-animation.service';
 import { LogService } from 'app/core/logger/log.service';
 
 /**
@@ -7,11 +7,11 @@ import { LogService } from 'app/core/logger/log.service';
  */
 @Component({
 	selector: 'odm-ghost-block',
-	templateUrl: './ghost-block.component.html',
-	styleUrls: ['./ghost-block.component.scss'],
+	templateUrl: './odm-ghost-block.component.html',
+	styleUrls: ['./odm-ghost-block.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class GhostBlockComponent implements OnInit {
+export class OdmGhostBlockComponent implements OnInit {
 	/**
 	 * Host binding of ghost block component indicating busy state.
 	 */
@@ -22,7 +22,7 @@ export class GhostBlockComponent implements OnInit {
 	 * Creates an instance of ghost block component.
 	 * @param ghostAnimationService
 	 */
-	constructor(private ghostAnimationService: GhostAnimationService, private logger: LogService) {}
+	constructor(private ghostAnimationService: OdmGhostAnimationService, private logger: LogService) {}
 
 	/**
 	 * NgOnInit life cycle.

@@ -6,11 +6,11 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app/app.component';
 import { setRootInjector } from './root-injector';
 import { MatDialogModule } from '@angular/material/dialog';
-import { AuthService } from './views/auth/auth.service';
+import { AuthService } from './core/auth/auth.service';
 import { Store } from '@ngxs/store';
 import { AuthState } from './core/auth/auth.store.state';
 import { filter, tap } from 'rxjs/operators';
-import { InitSessionResult } from './core/auth/init-session-result.model';
+import { InitSessionResult } from './core/auth/models/init-session-result.model';
 
 /**
  * Apps initializer factory for setting up user session.

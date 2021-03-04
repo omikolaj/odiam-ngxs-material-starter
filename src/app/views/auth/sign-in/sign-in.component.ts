@@ -1,7 +1,6 @@
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, ChangeDetectorRef, OnInit } from '@angular/core';
 import { FormGroup, ValidationErrors, AbstractControl } from '@angular/forms';
-import { SigninUser } from 'app/core/auth/signin-user.model';
-import { ValidationMessage_Required } from 'app/shared/validation-messages';
+import { SigninUser } from 'app/core/auth/models/signin-user.model';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { BreakpointState } from '@angular/cdk/layout';
@@ -12,8 +11,9 @@ import { TranslateErrorsService } from 'app/shared/services/translate-errors.ser
 import { Observable } from 'rxjs';
 import { AuthControlType } from 'app/shared/auth-abstract-control-type';
 import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
-import { ActiveAuthType } from 'app/core/auth/active-auth-type.model';
+import { ActiveAuthType } from 'app/core/auth/models/active-auth-type.model';
 import { MatCheckboxChange } from '@angular/material/checkbox';
+import { ValidationMessage_Required } from 'app/shared/required-validation-message';
 
 /**
  * Sign in component.
@@ -70,9 +70,11 @@ export class SignInComponent implements OnInit {
 	 * Username value. Empty string if remember me is false.
 	 */
 	@Input() set username(value: string) {
+		this.log.debug('Setting email value for signin form.', this, value);
 		this._username = value;
 		// in case we fetch user's email from the server. Ensures fresh copy is reflected in the UI.
-		if (this.signinForm) {
+		// if value is truthy set it, else we dont care to update the form.
+		if (this.signinForm && value) {
 			this.signinForm.get('email').setValue(value);
 		}
 	}
@@ -118,11 +120,6 @@ export class SignInComponent implements OnInit {
 	 * Hide/show password.
 	 */
 	_hide = true;
-
-	/**
-	 * Field is required message.
-	 */
-	_fieldRequiredMessage = ValidationMessage_Required;
 
 	/**
 	 * Route animations elements of auth container component.
@@ -171,6 +168,11 @@ export class SignInComponent implements OnInit {
 	}
 
 	/**
+	 * Field is required message.
+	 */
+	private _fieldRequiredMessage = ValidationMessage_Required;
+
+	/**
 	 * Creates an instance of sign in component.
 	 * @param translateError
 	 * @param log
@@ -182,6 +184,7 @@ export class SignInComponent implements OnInit {
 	 * NgOnInit life cycle.
 	 */
 	ngOnInit(): void {
+		this.log.trace('Initialized.', this);
 		this.signinForm.get('rememberMe').setValue(this.rememberMe);
 		this.signinForm.get('staySignedIn').setValue(this.staySignedIn);
 		this.signinForm.get('email').setValue(this._username);
@@ -255,6 +258,17 @@ export class SignInComponent implements OnInit {
 	 */
 	_getTranslatedErrorMessage$(errors: ValidationErrors): Observable<string> {
 		return this.translateError.translateErrorMessage$(errors);
+	}
+
+	/**
+	 * Gets translated required error message.
+	 * @returns translated required error message
+	 */
+	_getTranslatedRequiredErrorMessage$(): Observable<string> {
+		const requiredError: ValidationErrors = {
+			required: this._fieldRequiredMessage
+		};
+		return this._getTranslatedErrorMessage$(requiredError);
 	}
 
 	/**
