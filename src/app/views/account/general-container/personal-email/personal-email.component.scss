@@ -4,26 +4,30 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding-bottom: 18.72px;
-	}
+		// padding-bottom: 18.72px;
 
-	.personal-email__status {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		font-size: small;
 		span {
 			padding-right: 8px;
-			mat-icon {
-				padding-left: 8px;
+		}
+
+		.personal-email__verification {
+			display: flex;
+			align-items: center;
+			.personal-email__pending-verification {
+				display: flex;
+
+				mat-icon {
+					margin-right: 8px;
+				}
 			}
 		}
-		mat-icon {
-			height: 15px;
-			width: 15px;
-			font-size: 15px;
-		}
 	}
+}
+
+mat-icon {
+	height: 15px;
+	width: 15px;
+	font-size: 15px;
 }
 
 fa-icon {

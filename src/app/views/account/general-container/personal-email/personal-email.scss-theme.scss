@@ -13,14 +13,4 @@
 			}
 		}
 	}
-
-	.personal-email {
-		.personal-email__status {
-			span {
-				.personal-email__pending-verification {
-					color: mat-color($warn);
-				}
-			}
-		}
-	}
 }

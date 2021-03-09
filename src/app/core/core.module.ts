@@ -37,7 +37,8 @@ import {
 	faPlayCircle,
 	faTachometerAlt,
 	faExclamationTriangle,
-	faCheck
+	faCheck,
+	faPaperPlane
 } from '@fortawesome/free-solid-svg-icons';
 import { faGithub, faMediumM, faTwitter, faInstagram, faYoutube } from '@fortawesome/free-brands-svg-icons';
 import { NgxsModule, NGXS_PLUGINS } from '@ngxs/store';
@@ -187,7 +188,8 @@ export class CoreModule {
 			faInstagram,
 			faYoutube,
 			faCheck,
-			faExclamationTriangle
+			faExclamationTriangle,
+			faPaperPlane
 		);
 	}
 }

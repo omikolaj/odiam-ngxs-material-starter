@@ -1,28 +1,24 @@
 <div class="personal-email">
 	<div class="personal-email__info">
 		<span>{{ 'odm.account.general.personal-email' | translate }}</span>
-		<span
-			>{{ email
-			}}<mat-icon class="personal-email__verified">
-				<fa-icon icon="check"></fa-icon> </mat-icon
-		></span>
-	</div>
-	<div class="personal-email__status">
-		<ng-container *ngIf="verified; else pendingVerification">
-			<span>{{ 'odm.account.general.verified' | translate }} </span>
-			<mat-icon class="personal-email__verified">
-				<fa-icon icon="check"></fa-icon>
-			</mat-icon>
-		</ng-container>
+		<div class="personal-email__verification">
+			<span>{{ email }}</span>
+			<ng-container *ngIf="verified; else pendingVerification">
+				<mat-icon matTooltip="Email verified" class="personal-email__verified">
+					<fa-icon icon="check"></fa-icon>
+				</mat-icon>
+			</ng-container>
+		</div>
 	</div>
 </div>
 
 <ng-template #pendingVerification>
-	<span
-		>{{ 'odm.account.general.pending-verification' | translate }}
-		<mat-icon class="personal-email__pending-verification">
+	<div class="personal-email__pending-verification">
+		<mat-icon matTooltip="Pending email verification">
 			<fa-icon icon="exclamation-triangle"></fa-icon>
 		</mat-icon>
-	</span>
-	<button mat-raised-button (click)="_onResendEmailVerificationClicked()">{{ 'odm.buttons.resend' | translate }}</button>
+		<mat-icon (click)="_onResendEmailVerificationClicked()" matTooltip="Resend email verification">
+			<fa-icon icon="paper-plane"></fa-icon>
+		</mat-icon>
+	</div>
 </ng-template>
