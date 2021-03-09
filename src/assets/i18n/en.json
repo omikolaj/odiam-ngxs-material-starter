@@ -6,7 +6,10 @@
 		"account": {
 			"header": "Personal account",
 			"general": {
-				"title": "General"
+				"title": "General",
+				"personal-email": "Personal email",
+				"verified": "Verified",
+				"pending-verification": "Pending Verification"
 			},
 			"security": {
 				"title": "Security",
@@ -157,7 +160,8 @@
 			"finish": "Finish",
 			"generate": "Generate new codes",
 			"cancel": "Cancel",
-			"change-theme": "Change Theme"
+			"change-theme": "Change Theme",
+			"resend": "Resend"
 		}
 	}
 }

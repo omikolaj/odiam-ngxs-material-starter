@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { PasswordReset } from '../auth/models/password-reset.model';
 import { AccountDetails } from '../models/account-details.model';
 import { AccountSecurityDetails } from '../models/account-security-details.model';
+import { AccountGeneralDetails } from '../models/account-general-details.model';
 
 /**
  * User async service.
@@ -43,6 +44,24 @@ export class UsersAsyncService {
 	 */
 	getAccountSecurityDetails(id: string): Observable<AccountSecurityDetails> {
 		return this.http.get<AccountSecurityDetails>(`${this.apiUrl}/users/${id}/account/security`);
+	}
+
+	/**
+	 * Gets user account general details.
+	 * @param id
+	 * @returns account general details
+	 */
+	getAccountGeneralDetails(id: string): Observable<AccountGeneralDetails> {
+		return this.http.get<AccountGeneralDetails>(`${this.apiUrl}/users/${id}/account/general`);
+	}
+
+	/**
+	 * Resends email verification.
+	 * @param id
+	 * @returns email verification
+	 */
+	resendEmailVerification(id: string): Observable<void> {
+		return this.http.get<void>(`${this.apiUrl}/users/${id}/account/resend-email-verification`);
 	}
 
 	/**

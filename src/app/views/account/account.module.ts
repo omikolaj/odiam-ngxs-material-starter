@@ -7,13 +7,15 @@ import { NgxsModule } from '@ngxs/store';
 import { QRCodeModule } from 'angularx-qrcode';
 import { AccountComponent } from './account/account.component';
 import { DashboardState } from './account/account.store.state';
-import { GeneralComponent } from './general/general.component';
+import { GeneralContainerComponent } from './general-container/general-container.component';
 import { SecurityContainerComponent } from './security-container/security-container.component';
 import { TwoFactorAuthenticationCodesComponent } from './security-container/two-factor-authentication-codes/two-factor-authentication-codes.component';
 import { AccountSecurityState } from './security-container/security-container.store.state';
 import { TwoFactorAuthenticationSetupWizardComponent } from './security-container/two-factor-authentication-setup-wizard/two-factor-authentication-setup-wizard.component';
 import { TwoFactorAuthenticationComponent } from './security-container/two-factor-authentication/two-factor-authentication.component';
 import { TwoFactorAuthenticationState } from './security-container/two-factor-authentication/two-factor-authentication.store.state';
+import { PersonalEmailComponent } from './general-container/personal-email/personal-email.component';
+import { AccountGeneralState } from './general-container/general-container.store.state';
 
 /**
  * User account module.
@@ -21,18 +23,19 @@ import { TwoFactorAuthenticationState } from './security-container/two-factor-au
 @NgModule({
 	declarations: [
 		AccountComponent,
-		GeneralComponent,
+		GeneralContainerComponent,
 		SecurityContainerComponent,
 		TwoFactorAuthenticationComponent,
 		TwoFactorAuthenticationCodesComponent,
-		TwoFactorAuthenticationSetupWizardComponent
+		TwoFactorAuthenticationSetupWizardComponent,
+		PersonalEmailComponent
 	],
 	imports: [
 		CommonModule,
 		AccountRoutingModule,
 		QRCodeModule,
 		SharedModule,
-		NgxsModule.forFeature([DashboardState, AccountSecurityState, TwoFactorAuthenticationState])
+		NgxsModule.forFeature([DashboardState, AccountSecurityState, AccountGeneralState, TwoFactorAuthenticationState])
 	],
 	providers: [AccountFacadeService]
 })

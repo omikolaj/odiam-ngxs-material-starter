@@ -1,0 +1,13 @@
+<ng-container *ngIf="_accountGeneralDetails$ | async as accountGeneralDetails">
+	<div class="account-general">
+		<div class="account-general__personal-email">
+			<odm-personal-email
+				[email]="accountGeneralDetails?.email"
+				[verified]="accountGeneralDetails?.verified"
+				(resendEmailVerificationClicked)="_onResendEmailVerificationClicked()"
+			>
+			</odm-personal-email>
+		</div>
+		<mat-divider></mat-divider>
+	</div>
+</ng-container>

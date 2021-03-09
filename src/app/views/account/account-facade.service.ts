@@ -12,6 +12,7 @@ import { AuthState } from 'app/core/auth/auth.store.state';
 import { AccountSecurityState } from './security-container/security-container.store.state';
 import { AccountSecurityDetails } from 'app/core/models/account-security-details.model';
 import * as SecurityContainer from './security-container/security-container.store.actions';
+import * as GeneralContainer from './general-container/general-container.store.actions';
 import { TwoFactorAuthenticationState } from './security-container/two-factor-authentication/two-factor-authentication.store.state';
 import { InternalServerError } from 'app/core/error-handler/internal-server-error.decorator';
 import { ProblemDetailsError } from 'app/core/error-handler/problem-details-error.decorator';
@@ -20,6 +21,8 @@ import { InternalServerErrorDetails } from 'app/core/models/internal-server-erro
 import { LogService } from 'app/core/logger/log.service';
 import { FormBuilder } from '@angular/forms';
 import { TranslateErrorsService } from 'app/shared/services/translate-errors.service';
+import { AccountGeneralState } from './general-container/general-container.store.state';
+import { AccountGeneralDetails } from 'app/core/models/account-general-details.model';
 
 /**
  * User account facade service.
@@ -38,6 +41,7 @@ export class AccountFacadeService {
 	 * Selects account security details.
 	 */
 	@Select(AccountSecurityState.selectAccountSecurityDetails) accountSecurityDetails$: Observable<AccountSecurityDetails>;
+
 	/**
 	 * Selects two factor authentication setup details.
 	 */
@@ -50,6 +54,8 @@ export class AccountFacadeService {
 	@Select(TwoFactorAuthenticationState.selectAuthenticatorSetupResult) twoFactorAuthenticationSetupResult$: Observable<
 		TwoFactorAuthenticationSetupResult
 	>;
+
+	@Select(AccountGeneralState.selectAccountGeneralDetails) accountGeneralDetails$: Observable<AccountGeneralDetails>;
 
 	onCompletedUpdateRecoveryCodesAction$ = this.actions$.pipe(ofActionCompleted(SecurityContainer.UpdateRecoveryCodes));
 
@@ -75,6 +81,17 @@ export class AccountFacadeService {
 		this.userAsyncService
 			.getAccountSecurityDetails(id)
 			.pipe(tap((accountSecurityDetails) => this.store.dispatch(new SecurityContainer.SetAccountSecurityDetails(accountSecurityDetails))))
+			.subscribe();
+	}
+
+	/**
+	 * Gets user account general details.
+	 */
+	getAccountGeneralInfo(): void {
+		const id = this.store.selectSnapshot(AuthState.selectCurrentUserId);
+		this.userAsyncService
+			.getAccountGeneralDetails(id)
+			.pipe(tap((accountGeneralDetails) => this.store.dispatch(new GeneralContainer.SetAccountGeneralDetails(accountGeneralDetails))))
 			.subscribe();
 	}
 
@@ -140,5 +157,13 @@ export class AccountFacadeService {
 			.disable2Fa()
 			.pipe(tap(() => this.store.dispatch([new TwoFactorAuthentication.Reset2faSetupWizard(), new SecurityContainer.ResetAccountSecuritySettings()])))
 			.subscribe();
+	}
+
+	/**
+	 * Resends email verification.
+	 */
+	resendEmailVerification(): void {
+		const id = this.store.selectSnapshot(AuthState.selectCurrentUserId);
+		this.userAsyncService.resendEmailVerification(id).subscribe();
 	}
 }

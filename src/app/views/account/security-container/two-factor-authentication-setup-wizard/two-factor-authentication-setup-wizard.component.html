@@ -38,7 +38,7 @@
 						</mat-form-field>
 						<div class="setup-wizard__action-buttons">
 							<button mat-button (click)="_onCancelClicked()" color="warn">
-								{{ 'odm.buttons..cancel' | translate }}
+								{{ 'odm.buttons.cancel' | translate }}
 							</button>
 							<button mat-button color="primary" type="submit" [disabled]="!verificationCodeForm.valid || codeVerificationInProgress">
 								<ng-container *ngIf="!codeVerificationInProgress && _codeVerificationSucceeded">

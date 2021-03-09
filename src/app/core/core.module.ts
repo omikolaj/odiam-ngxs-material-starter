@@ -28,7 +28,17 @@ import { HttpErrorInterceptor } from './http-interceptors/http-error.interceptor
 
 import { NotificationService } from './notifications/notification.service';
 import { MatButtonModule } from '@angular/material/button';
-import { faCog, faBars, faRocket, faPowerOff, faUserCircle, faPlayCircle, faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
+import {
+	faCog,
+	faBars,
+	faRocket,
+	faPowerOff,
+	faUserCircle,
+	faPlayCircle,
+	faTachometerAlt,
+	faExclamationTriangle,
+	faCheck
+} from '@fortawesome/free-solid-svg-icons';
 import { faGithub, faMediumM, faTwitter, faInstagram, faYoutube } from '@fortawesome/free-brands-svg-icons';
 import { NgxsModule, NGXS_PLUGINS } from '@ngxs/store';
 import { SettingsState } from './settings/settings.store.state';
@@ -175,7 +185,9 @@ export class CoreModule {
 			faMediumM,
 			faTwitter,
 			faInstagram,
-			faYoutube
+			faYoutube,
+			faCheck,
+			faExclamationTriangle
 		);
 	}
 }
