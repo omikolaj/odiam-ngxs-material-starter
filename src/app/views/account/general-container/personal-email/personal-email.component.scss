@@ -6,8 +6,9 @@
 		align-items: center;
 		// padding-bottom: 18.72px;
 
-		span {
+		#email {
 			padding-right: 8px;
+			white-space: nowrap;
 		}
 
 		.personal-email__verification {

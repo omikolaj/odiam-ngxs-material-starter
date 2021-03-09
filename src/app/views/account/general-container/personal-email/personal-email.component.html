@@ -1,6 +1,6 @@
 <div class="personal-email">
 	<div class="personal-email__info">
-		<span>{{ 'odm.account.general.personal-email' | translate }}</span>
+		<span id="email">{{ 'odm.account.general.personal-email' | translate }}</span>
 		<div class="personal-email__verification">
 			<span>{{ email }}</span>
 			<ng-container *ngIf="verified; else pendingVerification">
