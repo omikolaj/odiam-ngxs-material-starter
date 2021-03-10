@@ -1,0 +1,9 @@
+@import '~@angular/material/theming';
+
+@mixin odm-general-container-component-theme($theme) {
+	$warn: map-get($theme, warn);
+
+	.account-general__req-not-met {
+		color: mat-color($warn);
+	}
+}

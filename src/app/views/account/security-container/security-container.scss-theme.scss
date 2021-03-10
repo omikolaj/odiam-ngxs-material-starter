@@ -1,0 +1,9 @@
+@import '~@angular/material/theming';
+
+@mixin odm-security-container-component-theme($theme) {
+	$warn: map-get($theme, warn);
+
+	.account-security__req-not-met {
+		color: mat-color($warn);
+	}
+}

@@ -161,6 +161,28 @@ export class TwoFactorAuthenticationComponent {
 	}
 
 	/**
+	 * Gets problem details error message.
+	 * @returns problem details error message
+	 */
+	get _getProblemDetailsErrorMessage(): string {
+		return this._problemDetails.detail;
+	}
+
+	/**
+	 * Gets internal server error message.
+	 * @returns internal server error message
+	 */
+	get _getInternalServerErrorMessage(): string {
+		let errorDescription = '';
+		if (this._doesInternalServerErrorImplementOdmWebApiException) {
+			errorDescription = this._internalServerErrorDetails.detail;
+		} else {
+			errorDescription = this._internalServerErrorDetails.message;
+		}
+		return errorDescription;
+	}
+
+	/**
 	 * Creates an instance of two factor authentication component.
 	 * @param facade
 	 */
@@ -220,28 +242,6 @@ export class TwoFactorAuthenticationComponent {
 	_onUserCodesPanelClosed(): void {
 		this.facade.log.trace('_onToggleUserCodeExpasionPanel fired.', this);
 		this._removeServerErrors();
-	}
-
-	/**
-	 * Gets problem details error message.
-	 * @returns problem details error message
-	 */
-	_getProblemDetailsErrorMessage(): string {
-		return this._problemDetails.detail;
-	}
-
-	/**
-	 * Gets internal server error message.
-	 * @returns internal server error message
-	 */
-	_getInternalServerErrorMessage(): string {
-		let errorDescription = '';
-		if (this._doesInternalServerErrorImplementOdmWebApiException) {
-			errorDescription = this._internalServerErrorDetails.detail;
-		} else {
-			errorDescription = this._internalServerErrorDetails.message;
-		}
-		return errorDescription;
 	}
 
 	/**

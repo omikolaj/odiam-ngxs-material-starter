@@ -23,6 +23,8 @@
 @import './app/views/auth/auth-container/auth-container.component.scss-theme.scss';
 @import './app/views/auth/forgot-password/forgot-password.component.scss-theme.scss';
 @import './app/views/account/general-container/personal-email/personal-email.scss-theme.scss';
+@import './app/views/account/general-container/general-container.scss-theme.scss';
+@import './app/views/account/security-container/security-container.scss-theme.scss';
 
 @mixin custom-components-theme($theme) {
 	@include odm-styles-reset-theme($theme);
@@ -35,6 +37,8 @@
 	@include odm-auth-container-component-theme($theme);
 	@include odm-forgot-password-component-theme($theme);
 	@include odm-personal-email-component-theme($theme);
+	@include odm-general-container-component-theme($theme);
+	@include odm-security-container-component-theme($theme);
 }
 
 .default-theme {

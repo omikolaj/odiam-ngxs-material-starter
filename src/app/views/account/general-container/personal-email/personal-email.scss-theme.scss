@@ -5,12 +5,8 @@
 	$accent: map-get($theme, accent);
 
 	.personal-email {
-		.personal-email__status {
-			span {
-				.personal-email__verified {
-					color: mat-color($accent);
-				}
-			}
+		.personal-email__pending-verification {
+			color: mat-color($warn);
 		}
 	}
 }

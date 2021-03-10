@@ -11,6 +11,8 @@ import { FormGroup } from '@angular/forms';
 import { OdmValidators } from 'app/core/form-validators/odm-validators';
 import { TwoFactorAuthenticationVerificationCode } from './two-factor-authentication/models/two-factor-authentication-verification-code.model';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
+import { implementsOdmWebApiException } from 'app/core/utilities/implements-odm-web-api-exception';
+import { fadeInAnimation, upDownFadeInAnimation } from 'app/core/core.module';
 
 /**
  * Component container that houses user security functionality.
@@ -19,6 +21,7 @@ import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 	selector: 'odm-security-container',
 	templateUrl: './security-container.component.html',
 	styleUrls: ['./security-container.component.scss'],
+	animations: [fadeInAnimation, upDownFadeInAnimation],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SecurityContainerComponent implements OnInit {
@@ -121,14 +124,14 @@ export class SecurityContainerComponent implements OnInit {
 		this._subscription.add(
 			merge(
 				// skip first value that emits, which is the default value.
-				this.facade.accountSecurityDetails$.pipe(skip(1)),
+				this._accountSecurityDetails$.pipe(skip(1)),
 				// skip first value that emits, which is the default value.
-				this.facade.twoFactorAuthenticationSetupResult$.pipe(skip(1)),
+				this._authenticatorSetupResult$.pipe(skip(1)),
 				this.facade.onCompletedUpdateRecoveryCodesAction$,
 				// skip first value that emits, which is the default value.
-				this.facade.twoFactorAuthenticationSetup$.pipe(skip(1)),
-				this.facade.problemDetails$,
-				this.facade.internalServerErrorDetails$
+				this._authenticatorSetup$.pipe(skip(1)),
+				this._problemDetails$,
+				this._internalServerErrorDetails$
 			)
 				.pipe(
 					filter((value) => value !== undefined),
@@ -205,6 +208,35 @@ export class SecurityContainerComponent implements OnInit {
 		this.facade.log.trace('_onGenerateNew2FaRecoveryCodes fired.', this);
 		this._generatingNewRecoveryCodes = true;
 		this.facade.generateRecoveryCodes();
+	}
+
+	/**
+	 * Gets problem details error message.
+	 * @returns problem details error message
+	 */
+	_getProblemDetailsErrorMessage(problemDetails: ProblemDetails): string {
+		return problemDetails.detail;
+	}
+
+	/**
+	 * Gets internal server error message.
+	 * @returns internal server error message
+	 */
+	_getInternalServerErrorMessage(internalServerErrorDetails: InternalServerErrorDetails): string {
+		let errorDescription = '';
+		if (this._doesInternalServerErrorImplementOdmWebApiException(internalServerErrorDetails)) {
+			errorDescription = internalServerErrorDetails.detail;
+		} else {
+			errorDescription = internalServerErrorDetails.message;
+		}
+		return errorDescription;
+	}
+
+	/**
+	 * Checks if internal server error implements OdmWebAPiException.
+	 */
+	private _doesInternalServerErrorImplementOdmWebApiException(internalServerErrorDetails: InternalServerErrorDetails): boolean {
+		return implementsOdmWebApiException(internalServerErrorDetails);
 	}
 
 	/**

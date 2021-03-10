@@ -1,4 +1,5 @@
-import { Component, OnInit, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
+import { LogService } from 'app/core/logger/log.service';
 
 /**
  * User's personal email component.
@@ -9,7 +10,7 @@ import { Component, OnInit, ChangeDetectionStrategy, Input, Output, EventEmitter
 	styleUrls: ['./personal-email.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PersonalEmailComponent implements OnInit {
+export class PersonalEmailComponent {
 	/**
 	 * Personal email registered with user's account.
 	 */
@@ -18,21 +19,29 @@ export class PersonalEmailComponent implements OnInit {
 	/**
 	 * Whether user's email is verified.
 	 */
-	@Input() verified = false;
+	@Input() verified: boolean;
+
+	/**
+	 * Whether the general data is being fetched.
+	 */
+	@Input() loading: boolean;
 
 	/**
 	 * Event emitter when user requests to re-send email verification.
 	 */
 	@Output() resendEmailVerificationClicked = new EventEmitter<void>();
 
-	constructor() {}
-
-	ngOnInit(): void {}
+	/**
+	 * Creates an instance of personal email component.
+	 * @param log
+	 */
+	constructor(private log: LogService) {}
 
 	/**
 	 * Event handler that resends user's email verification link.
 	 */
 	_onResendEmailVerificationClicked(): void {
+		this.log.trace('_onResendEmailVerificationClicked fired.', this);
 		this.resendEmailVerificationClicked.emit();
 	}
 }

@@ -1,5 +1,5 @@
 <ng-container *ngIf="_accountSecurityDetails$ | async as accountSecurityDetails">
-	<div>
+	<div class="account-security">
 		<odm-two-factor-authentication
 			[userRecoveryCodes]="accountSecurityDetails?.recoveryCodes?.items"
 			[twoFactorEnabled]="accountSecurityDetails?.twoFactorEnabled"
@@ -10,8 +10,6 @@
 			[verificationCodeForm]="_verificationCodeForm"
 			[authenticatorSetup]="_authenticatorSetup$ | async"
 			[authenticatorSetupResult]="_authenticatorSetupResult$ | async"
-			[problemDetails]="_problemDetails$ | async"
-			[internalServerErrorDetails]="_internalServerErrorDetails$ | async"
 			(verifyAuthenticatorClicked)="_verifyAuthenticatorClicked($event)"
 			(cancelSetupWizardClicked)="_cancelSetupWizardClicked()"
 			(finish2faSetupClicked)="_finish2faSetupClicked($event)"
@@ -23,6 +21,17 @@
 			<mat-form-field>
 				<input matInput type="text" />
 			</mat-form-field>
+		</div>
+		<mat-divider></mat-divider>
+		<div class="account-security__error">
+			<span *ngIf="_problemDetails$ | async as problemDetails" @upDownFadeIn>
+				<mat-icon class="account-security__req-not-met account-security__error-format-position" matPrefix>{{ 'clear' }}</mat-icon>
+				{{ _getProblemDetailsErrorMessage(problemDetails) }}
+			</span>
+			<span *ngIf="_internalServerErrorDetails$ | async as internalServerError" @upDownFadeIn>
+				<mat-icon class="account-security__req-not-met account-security__error-format-position" matPrefix>{{ 'clear' }}</mat-icon>
+				{{ _getInternalServerErrorMessage(internalServerError) }}
+			</span>
 		</div>
 	</div>
 </ng-container>

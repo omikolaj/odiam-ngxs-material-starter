@@ -1,0 +1,14 @@
+.account-security {
+	.account-security__error {
+		padding-top: 8px;
+		display: block;
+		font-size: 15px;
+
+		.account-security__error-format-position {
+			width: 15px;
+			height: 15px;
+			vertical-align: text-top;
+			font-size: 15px;
+		}
+	}
+}

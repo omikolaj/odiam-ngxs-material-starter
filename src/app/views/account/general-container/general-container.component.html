@@ -4,10 +4,21 @@
 			<odm-personal-email
 				[email]="accountGeneralDetails?.email"
 				[verified]="accountGeneralDetails?.verified"
+				[loading]="_loading$ | async"
 				(resendEmailVerificationClicked)="_onResendEmailVerificationClicked()"
 			>
 			</odm-personal-email>
 		</div>
 		<mat-divider></mat-divider>
+		<div class="account-general__error">
+			<span *ngIf="_problemDetails$ | async as problemDetails" @upDownFadeIn>
+				<mat-icon class="account-general__req-not-met account-general__error-format-position" matPrefix>{{ 'clear' }}</mat-icon>
+				{{ _getProblemDetailsErrorMessage(problemDetails) }}
+			</span>
+			<span *ngIf="_internalServerErrorDetails$ | async as internalServerError" @upDownFadeIn>
+				<mat-icon class="account-general__req-not-met account-general__error-format-position" matPrefix>{{ 'clear' }}</mat-icon>
+				{{ _getInternalServerErrorMessage(internalServerError) }}
+			</span>
+		</div>
 	</div>
 </ng-container>

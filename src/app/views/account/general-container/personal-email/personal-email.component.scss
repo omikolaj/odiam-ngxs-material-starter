@@ -1,36 +1,55 @@
+@import '../../../../../styles-variables.scss';
+
 .personal-email {
 	padding: 18.72px 0;
+
 	.personal-email__info {
 		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		// padding-bottom: 18.72px;
+		flex-flow: column;
+		align-items: flex-start;
 
-		#email {
-			padding-right: 8px;
-			white-space: nowrap;
+		.personal-email__title {
+			font-size: large;
+			margin-bottom: 8px;
 		}
 
-		.personal-email__verification {
-			display: flex;
-			align-items: center;
-			.personal-email__pending-verification {
-				display: flex;
-
-				mat-icon {
-					margin-right: 8px;
-				}
-			}
+		.personal-email__verified {
+			color: green;
 		}
+
+		mat-icon {
+			height: 15px;
+			width: 15px;
+			font-size: 15px;
+			margin-right: 8px;
+		}
+
+		fa-icon {
+			font-size: 15px;
+		}
+	}
+	.personal-email__pending-verification {
+		cursor: pointer;
 	}
 }
 
-mat-icon {
-	height: 15px;
-	width: 15px;
-	font-size: 15px;
+.personal-email__ghost-loading-state {
+	height: 56px;
+	padding: 8px 0;
+	width: 100%;
 }
 
-fa-icon {
-	font-size: 15px;
+@media (min-width: map-get($grid-breakpoints, sm)) {
+	.personal-email {
+		.personal-email__info {
+			display: flex;
+			flex-flow: row;
+			justify-content: space-between;
+			align-items: center;
+
+			.personal-email__title {
+				margin-bottom: 0;
+			}
+		}
+	}
 }

@@ -19,11 +19,21 @@ const ACCOUNT_GENERAL_STATE_TOKEN = new StateToken<GeneralContainerStateModel>('
  * Provides state for user account general tab.
  */
 export class AccountGeneralState {
+	/**
+	 * Selects account general settings.
+	 * @param state
+	 * @returns account general details
+	 */
 	@Selector([ACCOUNT_GENERAL_STATE_TOKEN])
 	static selectAccountGeneralDetails(state: GeneralContainerStateModel): AccountGeneralDetails {
 		return state as AccountGeneralDetails;
 	}
 
+	/**
+	 * Action handler for setting general details settings.
+	 * @param ctx
+	 * @param action
+	 */
 	@Action(GeneralContainer.SetAccountGeneralDetails)
 	setAccountGeneralDetails(ctx: StateContext<GeneralContainerStateModel>, action: GeneralContainer.SetAccountGeneralDetails): void {
 		ctx.setState(

@@ -40,11 +40,11 @@
 		<div class="two-factor-settings__error">
 			<span *ngIf="_problemDetails" @upDownFadeIn>
 				<mat-icon class="two-factor-settings__req-not-met two-factor-settings__error-format-position" matPrefix>{{ 'clear' }}</mat-icon>
-				{{ _getProblemDetailsErrorMessage() }}
+				{{ _getProblemDetailsErrorMessage }}
 			</span>
 			<span *ngIf="_internalServerErrorDetails" @upDownFadeIn>
 				<mat-icon class="two-factor-settings__req-not-met two-factor-settings__error-format-position" matPrefix>{{ 'clear' }}</mat-icon>
-				{{ _getInternalServerErrorMessage() }}
+				{{ _getInternalServerErrorMessage }}
 			</span>
 		</div>
 	</div>

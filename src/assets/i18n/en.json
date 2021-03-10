@@ -8,8 +8,8 @@
 			"general": {
 				"title": "General",
 				"personal-email": "Personal email",
-				"verified": "Verified",
-				"pending-verification": "Pending Verification"
+				"verified-tooltip": "Emailed verified",
+				"pending-verification-tooltip": "Pending verification. Click to resend email verification"
 			},
 			"security": {
 				"title": "Security",
@@ -160,8 +160,7 @@
 			"finish": "Finish",
 			"generate": "Generate new codes",
 			"cancel": "Cancel",
-			"change-theme": "Change Theme",
-			"resend": "Resend"
+			"change-theme": "Change Theme"
 		}
 	}
 }

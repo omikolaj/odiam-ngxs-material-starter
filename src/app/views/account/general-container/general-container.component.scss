@@ -1,4 +1,14 @@
 .account-general {
-	.account-general__personal-email {
+	.account-general__error {
+		padding-top: 8px;
+		display: block;
+		font-size: 15px;
+
+		.account-general__error-format-position {
+			width: 15px;
+			height: 15px;
+			vertical-align: text-top;
+			font-size: 15px;
+		}
 	}
 }
