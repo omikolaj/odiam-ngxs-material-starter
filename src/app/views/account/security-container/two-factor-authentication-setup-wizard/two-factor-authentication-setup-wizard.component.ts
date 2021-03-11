@@ -10,6 +10,7 @@ import { implementsOdmWebApiException } from 'app/core/utilities/implements-odm-
 import { CdkStepper } from '@angular/cdk/stepper';
 import { AccountFacadeService } from '../../account-facade.service';
 import { Observable } from 'rxjs';
+import { ErrorTranslateType } from 'app/shared/services/translate-errors.service';
 
 /**
  * Two factor authentication setup wizard component.
@@ -101,6 +102,8 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 	 * Event emitter when user finishes 2fa setup.
 	 */
 	@Output() finish2faSetupClicked = new EventEmitter<TwoFactorAuthenticationSetupResult>();
+
+	@Output() serverErrorHandledEmitted = new EventEmitter<boolean>();
 
 	/**
 	 * Setup wizard stepper.
@@ -206,12 +209,12 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 	 * Checks if the verification code control field is invalid.
 	 * @returns true if control field is invalid
 	 */
-	_ifControlFieldIsInvalid(): boolean {
+	_ifControlFieldIsInvalidOrServerErrorsEmitted(): boolean {
 		const control = this.verificationCodeForm.get('verificationCode');
 		if (control.invalid) {
 			return true;
 		} else {
-			return this._ifControlFieldIsInvalidatedByServer(control);
+			return this._ifServerErrorOccured(control);
 		}
 	}
 
@@ -220,7 +223,7 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 	 * @param control
 	 * @returns true if control field is invalidated by server
 	 */
-	private _ifControlFieldIsInvalidatedByServer(control: AbstractControl): boolean {
+	private _ifServerErrorOccured(control: AbstractControl): boolean {
 		if (this._problemDetails || this._internalServerErrorDetails) {
 			if (this._serverErrorHandled === false) {
 				// only go through if the form is enabled
@@ -254,11 +257,13 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 	 */
 	private _setServerErrorDetails(control: AbstractControl): void {
 		if (this._problemDetails) {
+			// add problem details server error onto verification code control.
 			const errorDescription = this._problemDetails.detail;
-			control.setErrors({ verificationCode: { errorDescription } });
+			control.setErrors({ serverValidationError: true, errorDescription });
 		} else if (this._internalServerErrorDetails) {
+			// add internal server error onto verification code control.
 			const errorDescription = this._getInternalServerErrorMessage();
-			control.setErrors({ internalServerError: { errorDescription } });
+			control.setErrors({ internalServerError: true, errorDescription });
 		}
 	}
 
@@ -276,7 +281,7 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 	 * Gets internal server error message.
 	 * @returns internal server error message
 	 */
-	_getInternalServerErrorMessage(): string {
+	private _getInternalServerErrorMessage(): string {
 		let errorDescription = '';
 		if (this._doesInternalServerErrorImplementOdmWebApiException) {
 			errorDescription = this._internalServerErrorDetails.detail;
@@ -292,6 +297,16 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 	 * @returns translated error message$
 	 */
 	_getTranslatedErrorMessage$(errors: ValidationErrors): Observable<string> {
-		return this.facade.translateError.translateErrorMessage$(errors);
+		this.serverErrorHandledEmitted.emit(true);
+		return this._getTranslatedErrorMessageForForm$(errors);
+	}
+
+	/**
+	 * Gets translated error message for standard form field.
+	 * @param errors
+	 * @returns translated error message for form$
+	 */
+	private _getTranslatedErrorMessageForForm$(errors: ValidationErrors): Observable<string> {
+		return this.facade.translateError.translateErrorMessageForType$(errors, ErrorTranslateType.Form);
 	}
 }

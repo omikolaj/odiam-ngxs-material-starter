@@ -6,7 +6,13 @@ export enum ValidationErrorType {
 	Required,
 	ServerValidationError,
 	ServerAuthenticationError,
+	InternalServerError,
 	InputValidationError,
 	InvalidEmailFormat,
-	NonUniqueEmail
+	NonUniqueEmail,
+	Number,
+	Uppercase,
+	Lowercase,
+	NonAlphanumeric,
+	MinLength
 }

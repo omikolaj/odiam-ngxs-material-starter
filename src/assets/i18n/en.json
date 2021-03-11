@@ -82,7 +82,15 @@
 					"invalid-email-format": "Invalid e-mail format.",
 					"input-error": "Input validation error.",
 					"field-required": "This field is required.",
-					"valid-email": "E-mail is not registered."
+					"valid-email": "E-mail is not registered.",
+					"min-length": "Input field must be at least {requiredLength} characters long.",
+					"password": {
+						"number": "Password must have at least one digit ('0'-'9').",
+						"uppercase": "Password must have at least one uppercase ('A'-'Z').",
+						"lowercase": "Password must have at least one lowercase ('a'-'z').",
+						"non-alphanumeric": "Password must contain one of {requiredNonAlphanumeric}",
+						"min-length": "Password must be at least {requiredLength} characters long."
+					}
 				}
 			}
 		},

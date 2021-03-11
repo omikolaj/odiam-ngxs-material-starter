@@ -37,16 +37,6 @@
 				</div>
 			</ng-container>
 		</ng-container>
-		<div class="two-factor-settings__error">
-			<span *ngIf="_problemDetails" @upDownFadeIn>
-				<mat-icon class="two-factor-settings__req-not-met two-factor-settings__error-format-position" matPrefix>{{ 'clear' }}</mat-icon>
-				{{ _getProblemDetailsErrorMessage }}
-			</span>
-			<span *ngIf="_internalServerErrorDetails" @upDownFadeIn>
-				<mat-icon class="two-factor-settings__req-not-met two-factor-settings__error-format-position" matPrefix>{{ 'clear' }}</mat-icon>
-				{{ _getInternalServerErrorMessage }}
-			</span>
-		</div>
 	</div>
 </ng-container>
 
@@ -58,9 +48,10 @@
 		[verificationCodeForm]="verificationCodeForm"
 		[twoFactorAuthenticationSetupResult]="authenticatorSetupResult"
 		[twoFactorAuthenticationSetup]="_authenticatorSetup"
-		[problemDetails]="_problemDetails"
-		[internalServerErrorDetails]="_internalServerErrorDetails"
+		[problemDetails]="_problemDetails$ | async"
+		[internalServerErrorDetails]="_internalServerErrorDetails$ | async"
 		[codeVerificationInProgress]="codeVerificationInProgress"
+		(serverErrorHandledEmitted)="_onServerErrorHandledEmitted($event)"
 	></odm-two-factor-authentication-setup-wizard>
 </ng-template>
 

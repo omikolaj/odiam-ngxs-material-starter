@@ -95,6 +95,10 @@ export class SecurityContainerComponent implements OnInit {
 	 */
 	_twoFactorAuthToggleLoading$ = this._twoFactorAuthToggleLoadingSub.asObservable();
 
+	_serverError$: Observable<ProblemDetails | InternalServerErrorDetails>;
+
+	_serverErrorHandled = false;
+
 	/**
 	 * Rxjs subscriptions for this component.
 	 */
@@ -108,8 +112,8 @@ export class SecurityContainerComponent implements OnInit {
 		this._accountSecurityDetails$ = facade.accountSecurityDetails$;
 		this._authenticatorSetup$ = facade.twoFactorAuthenticationSetup$;
 		this._authenticatorSetupResult$ = facade.twoFactorAuthenticationSetupResult$;
-		this._problemDetails$ = facade.problemDetails$;
-		this._internalServerErrorDetails$ = facade.internalServerErrorDetails$;
+		this._problemDetails$ = facade.problemDetails$.pipe(tap(() => (this._serverErrorHandled = false)));
+		this._internalServerErrorDetails$ = facade.internalServerErrorDetails$.pipe(tap(() => (this._serverErrorHandled = false)));
 	}
 
 	/**
@@ -149,6 +153,8 @@ export class SecurityContainerComponent implements OnInit {
 				)
 				.subscribe()
 		);
+
+		this._serverError$ = merge(this._problemDetails$, this._internalServerErrorDetails$).pipe(tap((winner) => console.log(winner)));
 
 		this._initVerificationCodeForm();
 	}
@@ -211,25 +217,24 @@ export class SecurityContainerComponent implements OnInit {
 	}
 
 	/**
-	 * Gets problem details error message.
-	 * @returns problem details error message
+	 * Event handler that is set when server error has been already displayed to the user in two-factor-authentication-setup-wizard.
+	 * @param hanlded
 	 */
-	_getProblemDetailsErrorMessage(problemDetails: ProblemDetails): string {
-		return problemDetails.detail;
+	_onServerErrorEmitted(hanlded: boolean): void {
+		this._serverErrorHandled = hanlded;
 	}
 
 	/**
-	 * Gets internal server error message.
-	 * @returns internal server error message
+	 * Gets server error message.
+	 * @param serverError
+	 * @returns server error message
 	 */
-	_getInternalServerErrorMessage(internalServerErrorDetails: InternalServerErrorDetails): string {
-		let errorDescription = '';
-		if (this._doesInternalServerErrorImplementOdmWebApiException(internalServerErrorDetails)) {
-			errorDescription = internalServerErrorDetails.detail;
+	_getServerErrorMessage(serverError: ProblemDetails | InternalServerErrorDetails): string {
+		if ((serverError as InternalServerErrorDetails).message) {
+			return (serverError as InternalServerErrorDetails).message;
 		} else {
-			errorDescription = internalServerErrorDetails.message;
+			return serverError.detail;
 		}
-		return errorDescription;
 	}
 
 	/**
