@@ -10,7 +10,6 @@ import { implementsOdmWebApiException } from 'app/core/utilities/implements-odm-
 import { CdkStepper } from '@angular/cdk/stepper';
 import { AccountFacadeService } from '../../account-facade.service';
 import { Observable } from 'rxjs';
-import { ErrorTranslateType } from 'app/shared/services/translate-errors.service';
 
 /**
  * Two factor authentication setup wizard component.
@@ -278,7 +277,7 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 	}
 
 	/**
-	 * Gets internal server error message.
+	 * Gets internal server error message. Used to get errors that are then set
 	 * @returns internal server error message
 	 */
 	private _getInternalServerErrorMessage(): string {
@@ -298,15 +297,6 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 	 */
 	_getTranslatedErrorMessage$(errors: ValidationErrors): Observable<string> {
 		this.serverErrorHandledEmitted.emit(true);
-		return this._getTranslatedErrorMessageForForm$(errors);
-	}
-
-	/**
-	 * Gets translated error message for standard form field.
-	 * @param errors
-	 * @returns translated error message for form$
-	 */
-	private _getTranslatedErrorMessageForForm$(errors: ValidationErrors): Observable<string> {
-		return this.facade.translateError.translateErrorMessageForType$(errors, ErrorTranslateType.Form);
+		return this.facade.translateValidationErrorService.translateValidationErrorMessage$(errors);
 	}
 }

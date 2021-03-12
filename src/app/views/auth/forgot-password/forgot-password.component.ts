@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy, Input, EventEmitter, Output } from 
 import { FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { LogService } from 'app/core/logger/log.service';
-import { TranslateErrorsService } from 'app/shared/services/translate-errors.service';
+import { TranslateValidationErrorsService } from 'app/shared/services/translate-validation-errors.service';
 import { leftRightFadeInAnimation } from 'app/core/core.module';
 
 /**
@@ -46,7 +46,7 @@ export class ForgotPasswordComponent {
 	 * @param fb
 	 * @param facade
 	 */
-	constructor(private log: LogService, private translateError: TranslateErrorsService) {}
+	constructor(private log: LogService, private translateError: TranslateValidationErrorsService) {}
 
 	/**
 	 * Event handler for when the form is submitted.

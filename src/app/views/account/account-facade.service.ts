@@ -20,7 +20,7 @@ import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { LogService } from 'app/core/logger/log.service';
 import { FormBuilder } from '@angular/forms';
-import { TranslateErrorsService } from 'app/shared/services/translate-errors.service';
+import { TranslateValidationErrorsService } from 'app/shared/services/translate-validation-errors.service';
 import { AccountGeneralState } from './general-container/general-container.store.state';
 import { AccountGeneralDetails } from 'app/core/models/account-general-details.model';
 
@@ -70,7 +70,7 @@ export class AccountFacadeService {
 		private actions$: Actions,
 		public log: LogService,
 		public fb: FormBuilder,
-		public translateError: TranslateErrorsService
+		public translateValidationErrorService: TranslateValidationErrorsService
 	) {}
 
 	/**

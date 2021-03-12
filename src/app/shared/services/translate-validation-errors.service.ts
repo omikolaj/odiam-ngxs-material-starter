@@ -6,19 +6,13 @@ import { TranslateError } from 'app/core/models/translate-error.model';
 import { ValidationErrorType } from 'app/core/models/validation-error.enum';
 import { map } from 'rxjs/operators';
 
-export enum ErrorTranslateType {
-	Password,
-	Server,
-	Form
-}
-
 /**
  * Translate errors service.
  */
 @Injectable({
 	providedIn: 'root'
 })
-export class TranslateErrorsService {
+export class TranslateValidationErrorsService {
 	/**
 	 * Creates an instance of translate errors service.
 	 * @param translateService
@@ -39,106 +33,169 @@ export class TranslateErrorsService {
 			: of(translateError.extras as string);
 	}
 
-	translateErrorMessageForType$(errors: ValidationErrors, type: ErrorTranslateType): Observable<string> {
-		const translateError = this._mapError(errors, type);
+	/**
+	 * Translates email error messages.
+	 * @param errors
+	 * @returns translated email error message
+	 */
+	translateValidationErrorMessage$(errors: ValidationErrors): Observable<string> {
+		const translateError = this._mapErrorToTranslation(errors);
 		return translateError.translationKey !== undefined
 			? this.translateService
 					.get(translateError.translationKey)
 					.pipe(map((translated: string) => this._buildTranslatedString(translateError, translated)))
-			: of(translateError.extras as string);
+			: of(translateError.extras as string).pipe(map((error: string) => this._buildTranslatedString(translateError, error)));
 	}
 
+	// /**
+	//  * Translates error message based on ErrorTranslateType.
+	//  * @param type
+	//  * @param errors
+	//  * @returns error message for$
+	//  */
+	// translateErrorMessageFor$(type: ErrorTranslateType, errors: ValidationErrors): Observable<string> {
+	// 	const translateError = this._mapError(errors, type);
+	// 	return translateError.translationKey !== undefined
+	// 		? this.translateService
+	// 				.get(translateError.translationKey)
+	// 				.pipe(map((translated: string) => this._buildTranslatedString(translateError, translated)))
+	// 		: of(translateError.extras as string);
+	// }
+
 	/**
-	 * Maps error to translation.
+	 * Maps error to translation. This is only used when the error is of type ValidationErrors.
+	 * When a server occurs and is on an AbstractControl, this method is executed.
 	 * @param errors
 	 * @param type
 	 * @returns error
 	 */
-	private _mapError(errors: ValidationErrors, type: ErrorTranslateType): TranslateError {
-		switch (type) {
-			case ErrorTranslateType.Password:
-				return this._mapPasswordErrorToTranslation(errors);
-			case ErrorTranslateType.Server:
-				break;
+	// private _mapError(errors: ValidationErrors, type: ErrorTranslateType): TranslateError {
+	// 	let translateError: TranslateError;
+	// 	switch (type) {
+	// 		case ErrorTranslateType.Password:
+	// 			translateError = this._mapPasswordErrorToTranslateError(errors);
+	// 			break;
+	// 		case ErrorTranslateType.Server:
+	// 			translateError = this._mapServerErrorToTranslateError(errors);
+	// 			break;
+	// 		case ErrorTranslateType.Form:
+	// 			translateError = this._mapFormFieldErrorToTranslateError(errors);
+	// 			break;
+	// 	}
 
-			case ErrorTranslateType.Form:
-				return this._mapFormFieldErrorToTranslation(errors);
-				break;
-		}
-	}
+	// 	return translateError ? translateError : this._setTranslateErrorDefaultValue();
+	// }
 
 	/**
-	 * Maps password error to translation key.
+	 * Sets translate error default value.
+	 * @returns translate error default value
+	 */
+	// private _setTranslateErrorDefaultValue(): TranslateError {
+	// 	return {
+	// 		translationKey: 'odm.auth.form.validations.input-error',
+	// 		validationErrorType: ValidationErrorType.InputValidationError
+	// 	};
+	// }
+
+	/**
+	 * Maps server error to translate error.
+	 * @param errors
+	 * @returns server error to translate error
+	 */
+	// private _mapServerErrorToTranslateError(errors: ValidationErrors): TranslateError {
+	// 	if (errors['serverValidationError']) {
+	// 		// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+	// 		// these could be 40X errors explicitly returned by the server
+	// 		return {
+	// 			validationErrorType: ValidationErrorType.ServerValidationError,
+	// 			extras: errors['errorDescription'] as string
+	// 		};
+	// 	} else if (errors['serverAuthenticationError']) {
+	// 		// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+	// 		return {
+	// 			validationErrorType: ValidationErrorType.ServerAuthenticationError,
+	// 			extras: errors['errorDescription'] as string
+	// 		};
+	// 	} else if (errors['internalServerError']) {
+	// 		return {
+	// 			validationErrorType: ValidationErrorType.InternalServerError,
+	// 			extras: errors['errorDescription'] as string
+	// 		};
+	// 	}
+	// }
+
+	/**
+	 * Maps password error to translate error.
 	 * @param errors
 	 * @returns password error to translation
 	 */
-	private _mapPasswordErrorToTranslation(errors: ValidationErrors): TranslateError {
-		if (errors['number']) {
-			return {
-				translationKey: 'odm.auth.form.validations.password.number',
-				validationErrorType: ValidationErrorType.Number
-			};
-		} else if (errors['uppercase']) {
-			return {
-				translationKey: 'odm.auth.form.validations.password.uppercase',
-				validationErrorType: ValidationErrorType.Uppercase
-			};
-		} else if (errors['lowercase']) {
-			return {
-				translationKey: 'odm.auth.form.validations.password.lowercase',
-				validationErrorType: ValidationErrorType.Lowercase
-			};
-		} else if (errors['nonAlphanumeric']) {
-			// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-			return {
-				translationKey: 'odm.auth.form.validations.password.non-alphanumeric',
-				validationErrorType: ValidationErrorType.NonAlphanumeric,
-				extras: errors['requiredNonAlphanumeric'] as string
-			};
-		} else if (errors['minlength']) {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-			const error = errors['minlength'] as { requiredLength: number };
-			return {
-				translationKey: 'odm.auth.form.validations.password.min-length',
-				validationErrorType: ValidationErrorType.MinLength,
-				extras: error.requiredLength
-			};
-		}
-	}
+	// private _mapPasswordErrorToTranslateError(errors: ValidationErrors): TranslateError {
+	// 	if (errors['number']) {
+	// 		return {
+	// 			translationKey: 'odm.auth.form.validations.password.number',
+	// 			validationErrorType: ValidationErrorType.Number
+	// 		};
+	// 	} else if (errors['uppercase']) {
+	// 		return {
+	// 			translationKey: 'odm.auth.form.validations.password.uppercase',
+	// 			validationErrorType: ValidationErrorType.Uppercase
+	// 		};
+	// 	} else if (errors['lowercase']) {
+	// 		return {
+	// 			translationKey: 'odm.auth.form.validations.password.lowercase',
+	// 			validationErrorType: ValidationErrorType.Lowercase
+	// 		};
+	// 	} else if (errors['nonAlphanumeric']) {
+	// 		// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+	// 		return {
+	// 			translationKey: 'odm.auth.form.validations.password.non-alphanumeric',
+	// 			validationErrorType: ValidationErrorType.NonAlphanumeric,
+	// 			extras: errors['requiredNonAlphanumeric'] as string
+	// 		};
+	// 	} else if (errors['minlength']) {
+	// 		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+	// 		const error = errors['minlength'] as { requiredLength: number };
+	// 		return {
+	// 			translationKey: 'odm.auth.form.validations.password.min-length',
+	// 			validationErrorType: ValidationErrorType.MinLength,
+	// 			extras: error.requiredLength
+	// 		};
+	// 	}
+	// }
 
-	private _mapFormFieldErrorToTranslation(errors: ValidationErrors): TranslateError {
-		if (errors['required']) {
-			return {
-				translationKey: 'odm.auth.form.validations.field-required',
-				validationErrorType: ValidationErrorType.Required
-			};
-		} else if (errors['email']) {
-			return {
-				translationKey: 'odm.auth.form.validations.invalid-email-format',
-				validationErrorType: ValidationErrorType.InvalidEmailFormat
-			};
-		} else if (errors['nonUnique']) {
-			// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-			return {
-				translationKey: 'odm.auth.form.validations.non-unique-email',
-				extras: errors['nonUnique'] as string,
-				validationErrorType: ValidationErrorType.NonUniqueEmail
-			};
-		} else if (errors['minlength']) {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-			const error = errors['minlength'] as { requiredLength: number };
-			return {
-				translationKey: 'odm.auth.form.validations.min-length',
-				validationErrorType: ValidationErrorType.MinLength,
-				extras: error.requiredLength
-			};
-		} else {
-			return {
-				translationKey: 'odm.auth.form.validations.input-error',
-				validationErrorType: ValidationErrorType.InputValidationError
-			};
-		}
-	}
+	/**
+	 * Maps form field error to translate error.
+	 * @param errors
+	 * @returns form field error to translate error
+	 */
+	// private _mapFormFieldErrorToTranslateError(errors: ValidationErrors): TranslateError {
+	// 	if (errors['required']) {
+	// 		return {
+	// 			translationKey: 'odm.auth.form.validations.field-required',
+	// 			validationErrorType: ValidationErrorType.Required
+	// 		};
+	// 	} else if (errors['email']) {
+	// 		return {
+	// 			translationKey: 'odm.auth.form.validations.invalid-email-format',
+	// 			validationErrorType: ValidationErrorType.InvalidEmailFormat
+	// 		};
+	// 	} else if (errors['nonUnique']) {
+	// 		// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+	// 		return {
+	// 			translationKey: 'odm.auth.form.validations.non-unique-email',
+	// 			extras: errors['nonUnique'] as string,
+	// 			validationErrorType: ValidationErrorType.NonUniqueEmail
+	// 		};
+	// 	} else if (errors['minlength']) {
+	// 		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+	// 		const error = errors['minlength'] as { requiredLength: number };
+	// 		return {
+	// 			translationKey: 'odm.auth.form.validations.min-length',
+	// 			validationErrorType: ValidationErrorType.MinLength,
+	// 			extras: error.requiredLength
+	// 		};
+	// 	}
+	// }
 
 	/**
 	 * Maps email error to translation.
@@ -167,6 +224,7 @@ export class TranslateErrorsService {
 			// 	// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 			const error = errors['minlength'] as { requiredLength: number };
 			return {
+				translationKey: 'odm.auth.form.validations.min-length',
 				extras: error['requiredLength'],
 				validationErrorType: ValidationErrorType.MinLength
 			};

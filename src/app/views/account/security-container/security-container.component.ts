@@ -11,7 +11,7 @@ import { FormGroup } from '@angular/forms';
 import { OdmValidators } from 'app/core/form-validators/odm-validators';
 import { TwoFactorAuthenticationVerificationCode } from './two-factor-authentication/models/two-factor-authentication-verification-code.model';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
-import { implementsOdmWebApiException } from 'app/core/utilities/implements-odm-web-api-exception';
+
 import { fadeInAnimation, upDownFadeInAnimation } from 'app/core/core.module';
 
 /**
@@ -235,13 +235,6 @@ export class SecurityContainerComponent implements OnInit {
 		} else {
 			return serverError.detail;
 		}
-	}
-
-	/**
-	 * Checks if internal server error implements OdmWebAPiException.
-	 */
-	private _doesInternalServerErrorImplementOdmWebApiException(internalServerErrorDetails: InternalServerErrorDetails): boolean {
-		return implementsOdmWebApiException(internalServerErrorDetails);
 	}
 
 	/**

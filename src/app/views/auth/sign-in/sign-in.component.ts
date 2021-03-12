@@ -7,7 +7,7 @@ import { BreakpointState } from '@angular/cdk/layout';
 import { implementsOdmWebApiException } from 'app/core/utilities/implements-odm-web-api-exception';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { LogService } from 'app/core/logger/log.service';
-import { TranslateErrorsService } from 'app/shared/services/translate-errors.service';
+import { TranslateValidationErrorsService } from 'app/shared/services/translate-validation-errors.service';
 import { Observable } from 'rxjs';
 import { AuthControlType } from 'app/shared/auth-abstract-control-type';
 import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
@@ -178,7 +178,7 @@ export class SignInComponent implements OnInit {
 	 * @param log
 	 * @param cd
 	 */
-	constructor(private translateError: TranslateErrorsService, private log: LogService, private cd: ChangeDetectorRef) {}
+	constructor(private translateError: TranslateValidationErrorsService, private log: LogService, private cd: ChangeDetectorRef) {}
 
 	/**
 	 * NgOnInit life cycle.

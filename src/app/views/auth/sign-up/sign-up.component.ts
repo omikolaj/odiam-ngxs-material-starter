@@ -256,7 +256,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
 	 * @returns translated error message$
 	 */
 	_getTranslatedErrorMessage$(errors: ValidationErrors): Observable<string> {
-		return this.facade.translateError.translateErrorMessage$(errors);
+		return this.facade.translateValidationErrorService.translateValidationErrorMessage$(errors);
 	}
 
 	/**

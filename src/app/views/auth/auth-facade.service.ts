@@ -16,7 +16,7 @@ import { AuthState } from 'app/core/auth/auth.store.state';
 import { SocialAuthService, SocialUser, GoogleLoginProvider, FacebookLoginProvider } from 'angularx-social-login';
 import { UsersAsyncService } from 'app/core/services/users-async.service';
 import { PasswordReset } from 'app/core/auth/models/password-reset.model';
-import { TranslateErrorsService } from 'app/shared/services/translate-errors.service';
+import { TranslateValidationErrorsService } from 'app/shared/services/translate-validation-errors.service';
 import { LogService } from 'app/core/logger/log.service';
 import { FormBuilder } from '@angular/forms';
 import { ActiveAuthType } from 'app/core/auth/models/active-auth-type.model';
@@ -67,7 +67,7 @@ export class AuthFacadeService {
 	 * @param router
 	 */
 	constructor(
-		public translateError: TranslateErrorsService,
+		public translateValidationErrorService: TranslateValidationErrorsService,
 		public log: LogService,
 		public fb: FormBuilder,
 		public router: Router,
