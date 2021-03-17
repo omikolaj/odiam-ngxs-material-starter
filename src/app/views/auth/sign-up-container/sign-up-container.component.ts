@@ -136,7 +136,7 @@ export class SignUpContainerComponent implements OnInit {
 					],
 					updateOn: 'change'
 				}),
-				confirmPassword: this.facade.fb.control('')
+				confirmPassword: this.facade.fb.control('', OdmValidators.required)
 			},
 			{
 				validators: OdmValidators.requireConfirmPassword,

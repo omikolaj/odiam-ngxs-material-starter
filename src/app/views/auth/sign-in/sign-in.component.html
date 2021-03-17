@@ -14,7 +14,7 @@
 					<input matInput formControlName="email" type="email" autocomplete="email" required />
 					<mat-icon matSuffix>email</mat-icon>
 					<mat-error *ngIf="_ifControlFieldIsInvalid(signinForm?.get('email'), 'email')">{{
-						_getTranslatedErrorMessage$(signinForm?.get('email').errors) | async
+						_getErrorMessage$(signinForm?.get('email')) | async
 					}}</mat-error>
 				</mat-form-field>
 			</div>
@@ -24,7 +24,7 @@
 					<mat-label>{{ 'odm.auth.form.label.password' | translate }}</mat-label>
 					<input matInput formControlName="password" [type]="_hide ? 'password' : 'text'" type="password" autocomplete="current-password" required />
 					<mat-icon class="auth__view-password" matSuffix (click)="_hide = !_hide">{{ _hide ? 'visibility_off' : 'visibility' }}</mat-icon>
-					<mat-error *ngIf="signinForm?.get('password').invalid">{{ _getTranslatedRequiredErrorMessage$() | async }}</mat-error>
+					<mat-error *ngIf="signinForm?.get('password').invalid">{{ _getErrorMessage$(signinForm?.get('password')) | async }}</mat-error>
 				</mat-form-field>
 			</div>
 
