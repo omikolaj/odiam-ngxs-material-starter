@@ -1,15 +1,16 @@
-import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, ChangeDetectorRef, ViewChild } from '@angular/core';
-import { FormGroup, ValidationErrors, AbstractControl } from '@angular/forms';
+import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, ChangeDetectorRef, ViewChild, OnDestroy } from '@angular/core';
+import { FormGroup, AbstractControl } from '@angular/forms';
 import { TwoFactorAuthenticationSetupResult } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-setup-result.model';
 import { TwoFactorAuthenticationVerificationCode } from '../two-factor-authentication/models/two-factor-authentication-verification-code.model';
 import { TwoFactorAuthenticationSetup } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-setup.model';
 import { ODM_SPINNER_DIAMETER, ODM_SPINNER_STROKE_WIDTH } from 'app/shared/global-settings/mat-spinner-settings';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
-import { implementsOdmWebApiException } from 'app/core/utilities/implements-odm-web-api-exception';
+
 import { CdkStepper } from '@angular/cdk/stepper';
 import { AccountFacadeService } from '../../account-facade.service';
-import { Observable } from 'rxjs';
+
+import { AuthBase } from 'app/views/auth/auth-base';
 
 /**
  * Two factor authentication setup wizard component.
@@ -20,26 +21,26 @@ import { Observable } from 'rxjs';
 	styleUrls: ['./two-factor-authentication-setup-wizard.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TwoFactorAuthenticationSetupWizardComponent {
+export class TwoFactorAuthenticationSetupWizardComponent extends AuthBase implements OnDestroy {
 	/**
 	 * Emitted when server responds with 40X error.
 	 */
 	@Input() set problemDetails(value: ProblemDetails) {
-		this._serverErrorHandled = false;
+		this.facade.log.debug('Problem Ddetails emitted.', this);
+		this._problemDetailsServerErrorHandled = false;
+		this._internalServerErrorDetails = null;
 		this._problemDetails = value;
 	}
-
-	private _problemDetails: ProblemDetails;
 
 	/**
 	 * Emitted when server responds with 50X error.
 	 */
 	@Input() set internalServerErrorDetails(value: InternalServerErrorDetails) {
-		this._serverErrorHandled = false;
+		this.facade.log.debug('Internal server error emitted.', this);
+		this._internalServerErrorDetailsHandled = false;
+		this._problemDetails = null;
 		this._internalServerErrorDetails = value;
 	}
-
-	_internalServerErrorDetails: InternalServerErrorDetails;
 
 	/**
 	 * Whether there is an outgoing request to verify two factor authentication setup verification code.
@@ -102,6 +103,9 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 	 */
 	@Output() finish2faSetupClicked = new EventEmitter<TwoFactorAuthenticationSetupResult>();
 
+	/**
+	 * Event emitter whether server side error has been displayed by this component.
+	 */
 	@Output() serverErrorHandledEmitted = new EventEmitter<boolean>();
 
 	/**
@@ -165,18 +169,29 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 	_verificationCodeInputLength = 6;
 
 	/**
-	 * Checks if internal server error implements OdmWebApiException.
+	 * Whether the verification code control is invalid
+	 * Accounts for server side errors as well.
 	 */
-	private get _doesInternalServerErrorImplementOdmWebApiException(): boolean {
-		return implementsOdmWebApiException(this._internalServerErrorDetails);
-	}
+	private _verificationCodeControlInvalid: boolean;
 
 	/**
 	 * Creates an instance of two factor authentication setup wizard component.
 	 * @param facade
 	 * @param cd
 	 */
-	constructor(private facade: AccountFacadeService, private cd: ChangeDetectorRef) {}
+	constructor(private facade: AccountFacadeService, cd: ChangeDetectorRef) {
+		super(facade.translateValidationErrorService, facade.log, cd);
+	}
+
+	/**
+	 * ngOnDestroy
+	 */
+	ngOnDestroy(): void {
+		// if verification code control is invalid this component will display the error message to the user.
+		if (this._verificationCodeControlInvalid) {
+			this.serverErrorHandledEmitted.emit(true);
+		}
+	}
 
 	/**
 	 * Event handler when user submits two factor authentication setup verification code.
@@ -205,98 +220,16 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 	}
 
 	/**
-	 * Checks if the verification code control field is invalid.
-	 * @returns true if control field is invalid
-	 */
-	_ifControlFieldIsInvalidOrServerErrorsEmitted(): boolean {
-		const control = this.verificationCodeForm.get('verificationCode');
-		if (control.invalid) {
-			return true;
-		} else {
-			return this._ifServerErrorOccured(control);
-		}
-	}
-
-	/**
-	 * Checks if there were any problem details or internal server errors emitted.
+	 * Whether the control is invalid. If true emits server error handled event.
 	 * @param control
-	 * @returns true if control field is invalidated by server
+	 * @returns true if control is invalid
 	 */
-	private _ifServerErrorOccured(control: AbstractControl): boolean {
-		if (this._problemDetails || this._internalServerErrorDetails) {
-			if (this._serverErrorHandled === false) {
-				// only go through if the form is enabled
-				if (this.verificationCodeForm.enabled) {
-					return this._setAndHandleServerError(control);
-				}
-			}
+	_ifControlIsInvalid(control: AbstractControl): boolean {
+		this.facade.log.trace('_ifControlIsInvalid fired.', this);
+		const invalid = this._ifControlFieldIsInvalid(control);
+		if (invalid) {
+			this.serverErrorHandledEmitted.emit(invalid);
 		}
-	}
-
-	/**
-	 * Sets and handles server error for the given control.
-	 * @param control
-	 * @returns true to indicate the control is invalid
-	 */
-	private _setAndHandleServerError(control: AbstractControl): boolean {
-		// adds error message to the control
-		this._setServerErrorDetails(control);
-		this._abstractControlServerErrorHandler(control);
-
-		// necessary to display error message if verification code is invalid
-		this.cd.detectChanges();
-
-		// return true to indicate the control is invalid with server validation errors
-		return true;
-	}
-
-	/**
-	 * Sets server error on the control.
-	 * @param control
-	 */
-	private _setServerErrorDetails(control: AbstractControl): void {
-		if (this._problemDetails) {
-			// add problem details server error onto verification code control.
-			const errorDescription = this._problemDetails.detail;
-			control.setErrors({ serverValidationError: true, errorDescription });
-		} else if (this._internalServerErrorDetails) {
-			// add internal server error onto verification code control.
-			const errorDescription = this._getInternalServerErrorMessage();
-			control.setErrors({ internalServerError: true, errorDescription });
-		}
-	}
-
-	/**
-	 * Servers error validation handler. Sets control as invalid.
-	 * @param control
-	 */
-	private _abstractControlServerErrorHandler(control: AbstractControl): void {
-		control.markAsPristine();
-		control.markAsUntouched();
-		this._serverErrorHandled = true;
-	}
-
-	/**
-	 * Gets internal server error message. Used to get errors that are then set
-	 * @returns internal server error message
-	 */
-	private _getInternalServerErrorMessage(): string {
-		let errorDescription = '';
-		if (this._doesInternalServerErrorImplementOdmWebApiException) {
-			errorDescription = this._internalServerErrorDetails.detail;
-		} else {
-			errorDescription = this._internalServerErrorDetails.message;
-		}
-		return errorDescription;
-	}
-
-	/**
-	 * Gets translated error message.
-	 * @param errors
-	 * @returns translated error message$
-	 */
-	_getTranslatedErrorMessage$(errors: ValidationErrors): Observable<string> {
-		this.serverErrorHandledEmitted.emit(true);
-		return this.facade.translateValidationErrorService.translateValidationErrorMessage$(errors);
+		return invalid;
 	}
 }

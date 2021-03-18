@@ -1,6 +1,6 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { AccountFacadeService } from '../account-facade.service';
-import { Observable, Subscription, merge, BehaviorSubject } from 'rxjs';
+import { Observable, Subscription, merge, BehaviorSubject, race } from 'rxjs';
 import { AccountSecurityDetails } from 'app/core/models/account-security-details.model';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
@@ -12,7 +12,7 @@ import { OdmValidators } from 'app/core/form-validators/odm-validators';
 import { TwoFactorAuthenticationVerificationCode } from './two-factor-authentication/models/two-factor-authentication-verification-code.model';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 
-import { fadeInAnimation, upDownFadeInAnimation } from 'app/core/core.module';
+import { upDownFadeInAnimation } from 'app/core/core.module';
 
 /**
  * Component container that houses user security functionality.
@@ -21,8 +21,8 @@ import { fadeInAnimation, upDownFadeInAnimation } from 'app/core/core.module';
 	selector: 'odm-security-container',
 	templateUrl: './security-container.component.html',
 	styleUrls: ['./security-container.component.scss'],
-	animations: [fadeInAnimation, upDownFadeInAnimation],
-	changeDetection: ChangeDetectionStrategy.OnPush
+	animations: [upDownFadeInAnimation],
+	changeDetection: ChangeDetectionStrategy.Default
 })
 export class SecurityContainerComponent implements OnInit {
 	/**
@@ -76,6 +76,11 @@ export class SecurityContainerComponent implements OnInit {
 	_showTwoFactorAuthSetupWizard: boolean;
 
 	/**
+	 * Whether or not server error was handled and displayed by two-factor-authentication-setup component.
+	 */
+	_serverErrorHandled = false;
+
+	/**
 	 * Loading subject. Required for angular OnPush change detection to be triggered.
 	 */
 	private _loadingSub = new BehaviorSubject<boolean>(false);
@@ -95,9 +100,10 @@ export class SecurityContainerComponent implements OnInit {
 	 */
 	_twoFactorAuthToggleLoading$ = this._twoFactorAuthToggleLoadingSub.asObservable();
 
+	/**
+	 * Emitted when server responds with 40X or 50X error.
+	 */
 	_serverError$: Observable<ProblemDetails | InternalServerErrorDetails>;
-
-	_serverErrorHandled = false;
 
 	/**
 	 * Rxjs subscriptions for this component.
@@ -108,7 +114,7 @@ export class SecurityContainerComponent implements OnInit {
 	 * Creates an instance of security container component.
 	 * @param facade
 	 */
-	constructor(private facade: AccountFacadeService) {
+	constructor(private facade: AccountFacadeService, private cd: ChangeDetectorRef) {
 		this._accountSecurityDetails$ = facade.accountSecurityDetails$;
 		this._authenticatorSetup$ = facade.twoFactorAuthenticationSetup$;
 		this._authenticatorSetupResult$ = facade.twoFactorAuthenticationSetupResult$;
@@ -134,7 +140,9 @@ export class SecurityContainerComponent implements OnInit {
 				this.facade.onCompletedUpdateRecoveryCodesAction$,
 				// skip first value that emits, which is the default value.
 				this._authenticatorSetup$.pipe(skip(1)),
+				// if problem details is emitted make sure to stop loading state.
 				this._problemDetails$,
+				// if internal server error details is emitted make sure to stop loading state.
 				this._internalServerErrorDetails$
 			)
 				.pipe(
@@ -154,7 +162,7 @@ export class SecurityContainerComponent implements OnInit {
 				.subscribe()
 		);
 
-		this._serverError$ = merge(this._problemDetails$, this._internalServerErrorDetails$).pipe(tap((winner) => console.log(winner)));
+		this._serverError$ = race(this._problemDetails$, this._internalServerErrorDetails$);
 
 		this._initVerificationCodeForm();
 	}
@@ -220,21 +228,9 @@ export class SecurityContainerComponent implements OnInit {
 	 * Event handler that is set when server error has been already displayed to the user in two-factor-authentication-setup-wizard.
 	 * @param hanlded
 	 */
-	_onServerErrorEmitted(hanlded: boolean): void {
-		this._serverErrorHandled = hanlded;
-	}
-
-	/**
-	 * Gets server error message.
-	 * @param serverError
-	 * @returns server error message
-	 */
-	_getServerErrorMessage(serverError: ProblemDetails | InternalServerErrorDetails): string {
-		if ((serverError as InternalServerErrorDetails).message) {
-			return (serverError as InternalServerErrorDetails).message;
-		} else {
-			return serverError.detail;
-		}
+	_onServerErrorHandledEmitted(handled: boolean): void {
+		this.facade.log.trace('_onServerErrorHandledEmitted fired.', this, handled);
+		this._serverErrorHandled = true;
 	}
 
 	/**

@@ -15,7 +15,7 @@
 			(finish2faSetupClicked)="_finish2faSetupClicked($event)"
 			(generateNew2faRecoveryCodesClicked)="_generateNew2faRecoveryCodesClicked()"
 			(twoFactorAuthToggleChanged)="_onTwoFactorAuthToggle($event)"
-			(serverErrorHandledEmitted)="_onServerErrorEmitted($event)"
+			(serverErrorHandledEmitted)="_onServerErrorHandledEmitted($event)"
 		></odm-two-factor-authentication>
 		<div>
 			<h3>Change password</h3>
@@ -24,15 +24,10 @@
 			</mat-form-field>
 		</div>
 		<mat-divider></mat-divider>
-		<div class="account-security__error">
-			<ng-container *ngIf="_serverError$ | async as serverError">
-				<ng-container *ngIf="_serverErrorHandled === false">
-					<span @upDownFadeIn>
-						<mat-icon class="account-security__req-not-met account-security__error-format-position" matPrefix>{{ 'clear' }}</mat-icon>
-						{{ _getServerErrorMessage(serverError) }}
-					</span>
-				</ng-container>
+		<ng-container *ngIf="_serverError$ | async as serverError">
+			<ng-container *ngIf="_serverErrorHandled === false">
+				<odm-server-side-error [serverError]="serverError"></odm-server-side-error>
 			</ng-container>
-		</div>
+		</ng-container>
 	</div>
 </ng-container>

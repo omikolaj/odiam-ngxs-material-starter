@@ -51,12 +51,13 @@ import { OdmGhostBlockComponent } from './components/odm-ghost-block/odm-ghost-b
 import { OdmGhostAnimationService } from './services/odm-ghost-animation.service';
 import { OdmSpinnerComponent } from './components/odm-spinner/odm-spinner.component';
 import { MatVerticalStepperScrollerDirective } from './directives/mat-vertical-stepper-scroller.directive';
+import { ServerSideErrorComponent } from './components/server-side-error/server-side-error.component';
 
 /**
  * Shared module.
  */
 @NgModule({
-	declarations: [OdmGhostBlockComponent, OdmSpinnerComponent, MatVerticalStepperScrollerDirective],
+	declarations: [OdmGhostBlockComponent, OdmSpinnerComponent, MatVerticalStepperScrollerDirective, ServerSideErrorComponent],
 	providers: [OdmGhostAnimationService, { provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher }],
 	imports: [
 		CommonModule,
@@ -121,6 +122,7 @@ import { MatVerticalStepperScrollerDirective } from './directives/mat-vertical-s
 		// Components
 		OdmGhostBlockComponent,
 		OdmSpinnerComponent,
+		ServerSideErrorComponent,
 
 		// Directives
 		MatVerticalStepperScrollerDirective

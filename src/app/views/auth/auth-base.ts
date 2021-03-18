@@ -94,7 +94,7 @@ export class AuthBase {
 	 * @param controlType
 	 * @returns true if control field is invalid
 	 */
-	_ifControlFieldIsInvalid(control: AbstractControl, controlType: AuthControlType): boolean {
+	_ifControlFieldIsInvalid(control: AbstractControl, controlType?: AuthControlType): boolean {
 		if (control.invalid) {
 			return true;
 		} else {
@@ -122,7 +122,7 @@ export class AuthBase {
 	 * @param controlType
 	 * @returns true if server error occured
 	 */
-	_ifServerErrorOccured(control: AbstractControl, controlType: AuthControlType): boolean {
+	_ifServerErrorOccured(control: AbstractControl, controlType?: AuthControlType): boolean {
 		// if internal server error occured set control as invalid.
 		if (this._internalServerErrorOccured) {
 			return this._handleInternalServerError(control);
@@ -177,6 +177,10 @@ export class AuthBase {
 			if (this._validationErrorMatchesControlType(errors, controlType)) {
 				this._setServerValidationError(control);
 				return true;
+			} else if (!controlType) {
+				this.log.warn('ControlType not specified!', this);
+				// fallback, in case controlType is null and not specified.
+				this._setServerValidationError(control);
 			}
 		}
 
