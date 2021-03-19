@@ -118,7 +118,6 @@ export class TwoFactorAuthenticationCodesComponent {
 	_onUserCodesClosed(): void {
 		this.log.trace('_onUserCodesClosed fired.', this);
 		this._showServerError = false;
-		this._removeServerError();
 		this.userCodesPanelClosed.emit();
 	}
 
@@ -127,11 +126,7 @@ export class TwoFactorAuthenticationCodesComponent {
 	 */
 	_onUserCodesOpened(): void {
 		this.log.trace('_onUserCodesOpened fired.', this);
-		// // ensure any errors are nulled out
-		// this._removeServerError();
 		this.userCodesPanelOpened.emit();
-		// indicates to parent component to no longer display any errors. Any errors that occur from this point on will be hanlded by this component.
-		this.serverErrorHandled.emit();
 	}
 
 	/**
