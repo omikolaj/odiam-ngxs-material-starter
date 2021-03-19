@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { AccountFacadeService } from '../account-facade.service';
-import { Observable, Subscription, merge, BehaviorSubject, race } from 'rxjs';
+import { Observable, Subscription, merge, BehaviorSubject } from 'rxjs';
 import { AccountSecurityDetails } from 'app/core/models/account-security-details.model';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
@@ -13,6 +13,7 @@ import { TwoFactorAuthenticationVerificationCode } from './two-factor-authentica
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 
 import { upDownFadeInAnimation } from 'app/core/core.module';
+import { ActionCompletion } from '@ngxs/store';
 
 /**
  * Component container that houses user security functionality.
@@ -73,7 +74,7 @@ export class SecurityContainerComponent implements OnInit {
 	/**
 	 * Whether to show two factor authentication setup wizard.
 	 */
-	_showTwoFactorAuthSetupWizard: boolean;
+	_showTwoFactorAuthSetupWizard = false;
 
 	/**
 	 * Whether or not server error was handled and displayed by two-factor-authentication-setup component.
@@ -106,6 +107,11 @@ export class SecurityContainerComponent implements OnInit {
 	_serverError$: Observable<ProblemDetails | InternalServerErrorDetails>;
 
 	/**
+	 * Whether this component should display server side error.
+	 */
+	_showServerError: boolean;
+
+	/**
 	 * Rxjs subscriptions for this component.
 	 */
 	private _subscription = new Subscription();
@@ -118,8 +124,23 @@ export class SecurityContainerComponent implements OnInit {
 		this._accountSecurityDetails$ = facade.accountSecurityDetails$;
 		this._authenticatorSetup$ = facade.twoFactorAuthenticationSetup$;
 		this._authenticatorSetupResult$ = facade.twoFactorAuthenticationSetupResult$;
-		this._problemDetails$ = facade.problemDetails$.pipe(tap(() => (this._serverErrorHandled = false)));
-		this._internalServerErrorDetails$ = facade.internalServerErrorDetails$.pipe(tap(() => (this._serverErrorHandled = false)));
+		this._problemDetails$ = facade.problemDetails$.pipe(
+			// if we're NOT displaying two factor auth setup wizard show error if occured
+
+			tap(() => {
+				if (this._showTwoFactorAuthSetupWizard === false) {
+					this._showServerError = true;
+				}
+			})
+		);
+		this._internalServerErrorDetails$ = facade.internalServerErrorDetails$.pipe(
+			// if we're NOT displaying two factor auth setup wizard show error if occured
+			tap(() => {
+				if (this._showTwoFactorAuthSetupWizard === false) {
+					this._showServerError = true;
+				}
+			})
+		);
 	}
 
 	/**
@@ -131,40 +152,78 @@ export class SecurityContainerComponent implements OnInit {
 		this._loadingSub.next(true);
 		this.facade.getAccountSecurityInfo();
 
-		this._subscription.add(
-			merge(
-				// skip first value that emits, which is the default value.
-				this._accountSecurityDetails$.pipe(skip(1)),
-				// skip first value that emits, which is the default value.
-				this._authenticatorSetupResult$.pipe(skip(1)),
-				this.facade.onCompletedUpdateRecoveryCodesAction$,
-				// skip first value that emits, which is the default value.
-				this._authenticatorSetup$.pipe(skip(1)),
-				// if problem details is emitted make sure to stop loading state.
-				this._problemDetails$,
-				// if internal server error details is emitted make sure to stop loading state.
-				this._internalServerErrorDetails$
-			)
-				.pipe(
-					filter((value) => value !== undefined),
-					// set the _verfyingCode property to false if any of the above observables emit
-					tap(() => {
-						// manual subject is NOT necessary because when codeVerificationInProgress changes to false, twoFactorAuthenticationSetupResult$ emits.
-						this._codeVerificationInProgress = false;
-						// manual subject is NOT necessary because when _generatingNewRecoveryCodes changes to false, onCompletedUpdateRecoveryCodesAction$ emits.
-						this._generatingNewRecoveryCodes = false;
-						// manual subject is necessary because when twoFactoAuthToggle changes nothing else emits so OnPush change detection is not triggered.
-						this._twoFactorAuthToggleLoadingSub.next(false);
-						// manual subject is necessary because when loading changes nothing else emits so OnPush change detection is not triggered.
-						this._loadingSub.next(false);
-					})
-				)
-				.subscribe()
-		);
+		this._subscription.add(this._listenToSecurityEvents().subscribe());
 
-		this._serverError$ = race(this._problemDetails$, this._internalServerErrorDetails$);
+		// this._subscription.add(
+		// 	merge(
+		// 		// skip first value that emits, which is the default value.
+		// 		this._accountSecurityDetails$.pipe(skip(1)),
+		// 		// skip first value that emits, which is the default value.
+		// 		this._authenticatorSetupResult$.pipe(skip(1)),
+		// 		this.facade.onCompletedUpdateRecoveryCodesAction$,
+		// 		// skip first value that emits, which is the default value.
+		// 		this._authenticatorSetup$.pipe(skip(1)),
+		// 		// if problem details is emitted make sure to stop loading state.
+		// 		this._problemDetails$,
+		// 		// if internal server error details is emitted make sure to stop loading state.
+		// 		this._internalServerErrorDetails$
+		// 	)
+		// 		.pipe(
+		// 			filter((value) => value !== undefined),
+		// 			// set the _verfyingCode property to false if any of the above observables emit
+		// 			tap(() => {
+		// 				// manual subject is NOT necessary because when codeVerificationInProgress changes to false, twoFactorAuthenticationSetupResult$ emits.
+		// 				this._codeVerificationInProgress = false;
+		// 				// manual subject is NOT necessary because when _generatingNewRecoveryCodes changes to false, onCompletedUpdateRecoveryCodesAction$ emits.
+		// 				this._generatingNewRecoveryCodes = false;
+		// 				// manual subject is necessary because when twoFactoAuthToggle changes nothing else emits so OnPush change detection is not triggered.
+		// 				this._twoFactorAuthToggleLoadingSub.next(false);
+		// 				// manual subject is necessary because when loading changes nothing else emits so OnPush change detection is not triggered.
+		// 				this._loadingSub.next(false);
+		// 			})
+		// 		)
+		// 		.subscribe()
+		// );
+
+		// this._serverError$ = merge(this._problemDetails$, this._internalServerErrorDetails$);
 
 		this._initVerificationCodeForm();
+	}
+
+	private _listenToSecurityEvents(): Observable<
+		| AccountSecurityDetails
+		| TwoFactorAuthenticationSetupResult
+		| ActionCompletion<any, Error>
+		| TwoFactorAuthenticationSetup
+		| ProblemDetails
+		| InternalServerErrorDetails
+	> {
+		return merge(
+			// skip first value that emits, which is the default value.
+			this._accountSecurityDetails$.pipe(skip(1)),
+			// skip first value that emits, which is the default value.
+			this._authenticatorSetupResult$.pipe(skip(1)),
+			this.facade.onCompletedUpdateRecoveryCodesAction$,
+			// skip first value that emits, which is the default value.
+			this._authenticatorSetup$.pipe(skip(1)),
+			// if problem details is emitted make sure to stop loading state.
+			this._problemDetails$,
+			// if internal server error details is emitted make sure to stop loading state.
+			this._internalServerErrorDetails$
+		).pipe(
+			filter((value) => value !== undefined),
+			// set the _verfyingCode property to false if any of the above observables emit
+			tap(() => {
+				// manual subject is NOT necessary because when codeVerificationInProgress changes to false, twoFactorAuthenticationSetupResult$ emits.
+				this._codeVerificationInProgress = false;
+				// manual subject is NOT necessary because when _generatingNewRecoveryCodes changes to false, onCompletedUpdateRecoveryCodesAction$ emits.
+				this._generatingNewRecoveryCodes = false;
+				// manual subject is necessary because when twoFactoAuthToggle changes nothing else emits so OnPush change detection is not triggered.
+				this._twoFactorAuthToggleLoadingSub.next(false);
+				// manual subject is necessary because when loading changes nothing else emits so OnPush change detection is not triggered.
+				this._loadingSub.next(false);
+			})
+		);
 	}
 
 	/**
@@ -178,11 +237,19 @@ export class SecurityContainerComponent implements OnInit {
 		if (event.checked) {
 			this.facade.log.trace('_onTwoFactorAuthToggle: enter 2fa setup.', this);
 			this.facade.setupAuthenticator();
-			// this._showTwoFactorAuthSetupWizard = event.checked;
 		} else {
 			this.facade.log.trace('_onTwoFactorAuthToggle: disable 2fa.', this);
 			this.facade.disable2Fa();
 		}
+	}
+
+	/**
+	 * Event handler when two factor authentication setup wizard is displayed.
+	 */
+	_onServerErrorHandled(): void {
+		// when two factor authentication setup wizard is displayed, hide the error in security-container component.
+		this._showServerError = false;
+		this._showTwoFactorAuthSetupWizard = true;
 	}
 
 	/**
@@ -201,6 +268,7 @@ export class SecurityContainerComponent implements OnInit {
 	_cancelSetupWizardClicked(): void {
 		this.facade.log.trace('_onCancelSetupWizard fired.', this);
 		this._showTwoFactorAuthSetupWizard = false;
+		this._showServerError = false;
 		this._verificationCodeForm.reset();
 		this.facade.cancel2faSetupWizard();
 	}
@@ -211,6 +279,7 @@ export class SecurityContainerComponent implements OnInit {
 	_finish2faSetupClicked(event: TwoFactorAuthenticationSetupResult): void {
 		this.facade.log.trace('_onFinish2faSetup fired.', this);
 		this._showTwoFactorAuthSetupWizard = false;
+		this._showServerError = false;
 		this._verificationCodeForm.reset();
 		this.facade.finish2faSetup(event);
 	}
@@ -230,7 +299,8 @@ export class SecurityContainerComponent implements OnInit {
 	 */
 	_onServerErrorHandledEmitted(handled: boolean): void {
 		this.facade.log.trace('_onServerErrorHandledEmitted fired.', this, handled);
-		this._serverErrorHandled = true;
+		// this._serverErrorHandled = true;
+		this._showServerError = false;
 	}
 
 	/**

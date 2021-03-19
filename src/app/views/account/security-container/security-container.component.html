@@ -16,6 +16,7 @@
 			(generateNew2faRecoveryCodesClicked)="_generateNew2faRecoveryCodesClicked()"
 			(twoFactorAuthToggleChanged)="_onTwoFactorAuthToggle($event)"
 			(serverErrorHandledEmitted)="_onServerErrorHandledEmitted($event)"
+			(serverErrorHandled)="_onServerErrorHandled()"
 		></odm-two-factor-authentication>
 		<div>
 			<h3>Change password</h3>
@@ -24,10 +25,6 @@
 			</mat-form-field>
 		</div>
 		<mat-divider></mat-divider>
-		<ng-container *ngIf="_serverError$ | async as serverError">
-			<ng-container *ngIf="_serverErrorHandled === false">
-				<odm-server-side-error [serverError]="serverError"></odm-server-side-error>
-			</ng-container>
-		</ng-container>
+		<odm-server-side-error [showError]="_showServerError"></odm-server-side-error>
 	</div>
 </ng-container>

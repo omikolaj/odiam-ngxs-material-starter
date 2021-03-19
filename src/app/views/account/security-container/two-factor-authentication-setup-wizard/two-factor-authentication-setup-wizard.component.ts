@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, ChangeDetectorRef, ViewChild, OnDestroy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { FormGroup, AbstractControl } from '@angular/forms';
 import { TwoFactorAuthenticationSetupResult } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-setup-result.model';
 import { TwoFactorAuthenticationVerificationCode } from '../two-factor-authentication/models/two-factor-authentication-verification-code.model';
@@ -21,7 +21,7 @@ import { AuthBase } from 'app/views/auth/auth-base';
 	styleUrls: ['./two-factor-authentication-setup-wizard.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TwoFactorAuthenticationSetupWizardComponent extends AuthBase implements OnDestroy {
+export class TwoFactorAuthenticationSetupWizardComponent extends AuthBase {
 	/**
 	 * Emitted when server responds with 40X error.
 	 */
@@ -184,16 +184,6 @@ export class TwoFactorAuthenticationSetupWizardComponent extends AuthBase implem
 	}
 
 	/**
-	 * ngOnDestroy
-	 */
-	ngOnDestroy(): void {
-		// if verification code control is invalid this component will display the error message to the user.
-		if (this._verificationCodeControlInvalid) {
-			this.serverErrorHandledEmitted.emit(true);
-		}
-	}
-
-	/**
 	 * Event handler when user submits two factor authentication setup verification code.
 	 */
 	_onVerificationCodeSubmitted(): void {
@@ -217,6 +207,7 @@ export class TwoFactorAuthenticationSetupWizardComponent extends AuthBase implem
 	_onCancelClicked(): void {
 		this.facade.log.trace('_onCancelClicked fired.', this);
 		this.cancelSetupWizardClicked.emit();
+		this.serverErrorHandledEmitted.emit(true);
 	}
 
 	/**
@@ -228,7 +219,7 @@ export class TwoFactorAuthenticationSetupWizardComponent extends AuthBase implem
 		this.facade.log.trace('_ifControlIsInvalid fired.', this);
 		const invalid = this._ifControlFieldIsInvalid(control);
 		if (invalid) {
-			this.serverErrorHandledEmitted.emit(invalid);
+			// this.serverErrorHandledEmitted.emit(invalid);
 		}
 		return invalid;
 	}

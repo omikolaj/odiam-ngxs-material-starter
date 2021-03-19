@@ -86,6 +86,9 @@ export class TwoFactorAuthenticationComponent {
 		this._authenticatorSetup = value;
 		if (value.authenticatorUri !== '' && value.sharedKey !== '') {
 			this._showTwoFactorAuthSetupWizard = true;
+			// Notifies parent that two fa setup wizard is displayed.
+			// Used to control the display of server side errors.
+			this.serverErrorHandled.emit();
 		}
 	}
 
@@ -135,6 +138,11 @@ export class TwoFactorAuthenticationComponent {
 	 * Event emitter when user toggles between enabling/disabling two factor auth.
 	 */
 	@Output() twoFactorAuthToggleChanged = new EventEmitter<MatSlideToggleChange>();
+
+	/**
+	 * Event emitter when two factor auth setup wizard is displayed.
+	 */
+	@Output() serverErrorHandled = new EventEmitter<void>();
 
 	/**
 	 * Event emitter when server errors 40X or 50X have been already displayed
@@ -187,7 +195,6 @@ export class TwoFactorAuthenticationComponent {
 	_onCancelSetupWizard(): void {
 		this.facade.log.trace('_onCancelSetupWizard fired.', this);
 		this._showTwoFactorAuthSetupWizard = false;
-		// this._removeServerErrors();
 		this.cancelSetupWizardClicked.emit();
 	}
 
@@ -205,7 +212,6 @@ export class TwoFactorAuthenticationComponent {
 	 */
 	_onGenerateNew2FaRecoveryCodes(): void {
 		this.facade.log.trace('_onGenerateNew2FaRecoveryCodes fired.', this);
-		// this._removeServerErrors();
 		this.generateNew2faRecoveryCodesClicked.emit();
 	}
 
@@ -215,7 +221,6 @@ export class TwoFactorAuthenticationComponent {
 	 */
 	_onVerifyAuthenticator(event: TwoFactorAuthenticationVerificationCode): void {
 		this.facade.log.trace('_onVerifyAuthenticator fired.', this);
-		// this._removeServerErrors();
 		this.verifyAuthenticatorClicked.emit(event);
 	}
 
@@ -224,7 +229,8 @@ export class TwoFactorAuthenticationComponent {
 	 */
 	_onUserCodesPanelClosed(): void {
 		this.facade.log.trace('_onToggleUserCodeExpasionPanel fired.', this);
-		// this._removeServerErrors();
+		// ensures parent component cleans up any errors that it might be displaying.
+		this.serverErrorHandled.emit();
 	}
 
 	/**
@@ -235,13 +241,4 @@ export class TwoFactorAuthenticationComponent {
 	_onServerErrorHandledEmitted(handled: boolean): void {
 		this.serverErrorHandledEmitted.emit(handled);
 	}
-
-	// /**
-	//  * Clears all server errors.
-	//  */
-	// private _removeServerErrors(): void {
-	// 	this.facade.log.trace('_removeServerErrors errors fired.', this);
-	// 	this._problemDetails = null;
-	// 	this._internalServerErrorDetails = null;
-	// }
 }
