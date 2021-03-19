@@ -26,7 +26,7 @@
 								{{ 'odm.account.security.two-step.setup-wizard.first-step.verification-code-placeholder' | translate }}
 							</mat-label>
 							<input matInput type="text" formControlName="verificationCode" [maxlength]="_verificationCodeInputLength" />
-							<mat-error *ngIf="_ifControlIsInvalid(verificationCodeForm.get('verificationCode'))">{{
+							<mat-error *ngIf="_ifControlFieldIsInvalid(verificationCodeForm.get('verificationCode'))">{{
 								_getErrorMessage$(verificationCodeForm.get('verificationCode')) | async
 							}}</mat-error>
 						</mat-form-field>

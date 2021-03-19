@@ -1,8 +1,11 @@
 import { Component, ChangeDetectionStrategy, Output, EventEmitter, Input } from '@angular/core';
 import { TooltipTouchGestures } from '@angular/material/tooltip';
 import { ODM_TOOLTIP_SHOW_DELAY_IN_MS } from 'app/shared/global-settings/mat-tooltip-settings';
-import { AccountFacadeService } from '../../account-facade.service';
+
 import { fadeInAnimation, upDownFadeInAnimation } from 'app/core/core.module';
+import { ProblemDetails } from 'app/core/models/problem-details.model';
+import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
+import { LogService } from 'app/core/logger/log.service';
 
 /**
  * Two factor authentication codes component.
@@ -16,19 +19,29 @@ import { fadeInAnimation, upDownFadeInAnimation } from 'app/core/core.module';
 })
 export class TwoFactorAuthenticationCodesComponent {
 	/**
-	 * Event emitter when user requests to generate new recovery codes.
+	 * Event emitter when server responds with 40X or 50X error.
 	 */
-	@Output() generateNewRecoveryCodes = new EventEmitter<void>();
+	@Input() set serverError(value: ProblemDetails | InternalServerErrorDetails) {
+		this.log.debug('serverError emitted.', this);
+		if (value) {
+			this._showServerError = true;
+		}
+		this._serverError = value;
+	}
 
-	/**
-	 * Event emitter when user closes the 'user codes' expansion panel.
-	 */
-	@Output() userCodesPanelClosed = new EventEmitter<void>();
+	_serverError: ProblemDetails | InternalServerErrorDetails;
 
 	/**
 	 * Recovery codes user has left to redeem for logging in.
 	 */
-	@Input() codes: string[] = [];
+	@Input() set codes(value: string[]) {
+		this.log.debug('codes emitted.', this);
+		this._codes = value;
+		// each time we successfully emit new codes null out serverError.
+		this._removeServerError();
+	}
+
+	_codes: string[] = [];
 
 	/**
 	 * Whether there is an outgoing request to generate new recovery codes.
@@ -39,6 +52,26 @@ export class TwoFactorAuthenticationCodesComponent {
 	 * Whether the mat-expansien-panel should disallow user to expand it.
 	 */
 	@Input() disabled = false;
+
+	/**
+	 * Event emitter when two factor auth setup wizard is displayed.
+	 */
+	@Output() serverErrorHandled = new EventEmitter<void>();
+
+	/**
+	 * Event emitter when user requests to generate new recovery codes.
+	 */
+	@Output() generateNewRecoveryCodes = new EventEmitter<void>();
+
+	/**
+	 * Event emitter when user closes the 'user codes' expansion panel.
+	 */
+	@Output() userCodesPanelClosed = new EventEmitter<void>();
+
+	/**
+	 * Event emitter when user opens the 'user codes' expansion panel.
+	 */
+	@Output() userCodesPanelOpened = new EventEmitter<void>();
 
 	/**
 	 * Touch gestrues of two factor authentication codes component.
@@ -61,16 +94,21 @@ export class TwoFactorAuthenticationCodesComponent {
 	_generatingCodesSpinnerStrokeWidth = 1;
 
 	/**
+	 * Whether to display server error to the user.
+	 */
+	_showServerError = false;
+
+	/**
 	 * Creates an instance of two factor authentication codes component.
 	 * @param facade
 	 */
-	constructor(private facade: AccountFacadeService) {}
+	constructor(private log: LogService) {}
 
 	/**
 	 * Event handler when user requests to generate new recovery codes.
 	 */
 	_onGenerateNewRecoveryCodes(): void {
-		this.facade.log.trace('_onGenerateNewRecoveryCodes fired.', this);
+		this.log.trace('_onGenerateNewRecoveryCodes fired.', this);
 		this.generateNewRecoveryCodes.emit();
 	}
 
@@ -78,7 +116,29 @@ export class TwoFactorAuthenticationCodesComponent {
 	 * Event handler when user closes expansion panel.
 	 */
 	_onUserCodesClosed(): void {
-		this.facade.log.trace('_onTogglePosition fired.', this);
+		this.log.trace('_onUserCodesClosed fired.', this);
+		this._showServerError = false;
+		this._removeServerError();
 		this.userCodesPanelClosed.emit();
+	}
+
+	/**
+	 * Event handler when user opens expansion panel.
+	 */
+	_onUserCodesOpened(): void {
+		this.log.trace('_onUserCodesOpened fired.', this);
+		// // ensure any errors are nulled out
+		// this._removeServerError();
+		this.userCodesPanelOpened.emit();
+		// indicates to parent component to no longer display any errors. Any errors that occur from this point on will be hanlded by this component.
+		this.serverErrorHandled.emit();
+	}
+
+	/**
+	 * Sets serverError to null.
+	 */
+	private _removeServerError(): void {
+		this.log.trace('_removeServerError fired.', this);
+		this.serverError = null;
 	}
 }

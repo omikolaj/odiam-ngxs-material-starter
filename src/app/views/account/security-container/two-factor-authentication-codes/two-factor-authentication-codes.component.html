@@ -1,5 +1,5 @@
 <mat-accordion class="recovery-codes">
-	<mat-expansion-panel [disabled]="disabled" (closed)="_onUserCodesClosed()">
+	<mat-expansion-panel [disabled]="disabled" (opened)="_onUserCodesOpened()" (closed)="_onUserCodesClosed()">
 		<mat-expansion-panel-header>
 			<mat-panel-title>
 				{{ 'odm.account.security.two-step.recovery-codes.title' | translate }}
@@ -19,7 +19,7 @@
 			<h3>{{ 'odm.account.security.two-step.recovery-codes.backup-codes.title' | translate }}</h3>
 			<p>{{ 'odm.account.security.two-step.recovery-codes.backup-codes.description' | translate }}</p>
 			<ol class="recovery-codes__format-codes blink">
-				<li *ngFor="let code of codes" @fadeIn>
+				<li *ngFor="let code of _codes" @fadeIn>
 					{{ code }}
 				</li>
 			</ol>
@@ -31,6 +31,9 @@
 						</odm-spinner>
 					</ng-container>
 				</button>
+				<ng-container *ngIf="_showServerError">
+					<odm-server-side-error [serverError]="_serverError"></odm-server-side-error>
+				</ng-container>
 			</div>
 		</div>
 	</mat-expansion-panel>

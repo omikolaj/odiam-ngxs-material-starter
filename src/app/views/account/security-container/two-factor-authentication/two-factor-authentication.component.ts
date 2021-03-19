@@ -8,7 +8,8 @@ import { AccountFacadeService } from '../../account-facade.service';
 import { upDownFadeInAnimation, fadeInAnimation } from 'app/core/core.module';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
-import { Observable } from 'rxjs';
+import { Observable, merge } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 /**
  * Component responsible for handling two factor authentication settings.
@@ -21,28 +22,6 @@ import { Observable } from 'rxjs';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TwoFactorAuthenticationComponent {
-	/**
-	 * Emitted when server responds with 40X error.
-	 */
-	// @Input() set problemDetails(value: ProblemDetails) {
-	// 	this.facade.log.debug('Problem details emitted.', this);
-	// 	this._internalServerErrorDetails = null;
-	// 	this._problemDetails = value;
-	// }
-
-	_problemDetails$: Observable<ProblemDetails>;
-
-	/**
-	 * Emitted when server responds with 50X error.
-	 */
-	// @Input() set internalServerErrorDetails(value: InternalServerErrorDetails) {
-	// 	this.facade.log.debug('Internal server error emitted.', this);
-	// 	this._problemDetails = null;
-	// 	this._internalServerErrorDetails = value;
-	// }
-
-	_internalServerErrorDetails$: Observable<InternalServerErrorDetails>;
-
 	/**
 	 * Whether the two factor authentication data is being fetched.
 	 */
@@ -145,15 +124,37 @@ export class TwoFactorAuthenticationComponent {
 	@Output() serverErrorHandled = new EventEmitter<void>();
 
 	/**
-	 * Event emitter when server errors 40X or 50X have been already displayed
-	 * by the two-factor-authentication-setup-wizard component.
+	 * Event emitter when user recovery codes panel is opened.
 	 */
-	@Output() serverErrorHandledEmitted = new EventEmitter<boolean>();
+	@Output() userRecoveryCodesOpened = new EventEmitter<void>();
+
+	/**
+	 * Event emitter when user recovery codes panel is opened.
+	 */
+	@Output() userRecoveryCodesClosed = new EventEmitter<void>();
 
 	/**
 	 * MatSlideToggle for enabling/disabling two factor authentication.
 	 */
 	@ViewChild('slideToggle') twoFactorEnabledToggle: MatSlideToggle;
+
+	/**
+	 * Emitted when server responds with 40X error.
+	 * Used in components that display server side errors by invalidating AbstractControl on a form.
+	 */
+	_problemDetails$: Observable<ProblemDetails>;
+
+	/**
+	 * Emitted when server responds with 50X error.
+	 * Used in components that display server side errors by invalidating AbstractControl on a form.
+	 */
+	_internalServerErrorDetails$: Observable<InternalServerErrorDetails>;
+
+	/**
+	 * Emitted when server responds with 40X or 50x error.
+	 * Used in components that display server side errors without using AbstractControl.
+	 */
+	_serverError$: Observable<ProblemDetails | InternalServerErrorDetails>;
 
 	/**
 	 * Two factor auth toggle spinner diameter.
@@ -171,12 +172,19 @@ export class TwoFactorAuthenticationComponent {
 	_showTwoFactorAuthSetupWizard = false;
 
 	/**
+	 * Used to filter out server side errors for two factor authentication codes that occur before the panel is opened.
+	 */
+	private _userRecoveryCodesOpened = false;
+
+	/**
 	 * Creates an instance of two factor authentication component.
 	 * @param facade
 	 */
 	constructor(private facade: AccountFacadeService) {
 		this._problemDetails$ = facade.problemDetails$;
 		this._internalServerErrorDetails$ = facade.internalServerErrorDetails$;
+		// filters out server errors that might have been displayed prior to opening up user recovery codes.
+		this._serverError$ = merge(facade.problemDetails$, facade.internalServerErrorDetails$).pipe(filter(() => this._userRecoveryCodesOpened === true));
 	}
 
 	/**
@@ -185,7 +193,6 @@ export class TwoFactorAuthenticationComponent {
 	 */
 	_onTwoFactorAuthToggle(event: MatSlideToggleChange): void {
 		this.facade.log.trace('_onTwoFactorAuthToggle fired.', this);
-		// this._removeServerErrors();
 		this.twoFactorAuthToggleChanged.emit(event);
 	}
 
@@ -225,20 +232,33 @@ export class TwoFactorAuthenticationComponent {
 	}
 
 	/**
+	 * Event handler when user opens 'user codes' expansion panel.
+	 */
+	_onUserRecoveryCodesOpened(): void {
+		this.facade.log.trace('_onUserRecoveryCodesOpened fired.', this);
+		this._userRecoveryCodesOpened = true;
+		this.userRecoveryCodesOpened.emit();
+	}
+
+	/**
 	 * Event handler when user closes 'user codes' expansion panel.
 	 */
 	_onUserCodesPanelClosed(): void {
-		this.facade.log.trace('_onToggleUserCodeExpasionPanel fired.', this);
+		this.facade.log.trace('_onUserCodesPanelClosed fired.', this);
 		// ensures parent component cleans up any errors that it might be displaying.
+		this._userRecoveryCodesOpened = false;
+		// indicates to the parent component that any server errors that have occured were already handled and displayed.
 		this.serverErrorHandled.emit();
+		this.userRecoveryCodesClosed.emit();
 	}
 
 	/**
 	 * Event handler when server errors 40X or 50X have been displayed to the user
-	 * already by the two-factor-authentication-setup-wizard component.
+	 * already by the two-factor-authentication-setup-wizard component or two-factor-authentication-codes component.
 	 * @param handled
 	 */
-	_onServerErrorHandledEmitted(handled: boolean): void {
-		this.serverErrorHandledEmitted.emit(handled);
+	_onServerErrorHandled(): void {
+		this.facade.log.trace('_onServerErrorHandled fired.', this);
+		this.serverErrorHandled.emit();
 	}
 }

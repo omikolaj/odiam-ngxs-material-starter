@@ -30,7 +30,10 @@
 							[disabled]="_twoFactorAuthToggleLoading"
 							[generatingCodes]="generatingNewRecoveryCodes"
 							(generateNewRecoveryCodes)="_onGenerateNew2FaRecoveryCodes()"
+							[serverError]="_serverError$ | async"
 							(userCodesPanelClosed)="_onUserCodesPanelClosed()"
+							(serverErrorHandled)="_onServerErrorHandled()"
+							(userCodesPanelOpened)="_onUserRecoveryCodesOpened()"
 						>
 						</odm-two-factor-authentication-codes>
 					</div>
@@ -51,7 +54,6 @@
 		[problemDetails]="_problemDetails$ | async"
 		[internalServerErrorDetails]="_internalServerErrorDetails$ | async"
 		[codeVerificationInProgress]="codeVerificationInProgress"
-		(serverErrorHandledEmitted)="_onServerErrorHandledEmitted($event)"
 	></odm-two-factor-authentication-setup-wizard>
 </ng-template>
 

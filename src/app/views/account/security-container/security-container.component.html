@@ -15,8 +15,9 @@
 			(finish2faSetupClicked)="_finish2faSetupClicked($event)"
 			(generateNew2faRecoveryCodesClicked)="_generateNew2faRecoveryCodesClicked()"
 			(twoFactorAuthToggleChanged)="_onTwoFactorAuthToggle($event)"
-			(serverErrorHandledEmitted)="_onServerErrorHandledEmitted($event)"
 			(serverErrorHandled)="_onServerErrorHandled()"
+			(userRecoveryCodesOpened)="_onUserRecoveryCodesOpened()"
+			(userRecoveryCodesClosed)="_onUserRecoveryCodesClosed()"
 		></odm-two-factor-authentication>
 		<div>
 			<h3>Change password</h3>
@@ -25,6 +26,10 @@
 			</mat-form-field>
 		</div>
 		<mat-divider></mat-divider>
-		<odm-server-side-error [showError]="_showServerError"></odm-server-side-error>
+		<ng-container *ngIf="_serverError$ | async as error">
+			<ng-container *ngIf="_showServerError">
+				<odm-server-side-error [serverError]="error"></odm-server-side-error>
+			</ng-container>
+		</ng-container>
 	</div>
 </ng-container>

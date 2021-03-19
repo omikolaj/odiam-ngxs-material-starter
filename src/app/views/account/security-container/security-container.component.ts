@@ -82,6 +82,26 @@ export class SecurityContainerComponent implements OnInit {
 	_serverErrorHandled = false;
 
 	/**
+	 * Whether user recovery codes pnael is open.
+	 */
+	_userRecoveryCodesPanelOpened = false;
+
+	/**
+	 * Emitted when server responds with 40X or 50X error.
+	 */
+	_serverError$: Observable<ProblemDetails | InternalServerErrorDetails>;
+
+	/**
+	 * Whether this component should display server side error.
+	 */
+	_showServerError: boolean;
+
+	/**
+	 * Rxjs subscriptions for this component.
+	 */
+	private _subscription = new Subscription();
+
+	/**
 	 * Loading subject. Required for angular OnPush change detection to be triggered.
 	 */
 	private _loadingSub = new BehaviorSubject<boolean>(false);
@@ -102,21 +122,6 @@ export class SecurityContainerComponent implements OnInit {
 	_twoFactorAuthToggleLoading$ = this._twoFactorAuthToggleLoadingSub.asObservable();
 
 	/**
-	 * Emitted when server responds with 40X or 50X error.
-	 */
-	_serverError$: Observable<ProblemDetails | InternalServerErrorDetails>;
-
-	/**
-	 * Whether this component should display server side error.
-	 */
-	_showServerError: boolean;
-
-	/**
-	 * Rxjs subscriptions for this component.
-	 */
-	private _subscription = new Subscription();
-
-	/**
 	 * Creates an instance of security container component.
 	 * @param facade
 	 */
@@ -124,23 +129,16 @@ export class SecurityContainerComponent implements OnInit {
 		this._accountSecurityDetails$ = facade.accountSecurityDetails$;
 		this._authenticatorSetup$ = facade.twoFactorAuthenticationSetup$;
 		this._authenticatorSetupResult$ = facade.twoFactorAuthenticationSetupResult$;
-		this._problemDetails$ = facade.problemDetails$.pipe(
-			// if we're NOT displaying two factor auth setup wizard show error if occured
-
-			tap(() => {
-				if (this._showTwoFactorAuthSetupWizard === false) {
-					this._showServerError = true;
-				}
-			})
-		);
-		this._internalServerErrorDetails$ = facade.internalServerErrorDetails$.pipe(
-			// if we're NOT displaying two factor auth setup wizard show error if occured
-			tap(() => {
-				if (this._showTwoFactorAuthSetupWizard === false) {
-					this._showServerError = true;
-				}
-			})
-		);
+		this._problemDetails$ = facade.problemDetails$;
+		this._internalServerErrorDetails$ = facade.internalServerErrorDetails$;
+		// this._problemDetails$ = facade.problemDetails$.pipe(
+		// 	// if we're NOT displaying two factor auth setup wizard show error if occured
+		// 	tap(() => this.shouldDisplayError())
+		// );
+		// this._internalServerErrorDetails$ = facade.internalServerErrorDetails$.pipe(
+		// 	// if we're NOT displaying two factor auth setup wizard show error if occured
+		// 	tap(() => this.shouldDisplayError())
+		// );
 	}
 
 	/**
@@ -148,48 +146,116 @@ export class SecurityContainerComponent implements OnInit {
 	 */
 	ngOnInit(): void {
 		this.facade.log.trace('Initialized.', this);
-
+		// initializes loading for fetching account security info.
 		this._loadingSub.next(true);
+		// fetches account security info.
 		this.facade.getAccountSecurityInfo();
-
+		// subscribes to security container component. Used to handle loading flags.
 		this._subscription.add(this._listenToSecurityEvents().subscribe());
-
-		// this._subscription.add(
-		// 	merge(
-		// 		// skip first value that emits, which is the default value.
-		// 		this._accountSecurityDetails$.pipe(skip(1)),
-		// 		// skip first value that emits, which is the default value.
-		// 		this._authenticatorSetupResult$.pipe(skip(1)),
-		// 		this.facade.onCompletedUpdateRecoveryCodesAction$,
-		// 		// skip first value that emits, which is the default value.
-		// 		this._authenticatorSetup$.pipe(skip(1)),
-		// 		// if problem details is emitted make sure to stop loading state.
-		// 		this._problemDetails$,
-		// 		// if internal server error details is emitted make sure to stop loading state.
-		// 		this._internalServerErrorDetails$
-		// 	)
-		// 		.pipe(
-		// 			filter((value) => value !== undefined),
-		// 			// set the _verfyingCode property to false if any of the above observables emit
-		// 			tap(() => {
-		// 				// manual subject is NOT necessary because when codeVerificationInProgress changes to false, twoFactorAuthenticationSetupResult$ emits.
-		// 				this._codeVerificationInProgress = false;
-		// 				// manual subject is NOT necessary because when _generatingNewRecoveryCodes changes to false, onCompletedUpdateRecoveryCodesAction$ emits.
-		// 				this._generatingNewRecoveryCodes = false;
-		// 				// manual subject is necessary because when twoFactoAuthToggle changes nothing else emits so OnPush change detection is not triggered.
-		// 				this._twoFactorAuthToggleLoadingSub.next(false);
-		// 				// manual subject is necessary because when loading changes nothing else emits so OnPush change detection is not triggered.
-		// 				this._loadingSub.next(false);
-		// 			})
-		// 		)
-		// 		.subscribe()
-		// );
-
-		// this._serverError$ = merge(this._problemDetails$, this._internalServerErrorDetails$);
-
+		// serverError used for components that display server side errors without adding them to AbstractControl.
+		this._serverError$ = merge(this._problemDetails$, this._internalServerErrorDetails$).pipe(tap(() => this.shouldDisplayError()));
+		// initializes verification code form.
 		this._initVerificationCodeForm();
 	}
 
+	/**
+	 * Event handler when user requests to enable/disable two factor authentication.
+	 * @param event
+	 */
+	_onTwoFactorAuthToggle(event: MatSlideToggleChange): void {
+		this.facade.log.trace('_onTwoFactorAuthToggle fired.', this);
+		this._twoFactorAuthToggleLoadingSub.next(true);
+
+		if (event.checked) {
+			this.facade.log.trace('_onTwoFactorAuthToggle: enter 2fa setup.', this);
+			this.facade.setupAuthenticator();
+		} else {
+			this.facade.log.trace('_onTwoFactorAuthToggle: disable 2fa.', this);
+			this.facade.disable2Fa();
+		}
+	}
+
+	/**
+	 * Event handler when two factor authentication setup wizard is displayed.
+	 */
+	_onServerErrorHandled(): void {
+		// when two factor authentication setup wizard is displayed, hide the error in security-container component.
+		this.facade.log.trace('_onServerErrorHandled fired.', this);
+		this._showServerError = false;
+		// this._showTwoFactorAuthSetupWizard = true;
+	}
+
+	/**
+	 * Event handler when user requests to verify authenticator code.
+	 * @param event
+	 */
+	_verifyAuthenticatorClicked(event: TwoFactorAuthenticationVerificationCode): void {
+		this.facade.log.trace('_onVerifyAuthenticator fired.', this);
+		this._codeVerificationInProgress = true;
+		this.facade.verifyAuthenticator(event);
+	}
+
+	/**
+	 * Event handler when user cancels the two factor authentication setup wizard.
+	 */
+	_cancelSetupWizardClicked(): void {
+		this.facade.log.trace('_onCancelSetupWizard fired.', this);
+		// this._showTwoFactorAuthSetupWizard = false;
+		this._showServerError = false;
+		this._verificationCodeForm.reset();
+		this.facade.cancel2faSetupWizard();
+	}
+
+	/**
+	 * Event handler when user finishes two factor authentication setup.
+	 */
+	_finish2faSetupClicked(event: TwoFactorAuthenticationSetupResult): void {
+		this.facade.log.trace('_onFinish2faSetup fired.', this);
+		// this._showTwoFactorAuthSetupWizard = false;
+		this._showServerError = false;
+		this._verificationCodeForm.reset();
+		this.facade.finish2faSetup(event);
+	}
+
+	/**
+	 * Event handler when user requests to generate new recovery codes.
+	 */
+	_generateNew2faRecoveryCodesClicked(): void {
+		this.facade.log.trace('_onGenerateNew2FaRecoveryCodes fired.', this);
+		this._generatingNewRecoveryCodes = true;
+		this.facade.generateRecoveryCodes();
+	}
+
+	/**
+	 * Fired when user recovery code panel is opened.
+	 */
+	_onUserRecoveryCodesOpened(): void {
+		this.facade.log.trace('_onUserRecoveryCodesOpened fired.', this);
+		this._showServerError = false;
+		this._userRecoveryCodesPanelOpened = true;
+	}
+
+	/**
+	 * Fired when user recovery code panel is closed.
+	 */
+	_onUserRecoveryCodesClosed(): void {
+		this.facade.log.trace('_onUserRecoveryCodesClosed fired.', this);
+		this._userRecoveryCodesPanelOpened = false;
+	}
+
+	/**
+	 * Whether or not this component should display server side error.
+	 */
+	private shouldDisplayError(): void {
+		if (this._userRecoveryCodesPanelOpened === false) {
+			this._showServerError = true;
+		}
+	}
+
+	/**
+	 * Listens to security events.
+	 * @returns to security events
+	 */
 	private _listenToSecurityEvents(): Observable<
 		| AccountSecurityDetails
 		| TwoFactorAuthenticationSetupResult
@@ -224,83 +290,6 @@ export class SecurityContainerComponent implements OnInit {
 				this._loadingSub.next(false);
 			})
 		);
-	}
-
-	/**
-	 * Event handler when user requests to enable/disable two factor authentication.
-	 * @param event
-	 */
-	_onTwoFactorAuthToggle(event: MatSlideToggleChange): void {
-		this.facade.log.trace('_onTwoFactorAuthToggle fired.', this);
-		this._twoFactorAuthToggleLoadingSub.next(true);
-
-		if (event.checked) {
-			this.facade.log.trace('_onTwoFactorAuthToggle: enter 2fa setup.', this);
-			this.facade.setupAuthenticator();
-		} else {
-			this.facade.log.trace('_onTwoFactorAuthToggle: disable 2fa.', this);
-			this.facade.disable2Fa();
-		}
-	}
-
-	/**
-	 * Event handler when two factor authentication setup wizard is displayed.
-	 */
-	_onServerErrorHandled(): void {
-		// when two factor authentication setup wizard is displayed, hide the error in security-container component.
-		this._showServerError = false;
-		this._showTwoFactorAuthSetupWizard = true;
-	}
-
-	/**
-	 * Event handler when user requests to verify authenticator code.
-	 * @param event
-	 */
-	_verifyAuthenticatorClicked(event: TwoFactorAuthenticationVerificationCode): void {
-		this.facade.log.trace('_onVerifyAuthenticator fired.', this);
-		this._codeVerificationInProgress = true;
-		this.facade.verifyAuthenticator(event);
-	}
-
-	/**
-	 * Event handler when user cancels the two factor authentication setup wizard.
-	 */
-	_cancelSetupWizardClicked(): void {
-		this.facade.log.trace('_onCancelSetupWizard fired.', this);
-		this._showTwoFactorAuthSetupWizard = false;
-		this._showServerError = false;
-		this._verificationCodeForm.reset();
-		this.facade.cancel2faSetupWizard();
-	}
-
-	/**
-	 * Event handler when user finishes two factor authentication setup.
-	 */
-	_finish2faSetupClicked(event: TwoFactorAuthenticationSetupResult): void {
-		this.facade.log.trace('_onFinish2faSetup fired.', this);
-		this._showTwoFactorAuthSetupWizard = false;
-		this._showServerError = false;
-		this._verificationCodeForm.reset();
-		this.facade.finish2faSetup(event);
-	}
-
-	/**
-	 * Event handler when user requests to generate new recovery codes.
-	 */
-	_generateNew2faRecoveryCodesClicked(): void {
-		this.facade.log.trace('_onGenerateNew2FaRecoveryCodes fired.', this);
-		this._generatingNewRecoveryCodes = true;
-		this.facade.generateRecoveryCodes();
-	}
-
-	/**
-	 * Event handler that is set when server error has been already displayed to the user in two-factor-authentication-setup-wizard.
-	 * @param hanlded
-	 */
-	_onServerErrorHandledEmitted(handled: boolean): void {
-		this.facade.log.trace('_onServerErrorHandledEmitted fired.', this, handled);
-		// this._serverErrorHandled = true;
-		this._showServerError = false;
 	}
 
 	/**

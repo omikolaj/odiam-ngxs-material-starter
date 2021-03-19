@@ -1,15 +1,13 @@
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, ChangeDetectorRef, ViewChild } from '@angular/core';
-import { FormGroup, AbstractControl } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { TwoFactorAuthenticationSetupResult } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-setup-result.model';
 import { TwoFactorAuthenticationVerificationCode } from '../two-factor-authentication/models/two-factor-authentication-verification-code.model';
 import { TwoFactorAuthenticationSetup } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-setup.model';
 import { ODM_SPINNER_DIAMETER, ODM_SPINNER_STROKE_WIDTH } from 'app/shared/global-settings/mat-spinner-settings';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
-
 import { CdkStepper } from '@angular/cdk/stepper';
 import { AccountFacadeService } from '../../account-facade.service';
-
 import { AuthBase } from 'app/views/auth/auth-base';
 
 /**
@@ -169,12 +167,6 @@ export class TwoFactorAuthenticationSetupWizardComponent extends AuthBase {
 	_verificationCodeInputLength = 6;
 
 	/**
-	 * Whether the verification code control is invalid
-	 * Accounts for server side errors as well.
-	 */
-	private _verificationCodeControlInvalid: boolean;
-
-	/**
 	 * Creates an instance of two factor authentication setup wizard component.
 	 * @param facade
 	 * @param cd
@@ -207,20 +199,5 @@ export class TwoFactorAuthenticationSetupWizardComponent extends AuthBase {
 	_onCancelClicked(): void {
 		this.facade.log.trace('_onCancelClicked fired.', this);
 		this.cancelSetupWizardClicked.emit();
-		this.serverErrorHandledEmitted.emit(true);
-	}
-
-	/**
-	 * Whether the control is invalid. If true emits server error handled event.
-	 * @param control
-	 * @returns true if control is invalid
-	 */
-	_ifControlIsInvalid(control: AbstractControl): boolean {
-		this.facade.log.trace('_ifControlIsInvalid fired.', this);
-		const invalid = this._ifControlFieldIsInvalid(control);
-		if (invalid) {
-			// this.serverErrorHandledEmitted.emit(invalid);
-		}
-		return invalid;
 	}
 }
