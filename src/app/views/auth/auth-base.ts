@@ -8,6 +8,9 @@ import { LogService } from 'app/core/logger/log.service';
 import { TranslateValidationErrorsService } from '../../shared/services/translate-validation-errors.service';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 
+/**
+ * Auth base class which contains error handling logic.
+ */
 export class AuthBase {
 	/**
 	 * Hide/show password.
@@ -25,24 +28,42 @@ export class AuthBase {
 	_googleLoginIcon = (require('../../../assets/google_icon_color.svg') as { default: string }).default;
 
 	/**
+	 * Sets internal server error.
+	 */
+	protected set internalServerError(value: InternalServerErrorDetails) {
+		this._internalServerErrorDetailsHandled = false;
+		this._problemDetails = null;
+		this._internalServerErrorDetails = value;
+	}
+
+	/**
 	 * When server responds with 50X error.
 	 */
-	protected _internalServerErrorDetails: InternalServerErrorDetails;
+	private _internalServerErrorDetails: InternalServerErrorDetails;
 
 	/**
 	 * Whether internal server error details has been handled by the component and displayed to the user.
 	 */
-	protected _internalServerErrorDetailsHandled: boolean;
+	private _internalServerErrorDetailsHandled: boolean;
+
+	/**
+	 * Sets problem details error.
+	 */
+	protected set problemDetailsError(value: ProblemDetails) {
+		this._problemDetailsServerErrorHandled = false;
+		this._internalServerErrorDetails = null;
+		this._problemDetails = value;
+	}
 
 	/**
 	 * When server responds with 40X error.
 	 */
-	protected _problemDetails: ProblemDetails;
+	private _problemDetails: ProblemDetails;
 
 	/**
 	 * If server error occured, this property is used to determine if the error has been handled by the component in the template.
 	 */
-	protected _problemDetailsServerErrorHandled: boolean;
+	private _problemDetailsServerErrorHandled: boolean;
 
 	/**
 	 * Checks if internal server error implements problem details

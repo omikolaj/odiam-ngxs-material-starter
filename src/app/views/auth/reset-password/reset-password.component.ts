@@ -30,34 +30,17 @@ export class ResetPasswordComponent extends AuthBase implements OnInit, OnDestro
 	/**
 	 * Emitted when server responds with 40X error.
 	 */
-	set problemDetails(value: Observable<ProblemDetails>) {
+	set problemDetails(value: ProblemDetails) {
 		this.facade.log.debug('Problem details emitted.', this);
-		this._problemDetailsServerErrorHandled = false;
-		this._subscription.add(
-			value
-				.pipe(
-					tap((value: ProblemDetails) => {
-						this._problemDetails = value;
-					})
-				)
-				.subscribe()
-		);
+		this.problemDetailsError = value;
 	}
 
 	/**
-	 * InternalServerErrorDetails for when server crashes and responds with 50X error.
+	 * Emitted when server responds with 50X error.
 	 */
-	set internalServerErrorDetails(value: Observable<InternalServerErrorDetails>) {
+	set internalServerErrorDetails(value: InternalServerErrorDetails) {
 		this.facade.log.debug('Internal server details emitted.', this);
-		this._subscription.add(
-			value
-				.pipe(
-					tap((value: InternalServerErrorDetails) => {
-						this._internalServerErrorDetails = value;
-					})
-				)
-				.subscribe()
-		);
+		this.internalServerError = value;
 	}
 
 	/**
@@ -127,8 +110,6 @@ export class ResetPasswordComponent extends AuthBase implements OnInit, OnDestro
 	 */
 	constructor(private facade: AuthFacadeService, cd: ChangeDetectorRef) {
 		super(facade.translateValidationErrorService, facade.log, cd);
-		this.problemDetails = this.facade.problemDetails$;
-		this.internalServerErrorDetails = this.facade.internalServerErrorDetails$;
 	}
 
 	/**
@@ -137,17 +118,12 @@ export class ResetPasswordComponent extends AuthBase implements OnInit, OnDestro
 	ngOnInit(): void {
 		this.facade.log.trace('Initialized.', this);
 		this._initForm();
-		this._resetPasswordFormEmailControlStatusChanges$ = this._resetPasswordForm.get('email').statusChanges.pipe(
+		this._listenForServerErrors();
+		this._resetPasswordFormEmailControlStatusChanges$ = this._resetPasswordForm
+			.get('email')
+			// null out internalServerErrorDetails
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			tap((_: string) => {
-				if (this._internalServerErrorOccured) {
-					// null out internalServerErrorDetails when the email
-					// control statusChanges. Necessary to remove old message
-					// and display new one.
-					this._internalServerErrorDetails = null;
-				}
-			})
-		);
+			.statusChanges.pipe(tap((_: string) => (this.internalServerErrorDetails = null)));
 	}
 
 	/**
@@ -164,6 +140,14 @@ export class ResetPasswordComponent extends AuthBase implements OnInit, OnDestro
 	_onSubmit(): void {
 		const model = this._resetPasswordForm.value as PasswordReset;
 		this.facade.onResetPassword(model);
+	}
+
+	/**
+	 * Subscribes to server errors and sets problem details and internal server error details.
+	 */
+	private _listenForServerErrors(): void {
+		this._subscription.add(this.facade.problemDetails$.pipe(tap((value) => (this.problemDetails = value))).subscribe());
+		this._subscription.add(this.facade.internalServerErrorDetails$.pipe(tap((value) => (this.internalServerErrorDetails = value))).subscribe());
 	}
 
 	/**

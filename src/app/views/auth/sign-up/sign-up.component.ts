@@ -2,14 +2,11 @@ import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, Output, 
 import { AuthFacadeService } from '../auth-facade.service';
 import { tap } from 'rxjs/operators';
 import { SignupUser } from 'app/core/auth/models/signup-user.model';
-
 import { Subscription, Observable } from 'rxjs';
-
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { FormGroup } from '@angular/forms';
 import { BreakpointState } from '@angular/cdk/layout';
-
 import { ActiveAuthType } from 'app/core/auth/models/active-auth-type.model';
 import { AuthBase } from '../auth-base';
 
@@ -28,8 +25,7 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	 */
 	@Input() set problemDetails(value: ProblemDetails) {
 		this.facade.log.debug('Problem details emitted.', this);
-		this._problemDetailsServerErrorHandled = false;
-		this._problemDetails = value;
+		this.problemDetailsError = value;
 	}
 
 	/**
@@ -37,8 +33,7 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	 */
 	@Input() set internalServerErrorDetails(value: InternalServerErrorDetails) {
 		this.facade.log.debug('Internal server error emitted.', this);
-		this._internalServerErrorDetailsHandled = false;
-		this._internalServerErrorDetails = value;
+		this.internalServerError = value;
 	}
 
 	/**
@@ -52,14 +47,14 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	}
 
 	/**
-	 * Whether to show overlay. Used for desktop view
-	 */
-	@Input() matcher: BreakpointState;
-
-	/**
 	 * Signup form of auth component.
 	 */
 	_signupForm: FormGroup;
+
+	/**
+	 * Whether to show overlay. Used for desktop view
+	 */
+	@Input() matcher: BreakpointState;
 
 	/**
 	 * Whether sign-in or sign-up component is active.
@@ -154,7 +149,7 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 			.get('email')
 			// null out internalServerErrorDetails
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			.statusChanges.pipe(tap((_: string) => (this._internalServerErrorDetails = null)));
+			.statusChanges.pipe(tap((_: string) => (this.internalServerErrorDetails = null)));
 	}
 
 	/**
@@ -198,7 +193,7 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 		this.switchToSigninClicked.emit('sign-in-active');
 		// allow for the animation before cleaning up the form.
 		setTimeout(() => {
-			this._internalServerErrorDetails = null;
+			this.internalServerErrorDetails = null;
 			// formDirective.resetForm();
 		}, 600);
 	}

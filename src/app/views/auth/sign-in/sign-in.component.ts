@@ -26,10 +26,7 @@ export class SignInComponent extends AuthBase implements OnInit {
 	 */
 	@Input() set problemDetails(value: ProblemDetails) {
 		this.facade.log.debug('Problem details emitted.', this);
-		this._problemDetailsServerErrorHandled = false;
-		// when problem details emits, clear out internal server error.
-		this._internalServerErrorDetails = null;
-		this._problemDetails = value;
+		this.problemDetailsError = value;
 	}
 
 	/**
@@ -37,10 +34,7 @@ export class SignInComponent extends AuthBase implements OnInit {
 	 */
 	@Input() set internalServerErrorDetails(value: InternalServerErrorDetails) {
 		this.facade.log.debug('Internal server error emitted.', this);
-		this._internalServerErrorDetailsHandled = false;
-		// when internal server error emits, clear out problem details.
-		this._problemDetails = null;
-		this._internalServerErrorDetails = value;
+		this.internalServerError = value;
 	}
 
 	/**

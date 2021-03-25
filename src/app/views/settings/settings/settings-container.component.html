@@ -17,7 +17,7 @@
 						<mat-select
 							[placeholder]="'odm.settings.general.placeholder' | translate"
 							[ngModel]="settings.language"
-							(selectionChange)="_onLanguageSelect($event)"
+							(selectionChange)="_onLanguageSelectChanged($event)"
 							name="language"
 						>
 							<ng-container *ngFor="let l of _languages">
@@ -38,7 +38,7 @@
 						<fa-icon icon="bars" color="accent"></fa-icon>
 					</mat-icon>
 					<mat-placeholder>{{ 'odm.settings.themes.sticky-header' | translate }} </mat-placeholder>
-					<mat-slide-toggle [checked]="settings.stickyHeader" (change)="_onStickyHeaderToggle($event)"> </mat-slide-toggle>
+					<mat-slide-toggle [checked]="settings.stickyHeader" (change)="_onStickyHeaderToggleChanged($event)"> </mat-slide-toggle>
 				</div>
 			</div>
 		</div>
@@ -53,7 +53,7 @@
 						<mat-select
 							[placeholder]="'odm.settings.themes.placeholder' | translate"
 							[ngModel]="settings.theme"
-							(selectionChange)="_onThemeSelect($event)"
+							(selectionChange)="_onThemeSelectChanged($event)"
 							name="themes"
 						>
 							<mat-option *ngFor="let t of _themes" [value]="t.value">
@@ -67,7 +67,7 @@
 						<fa-icon icon="lightbulb" color="accent"></fa-icon>
 					</mat-icon>
 					<mat-placeholder>{{ 'odm.settings.themes.night-mode' | translate }} </mat-placeholder>
-					<mat-slide-toggle [checked]="settings.autoNightMode" (change)="_onAutoNightModeToggle($event)"> </mat-slide-toggle>
+					<mat-slide-toggle [checked]="settings.autoNightMode" (change)="_onAutoNightModeToggleChanged($event)"> </mat-slide-toggle>
 				</div>
 			</div>
 			<div class="column-md-6 group" [ngClass]="_routeAnimationsElements">
@@ -86,7 +86,11 @@
 						disabled
 					>
 					</mat-slide-toggle>
-					<mat-slide-toggle *ngIf="!settings.pageAnimationsDisabled" [checked]="settings.pageAnimations" (change)="_onPageAnimationsToggle($event)">
+					<mat-slide-toggle
+						*ngIf="!settings.pageAnimationsDisabled"
+						[checked]="settings.pageAnimations"
+						(change)="_onPageAnimationsToggleChanged($event)"
+					>
 					</mat-slide-toggle>
 				</div>
 				<div class="icon-form-field">
@@ -94,7 +98,7 @@
 						<fa-icon icon="stream" color="accent"></fa-icon>
 					</mat-icon>
 					<mat-placeholder>{{ 'odm.settings.animations.elements' | translate }} </mat-placeholder>
-					<mat-slide-toggle [checked]="settings.elementsAnimations" (change)="_onElementsAnimationsToggle($event)"> </mat-slide-toggle>
+					<mat-slide-toggle [checked]="settings.elementsAnimations" (change)="_onElementsAnimationsToggleChanged($event)"> </mat-slide-toggle>
 				</div>
 			</div>
 		</div>

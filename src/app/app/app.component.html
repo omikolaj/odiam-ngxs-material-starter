@@ -34,7 +34,7 @@
 							{{ item.label | translate }}
 						</button>
 					</span>
-					<button mat-button mat-stroked-button color="accent" *ngIf="!(_isAuthenticated$ | async)" (click)="_onSigninClick()">
+					<button mat-button mat-stroked-button color="accent" *ngIf="!(_isAuthenticated$ | async)" (click)="_onSigninClicked()">
 						{{ 'odm.menu.signin' | translate }}
 					</button>
 
@@ -42,13 +42,13 @@
 						<fa-icon icon="user-circle"></fa-icon>
 					</button>
 					<mat-menu #toolbarUserMenu="matMenu">
-						<button mat-menu-item (click)="_onDashboardClick()">
+						<button mat-menu-item (click)="_onDashboardClicked()">
 							<mat-icon>
 								<fa-icon icon="tachometer-alt"></fa-icon>
 							</mat-icon>
 							<span>{{ 'odm.menu.account' | translate }}</span>
 						</button>
-						<button mat-menu-item (click)="_onSignoutClick()">
+						<button mat-menu-item (click)="_onSignoutClicked()">
 							<mat-icon>
 								<fa-icon icon="power-off"></fa-icon>
 							</mat-icon>
@@ -73,7 +73,7 @@
 					</a>
 
 					<span *ngIf="_language$ | async as language">
-						<mat-select [ngModel]="language" (selectionChange)="_onLanguageSelect($event)">
+						<mat-select [ngModel]="language" (selectionChange)="_onLanguageSelectChanged($event)">
 							<mat-option *ngFor="let l of _languages" [value]="l">
 								{{ l.toUpperCase() }}
 							</mat-option>

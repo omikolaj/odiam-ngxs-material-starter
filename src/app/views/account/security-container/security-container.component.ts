@@ -72,16 +72,6 @@ export class SecurityContainerComponent implements OnInit {
 	_twoFactorAuthToggleLoading: boolean;
 
 	/**
-	 * Whether to show two factor authentication setup wizard.
-	 */
-	_showTwoFactorAuthSetupWizard = false;
-
-	/**
-	 * Whether or not server error was handled and displayed by two-factor-authentication-setup component.
-	 */
-	_serverErrorHandled = false;
-
-	/**
 	 * Whether user recovery codes pnael is open.
 	 */
 	_userRecoveryCodesPanelOpened = false;
@@ -131,14 +121,6 @@ export class SecurityContainerComponent implements OnInit {
 		this._authenticatorSetupResult$ = facade.twoFactorAuthenticationSetupResult$;
 		this._problemDetails$ = facade.problemDetails$;
 		this._internalServerErrorDetails$ = facade.internalServerErrorDetails$;
-		// this._problemDetails$ = facade.problemDetails$.pipe(
-		// 	// if we're NOT displaying two factor auth setup wizard show error if occured
-		// 	tap(() => this.shouldDisplayError())
-		// );
-		// this._internalServerErrorDetails$ = facade.internalServerErrorDetails$.pipe(
-		// 	// if we're NOT displaying two factor auth setup wizard show error if occured
-		// 	tap(() => this.shouldDisplayError())
-		// );
 	}
 
 	/**
@@ -178,18 +160,18 @@ export class SecurityContainerComponent implements OnInit {
 	/**
 	 * Event handler when two factor authentication setup wizard is displayed.
 	 */
-	_onServerErrorHandled(): void {
+	_onServerErrorHandled(event: boolean): void {
 		// when two factor authentication setup wizard is displayed, hide the error in security-container component.
 		this.facade.log.trace('_onServerErrorHandled fired.', this);
-		this._showServerError = false;
-		// this._showTwoFactorAuthSetupWizard = true;
+		// if server error was handled, do not show error
+		this._showServerError = !event;
 	}
 
 	/**
 	 * Event handler when user requests to verify authenticator code.
 	 * @param event
 	 */
-	_verifyAuthenticatorClicked(event: TwoFactorAuthenticationVerificationCode): void {
+	_onVerifyAuthenticatorClicked(event: TwoFactorAuthenticationVerificationCode): void {
 		this.facade.log.trace('_onVerifyAuthenticator fired.', this);
 		this._codeVerificationInProgress = true;
 		this.facade.verifyAuthenticator(event);
@@ -198,9 +180,8 @@ export class SecurityContainerComponent implements OnInit {
 	/**
 	 * Event handler when user cancels the two factor authentication setup wizard.
 	 */
-	_cancelSetupWizardClicked(): void {
+	_onCancelSetupWizardClicked(): void {
 		this.facade.log.trace('_onCancelSetupWizard fired.', this);
-		// this._showTwoFactorAuthSetupWizard = false;
 		this._showServerError = false;
 		this._verificationCodeForm.reset();
 		this.facade.cancel2faSetupWizard();
@@ -209,9 +190,8 @@ export class SecurityContainerComponent implements OnInit {
 	/**
 	 * Event handler when user finishes two factor authentication setup.
 	 */
-	_finish2faSetupClicked(event: TwoFactorAuthenticationSetupResult): void {
+	_onFinish2faSetupClicked(event: TwoFactorAuthenticationSetupResult): void {
 		this.facade.log.trace('_onFinish2faSetup fired.', this);
-		// this._showTwoFactorAuthSetupWizard = false;
 		this._showServerError = false;
 		this._verificationCodeForm.reset();
 		this.facade.finish2faSetup(event);
@@ -220,7 +200,7 @@ export class SecurityContainerComponent implements OnInit {
 	/**
 	 * Event handler when user requests to generate new recovery codes.
 	 */
-	_generateNew2faRecoveryCodesClicked(): void {
+	_onGenerateNew2faRecoveryCodesClicked(): void {
 		this.facade.log.trace('_onGenerateNew2FaRecoveryCodes fired.', this);
 		this._generatingNewRecoveryCodes = true;
 		this.facade.generateRecoveryCodes();

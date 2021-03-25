@@ -23,9 +23,6 @@ export class TwoFactorAuthenticationCodesComponent {
 	 */
 	@Input() set serverError(value: ProblemDetails | InternalServerErrorDetails) {
 		this.log.debug('serverError emitted.', this);
-		if (value) {
-			this._showServerError = true;
-		}
 		this._serverError = value;
 	}
 
@@ -54,14 +51,9 @@ export class TwoFactorAuthenticationCodesComponent {
 	@Input() disabled = false;
 
 	/**
-	 * Event emitter when two factor auth setup wizard is displayed.
-	 */
-	@Output() serverErrorHandled = new EventEmitter<void>();
-
-	/**
 	 * Event emitter when user requests to generate new recovery codes.
 	 */
-	@Output() generateNewRecoveryCodes = new EventEmitter<void>();
+	@Output() generateNewRecoveryCodesClicked = new EventEmitter<void>();
 
 	/**
 	 * Event emitter when user closes the 'user codes' expansion panel.
@@ -94,11 +86,6 @@ export class TwoFactorAuthenticationCodesComponent {
 	_generatingCodesSpinnerStrokeWidth = 1;
 
 	/**
-	 * Whether to display server error to the user.
-	 */
-	_showServerError = false;
-
-	/**
 	 * Creates an instance of two factor authentication codes component.
 	 * @param facade
 	 */
@@ -109,7 +96,7 @@ export class TwoFactorAuthenticationCodesComponent {
 	 */
 	_onGenerateNewRecoveryCodes(): void {
 		this.log.trace('_onGenerateNewRecoveryCodes fired.', this);
-		this.generateNewRecoveryCodes.emit();
+		this.generateNewRecoveryCodesClicked.emit();
 	}
 
 	/**
@@ -117,7 +104,7 @@ export class TwoFactorAuthenticationCodesComponent {
 	 */
 	_onUserCodesClosed(): void {
 		this.log.trace('_onUserCodesClosed fired.', this);
-		this._showServerError = false;
+		this._removeServerError();
 		this.userCodesPanelClosed.emit();
 	}
 

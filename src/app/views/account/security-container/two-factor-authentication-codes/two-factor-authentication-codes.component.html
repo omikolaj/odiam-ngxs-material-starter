@@ -31,9 +31,7 @@
 						</odm-spinner>
 					</ng-container>
 				</button>
-				<ng-container *ngIf="_showServerError">
-					<odm-server-side-error [serverError]="_serverError"></odm-server-side-error>
-				</ng-container>
+				<odm-server-side-error [serverError]="_serverError"></odm-server-side-error>
 			</div>
 		</div>
 	</mat-expansion-panel>

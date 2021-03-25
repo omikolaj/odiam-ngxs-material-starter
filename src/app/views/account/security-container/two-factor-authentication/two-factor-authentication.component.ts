@@ -44,11 +44,7 @@ export class TwoFactorAuthenticationComponent {
 		this.facade.log.debug('twoFactorAuthToggleLoading emitted.', this);
 		this._twoFactorAuthToggleLoading = value;
 
-		// allow for any problemDetails or internalServerErrors to be emitted. This defers the execution.
 		setTimeout(() => {
-			// if (this.twoFactorEnabledToggle && (this._problemDetails || this._internalServerErrorDetails)) {
-
-			// }
 			if (this.twoFactorEnabledToggle) {
 				this.twoFactorEnabledToggle.checked = this.twoFactorEnabled;
 			}
@@ -64,10 +60,8 @@ export class TwoFactorAuthenticationComponent {
 		this.facade.log.debug('authenticatorSetup emitted.', this);
 		this._authenticatorSetup = value;
 		if (value.authenticatorUri !== '' && value.sharedKey !== '') {
-			this._showTwoFactorAuthSetupWizard = true;
 			// Notifies parent that two fa setup wizard is displayed.
-			// Used to control the display of server side errors.
-			this.serverErrorHandled.emit();
+			this._showTwoFactorAuthSetupWizard = true;
 		}
 	}
 
@@ -121,7 +115,7 @@ export class TwoFactorAuthenticationComponent {
 	/**
 	 * Event emitter when two factor auth setup wizard is displayed.
 	 */
-	@Output() serverErrorHandled = new EventEmitter<void>();
+	@Output() serverErrorHandled = new EventEmitter<boolean>();
 
 	/**
 	 * Event emitter when user recovery codes panel is opened.
@@ -167,9 +161,22 @@ export class TwoFactorAuthenticationComponent {
 	_twoFactorAuthToggleSpinnerStrokeWidth = 1;
 
 	/**
-	 * Show two factor auth setup wizard.
+	 * Whether to display two factor auth setup wizard.
 	 */
 	_showTwoFactorAuthSetupWizard = false;
+
+	// /**
+	//  * Sets whether two factor auth setup wizard should be displayed.
+	//  */
+	// set showTwoFactorAuthSetupWizard(value: boolean) {
+	// 	this._showTwoFactorAuthSetupWizard = value;
+	// 	if (value) {
+	// 		// if we are displaying two factor auth setup wizard, notify parent that the setup wizard component will be taking care of displaying server errors.
+	// 		// this.serverErrorHandled.emit(true);
+	// 	}
+	// }
+
+	// private _showTwoFactorAuthSetupWizard = false;
 
 	/**
 	 * Used to filter out server side errors for two factor authentication codes that occur before the panel is opened.
@@ -191,7 +198,7 @@ export class TwoFactorAuthenticationComponent {
 	 * Event handler when user requests to enable/disable two factor authentication.
 	 * @param event
 	 */
-	_onTwoFactorAuthToggle(event: MatSlideToggleChange): void {
+	_onTwoFactorAuthToggleChanged(event: MatSlideToggleChange): void {
 		this.facade.log.trace('_onTwoFactorAuthToggle fired.', this);
 		this.twoFactorAuthToggleChanged.emit(event);
 	}
@@ -199,7 +206,7 @@ export class TwoFactorAuthenticationComponent {
 	/**
 	 * Event handler when user cancels the two factor authentication setup wizard.
 	 */
-	_onCancelSetupWizard(): void {
+	_onCancelSetupWizardClicked(): void {
 		this.facade.log.trace('_onCancelSetupWizard fired.', this);
 		this._showTwoFactorAuthSetupWizard = false;
 		this.cancelSetupWizardClicked.emit();
@@ -208,7 +215,7 @@ export class TwoFactorAuthenticationComponent {
 	/**
 	 * Event handler when user finishes two factor authentication setup.
 	 */
-	_onFinish2faSetup(event: TwoFactorAuthenticationSetupResult): void {
+	_onFinish2faSetupClicked(event: TwoFactorAuthenticationSetupResult): void {
 		this.facade.log.trace('_onFinish2faSetup fired.', this);
 		this._showTwoFactorAuthSetupWizard = false;
 		this.finish2faSetupClicked.emit(event);
@@ -217,7 +224,7 @@ export class TwoFactorAuthenticationComponent {
 	/**
 	 * Event handler when user requests to generate new recovery codes.
 	 */
-	_onGenerateNew2FaRecoveryCodes(): void {
+	_onGenerateNew2FaRecoveryCodesClicked(): void {
 		this.facade.log.trace('_onGenerateNew2FaRecoveryCodes fired.', this);
 		this.generateNew2faRecoveryCodesClicked.emit();
 	}
@@ -226,7 +233,7 @@ export class TwoFactorAuthenticationComponent {
 	 * Event handler when user requests to verify authenticator code.
 	 * @param event
 	 */
-	_onVerifyAuthenticator(event: TwoFactorAuthenticationVerificationCode): void {
+	_onVerifyAuthenticatorSubmitted(event: TwoFactorAuthenticationVerificationCode): void {
 		this.facade.log.trace('_onVerifyAuthenticator fired.', this);
 		this.verifyAuthenticatorClicked.emit(event);
 	}
@@ -245,20 +252,7 @@ export class TwoFactorAuthenticationComponent {
 	 */
 	_onUserCodesPanelClosed(): void {
 		this.facade.log.trace('_onUserCodesPanelClosed fired.', this);
-		// ensures parent component cleans up any errors that it might be displaying.
 		this._userRecoveryCodesOpened = false;
-		// indicates to the parent component that any server errors that have occured were already handled and displayed.
-		this.serverErrorHandled.emit();
 		this.userRecoveryCodesClosed.emit();
-	}
-
-	/**
-	 * Event handler when server errors 40X or 50X have been displayed to the user
-	 * already by the two-factor-authentication-setup-wizard component or two-factor-authentication-codes component.
-	 * @param handled
-	 */
-	_onServerErrorHandled(): void {
-		this.facade.log.trace('_onServerErrorHandled fired.', this);
-		this.serverErrorHandled.emit();
 	}
 }

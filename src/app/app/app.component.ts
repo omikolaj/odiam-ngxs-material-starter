@@ -165,7 +165,7 @@ export class AppComponent implements OnInit, OnDestroy {
 	/**
 	 * Event handler for logging user in.
 	 */
-	_onSigninClick(): void {
+	_onSigninClicked(): void {
 		this.log.debug('onSigninClick handler fired.', this);
 		void this.router.navigate(['auth/sign-in']);
 	}
@@ -173,7 +173,7 @@ export class AppComponent implements OnInit, OnDestroy {
 	/**
 	 * Event handler for when user clicks the account button.
 	 */
-	_onDashboardClick(): void {
+	_onDashboardClicked(): void {
 		this.log.debug('onDashboardClick event handler fired.', this);
 		void this.router.navigate(['account']);
 	}
@@ -181,7 +181,7 @@ export class AppComponent implements OnInit, OnDestroy {
 	/**
 	 * Event handler for signing user out.
 	 */
-	_onSignoutClick(): void {
+	_onSignoutClicked(): void {
 		this.log.debug('onSignoutClick handler fired.', this);
 		this.authService.signOutUser();
 	}
@@ -190,7 +190,7 @@ export class AppComponent implements OnInit, OnDestroy {
 	 * Language select handler for nav bar language selection.
 	 * @param MatSelectChange
 	 */
-	_onLanguageSelect(event: MatSelectChange): void {
+	_onLanguageSelectChanged(event: MatSelectChange): void {
 		this.log.debug(`onLanguageSelect handler fired with: ${event.value as Language}.`, this);
 		const languageSelected = { language: event.value as Language };
 		this.store.dispatch(new Settings.ChangeLanguage(languageSelected));

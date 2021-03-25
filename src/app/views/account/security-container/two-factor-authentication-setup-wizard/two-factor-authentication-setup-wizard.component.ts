@@ -25,9 +25,7 @@ export class TwoFactorAuthenticationSetupWizardComponent extends AuthBase {
 	 */
 	@Input() set problemDetails(value: ProblemDetails) {
 		this.facade.log.debug('Problem Ddetails emitted.', this);
-		this._problemDetailsServerErrorHandled = false;
-		this._internalServerErrorDetails = null;
-		this._problemDetails = value;
+		this.problemDetailsError = value;
 	}
 
 	/**
@@ -35,9 +33,7 @@ export class TwoFactorAuthenticationSetupWizardComponent extends AuthBase {
 	 */
 	@Input() set internalServerErrorDetails(value: InternalServerErrorDetails) {
 		this.facade.log.debug('Internal server error emitted.', this);
-		this._internalServerErrorDetailsHandled = false;
-		this._problemDetails = null;
-		this._internalServerErrorDetails = value;
+		this.internalServerError = value;
 	}
 
 	/**

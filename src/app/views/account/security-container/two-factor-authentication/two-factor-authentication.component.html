@@ -17,7 +17,7 @@
 						#slideToggle
 						[disabled]="_twoFactorAuthToggleLoading"
 						[checked]="twoFactorEnabled"
-						(change)="_onTwoFactorAuthToggle($event)"
+						(change)="_onTwoFactorAuthToggleChanged($event)"
 						color="primary"
 					></mat-slide-toggle>
 				</div>
@@ -29,10 +29,9 @@
 							[codes]="userRecoveryCodes"
 							[disabled]="_twoFactorAuthToggleLoading"
 							[generatingCodes]="generatingNewRecoveryCodes"
-							(generateNewRecoveryCodes)="_onGenerateNew2FaRecoveryCodes()"
 							[serverError]="_serverError$ | async"
+							(generateNewRecoveryCodesClicked)="_onGenerateNew2FaRecoveryCodesClicked()"
 							(userCodesPanelClosed)="_onUserCodesPanelClosed()"
-							(serverErrorHandled)="_onServerErrorHandled()"
 							(userCodesPanelOpened)="_onUserRecoveryCodesOpened()"
 						>
 						</odm-two-factor-authentication-codes>
@@ -45,15 +44,15 @@
 
 <ng-template #twoFactorAuthenticationSetupWizard>
 	<odm-two-factor-authentication-setup-wizard
-		(verificationCodeSubmitted)="_onVerifyAuthenticator($event)"
-		(cancelSetupWizardClicked)="_onCancelSetupWizard()"
-		(finish2faSetupClicked)="_onFinish2faSetup($event)"
 		[verificationCodeForm]="verificationCodeForm"
 		[twoFactorAuthenticationSetupResult]="authenticatorSetupResult"
 		[twoFactorAuthenticationSetup]="_authenticatorSetup"
 		[problemDetails]="_problemDetails$ | async"
 		[internalServerErrorDetails]="_internalServerErrorDetails$ | async"
 		[codeVerificationInProgress]="codeVerificationInProgress"
+		(verificationCodeSubmitted)="_onVerifyAuthenticatorSubmitted($event)"
+		(cancelSetupWizardClicked)="_onCancelSetupWizardClicked()"
+		(finish2faSetupClicked)="_onFinish2faSetupClicked($event)"
 	></odm-two-factor-authentication-setup-wizard>
 </ng-template>
 
