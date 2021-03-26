@@ -6,11 +6,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app/app.component';
 import { setRootInjector } from './root-injector';
 import { MatDialogModule } from '@angular/material/dialog';
-import { AuthService } from './core/auth/auth.service';
-import { Store } from '@ngxs/store';
-import { AuthState } from './core/auth/auth.store.state';
-import { filter, tap } from 'rxjs/operators';
-import { InitSessionResult } from './core/auth/models/init-session-result.model';
+import { AppInitializerService } from './core/services/app-initializer.service';
 
 /**
  * Apps initializer factory for setting up user session.
@@ -18,19 +14,8 @@ import { InitSessionResult } from './core/auth/models/init-session-result.model'
  * @param authService
  * @returns
  */
-export function appInitializerFactory(store: Store, authService: AuthService) {
-	return (): Promise<InitSessionResult> => {
-		const isAuthenticated = store.selectSnapshot(AuthState.selectIsAuthenticated);
-		const staySignedIn = store.selectSnapshot(AuthState.selectStaySignedIn);
-		const explicitlySignedOut = store.selectSnapshot(AuthState.selectDidUserExplicitlySignout);
-		return authService
-			.renewExpiredSessionOrSignUserOut(isAuthenticated, staySignedIn, explicitlySignedOut)
-			.pipe(
-				filter((result) => result.succeeded),
-				tap((result) => authService.authenticate(result.accessToken, staySignedIn))
-			)
-			.toPromise();
-	};
+export function appInitializerFactory(appInitializerService: AppInitializerService) {
+	return (): Promise<void> => appInitializerService.initUserSession();
 }
 
 /**
@@ -56,7 +41,7 @@ export function appInitializerFactory(store: Store, authService: AuthService) {
 			provide: APP_INITIALIZER,
 			useFactory: appInitializerFactory,
 			multi: true,
-			deps: [Store, AuthService]
+			deps: [AppInitializerService]
 		}
 	],
 	bootstrap: [AppComponent]

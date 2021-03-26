@@ -129,7 +129,6 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
 			}
 		})
 	],
-	declarations: [],
 	providers: [
 		{ provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
 		{ provide: HTTP_INTERCEPTORS, useClass: HttpStatusInterceptor, multi: true, deps: [ServerErrorService] },

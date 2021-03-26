@@ -138,6 +138,7 @@ export class ResetPasswordComponent extends AuthBase implements OnInit, OnDestro
 	 * Event handler for when user submits password reset form.
 	 */
 	_onSubmit(): void {
+		this.facade.log.trace('_onSubmit fired.', this);
 		const model = this._resetPasswordForm.value as PasswordReset;
 		this.facade.onResetPassword(model);
 	}

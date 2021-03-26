@@ -165,19 +165,6 @@ export class TwoFactorAuthenticationComponent {
 	 */
 	_showTwoFactorAuthSetupWizard = false;
 
-	// /**
-	//  * Sets whether two factor auth setup wizard should be displayed.
-	//  */
-	// set showTwoFactorAuthSetupWizard(value: boolean) {
-	// 	this._showTwoFactorAuthSetupWizard = value;
-	// 	if (value) {
-	// 		// if we are displaying two factor auth setup wizard, notify parent that the setup wizard component will be taking care of displaying server errors.
-	// 		// this.serverErrorHandled.emit(true);
-	// 	}
-	// }
-
-	// private _showTwoFactorAuthSetupWizard = false;
-
 	/**
 	 * Used to filter out server side errors for two factor authentication codes that occur before the panel is opened.
 	 */

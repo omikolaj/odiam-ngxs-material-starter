@@ -48,6 +48,7 @@ export class AuthDialogComponent implements OnInit {
 	 * NgOnInit life cycle.
 	 */
 	ngOnInit(): void {
+		this.log.trace('Initialized', this);
 		this._counter$ = timer(0, 1000).pipe(
 			take(this._count),
 			map(() => --this._count)

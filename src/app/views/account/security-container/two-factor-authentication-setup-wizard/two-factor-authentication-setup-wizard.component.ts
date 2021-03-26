@@ -71,6 +71,7 @@ export class TwoFactorAuthenticationSetupWizardComponent extends AuthBase {
 	 * Two factor authentication setup information.
 	 */
 	@Input() set twoFactorAuthenticationSetup(value: TwoFactorAuthenticationSetup) {
+		this.log.debug('twoFactorAuthenticationSetup emitted.', this);
 		this._twoFactorAuthenticationSetup = value;
 		if (value.authenticatorUri && value.sharedKey) {
 			// enable verification code control

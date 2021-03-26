@@ -107,8 +107,8 @@ export class AuthState {
 	 * @returns true if is authenticated.
 	 */
 	@Selector([AuthState.selectExpiresAt])
-	static selectIsAuthenticated(state: AuthStateModel, exires_at: Date): boolean {
-		return state.isAuthenticated && isBefore(new Date(), exires_at);
+	static selectIsAuthenticated(state: AuthStateModel, expires_at: Date): boolean {
+		return state.isAuthenticated && isBefore(new Date(), expires_at);
 	}
 
 	/**
@@ -119,7 +119,9 @@ export class AuthState {
 	 */
 	@Selector([AuthState.selectExpiresAt])
 	static selectExpiresInSeconds(state: AuthStateModel, expires_at: Date): number {
-		return expires_at.getSeconds() - new Date().getSeconds();
+		const difference = expires_at.getTime() - new Date().getTime();
+		const seconds = difference / 1000;
+		return Math.abs(seconds);
 	}
 
 	/**

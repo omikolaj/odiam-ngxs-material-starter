@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
 import { AuthAsyncService } from 'app/core/auth/auth-async.service';
-import { tap, takeUntil, map, finalize, take, switchMap } from 'rxjs/operators';
+import { tap, map, finalize, switchMap, takeUntil, take } from 'rxjs/operators';
 import { AccessToken } from 'app/core/auth/models/access-token.model';
 import * as Auth from './auth.store.actions';
 import { Router } from '@angular/router';
 import { LogService } from 'app/core/logger/log.service';
-import { Store, Actions, ofActionCompleted } from '@ngxs/store';
+import { Store, ofActionCompleted, Actions } from '@ngxs/store';
 import { JsonWebTokenService } from 'app/core/services/json-web-token.service';
 import { MatDialog, MatDialogRef, MatDialogConfig } from '@angular/material/dialog';
 import { AuthDialogComponent } from '../../views/auth/auth-dialog/auth-dialog.component';
 import { AuthDialogData } from 'app/core/auth/models/auth-dialog-data.model';
 import { AuthState } from 'app/core/auth/auth.store.state';
-import { Observable, of, interval, Subscription, merge } from 'rxjs';
+import { Observable, of, Subscription, merge, interval } from 'rxjs';
 import { AuthDialogUserDecision } from '../../views/auth/auth-dialog/auth-dialog-user-decision.enum';
 import { InitSessionResult } from 'app/core/auth/models/init-session-result.model';
 
@@ -87,21 +87,21 @@ export class AuthService {
 	 * @param didExplicitlySignout
 	 * @returns expired session or sign user out
 	 */
-	renewExpiredSessionOrSignUserOut(isAuthenticated: boolean, staySignedIn: boolean, didExplicitlySignout: boolean): Observable<InitSessionResult> {
-		this.log.trace('renewExpiredSessionOrSignUserOut executed.', this);
+	initUserSession(isAuthenticated: boolean, staySignedIn: boolean, didExplicitlySignout: boolean): Observable<InitSessionResult> {
+		this.log.trace('initUserSession executed.', this);
 		// If token is valid treat as a successful sign in
 		if (isAuthenticated) {
-			this.log.trace('renewExpiredSessionOrSignUserOut: User is authenticated. Signing user in.', this);
+			this.log.debug('initUserSession: User is authenticated. Signing user in.', this);
 			return this._signinAuthenticatedUser();
 		}
 		// if staySignedIn is true and user did not explicitly sign out. Treat as renew current session.
 		else if (staySignedIn === true && didExplicitlySignout === false) {
-			this.log.trace('renewExpiredSessionOrSignUserOut: User is not authenticated and they did not explicitly sign out. Renewing session.', this);
+			this.log.debug('initUserSession: User is not authenticated and they did not explicitly sign out. Renewing session.', this);
 			return this._renewSessionFromExpiredSession();
 		}
 		// else if user did not explicitly sign out, sign them out.
 		else {
-			this.log.trace('renewExpiredSessionOrSignUserOut: User is not authenticated and session is not set to stay signed in. Signing user out.', this);
+			this.log.debug('initUserSession: User is not authenticated and session is not set to stay signed in. Signing user out.', this);
 			return of(didExplicitlySignout).pipe(switchMap(() => this._signOutUserFromApplication(didExplicitlySignout)));
 		}
 	}
@@ -194,7 +194,7 @@ export class AuthService {
 
 		// sign user in then return the result.
 		return this.store.dispatch(new Auth.Signin({ accessToken, userId })).pipe(
-			tap(() => this.log.trace('_renewSessionFromExpiredSession: Dispatched Auth.Signin.', this)),
+			tap(() => this.log.trace('_signinAuthenticatedUser: Dispatched Auth.Signin.', this)),
 			map(() => result)
 		);
 	}

@@ -26,9 +26,9 @@
 			</mat-form-field>
 		</div>
 		<mat-divider></mat-divider>
-		<ng-container *ngIf="_serverError$ | async as error">
+		<ng-container *ngIf="_serverError$ | async as serverError">
 			<ng-container *ngIf="_showServerError">
-				<odm-server-side-error [serverError]="error"></odm-server-side-error>
+				<odm-server-side-error [serverError]="serverError"></odm-server-side-error>
 			</ng-container>
 		</ng-container>
 	</div>
