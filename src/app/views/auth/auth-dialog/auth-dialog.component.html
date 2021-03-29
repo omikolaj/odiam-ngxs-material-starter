@@ -1,4 +1,5 @@
-<p>Your session will expire in {{ _counter$ | async }} seconds</p>
+<p>{{ _displayMessage }}</p>
+<p>{{ _counter$ | async }}</p>
 <div>
 	<p>Stay logged in</p>
 	<button mat-raised-button (click)="_onStaySignedIn()">Yes</button>

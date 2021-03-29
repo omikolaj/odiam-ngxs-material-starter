@@ -27,6 +27,11 @@ export class AuthDialogComponent implements OnInit {
 	_count: number;
 
 	/**
+	 * Display message of auth dialog component.
+	 */
+	_displayMessage: string;
+
+	/**
 	 * Event emitter for when user requests to stay signed in.
 	 */
 	@Output() staySignedInClicked = new EventEmitter<AuthDialogUserDecision>();
@@ -42,6 +47,7 @@ export class AuthDialogComponent implements OnInit {
 	 */
 	constructor(@Inject(MAT_DIALOG_DATA) data: AuthDialogData, private log: LogService) {
 		this._count = data.timeUntilTimeoutSeconds;
+		this._displayMessage = data.message;
 	}
 
 	/**

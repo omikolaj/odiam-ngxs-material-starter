@@ -4,6 +4,7 @@ import { Store } from '@ngxs/store';
 import { AuthService } from '../auth/auth.service';
 import { LogService } from '../logger/log.service';
 import { AuthState } from '../auth/auth.store.state';
+import { UserSessionActivityService } from './user-session-activity.service';
 
 /**
  * App initializer service.
@@ -18,7 +19,12 @@ export class AppInitializerService {
 	 * @param authService
 	 * @param log
 	 */
-	constructor(private store: Store, private authService: AuthService, private log: LogService) {}
+	constructor(
+		private store: Store,
+		private authService: AuthService,
+		private log: LogService,
+		private userSessionActivity: UserSessionActivityService
+	) {}
 
 	/**
 	 * Initializes user's session.
@@ -40,9 +46,15 @@ export class AppInitializerService {
 				if (result.succeeded) {
 					this.log.debug('[initUserSession] accesstoken:', this, result.accessToken.expires_in);
 					this.authService.authenticate(result.accessToken, staySignedIn);
+					this.monitorUserSessionAcitivity();
 				}
 			});
 
 		return promise;
+	}
+
+	monitorUserSessionAcitivity(): void {
+		// this.userSessionActivity.setInterval();
+		// this.authService.monitorUserActivity();
 	}
 }

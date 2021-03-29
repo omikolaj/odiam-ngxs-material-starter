@@ -1,8 +1,9 @@
 import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
 
-import { interval, BehaviorSubject } from 'rxjs';
-import { take } from 'rxjs/internal/operators/take';
-import { tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, interval } from 'rxjs';
+
+import { add, isBefore } from 'date-fns';
+import { map, startWith } from 'rxjs/operators';
 
 @Injectable({
 	providedIn: 'root'
@@ -13,6 +14,8 @@ export class UserSessionActivityService {
 	eventHandler;
 	interval;
 	timeout;
+
+	skipInterval = false;
 
 	private renderer: Renderer2;
 
@@ -30,39 +33,52 @@ export class UserSessionActivityService {
 
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		// this.onTimeout = this.authService.signOutUser.bind(this);
-		this.timeout = 10;
+		this.timeout = 7;
 
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		this.eventHandler = this._updateExiredTime.bind(this);
 		this._tracker();
-		this._setInterval();
+		// this.setInterval();
 	}
 
-	private _setInterval(): void {
+	private _setInterval$(): Observable<boolean> {
 		this._updateExiredTime();
-		const expiredTime = parseInt(localStorage.getItem('_expiredTime'), 10);
-		interval(1000)
-			.pipe(
-				take(1),
-				tap(() => {
-					if (expiredTime < Date.now()) {
-						this._isUserActive.next(false);
-					} else {
-						this._isUserActive.next(true);
-					}
-				})
-			)
-			.subscribe();
 
-		// this.interval = setInterval(() => {
-		// 	const expiredTime = parseInt(localStorage.getItem('_expiredTime'), 10);
-		// 	if (expiredTime < Date.now()) {
-		// 		if (this.onTimeout) {
-		// 			this.onTimeout();
-		// 			this._cleanUp();
-		// 		}
+		return interval(5000).pipe(
+			startWith(0),
+			map(() => {
+				const expiredTime = parseInt(localStorage.getItem('expiredTime'), 10);
+				const isUserActive = !isBefore(expiredTime, Date.now());
+
+				if (isUserActive) {
+					// console.log('isUserActive: true');
+					// this._isUserActive.next(true);
+					return true;
+				} else {
+					// console.log('isUserActive: false');
+					// this._isUserActive.next(false);
+					return false;
+				}
+			})
+		);
+
+		// this.interval = (() => {
+		// 	// const expiredTime = parseInt(localStorage.getItem('_expiredTime'), 10);
+		// 	const expiredTime = parseInt(localStorage.getItem('expiredTime'), 10);
+		// 	const isUserActive = !isBefore(expiredTime, Date.now());
+
+		// 	if (isUserActive) {
+		// 		console.log('isUserActive: true');
+		// 		this._isUserActive.next(true);
+		// 	} else {
+		// 		console.log('isUserActive: false');
+		// 		this._isUserActive.next(false);
 		// 	}
-		// }, 1000);
+		// }, 3000);
+	}
+
+	monitorUserSessionActivity$(): Observable<boolean> {
+		return this._setInterval$().pipe(startWith(true));
 	}
 
 	private _updateExiredTime(): void {
@@ -70,12 +86,15 @@ export class UserSessionActivityService {
 			clearTimeout(this.timeoutTracker);
 		}
 		this.timeoutTracker = setTimeout(() => {
-			localStorage.setItem('expiredTime', (Date.now() + this.timeout * 1000).toString());
+			localStorage.setItem('expiredTime', add(new Date(), { seconds: this.timeout }).getTime().toString());
 		}, 300);
 	}
 
 	private _tracker(): void {
-		this.unlistenMouseMove = this.renderer.listen('window', 'mousemove', this.eventHandler);
+		this.unlistenMouseMove = this.renderer.listen('window', 'mousemove', () => {
+			console.log('updating expired time');
+			this.eventHandler();
+		});
 		this.unlistenScroll = this.renderer.listen('window', 'scroll', this.eventHandler);
 		this.unlistenKeydown = this.renderer.listen('window', 'keydown', this.eventHandler);
 	}

@@ -111,6 +111,11 @@ export class AuthState {
 		return state.isAuthenticated && isBefore(new Date(), expires_at);
 	}
 
+	@Selector([AuthState.selectExpiresAt])
+	static selectIsAuthenticated_Fn(state: AuthStateModel): (date: Date, expires_at: Date) => boolean {
+		return (date: Date, expires_at: Date) => state.isAuthenticated && isBefore(date, expires_at);
+	}
+
 	/**
 	 * Selectors the time in seconds when the token will expire in.
 	 * @param state
@@ -132,6 +137,11 @@ export class AuthState {
 	@Selector([AUTH_STATE_TOKEN])
 	private static selectExpiresAt(state: AuthStateModel): Date {
 		return fromUnixTime(state.expires_at || 0);
+	}
+
+	@Selector([AUTH_STATE_TOKEN])
+	static selectExpiresAtNumber(state: AuthStateModel): number {
+		return state.expires_at;
 	}
 
 	/**

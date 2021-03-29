@@ -7,7 +7,7 @@ import { ProblemDetailsError } from 'app/core/error-handler/problem-details-erro
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerError } from 'app/core/error-handler/internal-server-error.decorator';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
-import { tap, filter } from 'rxjs/operators';
+import { tap, filter, switchMap } from 'rxjs/operators';
 import { Store, Select } from '@ngxs/store';
 import * as Auth from '../../core/auth/auth.store.actions';
 import { Router } from '@angular/router';
@@ -150,14 +150,28 @@ export class AuthFacadeService {
 	 * Signs user in.
 	 * @param model
 	 */
+	// signinUser(model: SigninUser): void {
+	// 	this.authAsyncService
+	// 		.signin(model)
+	// 		.pipe(
+	// 			tap((token) => {
+	// 				this._authenticate(token, model.staySignedIn);
+	// 				void this.router.navigate(['account']);
+	// 			}),
+	// 			filter(() => model.rememberMe),
+	// 			tap(() => this.store.dispatch(new Auth.UpdateRememberMeUsername(model.email))),
+	// 			switchMap(() => this.userSessionActivity.monitorUserSessionActivity$())
+	// 		)
+	// 		.subscribe();
+	// }
+
 	signinUser(model: SigninUser): void {
 		this.authAsyncService
 			.signin(model)
 			.pipe(
-				tap((token) => {
-					this._authenticate(token, model.staySignedIn);
-					void this.router.navigate(['account']);
-				}),
+				switchMap((token) => this._authenticate$(token, model.staySignedIn)),
+				switchMap(() => this._monitorUserSession$(model.staySignedIn)),
+				tap(() => void this.router.navigate(['account'])),
 				filter(() => model.rememberMe),
 				tap(() => this.store.dispatch(new Auth.UpdateRememberMeUsername(model.email)))
 			)
@@ -204,6 +218,15 @@ export class AuthFacadeService {
 	 * @param [staySignedIn]
 	 */
 	private _authenticate(token: AccessToken, staySignedIn?: boolean): void {
-		return this.authService.authenticate(token, staySignedIn);
+		this.authService.authenticate(token, staySignedIn);
+	}
+
+	private _authenticate$(token: AccessToken, staySignedIn?: boolean): Observable<any> {
+		return this.authService.authenticate$(token, staySignedIn);
+	}
+
+	private _monitorUserSession$(staySignedIn: boolean): Observable<any> {
+		const isAuthenticatedFn = this.store.selectSnapshot(AuthState.selectIsAuthenticated_Fn);
+		return this.authService.monitorUserSessionActivity$(staySignedIn, isAuthenticatedFn);
 	}
 }

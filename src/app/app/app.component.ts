@@ -183,7 +183,7 @@ export class AppComponent implements OnInit, OnDestroy {
 	 */
 	_onSignoutClicked(): void {
 		this.log.debug('onSignoutClick handler fired.', this);
-		this.authService.signOutUser();
+		this.authService.signOutUser$().subscribe();
 	}
 
 	/**
