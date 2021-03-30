@@ -3,16 +3,15 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { environment as env } from '../../environments/environment';
 import { routeAnimations, LocalStorageService } from '../core/core.module';
-import { Store } from '@ngxs/store';
-import { SettingsState } from 'app/core/settings/settings.store.state';
-import * as Settings from 'app/core/settings/settings.store.actions';
-import { LogService } from 'app/core/logger/log.service';
+
 import { Language } from 'app/core/settings/settings-state.model';
 import { MatSelectChange } from '@angular/material/select';
-import { AuthState } from 'app/core/auth/auth.store.state';
+
 import { Router, NavigationEnd } from '@angular/router';
 import { filter, tap } from 'rxjs/operators';
-import { AuthService } from 'app/core/auth/auth.service';
+
+import { AppFacadeService } from '../app-facade.service';
+import { LogService } from 'app/core/logger/log.service';
 
 /**
  * AppComponent displays navbar, footer and named router-outlet '#o=outlet'.
@@ -101,13 +100,7 @@ export class AppComponent implements OnInit, OnDestroy {
 	 * @param log
 	 * @param router
 	 */
-	constructor(
-		private storageService: LocalStorageService,
-		private store: Store,
-		private log: LogService,
-		private router: Router,
-		private authService: AuthService
-	) {
+	constructor(private storageService: LocalStorageService, private router: Router, private facade: AppFacadeService, private log: LogService) {
 		// Set up google analytics
 		this._subscription.add(
 			router.events
@@ -139,7 +132,7 @@ export class AppComponent implements OnInit, OnDestroy {
 		this.storageService.testLocalStorage();
 
 		if (AppComponent.isIEorEdgeOrSafari()) {
-			this.store.dispatch(new Settings.ChangeAnimationsPageDisabled({ pageAnimationsDisabled: true }));
+			this.facade.disablePageAnimations();
 		}
 
 		this._onInitSetSettingOptions();
@@ -156,10 +149,10 @@ export class AppComponent implements OnInit, OnDestroy {
 	 * Initializes settings options from the store.
 	 */
 	private _onInitSetSettingOptions(): void {
-		this._isAuthenticated$ = this.store.select(AuthState.selectIsAuthenticated);
-		this._stickyHeader$ = this.store.select(SettingsState.selectStickyHeaderSettings);
-		this._language$ = this.store.select(SettingsState.selectLanguageSettings);
-		this._theme$ = this.store.select(SettingsState.selectEffectiveTheme);
+		this._isAuthenticated$ = this.facade.isAuthenticated$;
+		this._stickyHeader$ = this.facade.stickyHeader$;
+		this._language$ = this.facade.language$;
+		this._theme$ = this.facade.theme$;
 	}
 
 	/**
@@ -183,7 +176,7 @@ export class AppComponent implements OnInit, OnDestroy {
 	 */
 	_onSignoutClicked(): void {
 		this.log.debug('onSignoutClick handler fired.', this);
-		this.authService.signOutUser$().subscribe();
+		this.facade.signOut();
 	}
 
 	/**
@@ -192,7 +185,6 @@ export class AppComponent implements OnInit, OnDestroy {
 	 */
 	_onLanguageSelectChanged(event: MatSelectChange): void {
 		this.log.debug(`onLanguageSelect handler fired with: ${event.value as Language}.`, this);
-		const languageSelected = { language: event.value as Language };
-		this.store.dispatch(new Settings.ChangeLanguage(languageSelected));
+		this.facade.changeLanguage(event.value as string);
 	}
 }

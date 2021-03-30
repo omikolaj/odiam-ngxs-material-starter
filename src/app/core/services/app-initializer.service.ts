@@ -30,7 +30,7 @@ export class AppInitializerService {
 	 * Initializes user's session.
 	 * @returns user session
 	 */
-	initUserSession(): Promise<void> {
+	initUserSession(): Promise<any> {
 		this.log.trace('initUserSession executing.', this);
 		const isAuthenticated = this.store.selectSnapshot(AuthState.selectIsAuthenticated);
 		this.log.debug('[initUserSession] isAuthenticated:', this, isAuthenticated);
@@ -44,17 +44,16 @@ export class AppInitializerService {
 			.then((result) => {
 				this.log.debug('[initUserSession] result:', this, result.succeeded);
 				if (result.succeeded) {
-					this.log.debug('[initUserSession] accesstoken:', this, result.accessToken.expires_in);
-					this.authService.authenticate(result.accessToken, staySignedIn);
-					this.monitorUserSessionAcitivity();
+					this.log.debug('[initUserSession] accesstoken expiriation:', this, result.accessToken.expires_in);
+					return this.authService
+						.authenticate$(result.accessToken)
+						.toPromise()
+						.then(() => {
+							void this.authService.monitorUserSessionActivity$().toPromise();
+						});
 				}
 			});
 
 		return promise;
-	}
-
-	monitorUserSessionAcitivity(): void {
-		// this.userSessionActivity.setInterval();
-		// this.authService.monitorUserActivity();
 	}
 }

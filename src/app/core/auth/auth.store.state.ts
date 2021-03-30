@@ -111,8 +111,13 @@ export class AuthState {
 		return state.isAuthenticated && isBefore(new Date(), expires_at);
 	}
 
+	/**
+	 * Selects user authenticated function. This is required to actively check if user is authenticated or not.
+	 * @param state
+	 * @returns is authenticated func
+	 */
 	@Selector([AuthState.selectExpiresAt])
-	static selectIsAuthenticated_Fn(state: AuthStateModel): (date: Date, expires_at: Date) => boolean {
+	static selectIsAuthenticatedFunc(state: AuthStateModel): (date: Date, expires_at: Date) => boolean {
 		return (date: Date, expires_at: Date) => state.isAuthenticated && isBefore(date, expires_at);
 	}
 
@@ -139,8 +144,13 @@ export class AuthState {
 		return fromUnixTime(state.expires_at || 0);
 	}
 
+	/**
+	 * Selects the raw expires_at value without converting it to Date.
+	 * @param state
+	 * @returns expires at raw
+	 */
 	@Selector([AUTH_STATE_TOKEN])
-	static selectExpiresAtNumber(state: AuthStateModel): number {
+	static selectExpiresAtRaw(state: AuthStateModel): number {
 		return state.expires_at;
 	}
 

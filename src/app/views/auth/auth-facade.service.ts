@@ -7,7 +7,7 @@ import { ProblemDetailsError } from 'app/core/error-handler/problem-details-erro
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerError } from 'app/core/error-handler/internal-server-error.decorator';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
-import { tap, filter, switchMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 import { Store, Select } from '@ngxs/store';
 import * as Auth from '../../core/auth/auth.store.actions';
 import { Router } from '@angular/router';
@@ -138,10 +138,8 @@ export class AuthFacadeService {
 		this.authAsyncService
 			.signup(model)
 			.pipe(
-				tap((token) => {
-					this._authenticate(token);
-					void this.router.navigate(['account']);
-				})
+				switchMap((token) => this._authenticate$(token)),
+				switchMap(() => this._monitorUserSession$())
 			)
 			.subscribe();
 	}
@@ -150,30 +148,12 @@ export class AuthFacadeService {
 	 * Signs user in.
 	 * @param model
 	 */
-	// signinUser(model: SigninUser): void {
-	// 	this.authAsyncService
-	// 		.signin(model)
-	// 		.pipe(
-	// 			tap((token) => {
-	// 				this._authenticate(token, model.staySignedIn);
-	// 				void this.router.navigate(['account']);
-	// 			}),
-	// 			filter(() => model.rememberMe),
-	// 			tap(() => this.store.dispatch(new Auth.UpdateRememberMeUsername(model.email))),
-	// 			switchMap(() => this.userSessionActivity.monitorUserSessionActivity$())
-	// 		)
-	// 		.subscribe();
-	// }
-
 	signinUser(model: SigninUser): void {
 		this.authAsyncService
 			.signin(model)
 			.pipe(
-				switchMap((token) => this._authenticate$(token, model.staySignedIn)),
-				switchMap(() => this._monitorUserSession$(model.staySignedIn)),
-				tap(() => void this.router.navigate(['account'])),
-				filter(() => model.rememberMe),
-				tap(() => this.store.dispatch(new Auth.UpdateRememberMeUsername(model.email)))
+				switchMap((token) => this._authenticate$(token, model.rememberMe, model.email)),
+				switchMap(() => this._monitorUserSession$())
 			)
 			.subscribe();
 	}
@@ -186,10 +166,8 @@ export class AuthFacadeService {
 			this.authAsyncService
 				.signinWithGoogle(model)
 				.pipe(
-					tap((token) => {
-						this._authenticate(token, staySignedIn);
-						void this.router.navigate(['account']);
-					})
+					switchMap((token) => this._authenticate$(token)),
+					switchMap(() => this._monitorUserSession$())
 				)
 				.subscribe();
 		});
@@ -203,30 +181,33 @@ export class AuthFacadeService {
 			this.authAsyncService
 				.signinWithFacebook(model)
 				.pipe(
-					tap((token) => {
-						this._authenticate(token, staySignedIn);
-						void this.router.navigate(['account']);
-					})
+					switchMap((token) => this._authenticate$(token)),
+					switchMap(() => this._monitorUserSession$())
 				)
 				.subscribe();
 		});
 	}
 
 	/**
-	 * Authenticates user that has signed in or signed up.
+	 * Authenticates user and takes them to the account page.
 	 * @param token
-	 * @param [staySignedIn]
+	 * @param [rememberMe]
+	 * @param [email]
+	 * @returns authenticate$
 	 */
-	private _authenticate(token: AccessToken, staySignedIn?: boolean): void {
-		this.authService.authenticate(token, staySignedIn);
+	private _authenticate$(token: AccessToken, rememberMe?: boolean, email?: string): Observable<any> {
+		void this.router.navigate(['account']);
+		if (rememberMe) {
+			this.store.dispatch(new Auth.UpdateRememberMeUsername(email));
+		}
+		return this.authService.authenticate$(token);
 	}
 
-	private _authenticate$(token: AccessToken, staySignedIn?: boolean): Observable<any> {
-		return this.authService.authenticate$(token, staySignedIn);
-	}
-
-	private _monitorUserSession$(staySignedIn: boolean): Observable<any> {
-		const isAuthenticatedFn = this.store.selectSnapshot(AuthState.selectIsAuthenticated_Fn);
-		return this.authService.monitorUserSessionActivity$(staySignedIn, isAuthenticatedFn);
+	/**
+	 * Monitors user session and keeps track if they are active.
+	 * @returns user session$
+	 */
+	private _monitorUserSession$(): Observable<any> {
+		return this.authService.monitorUserSessionActivity$();
 	}
 }
