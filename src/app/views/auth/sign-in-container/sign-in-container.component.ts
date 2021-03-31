@@ -60,11 +60,6 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 	_username$: Observable<string>;
 
 	/**
-	 * Stay signed in option selected by the user.
-	 */
-	_staySignedIn$: Observable<string>;
-
-	/**
 	 * Creates an instance of sign in container component.
 	 * @param facade
 	 * @param asyncValidators
@@ -76,7 +71,6 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 		this._internalServerErrorDetails$ = facade.internalServerErrorDetails$;
 		this._rememberMe$ = facade.rememberMe$;
 		this._username$ = facade.username$;
-		this._staySignedIn$ = facade.staySignedIn$;
 		this._breakpointStateScreenMatcher$ = breakpointObserver.observe([MinScreenSizeQuery.md]);
 		this._activeAuthType$ = facade.activeAuthType$;
 	}
@@ -108,17 +102,17 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 	/**
 	 * Event handler for when user signs in with facebook.
 	 */
-	_onSigninWithFacebookSubmitted(event: { staySignedIn: boolean }): void {
+	_onSigninWithFacebookSubmitted(): void {
 		this.facade.log.trace('_onSigninWithFacebookSubmitted event handler fired.', this);
-		this.facade.signinUserWithFacebook(event.staySignedIn);
+		this.facade.signinUserWithFacebook();
 	}
 
 	/**
 	 * Event handler for when user signs in with google.
 	 */
-	_onSigninWithGoogleSubmitted(event: { staySignedIn: boolean }): void {
+	_onSigninWithGoogleSubmitted(): void {
 		this.facade.log.trace('_onSigninWithGoogleSubmitted event handler fired.', this);
-		this.facade.signinUserWithGoogle(event.staySignedIn);
+		this.facade.signinUserWithGoogle();
 	}
 
 	/**
@@ -137,15 +131,6 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 	_onRememberMeChanged(event: boolean): void {
 		this.facade.log.trace('_onRememberMeChanged event handler fired.', this, event);
 		this.facade.onRememberMeChanged(event);
-	}
-
-	/**
-	 * Event handler for when user changes stay signed in option.
-	 * @param event
-	 */
-	_onStaySignedinChanged(event: boolean): void {
-		this.facade.log.trace('_staySignedinChanged event handler fired.', this, event);
-		this.facade.onStaySignedinChanged(event);
 	}
 
 	/**
@@ -177,8 +162,7 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 				updateOn: 'blur'
 			}),
 			password: this.facade.fb.control('', [OdmValidators.required]),
-			rememberMe: this.facade.fb.control(false),
-			staySignedIn: this.facade.fb.control(false)
+			rememberMe: this.facade.fb.control(false)
 		});
 	}
 }

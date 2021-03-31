@@ -7,7 +7,6 @@ import { BreakpointState } from '@angular/cdk/layout';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
 import { ActiveAuthType } from 'app/core/auth/models/active-auth-type.model';
-import { MatCheckboxChange } from '@angular/material/checkbox';
 import { AuthBase } from '../auth-base';
 import { AuthFacadeService } from '../auth-facade.service';
 
@@ -53,11 +52,6 @@ export class SignInComponent extends AuthBase implements OnInit {
 	@Input() activeAuthType: ActiveAuthType = 'sign-in-active';
 
 	/**
-	 * Whether to keep user signed in and automatically refresh the session.
-	 */
-	@Input() staySignedIn = false;
-
-	/**
 	 * Whether to remember username.
 	 */
 	@Input() rememberMe = false;
@@ -83,11 +77,6 @@ export class SignInComponent extends AuthBase implements OnInit {
 	@Output() rememberMeChanged = new EventEmitter<boolean>();
 
 	/**
-	 * Event emitter for when stay signed in option is changed.
-	 */
-	@Output() staySignedinChanged = new EventEmitter<boolean>();
-
-	/**
 	 * Event emitter for when the signin form is submitted.
 	 */
 	@Output() signinFormSubmitted = new EventEmitter<SigninUser>();
@@ -95,12 +84,12 @@ export class SignInComponent extends AuthBase implements OnInit {
 	/**
 	 * Event emitter for when user signs in with google.
 	 */
-	@Output() signinWithGoogleSubmitted = new EventEmitter<{ staySignedIn: boolean }>();
+	@Output() signinWithGoogleSubmitted = new EventEmitter<void>();
 
 	/**
 	 * Event emitter for when user signs in with google.
 	 */
-	@Output() signinWithFacebookSubmitted = new EventEmitter<{ staySignedIn: boolean }>();
+	@Output() signinWithFacebookSubmitted = new EventEmitter<void>();
 
 	/**
 	 * Event emitter for when user clicks forgot password.
@@ -138,7 +127,6 @@ export class SignInComponent extends AuthBase implements OnInit {
 	ngOnInit(): void {
 		this.facade.log.trace('Initialized.', this);
 		this.signinForm.get('rememberMe').setValue(this.rememberMe);
-		this.signinForm.get('staySignedIn').setValue(this.staySignedIn);
 		this.signinForm.get('email').setValue(this._username);
 	}
 
@@ -160,15 +148,6 @@ export class SignInComponent extends AuthBase implements OnInit {
 	}
 
 	/**
-	 * Event handler for when stay signed in options is changed.
-	 * @param event
-	 */
-	_onStaySignedInChange(event: MatCheckboxChange): void {
-		this.facade.log.trace('_onStaySignedInChange event handler fired.', this);
-		this.staySignedinChanged.emit(event.checked);
-	}
-
-	/**
 	 * Event handler for when user is attempting to sign in.
 	 */
 	_onSignin(): void {
@@ -182,8 +161,7 @@ export class SignInComponent extends AuthBase implements OnInit {
 	 */
 	_onSigninWithGoogle(): void {
 		this.facade.log.trace('_onSigninWithGoogle event handler fired.', this);
-		const staySignedIn = (this.signinForm.value as SigninUser).staySignedIn;
-		this.signinWithGoogleSubmitted.emit({ staySignedIn });
+		this.signinWithGoogleSubmitted.emit();
 	}
 
 	/**
@@ -191,8 +169,7 @@ export class SignInComponent extends AuthBase implements OnInit {
 	 */
 	_onSigninWithFacebook(): void {
 		this.facade.log.trace('_onSigninWithFacebook event handler fired.', this);
-		const staySignedIn = (this.signinForm.value as SigninUser).staySignedIn;
-		this.signinWithFacebookSubmitted.emit({ staySignedIn });
+		this.signinWithFacebookSubmitted.emit();
 	}
 
 	/**

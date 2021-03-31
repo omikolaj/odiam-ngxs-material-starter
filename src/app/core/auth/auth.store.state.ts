@@ -7,7 +7,7 @@ import { LocalStorageService } from '../local-storage/local-storage.service';
 import { isBefore, add, getUnixTime, fromUnixTime } from 'date-fns';
 import { LogService } from '../logger/log.service';
 import { ActiveAuthType } from './models/active-auth-type.model';
-import { Router } from '@angular/router';
+import { ACTIVE_UNTIL } from '../user-session-activity/user-session-activity-key';
 
 const AUTH_STATE_TOKEN = new StateToken<AuthStateModel>('auth');
 
@@ -159,7 +159,7 @@ export class AuthState {
 	 * @param router
 	 * @param localStorageService
 	 */
-	constructor(private localStorageService: LocalStorageService, private log: LogService, private router: Router) {}
+	constructor(private localStorageService: LocalStorageService, private log: LogService) {}
 
 	/**
 	 * Action handler that updates remember me option.
@@ -269,6 +269,7 @@ export class AuthState {
 		);
 		const auth = this._getAuthStateForLocalStorage(ctx);
 		this.localStorageService.setItem(AUTH_KEY, auth);
+		this.localStorageService.removeItem(ACTIVE_UNTIL);
 		this.log.debug('User has been signed out.', this);
 	}
 

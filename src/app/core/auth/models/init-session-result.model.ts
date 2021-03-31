@@ -10,6 +10,11 @@ export interface InitSessionResult {
 	succeeded: boolean;
 
 	/**
+	 * Whether error occured while initializing session.
+	 */
+	error: boolean;
+
+	/**
 	 * If user session was authenticated, this is user's access token.
 	 */
 	accessToken?: AccessToken;

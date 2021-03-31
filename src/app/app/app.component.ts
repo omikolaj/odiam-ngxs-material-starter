@@ -11,7 +11,6 @@ import { Router, NavigationEnd } from '@angular/router';
 import { filter, tap } from 'rxjs/operators';
 
 import { AppFacadeService } from '../app-facade.service';
-import { LogService } from 'app/core/logger/log.service';
 
 /**
  * AppComponent displays navbar, footer and named router-outlet '#o=outlet'.
@@ -100,7 +99,7 @@ export class AppComponent implements OnInit, OnDestroy {
 	 * @param log
 	 * @param router
 	 */
-	constructor(private storageService: LocalStorageService, private router: Router, private facade: AppFacadeService, private log: LogService) {
+	constructor(private storageService: LocalStorageService, private router: Router, private facade: AppFacadeService) {
 		// Set up google analytics
 		this._subscription.add(
 			router.events
@@ -128,7 +127,7 @@ export class AppComponent implements OnInit, OnDestroy {
 	 * NgOnInit life cycle. Performs local storage test as well as sets the state of the application.
 	 */
 	ngOnInit(): void {
-		this.log.trace('Initialized.', this);
+		this.facade.log.trace('Initialized.', this);
 		this.storageService.testLocalStorage();
 
 		if (AppComponent.isIEorEdgeOrSafari()) {
@@ -159,7 +158,7 @@ export class AppComponent implements OnInit, OnDestroy {
 	 * Event handler for logging user in.
 	 */
 	_onSigninClicked(): void {
-		this.log.debug('onSigninClick handler fired.', this);
+		this.facade.log.debug('onSigninClick handler fired.', this);
 		void this.router.navigate(['auth/sign-in']);
 	}
 
@@ -167,7 +166,7 @@ export class AppComponent implements OnInit, OnDestroy {
 	 * Event handler for when user clicks the account button.
 	 */
 	_onDashboardClicked(): void {
-		this.log.debug('onDashboardClick event handler fired.', this);
+		this.facade.log.debug('onDashboardClick event handler fired.', this);
 		void this.router.navigate(['account']);
 	}
 
@@ -175,7 +174,7 @@ export class AppComponent implements OnInit, OnDestroy {
 	 * Event handler for signing user out.
 	 */
 	_onSignoutClicked(): void {
-		this.log.debug('onSignoutClick handler fired.', this);
+		this.facade.log.debug('onSignoutClick handler fired.', this);
 		this.facade.signOut();
 	}
 
@@ -184,7 +183,7 @@ export class AppComponent implements OnInit, OnDestroy {
 	 * @param MatSelectChange
 	 */
 	_onLanguageSelectChanged(event: MatSelectChange): void {
-		this.log.debug(`onLanguageSelect handler fired with: ${event.value as Language}.`, this);
+		this.facade.log.debug(`onLanguageSelect handler fired with: ${event.value as Language}.`, this);
 		this.facade.changeLanguage(event.value as string);
 	}
 }

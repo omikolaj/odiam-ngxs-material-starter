@@ -161,7 +161,7 @@ export class AuthFacadeService {
 	/**
 	 * Signs user in with google.
 	 */
-	signinUserWithGoogle(staySignedIn: boolean): void {
+	signinUserWithGoogle(): void {
 		void this.socialAuthService.signIn(GoogleLoginProvider.PROVIDER_ID).then((model: SocialUser) => {
 			this.authAsyncService
 				.signinWithGoogle(model)
@@ -176,7 +176,7 @@ export class AuthFacadeService {
 	/**
 	 * Signs user in with facebook.
 	 */
-	signinUserWithFacebook(staySignedIn: boolean): void {
+	signinUserWithFacebook(): void {
 		void this.socialAuthService.signIn(FacebookLoginProvider.PROVIDER_ID).then((model: SocialUser) => {
 			this.authAsyncService
 				.signinWithFacebook(model)

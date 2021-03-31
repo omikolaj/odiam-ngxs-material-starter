@@ -6,6 +6,7 @@ import { SettingsState } from 'app/core/settings/settings.store.state';
 import { Observable } from 'rxjs';
 import { Language } from './core/settings/settings-state.model';
 import { AuthService } from './core/auth/auth.service';
+import { LogService } from './core/logger/log.service';
 
 /**
  * App facade service.
@@ -39,7 +40,7 @@ export class AppFacadeService {
 	 * @param authService
 	 * @param store
 	 */
-	constructor(private authService: AuthService, private store: Store) {}
+	constructor(private authService: AuthService, private store: Store, public log: LogService) {}
 
 	/**
 	 * Signs user out of the application.
