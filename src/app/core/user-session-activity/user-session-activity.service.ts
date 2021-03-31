@@ -171,6 +171,7 @@ export class UserSessionActivityService {
 	 */
 	private _updateActiveUntilTime(): void {
 		if (this._timeoutTracker) {
+			this.log.debug('[_updateActiveUntilTime]: _timeoutTracker is truthy, clearing timeout.', this);
 			clearTimeout(this._timeoutTracker);
 		}
 		this._timeoutTracker = setTimeout(() => {

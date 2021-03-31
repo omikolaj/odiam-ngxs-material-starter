@@ -143,10 +143,10 @@ export class AuthService {
 		// isAuthenticatedFunc has to be a function otherwise isAuthenticated from the stored gets cached and we
 		// get outdated value.
 		if (isAuthenticatedFunc(new Date(), expires_at_date)) {
-			this.log.trace('[_manageUserSession$]: User is authenticated.', this);
+			this.log.debug('[_manageUserSession$]: User is authenticated.', this);
 			return this._handleAuthenticatedUserSession$(isActive);
 		} else {
-			this.log.trace('[_manageUserSession$]: User is not authenticated.', this);
+			this.log.debug('[_manageUserSession$]: User is not authenticated.', this);
 			return this._handleUnauthenticatedUserSession$(isActive);
 		}
 	}
@@ -159,8 +159,10 @@ export class AuthService {
 	private _handleAuthenticatedUserSession$(isActive: boolean): Observable<any> {
 		this.log.trace('_handleAuthenticatedUserSession$ executed.', this);
 		if (isActive === false) {
+			this.log.debug('[_handleAuthenticatedUserSession$] User is not active.');
 			return this._handleSessionInactivity$();
 		} else {
+			this.log.debug('[_handleAuthenticatedUserSession$] User is active.');
 			return of(true);
 		}
 	}
@@ -173,8 +175,10 @@ export class AuthService {
 	private _handleUnauthenticatedUserSession$(isActive: boolean): Observable<any> {
 		this.log.trace('_handleUnauthenticatedUserSession$ executed.', this);
 		if (isActive === false) {
+			this.log.debug('[_handleUnauthenticatedUserSession$] User is not active.', this);
 			return this._handleSessionHasEnded$();
 		} else {
+			this.log.debug('[_handleUnauthenticatedUserSession$] User is active.', this);
 			return this._tryRenewAccessToken$();
 		}
 	}
@@ -208,7 +212,7 @@ export class AuthService {
 		return this.authAsyncService.tryRenewAccessToken().pipe(
 			switchMap((result) => {
 				this.log.debug('[_tryRenewAccessToken$]: succeeded:', this, result.succeeded);
-				return this._proceedWithRenewalOfAccessTokenResult(result);
+				return this._proceedWithRenewalOfAccessTokenResult$(result);
 			})
 		);
 	}
@@ -218,11 +222,13 @@ export class AuthService {
 	 * @param result
 	 * @returns with renewal of access token result
 	 */
-	private _proceedWithRenewalOfAccessTokenResult(result: RenewAccessTokenResult): Observable<any> {
-		this.log.trace('_proceedWithRenewalOfAccessTokenResult executed.');
+	private _proceedWithRenewalOfAccessTokenResult$(result: RenewAccessTokenResult): Observable<any> {
+		this.log.trace('_proceedWithRenewalOfAccessTokenResult$ executed.');
 		if (result.succeeded) {
+			this.log.debug('[_proceedWithRenewalOfAccessTokenResult$] result succeeded.', this);
 			return this.authenticate$(result.accessToken);
 		} else {
+			this.log.debug('[_proceedWithRenewalOfAccessTokenResult$] result failed.', this);
 			return this.signUserOut$();
 		}
 	}
@@ -268,8 +274,10 @@ export class AuthService {
 	private _handleUserAction$(decision: AuthDialogUserDecision, type: 'inactive' | 'expired'): Observable<any> {
 		this.log.trace('_handleUserAction$ executed.', this);
 		if (decision === AuthDialogUserDecision.staySignedIn) {
+			this.log.debug('[_handleUserAction$] User chose to stay signed in.', this);
 			return this._onStaySignedIn$(type);
 		} else {
+			this.log.debug('[_handleUserAction$] User chose to sign out.', this);
 			return this.signUserOut$();
 		}
 	}
@@ -282,8 +290,10 @@ export class AuthService {
 	private _onStaySignedIn$(type: 'inactive' | 'expired'): Observable<any> {
 		this.log.trace('_onStaySignedIn$ executed.', this);
 		if (type === 'expired') {
+			this.log.debug("[_onStaySignedIn$] Auth dialog type is 'expired'.", this);
 			return this._tryRenewAccessToken$();
 		} else {
+			this.log.debug("[_onStaySignedIn$] Auth dialog type is 'inactive'.", this);
 			return of(true);
 		}
 	}
