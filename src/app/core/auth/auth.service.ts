@@ -91,18 +91,18 @@ export class AuthService {
 	}
 
 	/**
-	 * Renews expired session or sign user out depending on their configured options.
+	 * Renews expired session token or signs user out.
 	 * @param isAuthenticated
 	 * @param staySignedIn
 	 * @param didExplicitlySignout
-	 * @returns expired session or sign user out
+	 * @returns result of session initialization.
 	 */
 	initUserSession$(isAuthenticated: boolean, didExplicitlySignout: boolean): Observable<InitSessionResult> {
 		this.log.trace('initUserSession executed.', this);
 		// If user is authenticated, treat it as a signin.
 		if (isAuthenticated) {
 			this.log.debug('initUserSession$: User is authenticated.', this);
-			return this._getAuthenticatedUserToken$();
+			return this._setInitSessionResultForAuthenticatedUser$();
 		}
 		// If user is not authenticated and user did NOT explicitly sign out, try to renew their session.
 		if (didExplicitlySignout === false) {
@@ -118,7 +118,7 @@ export class AuthService {
 
 	/**
 	 * Signs user out.
-	 * @returns out user
+	 * @returns any
 	 */
 	signUserOut$(): Observable<any> {
 		this.log.trace('signUserOut$ executed.', this);
@@ -133,7 +133,7 @@ export class AuthService {
 	 * @param isAuthenticatedFunc
 	 * @param expires_at
 	 * @param isActive
-	 * @returns user session
+	 * @returns any
 	 */
 	private _manageUserSession$(isAuthenticatedFunc: (date: Date, expires_at: Date) => boolean, isActive: boolean): Observable<any> {
 		this.log.trace('_manageUserSession$ executed.', this);
@@ -154,7 +154,7 @@ export class AuthService {
 	/**
 	 * Handles authenticated user session and checks if user is active.
 	 * @param isActive
-	 * @returns authenticated user session
+	 * @returns any
 	 */
 	private _handleAuthenticatedUserSession$(isActive: boolean): Observable<any> {
 		this.log.trace('_handleAuthenticatedUserSession$ executed.', this);
@@ -170,7 +170,7 @@ export class AuthService {
 	/**
 	 * Handles unauthenticated user session and checks if user is active.
 	 * @param isActive
-	 * @returns unauthenticated user session
+	 * @returns any
 	 */
 	private _handleUnauthenticatedUserSession$(isActive: boolean): Observable<any> {
 		this.log.trace('_handleUnauthenticatedUserSession$ executed.', this);
@@ -184,8 +184,8 @@ export class AuthService {
 	}
 
 	/**
-	 * Handles displaying of dialog for user whose session has been inactive.
-	 * @returns session inactivity
+	 * Handles displaying dialog for user whose session has been inactive.
+	 * @returns any
 	 */
 	private _handleSessionInactivity$(): Observable<any> {
 		this.log.trace('_handleSessionInactivity$ executed.', this);
@@ -194,8 +194,8 @@ export class AuthService {
 	}
 
 	/**
-	 * Handles displaying of dialog for user whose session has ended.
-	 * @returns session has ended
+	 * Handles displaying dialog for user whose session has ended.
+	 * @returns any
 	 */
 	private _handleSessionHasEnded$(): Observable<any> {
 		this.log.trace('_handleSessionHasEnded$ executed.', this);
@@ -205,7 +205,7 @@ export class AuthService {
 
 	/**
 	 * Tries to renew access token.
-	 * @returns renew access token
+	 * @returns any
 	 */
 	private _tryRenewAccessToken$(): Observable<any> {
 		this.log.trace('_tryRenewAccessToken$ executed.', this);
@@ -218,9 +218,9 @@ export class AuthService {
 	}
 
 	/**
-	 * Checks if access token renewal was successful or not and proceeds with it the result.
+	 * Checks if access token renewal was successful. If yes, authenticates user with the app else signs them out.
 	 * @param result
-	 * @returns with renewal of access token result
+	 * @returns any
 	 */
 	private _proceedWithRenewalOfAccessTokenResult$(result: RenewAccessTokenResult): Observable<any> {
 		this.log.trace('_proceedWithRenewalOfAccessTokenResult$ executed.');
@@ -235,7 +235,7 @@ export class AuthService {
 
 	/**
 	 * Displays the auth dialog.
-	 * @returns auth dialog
+	 * @returns any
 	 */
 	private _promptAuthDialog$(type: 'inactive' | 'expired'): Observable<any> {
 		this.log.trace('_promptAuthDialog$ executed.', this);
@@ -251,9 +251,12 @@ export class AuthService {
 	}
 
 	/**
-	 * Listens for auth dialog events. User can either choose to stay signed in, sign out or take no action. Treated as signout.
+	 * Listens for auth dialog events. User can either:
+	 * 1. Choose to stay signed in.
+	 * 2. Choose to end the session.
+	 * 3. Take no action, treated as end session.
 	 * @param dialogRef
-	 * @returns for dialog events
+	 * @returns user decision
 	 */
 	private _listenForDialogEvents$(
 		dialogRef: MatDialogRef<AuthDialogComponent, any>,
@@ -269,7 +272,7 @@ export class AuthService {
 	/**
 	 * Handles the action user took on the dialog.
 	 * @param decision
-	 * @returns took action
+	 * @returns any
 	 */
 	private _handleUserAction$(decision: AuthDialogUserDecision, type: 'inactive' | 'expired'): Observable<any> {
 		this.log.trace('_handleUserAction$ executed.', this);
@@ -283,9 +286,11 @@ export class AuthService {
 	}
 
 	/**
-	 * Handles user's action based on dialog type when they decide to stay signed in.
+	 * Handles user's action to stay signed in.
+	 * If dialog is for inactivity dismisses the dialog.
+	 * If dialog is for expired session, request is made to attempt to renew access token.
 	 * @param type
-	 * @returns stay signed in
+	 * @returns any
 	 */
 	private _onStaySignedIn$(type: 'inactive' | 'expired'): Observable<any> {
 		this.log.trace('_onStaySignedIn$ executed.', this);
@@ -298,7 +303,7 @@ export class AuthService {
 		}
 	}
 	/**
-	 * Signs user out of the application.
+	 * Signs user out of the server and then out of the application.
 	 */
 	private _signOut$(): Observable<void> {
 		this.log.trace('signOut: Signing user out from the server and from application. Dispatching KeepOrRemoveRememberMeUsername.', this);
@@ -306,8 +311,8 @@ export class AuthService {
 	}
 
 	/**
-	 * Initializes new session for expired session.
-	 * @returns session for expired session
+	 * Renewes expired session.
+	 * @returns result of session renewal
 	 */
 	private _renewSessionFromExpiredSession$(): Observable<InitSessionResult> {
 		this.log.trace('_renewSessionFromExpiredSession$ executed.', this);
@@ -323,8 +328,8 @@ export class AuthService {
 	}
 
 	/**
-	 * Signs user out. Only executed when certain conditions are met when the application first initializes.
-	 * @returns out on init session
+	 * Ensures user is signed out, by signing them out of the application.
+	 * @returns session signout result
 	 */
 	private _ensureUserIsSignedout$(): Observable<InitSessionResult> {
 		this.log.trace('_ensureUserIsSignedout executed.', this);
@@ -339,10 +344,10 @@ export class AuthService {
 	}
 
 	/**
-	 * Grabs authenticated user's access token and sets InitSessionResult.
+	 * Sets initialize session result for authenticated user.
 	 * @returns InitSessionResult
 	 */
-	private _getAuthenticatedUserToken$(): Observable<InitSessionResult> {
+	private _setInitSessionResultForAuthenticatedUser$(): Observable<InitSessionResult> {
 		this.log.trace('_signinAuthenticatedUser executed.', this);
 		// Grab the access token.
 		const accessToken: AccessToken = {
