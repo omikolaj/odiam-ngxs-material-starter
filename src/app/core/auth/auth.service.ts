@@ -65,7 +65,7 @@ export class AuthService {
 	/**
 	 * Authenticates user with the app by signing them in.
 	 * @param accessToken
-	 * @returns authenticate$
+	 * @returns authenticate
 	 */
 	authenticate$(accessToken: AccessToken): Observable<any> {
 		this.log.trace('authenticate$ executed.', this);
@@ -77,7 +77,7 @@ export class AuthService {
 	 * Monitors user's session activity.
 	 * @param isAuthenticatedFunc
 	 * @param expires_at
-	 * @returns session activity$
+	 * @returns session activity
 	 */
 	monitorUserSessionActivity$(): Observable<any> {
 		this.log.trace('monitorUserSessionActivity$ executed.', this);
@@ -118,7 +118,7 @@ export class AuthService {
 
 	/**
 	 * Signs user out.
-	 * @returns out user$
+	 * @returns out user
 	 */
 	signUserOut$(): Observable<any> {
 		this.log.trace('signUserOut$ executed.', this);
@@ -133,7 +133,7 @@ export class AuthService {
 	 * @param isAuthenticatedFunc
 	 * @param expires_at
 	 * @param isActive
-	 * @returns user session$
+	 * @returns user session
 	 */
 	private _manageUserSession$(isAuthenticatedFunc: (date: Date, expires_at: Date) => boolean, isActive: boolean): Observable<any> {
 		this.log.trace('_manageUserSession$ executed.', this);
@@ -204,8 +204,8 @@ export class AuthService {
 	}
 
 	/**
-	 * Trys renew access token$
-	 * @returns renew access token$
+	 * Tries to renew access token.
+	 * @returns renew access token
 	 */
 	private _tryRenewAccessToken$(): Observable<any> {
 		this.log.trace('_tryRenewAccessToken$ executed.', this);
@@ -235,7 +235,7 @@ export class AuthService {
 
 	/**
 	 * Displays the auth dialog.
-	 * @returns auth dialog$
+	 * @returns auth dialog
 	 */
 	private _promptAuthDialog$(type: 'inactive' | 'expired'): Observable<any> {
 		this.log.trace('_promptAuthDialog$ executed.', this);
