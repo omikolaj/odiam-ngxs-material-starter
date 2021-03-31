@@ -1,7 +1,7 @@
 import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
 import { Observable, timer, Subject } from 'rxjs';
 import { add, isBefore } from 'date-fns';
-import { map, startWith, takeUntil, repeatWhen } from 'rxjs/operators';
+import { map, startWith, repeatWhen, takeUntil } from 'rxjs/operators';
 import { LocalStorageService } from '../core.module';
 import { LogService } from '../logger/log.service';
 import { ACTIVE_UNTIL } from './user-session-activity-key';
@@ -53,8 +53,15 @@ export class UserSessionActivityService {
 	 */
 	private _unlistenKeydown: () => void;
 
-	private readonly _stop = new Subject<void>();
+	/**
+	 * Start the user session activity timer.
+	 */
 	private readonly _start = new Subject<void>();
+
+	/**
+	 * Stop the user session activity timer.
+	 */
+	private readonly _stop = new Subject<void>();
 
 	// sample https://codesandbox.io/s/interesting-snowflake-ml9w9?from-embed=&file=/src/app/IdleTimer.js
 	/**
@@ -80,11 +87,19 @@ export class UserSessionActivityService {
 		return this._isUserActive$().pipe(startWith(true));
 	}
 
-	start(): void {
+	/**
+	 * Starts activity timer.
+	 */
+	startActivityTimer(): void {
+		this.log.trace('startActivityTimer executed.', this);
 		this._start.next();
 	}
 
-	stop(): void {
+	/**
+	 * Stops activity timer.
+	 */
+	stopActivityTimer(): void {
+		this.log.trace('stopActivityTimer executed.', this);
 		this._stop.next();
 	}
 
@@ -141,19 +156,13 @@ export class UserSessionActivityService {
 	private _isUserActive$(): Observable<boolean> {
 		// set the initial ACTIVE_UNTIL time in local storage.
 		this._updateActiveUntilTime();
-		// return interval(this._checkActivityIntervalInMs).pipe(
-		// 	map(() => {
-		// 		const expiredTime = parseInt(this.localStorageService.getItem(ACTIVE_UNTIL), 10);
-		// 		return isBefore(Date.now(), expiredTime);
-		// 	})
-		// );
-		return timer(0, this._checkActivityIntervalInMs).pipe(
+		return timer(this._checkActivityIntervalInMs).pipe(
+			takeUntil(this._stop),
 			map(() => {
 				const expiredTime = parseInt(this.localStorageService.getItem(ACTIVE_UNTIL), 10);
 				return isBefore(Date.now(), expiredTime);
 			}),
-			takeUntil(this._stop),
-			repeatWhen(this._start)
+			repeatWhen(() => this._start)
 		);
 	}
 

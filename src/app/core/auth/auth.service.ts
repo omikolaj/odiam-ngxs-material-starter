@@ -36,12 +36,6 @@ export class AuthService {
 	private _authDialogConfig: MatDialogConfig;
 
 	/**
-	 * Whether the monitorUserSessionActivity$ should skip executing on interval. This gets changed to true when
-	 * user's session is being updated.
-	 */
-	private _skipInterval = false;
-
-	/**
 	 * Creates an instance of auth service.
 	 * @param authAsyncService
 	 * @param router
@@ -90,8 +84,9 @@ export class AuthService {
 		const isAuthenticatedFunc = this.store.selectSnapshot(AuthState.selectIsAuthenticatedFunc);
 		return this.userActivityService.monitorUserSessionActivity$().pipe(
 			takeUntil(this.actions$.pipe(ofActionCompleted(Auth.Signout))),
-			// filter(() => !this._skipInterval),
-			switchMap((isActive) => this._manageUserSession$(isAuthenticatedFunc, isActive))
+			tap(() => this.userActivityService.stopActivityTimer()),
+			switchMap((isActive) => this._manageUserSession$(isAuthenticatedFunc, isActive)),
+			tap(() => this.userActivityService.startActivityTimer())
 		);
 	}
 
@@ -145,18 +140,14 @@ export class AuthService {
 		const expires_at = this.store.selectSnapshot(AuthState.selectExpiresAtRaw);
 		const expires_at_date = fromUnixTime(expires_at);
 
-		// while we are managing user session, ensure to skip interval from emitting needlesly.
-		// this._skipInterval = true;
-		this.userActivityService.stop();
-
 		// isAuthenticatedFunc has to be a function otherwise isAuthenticated from the stored gets cached and we
 		// get outdated value.
 		if (isAuthenticatedFunc(new Date(), expires_at_date)) {
 			this.log.trace('User is authenticated.', this);
-			return this._handleAuthenticatedUserSession$(isActive).pipe(finalize(() => this.userActivityService.start())); // .pipe(finalize(() => (this._skipInterval = false)));
+			return this._handleAuthenticatedUserSession$(isActive);
 		} else {
 			this.log.trace('User is not authenticated.', this);
-			return this._handleUnauthenticatedUserSession$(isActive).pipe(finalize(() => this.userActivityService.start())); // .pipe(finalize(() => (this._skipInterval = false)));
+			return this._handleUnauthenticatedUserSession$(isActive);
 		}
 	}
 
@@ -243,15 +234,7 @@ export class AuthService {
 			tap(() => this.dialog.closeAll())
 		);
 
-		return race(userActions$, userTookNoActions$).pipe(
-			// this has to be tap because the observable never emits complete,
-			// if finailize is used here then this._skipInterval is never reset.
-			tap(() => this.userActivityService.start()),
-			tap(() => console.log('tap', this._skipInterval)),
-			finalize(() => {
-				console.log('finalize');
-			})
-		);
+		return race(userActions$, userTookNoActions$);
 	}
 
 	/**
