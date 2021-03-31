@@ -143,10 +143,10 @@ export class AuthService {
 		// isAuthenticatedFunc has to be a function otherwise isAuthenticated from the stored gets cached and we
 		// get outdated value.
 		if (isAuthenticatedFunc(new Date(), expires_at_date)) {
-			this.log.trace('User is authenticated.', this);
+			this.log.trace('[_manageUserSession$]: User is authenticated.', this);
 			return this._handleAuthenticatedUserSession$(isActive);
 		} else {
-			this.log.trace('User is not authenticated.', this);
+			this.log.trace('[_manageUserSession$]: User is not authenticated.', this);
 			return this._handleUnauthenticatedUserSession$(isActive);
 		}
 	}
@@ -157,6 +157,7 @@ export class AuthService {
 	 * @returns authenticated user session
 	 */
 	private _handleAuthenticatedUserSession$(isActive: boolean): Observable<any> {
+		this.log.trace('_handleAuthenticatedUserSession$ executed.', this);
 		if (isActive === false) {
 			return this._handleSessionInactivity$();
 		} else {
@@ -170,6 +171,7 @@ export class AuthService {
 	 * @returns unauthenticated user session
 	 */
 	private _handleUnauthenticatedUserSession$(isActive: boolean): Observable<any> {
+		this.log.trace('_handleUnauthenticatedUserSession$ executed.', this);
 		if (isActive === false) {
 			return this._handleSessionHasEnded$();
 		} else {
@@ -182,6 +184,7 @@ export class AuthService {
 	 * @returns session inactivity
 	 */
 	private _handleSessionInactivity$(): Observable<any> {
+		this.log.trace('_handleSessionInactivity$ executed.', this);
 		(this._authDialogConfig.data as AuthDialogData).message = 'You are about to be signed out due to inactivity.';
 		return this._promptAuthDialog$('inactive');
 	}
@@ -191,6 +194,7 @@ export class AuthService {
 	 * @returns session has ended
 	 */
 	private _handleSessionHasEnded$(): Observable<any> {
+		this.log.trace('_handleSessionHasEnded$ executed.', this);
 		(this._authDialogConfig.data as AuthDialogData).message = 'Your session is expired and you are about to be signed out.';
 		return this._promptAuthDialog$('expired');
 	}
@@ -200,9 +204,10 @@ export class AuthService {
 	 * @returns renew access token$
 	 */
 	private _tryRenewAccessToken$(): Observable<any> {
+		this.log.trace('_tryRenewAccessToken$ executed.', this);
 		return this.authAsyncService.tryRenewAccessToken().pipe(
 			switchMap((result) => {
-				this.log.debug('_tryRenewAccessToken$ succeeded:', this, result.succeeded);
+				this.log.debug('[_tryRenewAccessToken$]: succeeded:', this, result.succeeded);
 				return this._proceedWithRenewalOfAccessTokenResult(result);
 			})
 		);
@@ -214,6 +219,7 @@ export class AuthService {
 	 * @returns with renewal of access token result
 	 */
 	private _proceedWithRenewalOfAccessTokenResult(result: RenewAccessTokenResult): Observable<any> {
+		this.log.trace('_proceedWithRenewalOfAccessTokenResult executed.');
 		if (result.succeeded) {
 			return this.authenticate$(result.accessToken);
 		} else {
@@ -226,6 +232,7 @@ export class AuthService {
 	 * @returns auth dialog$
 	 */
 	private _promptAuthDialog$(type: 'inactive' | 'expired'): Observable<any> {
+		this.log.trace('_promptAuthDialog$ executed.', this);
 		const dialogRef = this.dialog.open(AuthDialogComponent, this._authDialogConfig);
 		const userActions$ = this._listenForDialogEvents$(dialogRef, type);
 		const userTookNoActions$ = timer(this._authDialogTimeoutInMs).pipe(
@@ -249,7 +256,7 @@ export class AuthService {
 		this.log.trace('_listenForDialogEvents executed.', this);
 		return race(dialogRef.componentInstance.staySignedInClicked, dialogRef.componentInstance.signOutClicked).pipe(
 			tap(() => this.dialog.closeAll()),
-			switchMap((decision: AuthDialogUserDecision) => this._handleUserAction(decision, type))
+			switchMap((decision: AuthDialogUserDecision) => this._handleUserAction$(decision, type))
 		) as Observable<AuthDialogUserDecision>;
 	}
 
@@ -258,7 +265,8 @@ export class AuthService {
 	 * @param decision
 	 * @returns took action
 	 */
-	private _handleUserAction(decision: AuthDialogUserDecision, type: 'inactive' | 'expired'): Observable<any> {
+	private _handleUserAction$(decision: AuthDialogUserDecision, type: 'inactive' | 'expired'): Observable<any> {
+		this.log.trace('_handleUserAction$ executed.', this);
 		if (decision === AuthDialogUserDecision.staySignedIn) {
 			return this._onStaySignedIn$(type);
 		} else {
@@ -272,6 +280,7 @@ export class AuthService {
 	 * @returns stay signed in
 	 */
 	private _onStaySignedIn$(type: 'inactive' | 'expired'): Observable<any> {
+		this.log.trace('_onStaySignedIn$ executed.', this);
 		if (type === 'expired') {
 			return this._tryRenewAccessToken$();
 		} else {
@@ -282,7 +291,7 @@ export class AuthService {
 	 * Signs user out of the application.
 	 */
 	private _signOut$(): Observable<void> {
-		this.log.trace('signOut: Signing user from the server and dispatching Auth.Signout and Auth.KeepOrRemoveRememberMeUsername', this);
+		this.log.trace('signOut: Signing user out from the server and from application. Dispatching KeepOrRemoveRememberMeUsername.', this);
 		return this.authAsyncService.signout().pipe(finalize(() => this.store.dispatch([new Auth.Signout(), new Auth.KeepOrRemoveRememberMeUsername()])));
 	}
 
