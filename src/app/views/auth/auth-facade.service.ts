@@ -119,7 +119,7 @@ export class AuthFacadeService {
 	 * @param email
 	 */
 	forgotPassword(email: string): void {
-		this.usersAsyncService.forgotPassword(email).subscribe();
+		this.usersAsyncService.forgotPassword$(email).subscribe();
 	}
 
 	/**
@@ -127,7 +127,7 @@ export class AuthFacadeService {
 	 * @param model
 	 */
 	onResetPassword(model: PasswordReset): void {
-		this.usersAsyncService.resetPassword(model).subscribe();
+		this.usersAsyncService.resetPassword$(model).subscribe();
 	}
 
 	/**
@@ -136,7 +136,7 @@ export class AuthFacadeService {
 	 */
 	signupUser(model: SignupUser): void {
 		this.authAsyncService
-			.signup(model)
+			.signup$(model)
 			.pipe(
 				switchMap((token) => this._authenticate$(token)),
 				switchMap(() => this._monitorUserSession$())
@@ -150,7 +150,7 @@ export class AuthFacadeService {
 	 */
 	signinUser(model: SigninUser): void {
 		this.authAsyncService
-			.signin(model)
+			.signin$(model)
 			.pipe(
 				switchMap((token) => this._authenticate$(token, model.rememberMe, model.email)),
 				switchMap(() => this._monitorUserSession$())
@@ -164,7 +164,7 @@ export class AuthFacadeService {
 	signinUserWithGoogle(): void {
 		void this.socialAuthService.signIn(GoogleLoginProvider.PROVIDER_ID).then((model: SocialUser) => {
 			this.authAsyncService
-				.signinWithGoogle(model)
+				.signinWithGoogle$(model)
 				.pipe(
 					switchMap((token) => this._authenticate$(token)),
 					switchMap(() => this._monitorUserSession$())
@@ -179,7 +179,7 @@ export class AuthFacadeService {
 	signinUserWithFacebook(): void {
 		void this.socialAuthService.signIn(FacebookLoginProvider.PROVIDER_ID).then((model: SocialUser) => {
 			this.authAsyncService
-				.signinWithFacebook(model)
+				.signinWithFacebook$(model)
 				.pipe(
 					switchMap((token) => this._authenticate$(token)),
 					switchMap(() => this._monitorUserSession$())
@@ -197,10 +197,7 @@ export class AuthFacadeService {
 	 */
 	private _authenticate$(token: AccessToken, rememberMe?: boolean, email?: string): Observable<any> {
 		void this.router.navigate(['account']);
-		if (rememberMe) {
-			this.store.dispatch(new Auth.UpdateRememberMeUsername(email));
-		}
-		return this.authService.authenticate$(token);
+		return this.authService.authenticate$(token, rememberMe, email);
 	}
 
 	/**
@@ -208,6 +205,6 @@ export class AuthFacadeService {
 	 * @returns user session$
 	 */
 	private _monitorUserSession$(): Observable<any> {
-		return this.authService.monitorUserSessionActivity$();
+		return this.authService.monitorSessionActivity$();
 	}
 }

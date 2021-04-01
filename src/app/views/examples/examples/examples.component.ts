@@ -17,7 +17,7 @@ import { ExamplesFacadeService } from '../examples-facade.service';
 export class ExamplesComponent implements OnInit {
 	isAuthenticated$: Observable<boolean>;
 
-	examples = [
+	readonly examples = [
 		{ link: './', label: 'odm.examples.menu.todos' },
 		{ link: './', label: 'odm.examples.menu.stocks' },
 		{ link: './', label: 'odm.examples.menu.theming' },

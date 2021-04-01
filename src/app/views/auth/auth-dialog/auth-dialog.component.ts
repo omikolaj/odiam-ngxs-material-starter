@@ -7,7 +7,7 @@ import { LogService } from 'app/core/logger/log.service';
 import { AuthDialogUserDecision } from './auth-dialog-user-decision.enum';
 
 /**
- * Auth dialog component.
+ * Authentication dialog component that is displayed to the user when they are inactive or session has expired.
  */
 @Component({
 	selector: 'odm-auth-dialog',
@@ -16,6 +16,16 @@ import { AuthDialogUserDecision } from './auth-dialog-user-decision.enum';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AuthDialogComponent implements OnInit {
+	/**
+	 * Event emitter for when user requests to stay signed in.
+	 */
+	@Output() staySignedInClicked = new EventEmitter<AuthDialogUserDecision>();
+
+	/**
+	 * Event emitter for when user requests to sign out.
+	 */
+	@Output() signOutClicked = new EventEmitter<AuthDialogUserDecision>();
+
 	/**
 	 * Current time in seconds before session times out.
 	 */
@@ -32,18 +42,9 @@ export class AuthDialogComponent implements OnInit {
 	_displayMessage: string;
 
 	/**
-	 * Event emitter for when user requests to stay signed in.
-	 */
-	@Output() staySignedInClicked = new EventEmitter<AuthDialogUserDecision>();
-
-	/**
-	 * Event emitter for when user requests to sign out.
-	 */
-	@Output() signOutClicked = new EventEmitter<AuthDialogUserDecision>();
-
-	/**
 	 * Creates an instance of auth dialog component.
 	 * @param data
+	 * @param log
 	 */
 	constructor(@Inject(MAT_DIALOG_DATA) data: AuthDialogData, private log: LogService) {
 		this._count = data.timeUntilTimeoutSeconds;

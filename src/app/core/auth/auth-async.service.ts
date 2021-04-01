@@ -9,13 +9,13 @@ import { RenewAccessTokenResult } from './models/renew-access-token-result.model
 import { SocialUser } from 'angularx-social-login';
 
 /**
- * AuthAsyncService injectable.
+ * Async authentication service.
  */
 @Injectable({
 	providedIn: 'root'
 })
 export class AuthAsyncService {
-	private _headers = new HttpHeaders({
+	private readonly _headers = new HttpHeaders({
 		'Content-Type': 'application/json'
 	});
 
@@ -30,7 +30,7 @@ export class AuthAsyncService {
 	 * @param model
 	 * @returns access token
 	 */
-	signup(model: SignupUser): Observable<AccessToken> {
+	signup$(model: SignupUser): Observable<AccessToken> {
 		return this.http.post<AccessToken>(`${this.apiUrl}/auth/signup`, JSON.stringify(model), { headers: this._headers });
 	}
 
@@ -39,7 +39,7 @@ export class AuthAsyncService {
 	 * @param model
 	 * @returns access token
 	 */
-	signin(model: SigninUser): Observable<AccessToken> {
+	signin$(model: SigninUser): Observable<AccessToken> {
 		return this.http.post<AccessToken>(`${this.apiUrl}/auth/signin`, JSON.stringify(model), { headers: this._headers });
 	}
 
@@ -47,7 +47,7 @@ export class AuthAsyncService {
 	 * Signs users out.
 	 * @returns void
 	 */
-	signout(): Observable<void> {
+	signout$(): Observable<void> {
 		return this.http.delete<void>(`${this.apiUrl}/auth/signout`, { headers: this._headers });
 	}
 
@@ -56,7 +56,7 @@ export class AuthAsyncService {
 	 * @param model
 	 * @returns access token
 	 */
-	signinWithGoogle(model: SocialUser): Observable<AccessToken> {
+	signinWithGoogle$(model: SocialUser): Observable<AccessToken> {
 		return this.http.post<AccessToken>(`${this.apiUrl}/auth/external-signin-google`, JSON.stringify(model), { headers: this._headers });
 	}
 
@@ -65,7 +65,7 @@ export class AuthAsyncService {
 	 * @param model
 	 * @returns access token
 	 */
-	signinWithFacebook(model: SocialUser): Observable<AccessToken> {
+	signinWithFacebook$(model: SocialUser): Observable<AccessToken> {
 		return this.http.post<AccessToken>(`${this.apiUrl}/auth/external-signin-facebook`, JSON.stringify(model), { headers: this._headers });
 	}
 
@@ -73,7 +73,7 @@ export class AuthAsyncService {
 	 * Trys to renew access token.
 	 * @returns renew access token
 	 */
-	tryRenewAccessToken(): Observable<RenewAccessTokenResult> {
+	tryRenewAccessToken$(): Observable<RenewAccessTokenResult> {
 		return this.http.post<RenewAccessTokenResult>(`${this.apiUrl}/auth/refresh-token`, { headers: this._headers });
 	}
 }

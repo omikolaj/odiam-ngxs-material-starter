@@ -79,7 +79,7 @@ export class AccountFacadeService {
 	getAccountSecurityInfo(): void {
 		const id = this.store.selectSnapshot(AuthState.selectCurrentUserId);
 		this.userAsyncService
-			.getAccountSecurityDetails(id)
+			.getAccountSecurityDetails$(id)
 			.pipe(tap((accountSecurityDetails) => this.store.dispatch(new SecurityContainer.SetAccountSecurityDetails(accountSecurityDetails))))
 			.subscribe();
 	}
@@ -90,7 +90,7 @@ export class AccountFacadeService {
 	getAccountGeneralInfo(): void {
 		const id = this.store.selectSnapshot(AuthState.selectCurrentUserId);
 		this.userAsyncService
-			.getAccountGeneralDetails(id)
+			.getAccountGeneralDetails$(id)
 			.pipe(tap((accountGeneralDetails) => this.store.dispatch(new GeneralContainer.SetAccountGeneralDetails(accountGeneralDetails))))
 			.subscribe();
 	}
@@ -100,7 +100,7 @@ export class AccountFacadeService {
 	 */
 	setupAuthenticator(): void {
 		this.twoFactorAuthenticationAsync
-			.setupAuthenticator()
+			.setupAuthenticator$()
 			.pipe(tap((authenticatorInfo) => this.store.dispatch([new TwoFactorAuthentication.SetupTwoFactorAuthentication(authenticatorInfo)])))
 			.subscribe();
 	}
@@ -111,7 +111,7 @@ export class AccountFacadeService {
 	 */
 	verifyAuthenticator(model: TwoFactorAuthenticationVerificationCode): void {
 		this.twoFactorAuthenticationAsync
-			.verifyAuthenticator(model)
+			.verifyAuthenticator$(model)
 			.pipe(tap((result) => this.store.dispatch(new TwoFactorAuthentication.AuthenticatorVerificationResult(result))))
 			.subscribe();
 	}
@@ -144,7 +144,7 @@ export class AccountFacadeService {
 	 */
 	generateRecoveryCodes(): void {
 		this.twoFactorAuthenticationAsync
-			.generate2FaRecoveryCodes()
+			.generate2FaRecoveryCodes$()
 			.pipe(tap((result) => this.store.dispatch(new SecurityContainer.UpdateRecoveryCodes(result))))
 			.subscribe();
 	}
@@ -154,7 +154,7 @@ export class AccountFacadeService {
 	 */
 	disable2Fa(): void {
 		this.twoFactorAuthenticationAsync
-			.disable2Fa()
+			.disable2Fa$()
 			.pipe(tap(() => this.store.dispatch([new TwoFactorAuthentication.Reset2faSetupWizard(), new SecurityContainer.ResetAccountSecuritySettings()])))
 			.subscribe();
 	}
@@ -164,6 +164,6 @@ export class AccountFacadeService {
 	 */
 	resendEmailVerification(): void {
 		const id = this.store.selectSnapshot(AuthState.selectCurrentUserId);
-		this.userAsyncService.resendEmailVerification(id).subscribe();
+		this.userAsyncService.resendEmailVerification$(id).subscribe();
 	}
 }

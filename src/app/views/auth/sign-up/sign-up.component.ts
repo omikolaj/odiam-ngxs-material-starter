@@ -11,7 +11,7 @@ import { ActiveAuthType } from 'app/core/auth/models/active-auth-type.model';
 import { AuthBase } from '../auth-base';
 
 /**
- * Signup component.
+ * Sign up component.
  */
 @Component({
 	selector: 'odm-sign-up',
@@ -127,9 +127,9 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	_confirmPasswordNotMatchReqMet = false;
 
 	/**
-	 * Subscriptions for this component.
+	 * Rxjs subscriptions for this component.
 	 */
-	private _subscription: Subscription = new Subscription();
+	private readonly _subscription: Subscription = new Subscription();
 
 	/**
 	 * Creates an instance of sign up component.

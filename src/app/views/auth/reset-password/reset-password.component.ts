@@ -44,9 +44,9 @@ export class ResetPasswordComponent extends AuthBase implements OnInit, OnDestro
 	}
 
 	/**
-	 * Route animations elements of auth component.
+	 * Route animations.
 	 */
-	_routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
+	readonly _routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
 
 	/**
 	 * Hide/show password.
@@ -99,9 +99,9 @@ export class ResetPasswordComponent extends AuthBase implements OnInit, OnDestro
 	_resetPasswordFormEmailControlStatusChanges$: Observable<string>;
 
 	/**
-	 * Subscriptions for this component.
+	 * Rxjs subscriptions for this component.
 	 */
-	private _subscription = new Subscription();
+	private readonly _subscription = new Subscription();
 
 	/**
 	 * Creates an instance of reset password component.

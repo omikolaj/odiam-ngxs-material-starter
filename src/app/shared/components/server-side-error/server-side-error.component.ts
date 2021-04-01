@@ -6,7 +6,7 @@ import { Observable, of } from 'rxjs';
 import { upDownFadeInAnimation } from 'app/core/core.module';
 
 /**
- * Component that handles displaying server side errors.
+ * Server side error component that handles displaying server side errors.
  */
 @Component({
 	selector: 'odm-server-side-error',
@@ -17,24 +17,25 @@ import { upDownFadeInAnimation } from 'app/core/core.module';
 })
 export class ServerSideErrorComponent implements OnInit {
 	/**
-	 * Whether to show the error or not.
-	 */
-	@Input() showError = true;
-
-	/**
 	 * Server side error.
 	 */
 	@Input() serverError: ProblemDetails | InternalServerErrorDetails;
 
+	/**
+	 * Sets problem detials.
+	 */
 	@Input() set problemDetails(value: ProblemDetails) {
-		console.log('problem details error emitted: ', value);
+		this.log.debug('problemDetails emitted.', this);
 		this._problemDetails = value;
 	}
 
 	_problemDetails: ProblemDetails;
 
+	/**
+	 * Sets internal server error details.
+	 */
 	@Input() set internalServerErrorDetails(value: InternalServerErrorDetails) {
-		console.log('internal server error emitted: ', value);
+		this.log.debug('internalServerErrorDetails emitted.', this);
 		this._internalServerErrorDetails = value;
 	}
 
@@ -51,10 +52,6 @@ export class ServerSideErrorComponent implements OnInit {
 	 */
 	ngOnInit(): void {
 		this.log.trace('Initialized', this);
-		// this._serverError$ = merge(
-		// 	this.problemDetails$.pipe(tap((err) => this.log.trace('Problem details:', this, err))),
-		// 	this.internalServerError$.pipe(tap((err) => this.log.trace('Internal Server error:', this, err)))
-		// );
 	}
 
 	/**

@@ -12,7 +12,7 @@ import { ROUTE_ANIMATIONS_ELEMENTS } from '../../../core/core.module';
 })
 export class AboutComponent {
 	/**
-	 * Route animations elements of about component.
+	 * Route animations.
 	 */
-	_routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
+	readonly _routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
 }

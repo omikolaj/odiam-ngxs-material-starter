@@ -17,7 +17,7 @@ export class UsersAsyncService {
 	/**
 	 * Headers of users service.
 	 */
-	private _headers = new HttpHeaders({
+	private readonly _headers = new HttpHeaders({
 		'Content-Type': 'application/json'
 	});
 
@@ -33,7 +33,7 @@ export class UsersAsyncService {
 	 * @param id
 	 * @returns user profile
 	 */
-	getUserProfile(id: string): Observable<AccountDetails> {
+	getUserProfile$(id: string): Observable<AccountDetails> {
 		return this.http.get<AccountDetails>(`${this.apiUrl}/users/${id}`);
 	}
 
@@ -42,7 +42,7 @@ export class UsersAsyncService {
 	 * @param id
 	 * @returns account security details
 	 */
-	getAccountSecurityDetails(id: string): Observable<AccountSecurityDetails> {
+	getAccountSecurityDetails$(id: string): Observable<AccountSecurityDetails> {
 		return this.http.get<AccountSecurityDetails>(`${this.apiUrl}/users/${id}/account/security`);
 	}
 
@@ -51,7 +51,7 @@ export class UsersAsyncService {
 	 * @param id
 	 * @returns account general details
 	 */
-	getAccountGeneralDetails(id: string): Observable<AccountGeneralDetails> {
+	getAccountGeneralDetails$(id: string): Observable<AccountGeneralDetails> {
 		return this.http.get<AccountGeneralDetails>(`${this.apiUrl}/users/${id}/account/general`);
 	}
 
@@ -60,7 +60,7 @@ export class UsersAsyncService {
 	 * @param id
 	 * @returns email verification
 	 */
-	resendEmailVerification(id: string): Observable<void> {
+	resendEmailVerification$(id: string): Observable<void> {
 		return this.http.get<void>(`${this.apiUrl}/users/${id}/account/resend-email-verification`);
 	}
 
@@ -69,7 +69,7 @@ export class UsersAsyncService {
 	 * @param email
 	 * @returns if email exists
 	 */
-	checkIfEmailExists(email: string): Observable<boolean> {
+	checkIfEmailExists$(email: string): Observable<boolean> {
 		return this.http.get<boolean>(`${this.apiUrl}/users/email`, { params: { email: email }, headers: this._headers });
 	}
 
@@ -78,7 +78,7 @@ export class UsersAsyncService {
 	 * @param email
 	 * @returns password
 	 */
-	forgotPassword(email: string): Observable<void> {
+	forgotPassword$(email: string): Observable<void> {
 		return this.http.post<void>(`${this.apiUrl}/users/password`, JSON.stringify(email), { headers: this._headers });
 	}
 
@@ -87,7 +87,7 @@ export class UsersAsyncService {
 	 * @param model
 	 * @returns password
 	 */
-	resetPassword(model: PasswordReset): Observable<void> {
+	resetPassword$(model: PasswordReset): Observable<void> {
 		return this.http.put<void>(`${this.apiUrl}/users/password`, JSON.stringify(model), { headers: this._headers });
 	}
 
@@ -96,7 +96,7 @@ export class UsersAsyncService {
 	 * @param id
 	 * @returns username for remember me
 	 */
-	fetchUsernameForRememberMe(id: string): Observable<string> {
+	fetchUsernameForRememberMe$(id: string): Observable<string> {
 		return this.http.get<string>(`${this.apiUrl}/users/${id}/username`, { headers: this._headers });
 	}
 }

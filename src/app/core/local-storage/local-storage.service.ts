@@ -10,8 +10,6 @@ const APP_PREFIX = 'odm-';
 	providedIn: 'root'
 })
 export class LocalStorageService {
-	constructor() {}
-
 	/**
 	 * Loads initial state from local storage.
 	 * @returns state restored from local storage.

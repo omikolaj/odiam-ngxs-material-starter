@@ -17,15 +17,28 @@ import { SettingsFacadeService } from '../settings-facade.service';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SettingsContainerComponent implements OnInit, OnDestroy {
-	_routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
+	/**
+	 * Route animations
+	 */
+	readonly _routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
+	/**
+	 * Settings state.
+	 */
 	_settings$: Observable<SettingsStateModel>;
-	_themes = [
+	/**
+	 * Supported themes.
+	 */
+	readonly _themes = [
 		{ value: 'DEFAULT-THEME', label: 'blue' },
 		{ value: 'LIGHT-THEME', label: 'light' },
 		{ value: 'NATURE-THEME', label: 'nature' },
 		{ value: 'BLACK-THEME', label: 'dark' }
 	];
-	_languages = [
+
+	/**
+	 * Supported languages.
+	 */
+	readonly _languages = [
 		{ value: 'en', label: 'English' },
 		{ value: 'de', label: 'Deutsch' },
 		{ value: 'sk', label: 'Slovenčina' },
@@ -46,7 +59,7 @@ export class SettingsContainerComponent implements OnInit, OnDestroy {
 	 */
 	ngOnInit(): void {
 		this.facade.log.trace('Initialized.', this);
-		this._settings$ = this.facade.settings$.pipe(tap((settings) => this.facade.log.trace('Settings data.', this, settings)));
+		this._settings$ = this.facade.settings$.pipe(tap((settings) => this.facade.log.trace('[ngOnInit]: Settings data.', this, settings)));
 	}
 
 	/**

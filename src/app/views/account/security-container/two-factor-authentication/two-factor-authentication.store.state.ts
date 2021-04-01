@@ -5,6 +5,7 @@ import * as TwoFactorAuthentication from './two-factor-authentication.store.acti
 import produce from 'immer';
 import { TwoFactorAuthenticationSetup } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-setup.model';
 import { TwoFactorAuthenticationSetupResult } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-setup-result.model';
+import { LogService } from 'app/core/logger/log.service';
 
 const TWO_FACTOR_AUTHENTICATION_STATE_TOKEN = new StateToken<TwoFactorAuthenticationStateModel>('twoFactorAuthentication');
 
@@ -50,6 +51,12 @@ export class TwoFactorAuthenticationState {
 	}
 
 	/**
+	 * Creates an instance of two factor authentication state.
+	 * @param log
+	 */
+	constructor(private log: LogService) {}
+
+	/**
 	 * Actions handler for getting details for two factor authentication setup wizard.
 	 * @param ctx
 	 * @param action
@@ -59,6 +66,7 @@ export class TwoFactorAuthenticationState {
 		ctx: StateContext<TwoFactorAuthenticationStateModel>,
 		action: TwoFactorAuthentication.SetupTwoFactorAuthentication
 	): void {
+		this.log.info('setupTwoFactorAuthentication action handler fired.', this);
 		ctx.setState(
 			produce((draft: TwoFactorAuthenticationStateModel) => {
 				draft = { ...draft, ...action.payload };
@@ -77,6 +85,7 @@ export class TwoFactorAuthenticationState {
 		ctx: StateContext<TwoFactorAuthenticationStateModel>,
 		action: TwoFactorAuthentication.AuthenticatorVerificationResult
 	): void {
+		this.log.info('twoFactorAuthenticationSetupResult action handler fired.', this);
 		ctx.setState(
 			produce((draft: TwoFactorAuthenticationStateModel) => {
 				draft = {
@@ -97,6 +106,7 @@ export class TwoFactorAuthenticationState {
 	 */
 	@Action(TwoFactorAuthentication.Reset2faSetupWizard)
 	resetTwoFactorAuthenticationSetupWizard(ctx: StateContext<TwoFactorAuthenticationStateModel>): void {
+		this.log.info('resetTwoFactorAuthenticationSetupWizard action handler fired.', this);
 		const defaults: TwoFactorAuthenticationStateModel = {
 			authenticatorResult: {
 				recoveryCodes: {

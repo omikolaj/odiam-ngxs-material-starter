@@ -14,8 +14,8 @@ import { AppInitializerService } from './core/services/app-initializer.service';
  * @param authService
  * @returns
  */
-export function appInitializerFactory(appInitializerService: AppInitializerService) {
-	return (): Promise<void> => appInitializerService.initUserSession();
+export function userSessionInitializerFactory(appInitializerService: AppInitializerService) {
+	return (): Promise<any> => appInitializerService.initUserSession();
 }
 
 /**
@@ -39,7 +39,7 @@ export function appInitializerFactory(appInitializerService: AppInitializerServi
 	providers: [
 		{
 			provide: APP_INITIALIZER,
-			useFactory: appInitializerFactory,
+			useFactory: userSessionInitializerFactory,
 			multi: true,
 			deps: [AppInitializerService]
 		}

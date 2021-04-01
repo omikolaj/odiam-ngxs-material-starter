@@ -1,5 +1,6 @@
 import { AccessToken } from './models/access-token.model';
 import { ActiveAuthType } from './models/active-auth-type.model';
+import { AuthStateModel } from './models/auth-state-model';
 
 /**
  * Init auth state from local storage.
@@ -121,4 +122,20 @@ export class SwitchAuthType {
 	 * @param payload
 	 */
 	constructor(public payload: { activeAuthType: ActiveAuthType }) {}
+}
+
+/**
+ * Persist settings action.
+ */
+export class PersistSettings {
+	/**
+	 * Type of action.
+	 */
+	static readonly type = '[Auth] Persist Settings';
+
+	/**
+	 * Creates an instance of persist settings action.
+	 * @param payload
+	 */
+	constructor(public payload: AuthStateModel) {}
 }

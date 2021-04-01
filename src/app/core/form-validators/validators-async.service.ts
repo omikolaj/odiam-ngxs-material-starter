@@ -5,7 +5,7 @@ import { debounceTime, take, switchMap, map } from 'rxjs/operators';
 import { UsersAsyncService } from '../services/users-async.service';
 
 /**
- * Injectable AsyncValidatorsService
+ * Async validation service, responsible for performing validations against the server.
  */
 @Injectable({
 	providedIn: 'root'
@@ -45,7 +45,7 @@ export class AsyncValidatorsService {
 					// eslint-disable-next-line @typescript-eslint/no-unused-vars
 					switchMap((_) => {
 						return this.usersAsyncService
-							.checkIfEmailExists(control.value)
+							.checkIfEmailExists$(control.value)
 							.pipe(map((exists) => (exists ? { nonUnique: control.value as string } : null)));
 					})
 				);

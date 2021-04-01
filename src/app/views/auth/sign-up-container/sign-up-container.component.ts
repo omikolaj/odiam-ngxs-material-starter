@@ -14,7 +14,7 @@ import { AuthTypeRouteUrl } from 'app/core/auth/models/auth-type-route-url.model
 import { rightLeftFadeInAnimation } from 'app/core/core.module';
 
 /**
- * Signup component.
+ * Sign up container component.
  */
 @Component({
 	selector: 'odm-sign-up-container',

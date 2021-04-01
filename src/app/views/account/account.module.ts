@@ -6,7 +6,6 @@ import { AccountFacadeService } from './account-facade.service';
 import { NgxsModule } from '@ngxs/store';
 import { QRCodeModule } from 'angularx-qrcode';
 import { AccountComponent } from './account/account.component';
-import { DashboardState } from './account/account.store.state';
 import { GeneralContainerComponent } from './general-container/general-container.component';
 import { SecurityContainerComponent } from './security-container/security-container.component';
 import { TwoFactorAuthenticationCodesComponent } from './security-container/two-factor-authentication-codes/two-factor-authentication-codes.component';
@@ -35,7 +34,7 @@ import { AccountGeneralState } from './general-container/general-container.store
 		AccountRoutingModule,
 		QRCodeModule,
 		SharedModule,
-		NgxsModule.forFeature([DashboardState, AccountSecurityState, AccountGeneralState, TwoFactorAuthenticationState])
+		NgxsModule.forFeature([AccountSecurityState, AccountGeneralState, TwoFactorAuthenticationState])
 	],
 	providers: [AccountFacadeService]
 })

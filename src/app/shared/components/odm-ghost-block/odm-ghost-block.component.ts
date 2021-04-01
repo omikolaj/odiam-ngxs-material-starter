@@ -3,7 +3,7 @@ import { OdmGhostAnimationService } from 'app/shared/services/odm-ghost-animatio
 import { LogService } from 'app/core/logger/log.service';
 
 /**
- * GhostBLock component.
+ * Ghosting component.
  */
 @Component({
 	selector: 'odm-ghost-block',
@@ -15,8 +15,7 @@ export class OdmGhostBlockComponent implements OnInit {
 	/**
 	 * Host binding of ghost block component indicating busy state.
 	 */
-	@HostBinding('attr.aria-busy')
-	busy = true;
+	@HostBinding('attr.aria-busy') busy = true;
 
 	/**
 	 * Creates an instance of ghost block component.

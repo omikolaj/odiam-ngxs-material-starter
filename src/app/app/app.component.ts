@@ -25,37 +25,37 @@ export class AppComponent implements OnInit, OnDestroy {
 	/**
 	 * Indicates the environment the application is running under.
 	 */
-	_isProd = env.production;
+	readonly _isProd = env.production;
 
 	/**
 	 * String value of DEV or PROD depending on the environment.
 	 */
-	_envName = env.envName;
+	readonly _envName = env.envName;
 
 	/**
 	 * String value representing current version of the app. For example 10.0.2.
 	 */
-	_version = env.versions.app as string;
+	readonly _version = env.versions.app as string;
 
 	/**
 	 * Gets the current year.
 	 */
-	_year = new Date().getFullYear();
+	readonly _year = new Date().getFullYear();
 
 	/**
 	 * Gets left hand side logo url.
 	 */
-	_logo = (require('../../assets/logo.png') as { default: string }).default;
+	readonly _logo = (require('../../assets/logo.png') as { default: string }).default;
 
 	/**
 	 * List of currently available languages.
 	 */
-	_languages = ['en', 'de', 'sk', 'fr', 'es', 'pt-br', 'zh-cn', 'he'];
+	readonly _languages = ['en', 'de', 'sk', 'fr', 'es', 'pt-br', 'zh-cn', 'he'];
 
 	/**
 	 * Navigation options.
 	 */
-	_navigation = [
+	readonly _navigation = [
 		{ link: 'about', label: 'odm.menu.about' },
 		{ link: 'feature-list', label: 'odm.menu.features' },
 		{ link: 'examples', label: 'odm.menu.examples' }
@@ -64,7 +64,7 @@ export class AppComponent implements OnInit, OnDestroy {
 	/**
 	 * Navigation options for side drawer.
 	 */
-	_navigationSideMenu = [...this._navigation, { link: 'settings', label: 'odm.menu.settings' }];
+	readonly _navigationSideMenu = [...this._navigation, { link: 'settings', label: 'odm.menu.settings' }];
 
 	/**
 	 * Stream indicating if user is authenticated.
@@ -87,9 +87,9 @@ export class AppComponent implements OnInit, OnDestroy {
 	_theme$: Observable<string>;
 
 	/**
-	 * Subscription.
+	 * Rxjs subscriptions for this component.
 	 */
-	private _subscription = new Subscription();
+	private readonly _subscription = new Subscription();
 
 	/**
 	 * Creates an instance of app component.

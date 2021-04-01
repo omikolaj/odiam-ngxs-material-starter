@@ -8,6 +8,7 @@ import { isBefore, add, getUnixTime, fromUnixTime } from 'date-fns';
 import { LogService } from '../logger/log.service';
 import { ActiveAuthType } from './models/active-auth-type.model';
 import { ACTIVE_UNTIL } from '../user-session-activity/user-session-activity-key';
+import { Observable } from 'rxjs';
 
 const AUTH_STATE_TOKEN = new StateToken<AuthStateModel>('auth');
 
@@ -167,8 +168,8 @@ export class AuthState {
 	 * @param action
 	 */
 	@Action(Auth.RememberMeOptionChange)
-	rememberMe(ctx: StateContext<AuthStateModel>, action: Auth.RememberMeOptionChange): void {
-		this.log.debug('Remember me action fired.', this);
+	rememberMe(ctx: StateContext<AuthStateModel>, action: Auth.RememberMeOptionChange): Observable<void> {
+		this.log.info('rememberMe action handler fired.', this);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft.rememberMe = action.payload;
@@ -176,8 +177,9 @@ export class AuthState {
 				draft.username = '';
 			})
 		);
-		const auth = this._getAuthStateForLocalStorage(ctx);
-		this.localStorageService.setItem(AUTH_KEY, auth);
+
+		const auth = ctx.getState();
+		return ctx.dispatch(new Auth.PersistSettings(auth));
 	}
 
 	/**
@@ -186,15 +188,16 @@ export class AuthState {
 	 * @param action
 	 */
 	@Action(Auth.UpdateRememberMeUsername)
-	updateRememberMeUsername(ctx: StateContext<AuthStateModel>, action: Auth.UpdateRememberMeUsername): void {
-		this.log.debug('Update Remember username action fired.', this);
+	updateRememberMeUsername(ctx: StateContext<AuthStateModel>, action: Auth.UpdateRememberMeUsername): Observable<void> {
+		this.log.info('updateRememberMeUsername action handler fired.', this);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft.username = action.payload;
 			})
 		);
-		const auth = this._getAuthStateForLocalStorage(ctx);
-		this.localStorageService.setItem(AUTH_KEY, auth);
+
+		const auth = ctx.getState();
+		return ctx.dispatch(new Auth.PersistSettings(auth));
 	}
 
 	/**
@@ -203,15 +206,16 @@ export class AuthState {
 	 * @param action
 	 */
 	@Action(Auth.StaySignedinOptionChange)
-	staySignedIn(ctx: StateContext<AuthStateModel>, action: Auth.StaySignedinOptionChange): void {
-		this.log.debug('Stay signed in action fired.', this);
+	staySignedIn(ctx: StateContext<AuthStateModel>, action: Auth.StaySignedinOptionChange): Observable<void> {
+		this.log.info('staySignedIn action handler fired.', this);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft.staySignedIn = action.payload;
 			})
 		);
-		const auth = this._getAuthStateForLocalStorage(ctx);
-		this.localStorageService.setItem(AUTH_KEY, auth);
+
+		const auth = ctx.getState();
+		return ctx.dispatch(new Auth.PersistSettings(auth));
 	}
 
 	/**
@@ -220,9 +224,10 @@ export class AuthState {
 	 * @returns action to persist auth state.
 	 */
 	@Action(Auth.Signin)
-	signin(ctx: StateContext<AuthStateModel>, action: Auth.Signin): void {
-		this.log.debug(`Jwt token expires in: ${action.payload.accessToken.expires_in} seconds.`, this);
-		this.log.debug(`Jwt token expirey date`, this, add(new Date(), { seconds: action.payload.accessToken.expires_in }));
+	signin(ctx: StateContext<AuthStateModel>, action: Auth.Signin): Observable<void> {
+		this.log.info('signin action handler fired.', this);
+		this.log.info(`Jwt token expires in: ${action.payload.accessToken.expires_in} seconds.`, this);
+		this.log.info(`Jwt token expirey date`, this, add(new Date(), { seconds: action.payload.accessToken.expires_in }));
 		const expires_at = getUnixTime(add(new Date(), { seconds: action.payload.accessToken.expires_in }));
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
@@ -233,8 +238,8 @@ export class AuthState {
 			})
 		);
 
-		const auth = this._getAuthStateForLocalStorage(ctx);
-		this.localStorageService.setItem(AUTH_KEY, auth);
+		const auth = ctx.getState();
+		return ctx.dispatch(new Auth.PersistSettings(auth));
 	}
 
 	/**
@@ -243,13 +248,15 @@ export class AuthState {
 	 * @param action
 	 */
 	@Action(Auth.SetCurrentUserId)
-	setCurrentUserId(ctx: StateContext<AuthStateModel>, action: Auth.SetCurrentUserId): void {
-		this.log.debug('Setting current user id.', this, action.payload);
+	setCurrentUserId(ctx: StateContext<AuthStateModel>, action: Auth.SetCurrentUserId): Observable<void> {
+		this.log.info('setCurrentUserId action handler fired.', this);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft.userId = action.payload;
 			})
 		);
+		const auth = ctx.getState();
+		return ctx.dispatch(new Auth.PersistSettings(auth));
 	}
 
 	/**
@@ -258,7 +265,8 @@ export class AuthState {
 	 * @returns action to persist auth state.
 	 */
 	@Action(Auth.Signout)
-	signout(ctx: StateContext<AuthStateModel>): void {
+	signout(ctx: StateContext<AuthStateModel>): Observable<void> {
+		this.log.info('signout action handler fired.', this);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft.isAuthenticated = false;
@@ -267,10 +275,10 @@ export class AuthState {
 				draft.userId = '';
 			})
 		);
-		const auth = this._getAuthStateForLocalStorage(ctx);
-		this.localStorageService.setItem(AUTH_KEY, auth);
+		this.log.debug('[signout]: Removing ACTIVE_UNTIL from local storage.');
 		this.localStorageService.removeItem(ACTIVE_UNTIL);
-		this.log.debug('User has been signed out.', this);
+		const auth = ctx.getState();
+		return ctx.dispatch(new Auth.PersistSettings(auth));
 	}
 
 	/**
@@ -278,17 +286,16 @@ export class AuthState {
 	 * @param ctx
 	 */
 	@Action(Auth.KeepOrRemoveRememberMeUsername)
-	keepOrRemoveRememberMeUsername(ctx: StateContext<AuthStateModel>): void {
+	keepOrRemoveRememberMeUsername(ctx: StateContext<AuthStateModel>): Observable<void> {
 		const rememberMe = ctx.getState().rememberMe;
-		this.log.debug('keepOrRemoveRememberMeUsername fired. Remember me options is set to:', this, rememberMe);
+		this.log.info('keepOrRemoveRememberMeUsername action handler fired. Remember me options is set to:', this, rememberMe);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft.username = rememberMe ? draft.username : '';
 			})
 		);
-		const auth = this._getAuthStateForLocalStorage(ctx);
-		this.localStorageService.setItem(AUTH_KEY, auth);
-		this.log.debug('Username for remember me option has been updated.', this);
+		const auth = ctx.getState();
+		return ctx.dispatch(new Auth.PersistSettings(auth));
 	}
 
 	/**
@@ -297,34 +304,26 @@ export class AuthState {
 	 * @param action
 	 */
 	@Action(Auth.SwitchAuthType)
-	switchAuthType(ctx: StateContext<AuthStateModel>, action: Auth.SwitchAuthType): void {
-		this.log.debug('Changing auth type.', this);
+	switchAuthType(ctx: StateContext<AuthStateModel>, action: Auth.SwitchAuthType): Observable<void> {
+		this.log.info('switchAuthType action handler fired.', this);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft = { ...draft, ...action.payload };
 				return draft;
 			})
 		);
-		const auth = this._getAuthStateForLocalStorage(ctx);
-		this.localStorageService.setItem(AUTH_KEY, auth);
+		const auth = ctx.getState();
+		return ctx.dispatch(new Auth.PersistSettings(auth));
 	}
 
 	/**
-	 * Gets auth storage state.
+	 * Action handler that persists auth settings to local storage.
 	 * @param ctx
-	 * @returns auth storage state
+	 * @param action
 	 */
-	private _getAuthStateForLocalStorage(ctx: StateContext<AuthStateModel>): AuthStateModel {
-		const state = ctx.getState();
-		return {
-			access_token: state.access_token,
-			activeAuthType: state.activeAuthType,
-			expires_at: state.expires_at,
-			userId: state.userId,
-			isAuthenticated: state.isAuthenticated,
-			rememberMe: state.rememberMe,
-			staySignedIn: state.staySignedIn,
-			username: state.username
-		} as AuthStateModel;
+	@Action(Auth.PersistSettings)
+	persistSettings(ctx: StateContext<AuthStateModel>, action: Auth.PersistSettings): void {
+		this.log.info('persistSettings action handler fired.', this);
+		this.localStorageService.setItem(AUTH_KEY, action.payload);
 	}
 }

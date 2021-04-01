@@ -10,9 +10,10 @@ import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { Observable, merge } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { ODM_SMALL_SPINNER_DIAMETER, ODM_SMALL_SPINNER_STROKE_WIDTH } from 'app/shared/global-settings/mat-spinner-settings';
 
 /**
- * Component responsible for handling two factor authentication settings.
+ * Two factor authentication component responsible for handling user's 2fa settings.
  */
 @Component({
 	selector: 'odm-two-factor-authentication',
@@ -151,19 +152,19 @@ export class TwoFactorAuthenticationComponent {
 	_serverError$: Observable<ProblemDetails | InternalServerErrorDetails>;
 
 	/**
+	 * Whether to display two factor auth setup wizard.
+	 */
+	_showTwoFactorAuthSetupWizard = false;
+
+	/**
 	 * Two factor auth toggle spinner diameter.
 	 */
-	_twoFactorAuthToggleSpinnerDiameter = 15;
+	readonly _twoFactorAuthToggleSpinnerDiameter = ODM_SMALL_SPINNER_DIAMETER;
 
 	/**
 	 * Two factor auth toggle spinner stroke width.
 	 */
-	_twoFactorAuthToggleSpinnerStrokeWidth = 1;
-
-	/**
-	 * Whether to display two factor auth setup wizard.
-	 */
-	_showTwoFactorAuthSetupWizard = false;
+	readonly _twoFactorAuthToggleSpinnerStrokeWidth = ODM_SMALL_SPINNER_STROKE_WIDTH;
 
 	/**
 	 * Used to filter out server side errors for two factor authentication codes that occur before the panel is opened.

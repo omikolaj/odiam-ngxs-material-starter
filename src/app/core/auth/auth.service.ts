@@ -19,7 +19,7 @@ import { UserSessionActivityService } from '../user-session-activity/user-sessio
 import { RenewAccessTokenResult } from './models/renew-access-token-result.model';
 
 /**
- * Auth service.
+ * Authentication service, responsible for handling user session.
  */
 @Injectable({
 	providedIn: 'root'
@@ -28,7 +28,7 @@ export class AuthService {
 	/**
 	 * Timeout in miliseconds.
 	 */
-	private _authDialogTimeoutInMs = 10000;
+	private readonly _authDialogTimeoutInMs = 10000;
 
 	/**
 	 * Auth dialog configuration. Initialized in the constructor.
@@ -67,8 +67,12 @@ export class AuthService {
 	 * @param accessToken
 	 * @returns authenticate
 	 */
-	authenticate$(accessToken: AccessToken): Observable<any> {
+	authenticate$(accessToken: AccessToken, rememberMe?: boolean, email?: string): Observable<any> {
 		this.log.trace('authenticate$ executed.', this);
+		if (rememberMe) {
+			this.log.debug('[authenticate$]: rememberMe option is selected.');
+			this.store.dispatch(new Auth.UpdateRememberMeUsername(email));
+		}
 		const userId = this.jwtService.getSubClaim(accessToken.access_token);
 		return this.store.dispatch(new Auth.Signin({ accessToken, userId }));
 	}
@@ -79,10 +83,10 @@ export class AuthService {
 	 * @param expires_at
 	 * @returns session activity
 	 */
-	monitorUserSessionActivity$(): Observable<any> {
+	monitorSessionActivity$(): Observable<any> {
 		this.log.trace('monitorUserSessionActivity$ executed.', this);
 		const isAuthenticatedFunc = this.store.selectSnapshot(AuthState.selectIsAuthenticatedFunc);
-		return this.userActivityService.monitorUserSessionActivity$().pipe(
+		return this.userActivityService.monitorSessionActivity$().pipe(
 			takeUntil(this.actions$.pipe(ofActionCompleted(Auth.Signout))),
 			tap(() => this.userActivityService.stopActivityTimer()),
 			switchMap((isActive) => this._manageUserSession$(isAuthenticatedFunc, isActive)),
@@ -107,7 +111,7 @@ export class AuthService {
 		// If user is not authenticated and user did NOT explicitly sign out, try to renew their session.
 		if (didExplicitlySignout === false) {
 			this.log.debug('initUserSession$: User is not authenticated and did not explicitly sign out. Attempting to renewing session.', this);
-			return this._renewSessionFromExpiredSession$();
+			return this._tryRenewSession$();
 		}
 		// else if user did not explicitly sign out, sign them out.
 		else {
@@ -137,8 +141,8 @@ export class AuthService {
 	 */
 	private _manageUserSession$(isAuthenticatedFunc: (date: Date, expires_at: Date) => boolean, isActive: boolean): Observable<any> {
 		this.log.trace('_manageUserSession$ executed.', this);
-		const expires_at = this.store.selectSnapshot(AuthState.selectExpiresAtRaw);
-		const expires_at_date = fromUnixTime(expires_at);
+		const expires_at_raw = this.store.selectSnapshot(AuthState.selectExpiresAtRaw);
+		const expires_at_date = fromUnixTime(expires_at_raw);
 
 		// isAuthenticatedFunc has to be a function otherwise isAuthenticated from the stored gets cached and we
 		// get outdated value.
@@ -190,7 +194,7 @@ export class AuthService {
 	private _handleSessionInactivity$(): Observable<any> {
 		this.log.trace('_handleSessionInactivity$ executed.', this);
 		(this._authDialogConfig.data as AuthDialogData).message = 'You are about to be signed out due to inactivity.';
-		return this._promptAuthDialog$('inactive');
+		return this._promptDialog$('inactive');
 	}
 
 	/**
@@ -200,7 +204,7 @@ export class AuthService {
 	private _handleSessionHasEnded$(): Observable<any> {
 		this.log.trace('_handleSessionHasEnded$ executed.', this);
 		(this._authDialogConfig.data as AuthDialogData).message = 'Your session is expired and you are about to be signed out.';
-		return this._promptAuthDialog$('expired');
+		return this._promptDialog$('expired');
 	}
 
 	/**
@@ -209,10 +213,10 @@ export class AuthService {
 	 */
 	private _tryRenewAccessToken$(): Observable<any> {
 		this.log.trace('_tryRenewAccessToken$ executed.', this);
-		return this.authAsyncService.tryRenewAccessToken().pipe(
+		return this.authAsyncService.tryRenewAccessToken$().pipe(
 			switchMap((result) => {
 				this.log.debug('[_tryRenewAccessToken$]: succeeded:', this, result.succeeded);
-				return this._proceedWithRenewalOfAccessTokenResult$(result);
+				return this._updateUserSession$(result);
 			})
 		);
 	}
@@ -222,13 +226,13 @@ export class AuthService {
 	 * @param result
 	 * @returns any
 	 */
-	private _proceedWithRenewalOfAccessTokenResult$(result: RenewAccessTokenResult): Observable<any> {
-		this.log.trace('_proceedWithRenewalOfAccessTokenResult$ executed.');
+	private _updateUserSession$(result: RenewAccessTokenResult): Observable<any> {
+		this.log.trace('_updateUserSession$ executed.');
 		if (result.succeeded) {
-			this.log.debug('[_proceedWithRenewalOfAccessTokenResult$] result succeeded.', this);
+			this.log.debug('[_updateUserSession$] result succeeded.', this);
 			return this.authenticate$(result.accessToken);
 		} else {
-			this.log.debug('[_proceedWithRenewalOfAccessTokenResult$] result failed.', this);
+			this.log.debug('[_updateUserSession$] result failed.', this);
 			return this.signUserOut$();
 		}
 	}
@@ -237,8 +241,8 @@ export class AuthService {
 	 * Displays the auth dialog.
 	 * @returns any
 	 */
-	private _promptAuthDialog$(type: 'inactive' | 'expired'): Observable<any> {
-		this.log.trace('_promptAuthDialog$ executed.', this);
+	private _promptDialog$(type: 'inactive' | 'expired'): Observable<any> {
+		this.log.trace('_promptDialog$ executed.', this);
 		const dialogRef = this.dialog.open(AuthDialogComponent, this._authDialogConfig);
 		const userActions$ = this._listenForDialogEvents$(dialogRef, type);
 		const userTookNoActions$ = timer(this._authDialogTimeoutInMs).pipe(
@@ -265,7 +269,7 @@ export class AuthService {
 		this.log.trace('_listenForDialogEvents executed.', this);
 		return race(dialogRef.componentInstance.staySignedInClicked, dialogRef.componentInstance.signOutClicked).pipe(
 			tap(() => this.dialog.closeAll()),
-			switchMap((decision: AuthDialogUserDecision) => this._handleUserAction$(decision, type))
+			switchMap((decision: AuthDialogUserDecision) => this._handleUserDialogAction$(decision, type))
 		) as Observable<AuthDialogUserDecision>;
 	}
 
@@ -274,13 +278,13 @@ export class AuthService {
 	 * @param decision
 	 * @returns any
 	 */
-	private _handleUserAction$(decision: AuthDialogUserDecision, type: 'inactive' | 'expired'): Observable<any> {
-		this.log.trace('_handleUserAction$ executed.', this);
+	private _handleUserDialogAction$(decision: AuthDialogUserDecision, type: 'inactive' | 'expired'): Observable<any> {
+		this.log.trace('_handleUserDialogAction$ executed.', this);
 		if (decision === AuthDialogUserDecision.staySignedIn) {
-			this.log.debug('[_handleUserAction$] User chose to stay signed in.', this);
-			return this._onStaySignedIn$(type);
+			this.log.debug('[_handleUserDialogAction$] User chose to stay signed in.', this);
+			return this._keepUserSignedIn$(type);
 		} else {
-			this.log.debug('[_handleUserAction$] User chose to sign out.', this);
+			this.log.debug('[_handleUserDialogAction$] User chose to sign out.', this);
 			return this.signUserOut$();
 		}
 	}
@@ -292,13 +296,13 @@ export class AuthService {
 	 * @param type
 	 * @returns any
 	 */
-	private _onStaySignedIn$(type: 'inactive' | 'expired'): Observable<any> {
-		this.log.trace('_onStaySignedIn$ executed.', this);
+	private _keepUserSignedIn$(type: 'inactive' | 'expired'): Observable<any> {
+		this.log.trace('_keepUserSignedIn$ executed.', this);
 		if (type === 'expired') {
-			this.log.debug("[_onStaySignedIn$] Auth dialog type is 'expired'.", this);
+			this.log.debug("[_keepUserSignedIn$] Auth dialog type is 'expired'.", this);
 			return this._tryRenewAccessToken$();
 		} else {
-			this.log.debug("[_onStaySignedIn$] Auth dialog type is 'inactive'.", this);
+			this.log.debug("[_keepUserSignedIn$] Auth dialog type is 'inactive'.", this);
 			return of(true);
 		}
 	}
@@ -307,16 +311,18 @@ export class AuthService {
 	 */
 	private _signOut$(): Observable<void> {
 		this.log.trace('signOut: Signing user out from the server and from application. Dispatching KeepOrRemoveRememberMeUsername.', this);
-		return this.authAsyncService.signout().pipe(finalize(() => this.store.dispatch([new Auth.Signout(), new Auth.KeepOrRemoveRememberMeUsername()])));
+		return this.authAsyncService
+			.signout$()
+			.pipe(finalize(() => this.store.dispatch([new Auth.Signout(), new Auth.KeepOrRemoveRememberMeUsername()])));
 	}
 
 	/**
 	 * Renewes expired session.
 	 * @returns result of session renewal
 	 */
-	private _renewSessionFromExpiredSession$(): Observable<InitSessionResult> {
-		this.log.trace('_renewSessionFromExpiredSession$ executed.', this);
-		return this.authAsyncService.tryRenewAccessToken().pipe(
+	private _tryRenewSession$(): Observable<InitSessionResult> {
+		this.log.trace('_tryRenewSession$ executed.', this);
+		return this.authAsyncService.tryRenewAccessToken$().pipe(
 			map((result) => {
 				return {
 					succeeded: result.succeeded,

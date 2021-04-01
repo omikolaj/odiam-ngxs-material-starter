@@ -3,7 +3,12 @@ import { FormGroup } from '@angular/forms';
 import { TwoFactorAuthenticationSetupResult } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-setup-result.model';
 import { TwoFactorAuthenticationVerificationCode } from '../two-factor-authentication/models/two-factor-authentication-verification-code.model';
 import { TwoFactorAuthenticationSetup } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-setup.model';
-import { ODM_SPINNER_DIAMETER, ODM_SPINNER_STROKE_WIDTH } from 'app/shared/global-settings/mat-spinner-settings';
+import {
+	ODM_BIG_SPINNER_DIAMETER,
+	ODM_BIG_SPINNER_STROKE_WIDTH,
+	ODM_SMALL_SPINNER_STROKE_WIDTH,
+	ODM_SMALL_SPINNER_DIAMETER
+} from 'app/shared/global-settings/mat-spinner-settings';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { CdkStepper } from '@angular/cdk/stepper';
@@ -129,29 +134,29 @@ export class TwoFactorAuthenticationSetupWizardComponent extends AuthBase {
 	_stepper2faSetupEditable = false;
 
 	/**
-	 * Verified next step spinner diameter.
+	 * Verified next step button spinner diameter.
 	 */
-	_verifiedNextStepSpinnerDiameter = 15;
+	readonly _verifiedNextStepSpinnerDiameter = ODM_SMALL_SPINNER_DIAMETER;
 
 	/**
-	 * Verified next step spinner stroke width.
+	 * Verified next step button spinner stroke width.
 	 */
-	_verifiedNextStepSpinnerStrokeWidth = 1;
+	readonly _verifiedNextStepSpinnerStrokeWidth = ODM_SMALL_SPINNER_STROKE_WIDTH;
 
 	/**
 	 * QR bar code size.
 	 */
-	_qrBarCodeWidth = 225;
+	readonly _qrBarCodeWidth = 225;
 
 	/**
 	 * QR bar code spinner width.
 	 */
-	_qrBarCodeSpinnerDiameter = ODM_SPINNER_DIAMETER;
+	readonly _qrBarCodeSpinnerDiameter = ODM_BIG_SPINNER_DIAMETER;
 
 	/**
 	 * QR bar code spinner stroke width.
 	 */
-	_qrBarCodeSpinnerStrokeWidth = ODM_SPINNER_STROKE_WIDTH;
+	readonly _qrBarCodeSpinnerStrokeWidth = ODM_BIG_SPINNER_STROKE_WIDTH;
 
 	/**
 	 * Whether the two factor authentication setup is complete.
@@ -161,7 +166,7 @@ export class TwoFactorAuthenticationSetupWizardComponent extends AuthBase {
 	/**
 	 * Maximum allowed characters for the verification code input field.
 	 */
-	_verificationCodeInputLength = 6;
+	readonly _verificationCodeInputLength = 6;
 
 	/**
 	 * Creates an instance of two factor authentication setup wizard component.

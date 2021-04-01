@@ -6,6 +6,7 @@ import { fadeInAnimation, upDownFadeInAnimation } from 'app/core/core.module';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { LogService } from 'app/core/logger/log.service';
+import { ODM_SMALL_SPINNER_DIAMETER, ODM_SMALL_SPINNER_STROKE_WIDTH } from 'app/shared/global-settings/mat-spinner-settings';
 
 /**
  * Two factor authentication codes component.
@@ -68,22 +69,22 @@ export class TwoFactorAuthenticationCodesComponent {
 	/**
 	 * Touch gestrues of two factor authentication codes component.
 	 */
-	_touchGestrues: TooltipTouchGestures = 'on';
+	readonly _touchGestrues: TooltipTouchGestures = 'on';
 
 	/**
 	 * Delay in ms for toolip.
 	 */
-	_showDelayInMs = ODM_TOOLTIP_SHOW_DELAY_IN_MS;
+	readonly _showDelayInMs = ODM_TOOLTIP_SHOW_DELAY_IN_MS;
 
 	/**
 	 * Generating recovery codes spinner diameter.
 	 */
-	_generatingCodesSpinnerDiameter = 15;
+	readonly _generatingCodesSpinnerDiameter = ODM_SMALL_SPINNER_DIAMETER;
 
 	/**
 	 * Generating recovery codes spinner stroke width.
 	 */
-	_generatingCodesSpinnerStrokeWidth = 1;
+	readonly _generatingCodesSpinnerStrokeWidth = ODM_SMALL_SPINNER_STROKE_WIDTH;
 
 	/**
 	 * Creates an instance of two factor authentication codes component.

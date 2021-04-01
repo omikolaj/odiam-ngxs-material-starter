@@ -9,7 +9,7 @@ import { tap, startWith } from 'rxjs/operators';
 import { NavigationEnd } from '@angular/router';
 
 /**
- * Auth container component.
+ * Auth container component that houses all functionality responsible for displaying sign-in/sign-up/forgot-password.
  */
 @Component({
 	selector: 'odm-auth-container',
@@ -20,15 +20,15 @@ import { NavigationEnd } from '@angular/router';
 })
 export class AuthContainerComponent implements OnInit, OnDestroy {
 	/**
-	 * Route animations elements of auth container component.
+	 * Route animations.
 	 */
-	_routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
+	readonly _routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
 
 	/**
 	 * Image located at the bottom of this component.
 	 */
 
-	_authContainerImg = (require('../../../../assets/auth_bottom.jpg') as { default: string }).default;
+	readonly _authContainerImg = (require('../../../../assets/auth_bottom.jpg') as { default: string }).default;
 
 	/**
 	 * Whether specified screen width was matched.
@@ -50,7 +50,7 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	/**
 	 * Rxjs subscriptions for this component.
 	 */
-	private _subscription = new Subscription();
+	private readonly _subscription = new Subscription();
 
 	/**
 	 * Creates an instance of auth container component.

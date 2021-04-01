@@ -7,7 +7,7 @@ import { tap } from 'rxjs/operators';
 import { LogService } from '../logger/log.service';
 
 /**
- * Auth guard service which determines if user is authenticated.
+ * Authentication guard service which determines if user is authenticated.
  */
 @Injectable({
 	providedIn: 'root'

@@ -16,7 +16,7 @@ import { upDownFadeInAnimation } from 'app/core/core.module';
 import { ActionCompletion } from '@ngxs/store';
 
 /**
- * Component container that houses user security functionality.
+ * Security component container that houses user security functionality.
  */
 @Component({
 	selector: 'odm-security-container',
@@ -87,14 +87,9 @@ export class SecurityContainerComponent implements OnInit {
 	_showServerError: boolean;
 
 	/**
-	 * Rxjs subscriptions for this component.
-	 */
-	private _subscription = new Subscription();
-
-	/**
 	 * Loading subject. Required for angular OnPush change detection to be triggered.
 	 */
-	private _loadingSub = new BehaviorSubject<boolean>(false);
+	private readonly _loadingSub = new BehaviorSubject<boolean>(false);
 
 	/**
 	 * Whether this component is fetching data for the view.
@@ -110,6 +105,11 @@ export class SecurityContainerComponent implements OnInit {
 	 * Whether there is an outgoing request to enable/disable two factor authentication setting.
 	 */
 	_twoFactorAuthToggleLoading$ = this._twoFactorAuthToggleLoadingSub.asObservable();
+
+	/**
+	 * Rxjs subscriptions for this component.
+	 */
+	private readonly _subscription = new Subscription();
 
 	/**
 	 * Creates an instance of security container component.
@@ -133,7 +133,7 @@ export class SecurityContainerComponent implements OnInit {
 		// fetches account security info.
 		this.facade.getAccountSecurityInfo();
 		// subscribes to security container component. Used to handle loading flags.
-		this._subscription.add(this._listenToSecurityEvents().subscribe());
+		this._subscription.add(this._listenToSecurityEvents$().subscribe());
 		// serverError used for components that display server side errors without adding them to AbstractControl.
 		this._serverError$ = merge(this._problemDetails$, this._internalServerErrorDetails$).pipe(tap(() => this.shouldDisplayError()));
 		// initializes verification code form.
@@ -149,10 +149,10 @@ export class SecurityContainerComponent implements OnInit {
 		this._twoFactorAuthToggleLoadingSub.next(true);
 
 		if (event.checked) {
-			this.facade.log.trace('_onTwoFactorAuthToggle: enter 2fa setup.', this);
+			this.facade.log.debug('_onTwoFactorAuthToggle: enter 2fa setup.', this);
 			this.facade.setupAuthenticator();
 		} else {
-			this.facade.log.trace('_onTwoFactorAuthToggle: disable 2fa.', this);
+			this.facade.log.debug('_onTwoFactorAuthToggle: disable 2fa.', this);
 			this.facade.disable2Fa();
 		}
 	}
@@ -236,7 +236,7 @@ export class SecurityContainerComponent implements OnInit {
 	 * Listens to security events.
 	 * @returns to security events
 	 */
-	private _listenToSecurityEvents(): Observable<
+	private _listenToSecurityEvents$(): Observable<
 		| AccountSecurityDetails
 		| TwoFactorAuthenticationSetupResult
 		| ActionCompletion<any, Error>
@@ -244,6 +244,7 @@ export class SecurityContainerComponent implements OnInit {
 		| ProblemDetails
 		| InternalServerErrorDetails
 	> {
+		this.facade.log.trace('_listenToSecurityEvents executed.', this);
 		return merge(
 			// skip first value that emits, which is the default value.
 			this._accountSecurityDetails$.pipe(skip(1)),

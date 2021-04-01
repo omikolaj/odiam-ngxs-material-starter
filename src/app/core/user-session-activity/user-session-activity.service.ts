@@ -26,17 +26,17 @@ export class UserSessionActivityService {
 	/**
 	 * Time in seconds, that determines how long user must be inactive for, before they are deemed inactive.
 	 */
-	private _userInactivityTimeoutInSeconds = 5;
+	private readonly _userInactivityTimeoutInSeconds = 5;
 
 	/**
-	 * Time in miliseconds, that determines how often to check if user is inactive.
+	 * Time in seconds, that determines how often to check if user is inactive.
 	 */
-	private _checkActivityIntervalInMs = 5000;
+	private readonly _checkActivityIntervalInSeconds = 5;
 
 	/**
 	 * Renderer of user session activity service.
 	 */
-	private _renderer: Renderer2;
+	private readonly _renderer: Renderer2;
 
 	/**
 	 * Unlistens to mousemove event.
@@ -81,8 +81,8 @@ export class UserSessionActivityService {
 	 * Monitors user session activity.
 	 * @returns if user is active
 	 */
-	monitorUserSessionActivity$(): Observable<boolean> {
-		this.log.trace('monitorUserSessionActivity$ fired.', this);
+	monitorSessionActivity$(): Observable<boolean> {
+		this.log.trace('monitorSessionActivity$ fired.', this);
 		this._tracker();
 		return this._isUserActive$().pipe(startWith(true));
 	}
@@ -156,7 +156,7 @@ export class UserSessionActivityService {
 	private _isUserActive$(): Observable<boolean> {
 		// set the initial ACTIVE_UNTIL time in local storage.
 		this._updateActiveUntilTime();
-		return timer(this._checkActivityIntervalInMs).pipe(
+		return timer(this._checkActivityIntervalInSeconds * 1000).pipe(
 			takeUntil(this._stop),
 			map(() => {
 				const expiredTime = parseInt(this.localStorageService.getItem(ACTIVE_UNTIL), 10);
@@ -171,7 +171,6 @@ export class UserSessionActivityService {
 	 */
 	private _updateActiveUntilTime(): void {
 		if (this._timeoutTracker) {
-			this.log.debug('[_updateActiveUntilTime]: _timeoutTracker is truthy, clearing timeout.', this);
 			clearTimeout(this._timeoutTracker);
 		}
 		this._timeoutTracker = setTimeout(() => {
@@ -181,7 +180,8 @@ export class UserSessionActivityService {
 	}
 
 	/**
-	 * Hooks up event listeners for 'mousemove', 'scroll' and 'keydown'. These events track user's activity on the page.
+	 * Hooks up event listeners for 'mousemove', 'scroll' and 'keydown'.
+	 * These events track user's activity on the page and are used to determine if user is active/inactive.
 	 */
 	private _tracker(): void {
 		this.log.debug("Listening for 'mousemove' event.", this);

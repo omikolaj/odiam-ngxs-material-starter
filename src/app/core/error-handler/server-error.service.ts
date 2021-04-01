@@ -4,7 +4,7 @@ import { InternalServerErrorDetails } from '../models/internal-server-error-deta
 import { ProblemDetails } from '../models/problem-details.model';
 
 /**
- * Server error service.
+ * Server error service that emits when problem details or internal server error details occurs.
  */
 @Injectable({
 	providedIn: 'root'
@@ -13,11 +13,11 @@ export class ServerErrorService {
 	/**
 	 * Problem details subject for emiting problem details error.
 	 */
-	private problemDetailsSub$ = new Subject<ProblemDetails>();
+	private readonly problemDetailsSub$ = new Subject<ProblemDetails>();
 	/**
 	 * Internal server error subject for emtting insternal server error.
 	 */
-	private internalServerErrorSub$ = new Subject<InternalServerErrorDetails>();
+	private readonly internalServerErrorSub$ = new Subject<InternalServerErrorDetails>();
 
 	/**
 	 * Gets problem details error observable.

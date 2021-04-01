@@ -102,14 +102,9 @@ export class SignInComponent extends AuthBase implements OnInit {
 	@Output() switchToSignupClicked = new EventEmitter<ActiveAuthType>();
 
 	/**
-	 * Route animations elements of auth container component.
+	 * Route animations.
 	 */
-	_routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
-
-	/**
-	 * Label position of stay signed in checkbox.
-	 */
-	_labelPosition: 'before' | 'after' = 'after';
+	readonly _routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
 
 	/**
 	 * Creates an instance of sign in component.

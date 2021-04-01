@@ -1,7 +1,7 @@
 import { AccountGeneralDetails } from 'app/core/models/account-general-details.model';
 
 /**
- * Set account genral details.
+ * Sets account genral details for the logged in user.
  */
 export class SetAccountGeneralDetails {
 	/**

@@ -9,7 +9,7 @@ import { implementsOdmWebApiException } from 'app/core/utilities/implements-odm-
 import { fadeInAnimation, upDownFadeInAnimation } from 'app/core/core.module';
 
 /**
- * Component container that houses user general settings functionality.
+ * General component container that houses user's general settings functionality.
  */
 @Component({
 	selector: 'odm-general-container',
@@ -37,7 +37,7 @@ export class GeneralContainerComponent implements OnInit, OnDestroy {
 	/**
 	 * Loading subject. Required for angular OnPush change detection to be triggered.
 	 */
-	private _loadingSub = new BehaviorSubject<boolean>(true);
+	private readonly _loadingSub = new BehaviorSubject<boolean>(true);
 
 	/**
 	 * Whether this component is fetching data for the view.
@@ -47,7 +47,7 @@ export class GeneralContainerComponent implements OnInit, OnDestroy {
 	/**
 	 * Rxjs subscriptions for this component.
 	 */
-	private _subscription = new Subscription();
+	private readonly _subscription = new Subscription();
 
 	/**
 	 * Creates an instance of general container component.

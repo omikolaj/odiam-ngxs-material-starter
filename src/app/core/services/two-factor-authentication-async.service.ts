@@ -17,7 +17,7 @@ export class TwoFactorAuthenticationAsyncService {
 	/**
 	 * Headers of users service.
 	 */
-	private _headers = new HttpHeaders({
+	private readonly _headers = new HttpHeaders({
 		'Content-Type': 'application/json'
 	});
 
@@ -32,7 +32,7 @@ export class TwoFactorAuthenticationAsyncService {
 	 * Gets authenticator setup information.
 	 * @returns authenticator
 	 */
-	setupAuthenticator(): Observable<TwoFactorAuthenticationSetup> {
+	setupAuthenticator$(): Observable<TwoFactorAuthenticationSetup> {
 		return this.http.get<TwoFactorAuthenticationSetup>(`${this.apiUrl}/2fa/setup-authenticator`, { headers: this._headers });
 	}
 
@@ -41,7 +41,7 @@ export class TwoFactorAuthenticationAsyncService {
 	 * @param model
 	 * @returns TwoFactorAuthenticationSetupResult
 	 */
-	verifyAuthenticator(model: TwoFactorAuthenticationVerificationCode): Observable<TwoFactorAuthenticationSetupResult> {
+	verifyAuthenticator$(model: TwoFactorAuthenticationVerificationCode): Observable<TwoFactorAuthenticationSetupResult> {
 		return this.http.post<TwoFactorAuthenticationSetupResult>(`${this.apiUrl}/2fa/verify-authenticator`, JSON.stringify(model.verificationCode), {
 			headers: this._headers
 		});
@@ -51,7 +51,7 @@ export class TwoFactorAuthenticationAsyncService {
 	 * Generates two factor authentication recovery codes.
 	 * @returns UserRecoveryCodes
 	 */
-	generate2FaRecoveryCodes(): Observable<UserRecoveryCodes> {
+	generate2FaRecoveryCodes$(): Observable<UserRecoveryCodes> {
 		return this.http.post<UserRecoveryCodes>(`${this.apiUrl}/2fa/generate-recovery-codes`, '', { headers: this._headers });
 	}
 
@@ -59,7 +59,7 @@ export class TwoFactorAuthenticationAsyncService {
 	 * Disables two factor authentication for the given user.
 	 * @returns Disable2FaResult.
 	 */
-	disable2Fa(): Observable<void> {
+	disable2Fa$(): Observable<void> {
 		return this.http.post<void>(`${this.apiUrl}/2fa/disable`, '', { headers: this._headers });
 	}
 }

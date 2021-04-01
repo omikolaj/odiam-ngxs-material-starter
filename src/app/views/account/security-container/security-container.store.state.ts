@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 import * as SecurityContainer from './security-container.store.actions';
 import produce from 'immer';
 import { AccountSecurityDetails } from 'app/core/models/account-security-details.model';
+import { LogService } from 'app/core/logger/log.service';
 
 const ACCOUNT_SECURITY_STATE_TOKEN = new StateToken<SecurityContainerStateModel>('security');
 
@@ -34,12 +35,19 @@ export class AccountSecurityState {
 	}
 
 	/**
+	 * Creates an instance of account security state.
+	 * @param log
+	 */
+	constructor(private log: LogService) {}
+
+	/**
 	 * Action handler for setting account security details state.
 	 * @param ctx
 	 * @param action
 	 */
 	@Action(SecurityContainer.SetAccountSecurityDetails)
 	setAccountSecurityDetails(ctx: StateContext<SecurityContainerStateModel>, action: SecurityContainer.SetAccountSecurityDetails): void {
+		this.log.info('setAccountSecurityDetails fired.', this);
 		ctx.setState(
 			produce((draft: SecurityContainerStateModel) => {
 				draft = { ...draft, ...action.payload };
@@ -58,6 +66,7 @@ export class AccountSecurityState {
 		ctx: StateContext<SecurityContainerStateModel>,
 		action: SecurityContainer.UpdateAccountSecurityDetailsSettings
 	): void {
+		this.log.info('updateAccountSecurityDetailsSetting action handler fired.', this);
 		ctx.setState(
 			produce((draft: SecurityContainerStateModel) => {
 				draft = {
@@ -78,6 +87,7 @@ export class AccountSecurityState {
 	 */
 	@Action(SecurityContainer.UpdateRecoveryCodes)
 	updateUserRecoveryCodes(ctx: StateContext<SecurityContainerStateModel>, action: SecurityContainer.UpdateRecoveryCodes): void {
+		this.log.info('updateUserRecoveryCodes action handler fired.', this);
 		ctx.setState(
 			produce((draft: SecurityContainerStateModel) => {
 				draft.recoveryCodes = action.payload;
@@ -94,6 +104,7 @@ export class AccountSecurityState {
 	 */
 	@Action(SecurityContainer.ResetAccountSecuritySettings)
 	resetAccountSecuritySettings(ctx: StateContext<SecurityContainerStateModel>): void {
+		this.log.info('resetAccountSecuritySettings action handler fired.', this);
 		const defaults: SecurityContainerStateModel = {
 			hasAuthenticator: false,
 			recoveryCodes: {

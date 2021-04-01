@@ -14,7 +14,14 @@ import { Feature, features } from '../feature-list.data';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FeatureListComponent {
-	routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
+	/**
+	 * Route animations.
+	 */
+	readonly routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
+
+	/**
+	 * Features list.
+	 */
 	features: Feature[] = features;
 
 	/**

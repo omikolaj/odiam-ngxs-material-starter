@@ -5,7 +5,7 @@ import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 const ACTIVE_GHOST = 'odm-ghost-active';
 
 /**
- * GhostAnimationService injectable.
+ * Ghosting animation service.
  */
 @Injectable()
 export class OdmGhostAnimationService {
