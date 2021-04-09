@@ -15,16 +15,15 @@
 
 @import 'styles-reset.scss-theme';
 @import './app/app/app.component.scss-theme';
+@import './app/shared/components/odm-ghost-block/odm-ghost.scss-theme';
 @import './app/views/about/about/about.component.scss-theme';
 @import './app/views/examples/examples/examples.component.scss-theme';
-@import './app//shared/components/odm-ghost-block/odm-ghost.scss-theme';
-@import './app/views/account/security-container/two-factor-authentication-setup-wizard/two-factor-authentication-setup-wizard.scss-theme.scss';
-@import './app/views/account/security-container/two-factor-authentication/two-factor-authentication.scss-theme.scss';
 @import './app/views/auth/auth-container/auth-container.component.scss-theme.scss';
 @import './app/views/auth/forgot-password/forgot-password.component.scss-theme.scss';
+@import './app/views/account/security-container/security-container.scss-theme.scss';
+@import './app/views/account/security-container/two-factor-authentication/two-factor-authentication.scss-theme.scss';
 @import './app/views/account/general-container/personal-email/personal-email.scss-theme.scss';
 @import './app/views/account/general-container/general-container.scss-theme.scss';
-@import './app/views/account/security-container/security-container.scss-theme.scss';
 
 @mixin custom-components-theme($theme) {
 	@include odm-styles-reset-theme($theme);
@@ -32,9 +31,8 @@
 	@include odm-about-component-theme($theme);
 	@include odm-examples-component-theme($theme);
 	@include odm-ghost-theme;
-	@include odm-two-factor-authentication-setup-wizard-component-theme($theme);
-	@include odm-two-factor-authentication-component-theme($theme);
 	@include odm-auth-container-component-theme($theme);
+	@include odm-two-factor-authentication-component-theme($theme);
 	@include odm-forgot-password-component-theme($theme);
 	@include odm-personal-email-component-theme($theme);
 	@include odm-general-container-component-theme($theme);

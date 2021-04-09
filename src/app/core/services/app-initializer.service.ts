@@ -37,6 +37,7 @@ export class AppInitializerService {
 				this.log.debug('[initUserSession] result:', this, result.succeeded);
 				if (result.succeeded) {
 					this.log.debug('[initUserSession] authenticating user.', this);
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 					return this.authService
 						.authenticate$(result.accessToken)
 						.toPromise()

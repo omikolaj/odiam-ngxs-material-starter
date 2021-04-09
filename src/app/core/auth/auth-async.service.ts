@@ -7,6 +7,9 @@ import { Observable } from 'rxjs';
 import { SigninUser } from './models/signin-user.model';
 import { RenewAccessTokenResult } from './models/renew-access-token-result.model';
 import { SocialUser } from 'angularx-social-login';
+import { AuthResponse } from './models/auth-response.model';
+import { TwoFactorAuthenticationVerificationCode } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-verification-code.model';
+import { TwoFactorRecoveryCode } from './models/two-factor-recovery-code.model';
 
 /**
  * Async authentication service.
@@ -39,8 +42,26 @@ export class AuthAsyncService {
 	 * @param model
 	 * @returns access token
 	 */
-	signin$(model: SigninUser): Observable<AccessToken> {
-		return this.http.post<AccessToken>(`${this.apiUrl}/auth/signin`, JSON.stringify(model), { headers: this._headers });
+	signin$(model: SigninUser): Observable<AuthResponse> {
+		return this.http.post<AuthResponse>(`${this.apiUrl}/auth/signin`, JSON.stringify(model), { headers: this._headers });
+	}
+
+	/**
+	 * Verifys two step verification code. This is used once user has already set-up two factor authentication.
+	 * @param model
+	 * @returns AccessToken
+	 */
+	verifyTwoStepVerificationCode$(model: TwoFactorAuthenticationVerificationCode): Observable<AccessToken> {
+		return this.http.post<AccessToken>(`${this.apiUrl}/auth/verify-two-step-verification-code`, JSON.stringify(model), { headers: this._headers });
+	}
+
+	/**
+	 * Redeems user's recovery code.
+	 * @param model
+	 * @returns AccessToken
+	 */
+	redeemRecoveryCode$(model: TwoFactorRecoveryCode): Observable<AccessToken> {
+		return this.http.post<AccessToken>(`${this.apiUrl}/auth/redeem-recovery-code`, JSON.stringify(model), { headers: this._headers });
 	}
 
 	/**

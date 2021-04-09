@@ -20,39 +20,16 @@
 					{{ 'odm.account.security.two-step.setup-wizard.first-step.instructions.verification-code' | translate }}
 				</p>
 				<div class="setup-wizard__verification-form">
-					<form [formGroup]="verificationCodeForm" (ngSubmit)="_onVerificationCodeSubmitted()">
-						<mat-form-field>
-							<mat-label>
-								{{ 'odm.account.security.two-step.setup-wizard.first-step.verification-code-placeholder' | translate }}
-							</mat-label>
-							<input matInput type="text" formControlName="verificationCode" [maxlength]="_verificationCodeInputLength" />
-							<mat-error *ngIf="_ifControlFieldIsInvalid(verificationCodeForm.get('verificationCode'))">{{
-								_getErrorMessage$(verificationCodeForm.get('verificationCode')) | async
-							}}</mat-error>
-						</mat-form-field>
-						<div class="setup-wizard__action-buttons">
-							<button mat-button (click)="_onCancelClicked()" color="warn">
-								{{ 'odm.buttons.cancel' | translate }}
-							</button>
-							<button mat-button color="primary" type="submit" [disabled]="!verificationCodeForm.valid || codeVerificationInProgress">
-								<ng-container *ngIf="!codeVerificationInProgress && _codeVerificationSucceeded">
-									{{ 'odm.buttons.verified' | translate }}
-									<mat-icon class="req-met" matSuffix>{{ 'task_alt' }}</mat-icon>
-									<odm-spinner
-										[type]="'button'"
-										[diameter]="_verifiedNextStepSpinnerDiameter"
-										[strokeWidth]="_verifiedNextStepSpinnerStrokeWidth"
-									></odm-spinner>
-								</ng-container>
-								<span *ngIf="codeVerificationInProgress" class="loading-dots-animation"
-									>{{ 'odm.buttons.verifing' | translate }}<span>.</span><span>.</span><span>.</span>
-								</span>
-								<ng-container *ngIf="!codeVerificationInProgress && !_codeVerificationSucceeded">
-									{{ 'odm.buttons.verify' | translate }}
-								</ng-container>
-							</button>
-						</div>
-					</form>
+					<odm-verification-code
+						[form]="verificationCodeForm"
+						[codeVerificationInProgress]="codeVerificationInProgress"
+						[codeVerificationSucceeded]="_codeVerificationSucceeded"
+						[problemDetails]="problemDetails"
+						[internalServerErrorDetails]="internalServerErrorDetails"
+						(verificationCodeSubmitted)="_onVerificationCodeSubmitted($event)"
+						(cancelSetupWizardClicked)="_onCancelClicked()"
+					>
+					</odm-verification-code>
 				</div>
 			</mat-step>
 			<mat-step>

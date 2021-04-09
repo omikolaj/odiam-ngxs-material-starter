@@ -42,7 +42,7 @@ export class TwoFactorAuthenticationAsyncService {
 	 * @returns TwoFactorAuthenticationSetupResult
 	 */
 	verifyAuthenticator$(model: TwoFactorAuthenticationVerificationCode): Observable<TwoFactorAuthenticationSetupResult> {
-		return this.http.post<TwoFactorAuthenticationSetupResult>(`${this.apiUrl}/2fa/verify-authenticator`, JSON.stringify(model.verificationCode), {
+		return this.http.post<TwoFactorAuthenticationSetupResult>(`${this.apiUrl}/2fa/verify-authenticator`, JSON.stringify(model), {
 			headers: this._headers
 		});
 	}

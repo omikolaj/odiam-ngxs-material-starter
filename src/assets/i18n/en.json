@@ -62,11 +62,23 @@
 				"header": "Welcome",
 				"subheader": "Sign up to create an account."
 			},
+			"two-step-verification": {
+				"header": "Two step verification is required",
+				"subheader": "Please enter verification code found on your authenticator app.",
+				"use-recovery-code": "Use recovery code"
+			},
+			"recovery-code": {
+				"header": "Recovery code is required",
+				"subheader": "Please enter your recovery code."
+			},
 			"form": {
 				"label": {
 					"email": "E-mail",
 					"password": "Password",
 					"confirm-password": "Confirm Password"
+				},
+				"placeholders": {
+					"verification-code": "{number}-digit verification code"
 				},
 				"requirements": {
 					"pass-must-match": "Passwords must match",

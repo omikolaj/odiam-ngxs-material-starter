@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy, OnInit, OnDestroy } from '@angular/
 import { Observable, Subscription } from 'rxjs';
 import { BreakpointState, BreakpointObserver } from '@angular/cdk/layout';
 import { MinScreenSizeQuery } from 'app/shared/screen-size-queries';
-import { ROUTE_ANIMATIONS_ELEMENTS, routeAnimations } from 'app/core/core.module';
+import { ROUTE_ANIMATIONS_ELEMENTS, routeAnimations, leftRightFadeInAnimation } from 'app/core/core.module';
 import { AuthFacadeService } from '../auth-facade.service';
 import { ActiveAuthType } from 'app/core/auth/models/active-auth-type.model';
 import { tap, startWith } from 'rxjs/operators';
@@ -15,7 +15,7 @@ import { NavigationEnd } from '@angular/router';
 	selector: 'odm-auth-container',
 	templateUrl: './auth-container.component.html',
 	styleUrls: ['./auth-container.component.scss'],
-	animations: [routeAnimations],
+	animations: [routeAnimations, leftRightFadeInAnimation],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AuthContainerComponent implements OnInit, OnDestroy {
@@ -45,6 +45,27 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 */
 	get _forgotPasswordIsDisplayed(): boolean {
 		return this.facade.router.url === '/auth/forgot-password';
+	}
+
+	/**
+	 * Whether user is on two step verification route.
+	 */
+	get _twoStepVerificationIsDisplayed(): boolean {
+		return this.facade.router.url.includes('/auth/two-step-verification');
+	}
+
+	/**
+	 * Whether user is on redeem recovery code route.
+	 */
+	get _redeemRecoveryCodeIsDisplayed(): boolean {
+		return this.facade.router.url.includes('/auth/redeem-recovery-code');
+	}
+
+	/**
+	 * Whether user is on two step verification route.
+	 */
+	get _signInIsDisplayed(): boolean {
+		return this.facade.router.url === '/auth/sign-in';
 	}
 
 	/**

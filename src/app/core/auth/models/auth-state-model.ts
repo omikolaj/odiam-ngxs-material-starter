@@ -48,4 +48,19 @@ export interface AuthStateModel {
 	 * Whether sign-in or sign-up component should be displayed or forgot-password styles should be applied.
 	 */
 	activeAuthType: ActiveAuthType;
+
+	/**
+	 * Whether the two step verification code user entered has been successfully verified by the server.
+	 */
+	is2StepVerificationSuccessful: boolean;
+
+	/**
+	 * Whether two step verification protocol is required to sign user in.
+	 */
+	is2StepVerificationRequired: boolean;
+
+	/**
+	 * Whether recovery code was successfully redeemed.
+	 */
+	isRedeemRecoveryCodeSuccessful: boolean;
 }

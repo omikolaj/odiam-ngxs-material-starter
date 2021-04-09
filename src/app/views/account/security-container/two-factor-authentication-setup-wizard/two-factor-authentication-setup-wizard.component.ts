@@ -1,19 +1,13 @@
-import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { TwoFactorAuthenticationSetupResult } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-setup-result.model';
 import { TwoFactorAuthenticationVerificationCode } from '../two-factor-authentication/models/two-factor-authentication-verification-code.model';
 import { TwoFactorAuthenticationSetup } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-setup.model';
-import {
-	ODM_BIG_SPINNER_DIAMETER,
-	ODM_BIG_SPINNER_STROKE_WIDTH,
-	ODM_SMALL_SPINNER_STROKE_WIDTH,
-	ODM_SMALL_SPINNER_DIAMETER
-} from 'app/shared/global-settings/mat-spinner-settings';
+import { ODM_BIG_SPINNER_DIAMETER, ODM_BIG_SPINNER_STROKE_WIDTH } from 'app/shared/global-settings/mat-spinner-settings';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { CdkStepper } from '@angular/cdk/stepper';
 import { AccountFacadeService } from '../../account-facade.service';
-import { AuthBase } from 'app/views/auth/auth-base';
 
 /**
  * Two factor authentication setup wizard component.
@@ -24,22 +18,16 @@ import { AuthBase } from 'app/views/auth/auth-base';
 	styleUrls: ['./two-factor-authentication-setup-wizard.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TwoFactorAuthenticationSetupWizardComponent extends AuthBase {
+export class TwoFactorAuthenticationSetupWizardComponent {
 	/**
 	 * Emitted when server responds with 40X error.
 	 */
-	@Input() set problemDetails(value: ProblemDetails) {
-		this.facade.log.debug('Problem Ddetails emitted.', this);
-		this.problemDetailsError = value;
-	}
+	@Input() problemDetails: ProblemDetails;
 
 	/**
 	 * Emitted when server responds with 50X error.
 	 */
-	@Input() set internalServerErrorDetails(value: InternalServerErrorDetails) {
-		this.facade.log.debug('Internal server error emitted.', this);
-		this.internalServerError = value;
-	}
+	@Input() internalServerErrorDetails: InternalServerErrorDetails;
 
 	/**
 	 * Whether there is an outgoing request to verify two factor authentication setup verification code.
@@ -63,7 +51,7 @@ export class TwoFactorAuthenticationSetupWizardComponent extends AuthBase {
 			setTimeout(() => {
 				this.setupWizard.next();
 				this._twoFactorAuthenticationSetupResult = value;
-			}, 1500);
+			}, 1000);
 		}
 	}
 
@@ -76,7 +64,7 @@ export class TwoFactorAuthenticationSetupWizardComponent extends AuthBase {
 	 * Two factor authentication setup information.
 	 */
 	@Input() set twoFactorAuthenticationSetup(value: TwoFactorAuthenticationSetup) {
-		this.log.debug('twoFactorAuthenticationSetup emitted.', this);
+		this.facade.log.debug('twoFactorAuthenticationSetup emitted.', this);
 		this._twoFactorAuthenticationSetup = value;
 		if (value.authenticatorUri && value.sharedKey) {
 			// enable verification code control
@@ -119,11 +107,6 @@ export class TwoFactorAuthenticationSetupWizardComponent extends AuthBase {
 	_codeVerificationSucceeded = false;
 
 	/**
-	 * Whether server errors were already displayed in the view.
-	 */
-	_serverErrorHandled = false;
-
-	/**
 	 * Whether the validity of previous steps should be checked or not.
 	 */
 	_stepperIsLinear = true;
@@ -132,16 +115,6 @@ export class TwoFactorAuthenticationSetupWizardComponent extends AuthBase {
 	 * Whether the user can return to this step once it has been marked as completed.
 	 */
 	_stepper2faSetupEditable = false;
-
-	/**
-	 * Verified next step button spinner diameter.
-	 */
-	readonly _verifiedNextStepSpinnerDiameter = ODM_SMALL_SPINNER_DIAMETER;
-
-	/**
-	 * Verified next step button spinner stroke width.
-	 */
-	readonly _verifiedNextStepSpinnerStrokeWidth = ODM_SMALL_SPINNER_STROKE_WIDTH;
 
 	/**
 	 * QR bar code size.
@@ -164,26 +137,17 @@ export class TwoFactorAuthenticationSetupWizardComponent extends AuthBase {
 	_is2faSetupCompleted = false;
 
 	/**
-	 * Maximum allowed characters for the verification code input field.
-	 */
-	readonly _verificationCodeInputLength = 6;
-
-	/**
 	 * Creates an instance of two factor authentication setup wizard component.
 	 * @param facade
-	 * @param cd
 	 */
-	constructor(private facade: AccountFacadeService, cd: ChangeDetectorRef) {
-		super(facade.translateValidationErrorService, facade.log, cd);
-	}
+	constructor(private facade: AccountFacadeService) {}
 
 	/**
 	 * Event handler when user submits two factor authentication setup verification code.
 	 */
-	_onVerificationCodeSubmitted(): void {
+	_onVerificationCodeSubmitted(event: unknown): void {
 		this.facade.log.trace('_onVerificationCodeSubmitted fired.', this);
-		const code = this.verificationCodeForm.value as TwoFactorAuthenticationVerificationCode;
-		this.verificationCodeSubmitted.emit(code);
+		this.verificationCodeSubmitted.emit(event as TwoFactorAuthenticationVerificationCode);
 	}
 
 	/**

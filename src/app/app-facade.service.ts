@@ -46,6 +46,7 @@ export class AppFacadeService {
 	 * Signs user out of the application.
 	 */
 	signOut(): void {
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 		this.authService.signUserOut$().subscribe();
 	}
 

@@ -13,6 +13,8 @@ import { SignUpComponent } from './sign-up/sign-up.component';
 import { AuthContainerComponent } from './auth-container/auth-container.component';
 import { ForgotPasswordContainerComponent } from './forgot-password-container/forgot-password-container.component';
 import { AuthDialogComponent } from './auth-dialog/auth-dialog.component';
+import { TwoStepVerificationComponent } from './two-step-verification/two-step-verification.component';
+import { RedeemRecoveryCodeComponent } from './redeem-recovery-code/redeem-recovery-code.component';
 
 /**
  * Auth module.
@@ -27,7 +29,9 @@ import { AuthDialogComponent } from './auth-dialog/auth-dialog.component';
 		SignInContainerComponent,
 		SignUpContainerComponent,
 		ForgotPasswordContainerComponent,
-		AuthDialogComponent
+		AuthDialogComponent,
+		TwoStepVerificationComponent,
+		RedeemRecoveryCodeComponent
 	],
 	imports: [CommonModule, AuthRoutingModule, SharedModule, SocialLoginModule],
 	providers: [

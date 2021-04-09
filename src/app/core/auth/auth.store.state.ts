@@ -21,6 +21,9 @@ const AUTH_STATE_TOKEN = new StateToken<AuthStateModel>('auth');
 		rememberMe: false,
 		username: '',
 		staySignedIn: false,
+		is2StepVerificationRequired: false,
+		is2StepVerificationSuccessful: false,
+		isRedeemRecoveryCodeSuccessful: false,
 		userId: '',
 		activeAuthType: 'sign-in-active'
 	}
@@ -103,6 +106,26 @@ export class AuthState {
 	}
 
 	/**
+	 * Selectors whether two step verification code was successfully verified.
+	 * @param state
+	 * @returns true if is2 step verification successful
+	 */
+	@Selector([AUTH_STATE_TOKEN])
+	static selectIs2StepVerificationSuccessful(state: AuthStateModel): boolean {
+		return state.is2StepVerificationSuccessful;
+	}
+
+	/**
+	 * Selectors whether recovery code was successfully redeemed.
+	 * @param state
+	 * @returns true if is2 step verification successful
+	 */
+	@Selector([AUTH_STATE_TOKEN])
+	static selectIsRedeemRecoveryCodeSuccessful(state: AuthStateModel): boolean {
+		return state.isRedeemRecoveryCodeSuccessful;
+	}
+
+	/**
 	 * Selects user authentication status.
 	 * @param state
 	 * @returns true if is authenticated.
@@ -136,16 +159,6 @@ export class AuthState {
 	}
 
 	/**
-	 * Selects expires_at value from local storage and converts it to Date.
-	 * @param state
-	 * @returns date of expires at
-	 */
-	@Selector([AUTH_STATE_TOKEN])
-	private static selectExpiresAt(state: AuthStateModel): Date {
-		return fromUnixTime(state.expires_at || 0);
-	}
-
-	/**
 	 * Selects the raw expires_at value without converting it to Date.
 	 * @param state
 	 * @returns expires at raw
@@ -153,6 +166,16 @@ export class AuthState {
 	@Selector([AUTH_STATE_TOKEN])
 	static selectExpiresAtRaw(state: AuthStateModel): number {
 		return state.expires_at;
+	}
+
+	/**
+	 * Selects expires_at value from local storage and converts it to Date.
+	 * @param state
+	 * @returns date of expires at
+	 */
+	@Selector([AUTH_STATE_TOKEN])
+	private static selectExpiresAt(state: AuthStateModel): Date {
+		return fromUnixTime(state.expires_at || 0);
 	}
 
 	/**
@@ -172,7 +195,7 @@ export class AuthState {
 		this.log.info('rememberMe action handler fired.', this);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
-				draft.rememberMe = action.payload;
+				draft = { ...draft, ...action.payload };
 				// clear out username everytime this option changes. It is set only when user successfully logs in.
 				draft.username = '';
 			})
@@ -192,7 +215,8 @@ export class AuthState {
 		this.log.info('updateRememberMeUsername action handler fired.', this);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
-				draft.username = action.payload;
+				draft = { ...draft, ...action.payload };
+				return draft;
 			})
 		);
 
@@ -252,7 +276,8 @@ export class AuthState {
 		this.log.info('setCurrentUserId action handler fired.', this);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
-				draft.userId = action.payload;
+				draft = { ...draft, ...action.payload };
+				return draft;
 			})
 		);
 		const auth = ctx.getState();
@@ -260,7 +285,7 @@ export class AuthState {
 	}
 
 	/**
-	 * Action handler that logs user out.
+	 * Action handler that signs user out.
 	 * @param ctx
 	 * @returns action to persist auth state.
 	 */
@@ -270,6 +295,9 @@ export class AuthState {
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft.isAuthenticated = false;
+				draft.is2StepVerificationRequired = false;
+				draft.is2StepVerificationSuccessful = false;
+				draft.isRedeemRecoveryCodeSuccessful = false;
 				draft.access_token = '';
 				draft.expires_at = 0;
 				draft.userId = '';
@@ -306,6 +334,60 @@ export class AuthState {
 	@Action(Auth.SwitchAuthType)
 	switchAuthType(ctx: StateContext<AuthStateModel>, action: Auth.SwitchAuthType): Observable<void> {
 		this.log.info('switchAuthType action handler fired.', this);
+		ctx.setState(
+			produce((draft: AuthStateModel) => {
+				draft = { ...draft, ...action.payload };
+				return draft;
+			})
+		);
+		const auth = ctx.getState();
+		return ctx.dispatch(new Auth.PersistSettings(auth));
+	}
+
+	/**
+	 * Action handler that updates state whether two step verification code has been successfully verified.
+	 * @param ctx
+	 * @param action
+	 */
+	@Action(Auth.Is2StepVerificationSuccessful)
+	is2StepVerificationSuccessful(ctx: StateContext<AuthStateModel>, action: Auth.Is2StepVerificationSuccessful): Observable<void> {
+		this.log.info('is2StepVerificationSuccessful action handler fired.', this);
+		ctx.setState(
+			produce((draft: AuthStateModel) => {
+				draft = { ...draft, ...action.payload };
+				return draft;
+			})
+		);
+		const auth = ctx.getState();
+		return ctx.dispatch(new Auth.PersistSettings(auth));
+	}
+
+	/**
+	 * Action handler whether two step verification is required to sign user in.
+	 * @param ctx
+	 * @param action
+	 */
+	@Action(Auth.Is2StepVerificationSuccessful)
+	is2StepVerificationRequired(ctx: StateContext<AuthStateModel>, action: Auth.Is2StepVerificationRequired): Observable<void> {
+		this.log.info('is2StepVerificationRequired action handler fired.', this);
+		ctx.setState(
+			produce((draft: AuthStateModel) => {
+				draft = { ...draft, ...action.payload };
+				return draft;
+			})
+		);
+		const auth = ctx.getState();
+		return ctx.dispatch(new Auth.PersistSettings(auth));
+	}
+
+	/**
+	 * Action handler that updates state whether two step verification code has been successfully verified.
+	 * @param ctx
+	 * @param action
+	 */
+	@Action(Auth.IsRedeemRecoveryCodeSuccessful)
+	isRedeemRecoveryCodeSuccessful(ctx: StateContext<AuthStateModel>, action: Auth.IsRedeemRecoveryCodeSuccessful): Observable<void> {
+		this.log.info('isRedeemRecoveryCodeSuccessful action handler fired.', this);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft = { ...draft, ...action.payload };

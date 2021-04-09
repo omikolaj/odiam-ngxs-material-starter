@@ -26,7 +26,7 @@ export class UserSessionActivityService {
 	/**
 	 * Time in seconds, that determines how long user must be inactive for, before they are deemed inactive.
 	 */
-	private readonly _userInactivityTimeoutInSeconds = 5;
+	private readonly _userInactivityTimeoutInSeconds = 320;
 
 	/**
 	 * Time in seconds, that determines how often to check if user is inactive.

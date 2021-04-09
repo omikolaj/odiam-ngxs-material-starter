@@ -7,7 +7,8 @@
 	$background: map-get($theme, background);
 
 	odm-sign-in-container odm-sign-in,
-	odm-sign-up-container odm-sign-up {
+	odm-sign-up-container odm-sign-up,
+	odm-two-step-verification {
 		h3 {
 			background-image: linear-gradient(to right, mat-color($accent, A400), mat-color($primary, 700));
 		}

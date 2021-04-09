@@ -45,13 +45,13 @@ export class AuthService {
 	 */
 	constructor(
 		private authAsyncService: AuthAsyncService,
-		private router: Router,
-		private log: LogService,
+		private userActivityService: UserSessionActivityService,
 		private store: Store,
+		private actions$: Actions,
+		private router: Router,
 		private jwtService: JsonWebTokenService,
 		private dialog: MatDialog,
-		private actions$: Actions,
-		private userActivityService: UserSessionActivityService
+		private log: LogService
 	) {
 		this._authDialogConfig = {
 			data: {
@@ -63,16 +63,76 @@ export class AuthService {
 	}
 
 	/**
-	 * Authenticates user with the app by signing them in.
+	 * Attempts to sign user in if two step authentication is not required, else proceeds with two step verification process.
 	 * @param accessToken
 	 * @returns authenticate
 	 */
-	authenticate$(accessToken: AccessToken, rememberMe?: boolean, email?: string): Observable<any> {
-		this.log.trace('authenticate$ executed.', this);
+	processUserAuthentication$(
+		accessToken?: AccessToken,
+		rememberMe?: boolean,
+		email?: string,
+		is2StepVerificationRequired?: boolean,
+		provider?: string
+	): Observable<any> {
+		this.log.trace('processUserAuthentication$ executed.', this);
+
 		if (rememberMe) {
-			this.log.debug('[authenticate$]: rememberMe option is selected.');
-			this.store.dispatch(new Auth.UpdateRememberMeUsername(email));
+			this.log.debug('[processUserAuthentication$]: rememberMe option is selected.', email);
+			this.store.dispatch(new Auth.UpdateRememberMeUsername({ username: email }));
 		}
+
+		return this._processAuthentication$(accessToken, email, is2StepVerificationRequired, provider);
+	}
+
+	/**
+	 * Processes user authentication.
+	 * @param [accessToken]
+	 * @param [email]
+	 * @param [is2StepVerificationRequired]
+	 * @param [provider]
+	 * @returns authentication$
+	 */
+	private _processAuthentication$(
+		accessToken?: AccessToken,
+		email?: string,
+		is2StepVerificationRequired?: boolean,
+		provider?: string
+	): Observable<any> {
+		this.log.trace('_processAuthentication$ executed.', this);
+		if (is2StepVerificationRequired) {
+			return this._requires2StepVerification$(provider, email);
+		}
+
+		return this.authenticate$(accessToken).pipe(switchMap(() => this.monitorSessionActivity$()));
+	}
+
+	/**
+	 * Navigates user to two step verification component for two step verification process.
+	 * @param provider
+	 * @returns step verification$
+	 */
+	private _requires2StepVerification$(provider: string, email: string): Observable<any> {
+		this.log.trace('_requires2StepVerification$ executed.', this);
+		if (provider) {
+			void this.router.navigate(['auth/two-step-verification'], { queryParams: { provider, email } });
+
+			return this.store.dispatch(new Auth.Is2StepVerificationRequired({ is2StepVerificationRequired: true }));
+		} else {
+			this.log.error('[_requires2StepVerification$]: Provider was not defined. Two step logging will fail.');
+		}
+	}
+
+	/**
+	 * Authenticates user with the app by signing them in.
+	 * @param accessToken
+	 * @param rememberMe
+	 * @param email
+	 * @returns authenticate$
+	 */
+	authenticate$(accessToken: AccessToken): Observable<any> {
+		this.log.trace('_authenticate$ executed.', this);
+		void this.router.navigate(['account']);
+
 		const userId = this.jwtService.getSubClaim(accessToken.access_token);
 		return this.store.dispatch(new Auth.Signin({ accessToken, userId }));
 	}
@@ -126,9 +186,12 @@ export class AuthService {
 	 */
 	signUserOut$(): Observable<any> {
 		this.log.trace('signUserOut$ executed.', this);
-		return this._signOut$().pipe(
+		return this.authAsyncService.signout$().pipe(
 			tap(() => void this.router.navigate(['auth/sign-in'])),
-			finalize(() => this.userActivityService.cleanUp())
+			finalize(() => {
+				this.store.dispatch([new Auth.Signout(), new Auth.KeepOrRemoveRememberMeUsername()]);
+				this.userActivityService.cleanUp();
+			})
 		);
 	}
 
@@ -305,15 +368,6 @@ export class AuthService {
 			this.log.debug("[_keepUserSignedIn$] Auth dialog type is 'inactive'.", this);
 			return of(true);
 		}
-	}
-	/**
-	 * Signs user out of the server and then out of the application.
-	 */
-	private _signOut$(): Observable<void> {
-		this.log.trace('signOut: Signing user out from the server and from application. Dispatching KeepOrRemoveRememberMeUsername.', this);
-		return this.authAsyncService
-			.signout$()
-			.pipe(finalize(() => this.store.dispatch([new Auth.Signout(), new Auth.KeepOrRemoveRememberMeUsername()])));
 	}
 
 	/**

@@ -7,7 +7,7 @@ import { ProblemDetailsError } from 'app/core/error-handler/problem-details-erro
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerError } from 'app/core/error-handler/internal-server-error.decorator';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
 import { Store, Select } from '@ngxs/store';
 import * as Auth from '../../core/auth/auth.store.actions';
 import { Router } from '@angular/router';
@@ -21,8 +21,10 @@ import { LogService } from 'app/core/logger/log.service';
 import { FormBuilder } from '@angular/forms';
 import { ActiveAuthType } from 'app/core/auth/models/active-auth-type.model';
 import { AuthTypeRouteUrl } from 'app/core/auth/models/auth-type-route-url.model';
-import { NotificationService } from 'app/core/core.module';
+
 import { AuthService } from '../../core/auth/auth.service';
+import { TwoFactorAuthenticationVerificationCode } from '../account/security-container/two-factor-authentication/models/two-factor-authentication-verification-code.model';
+import { TwoFactorRecoveryCode } from 'app/core/auth/models/two-factor-recovery-code.model';
 
 /**
  * Auth facade service.
@@ -60,6 +62,16 @@ export class AuthFacadeService {
 	@Select(AuthState.selectActiveAuthType) activeAuthType$: Observable<ActiveAuthType>;
 
 	/**
+	 * Whether two step verification process was successful.
+	 */
+	@Select(AuthState.selectIs2StepVerificationSuccessful) is2StepVerificationSuccessful$: Observable<boolean>;
+
+	/**
+	 * Whether redemption of recovery code was successful.
+	 */
+	@Select(AuthState.selectIsRedeemRecoveryCodeSuccessful) isRecoveryCodeRedemptionSuccessful$: Observable<boolean>;
+
+	/**
 	 * Creates an instance of auth facade service.
 	 * @param authAsyncService
 	 * @param notification
@@ -74,7 +86,6 @@ export class AuthFacadeService {
 		private authAsyncService: AuthAsyncService,
 		private usersAsyncService: UsersAsyncService,
 		private store: Store,
-		private notification: NotificationService,
 		private socialAuthService: SocialAuthService,
 		private authService: AuthService
 	) {}
@@ -103,7 +114,7 @@ export class AuthFacadeService {
 	 * @param event
 	 */
 	onRememberMeChanged(event: boolean): void {
-		this.store.dispatch(new Auth.RememberMeOptionChange(event));
+		this.store.dispatch(new Auth.RememberMeOptionChange({ rememberMe: event }));
 	}
 
 	/**
@@ -152,8 +163,43 @@ export class AuthFacadeService {
 		this.authAsyncService
 			.signin$(model)
 			.pipe(
-				switchMap((token) => this._authenticate$(token, model.rememberMe, model.email)),
-				switchMap(() => this._monitorUserSession$())
+				switchMap((resp) => this._authenticate$(resp.accessToken, model.rememberMe, model.email, resp.is2StepVerificationRequired, resp.provider))
+			)
+			.subscribe();
+	}
+
+	/**
+	 * Verifys two step verification code
+	 * @param model
+	 */
+	verifyTwoStepVerificationCode(model: TwoFactorAuthenticationVerificationCode): void {
+		this.authAsyncService
+			.verifyTwoStepVerificationCode$(model)
+			.pipe(
+				tap(() => this.store.dispatch(new Auth.Is2StepVerificationSuccessful({ is2StepVerificationSuccessful: true }))),
+				switchMap((accessToken) => this._authenticate$(accessToken))
+			)
+			.subscribe();
+	}
+
+	/**
+	 * Verifys two step verification code
+	 * @param model
+	 */
+	cancelTwoStepVerificationCodeProcess(): void {
+		void this.router.navigate(['auth/sign-in']);
+	}
+
+	/**
+	 * Redeems users backup code and signs them in.
+	 * @param model
+	 */
+	redeemRecoveryCode(model: TwoFactorRecoveryCode): void {
+		this.authAsyncService
+			.redeemRecoveryCode$(model)
+			.pipe(
+				tap(() => this.store.dispatch(new Auth.IsRedeemRecoveryCodeSuccessful({ isRedeemRecoveryCodeSuccessful: true }))),
+				switchMap((accessToken) => this._authenticate$(accessToken))
 			)
 			.subscribe();
 	}
@@ -190,19 +236,26 @@ export class AuthFacadeService {
 
 	/**
 	 * Authenticates user and takes them to the account page.
-	 * @param token
+	 * @param [accessToken]
 	 * @param [rememberMe]
 	 * @param [email]
-	 * @returns authenticate$
+	 * @param [is2StepVerificationRequired]
+	 * @param [provider]
+	 * @returns Observable<any>
 	 */
-	private _authenticate$(token: AccessToken, rememberMe?: boolean, email?: string): Observable<any> {
-		void this.router.navigate(['account']);
-		return this.authService.authenticate$(token, rememberMe, email);
+	private _authenticate$(
+		accessToken?: AccessToken,
+		rememberMe?: boolean,
+		email?: string,
+		is2StepVerificationRequired?: boolean,
+		provider?: string
+	): Observable<any> {
+		return this.authService.processUserAuthentication$(accessToken, rememberMe, email, is2StepVerificationRequired, provider);
 	}
 
 	/**
 	 * Monitors user session and keeps track if they are active.
-	 * @returns user session$
+	 * @returns Observable<any>
 	 */
 	private _monitorUserSession$(): Observable<any> {
 		return this.authService.monitorSessionActivity$();

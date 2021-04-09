@@ -80,7 +80,7 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 	 */
 	ngOnInit(): void {
 		this.facade.log.trace('Initialized.', this);
-		this._initForms();
+		this._initForm();
 	}
 
 	/**
@@ -147,7 +147,7 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 	/**
 	 * Inits singin form.
 	 */
-	private _initForms(): void {
+	private _initForm(): void {
 		this._signinForm = this._initSigninForm();
 	}
 

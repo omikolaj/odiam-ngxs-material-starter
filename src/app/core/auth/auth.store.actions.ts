@@ -24,7 +24,7 @@ export class RememberMeOptionChange {
 	 * Creates an instance of remember me option change action.
 	 * @param payload
 	 */
-	constructor(public payload: boolean) {}
+	constructor(public payload: { rememberMe: boolean }) {}
 }
 
 /**
@@ -39,7 +39,7 @@ export class UpdateRememberMeUsername {
 	 * Creates an instance of remember username action.
 	 * @param payload
 	 */
-	constructor(public payload: string) {}
+	constructor(public payload: { username: string }) {}
 }
 
 /**
@@ -83,6 +83,51 @@ export class Signin {
 }
 
 /**
+ * Was two step verification code successfully verified by the server.
+ */
+export class Is2StepVerificationSuccessful {
+	/**
+	 * Type of action.
+	 */
+	static readonly type = '[Auth] Is2StepVerificationSuccessful';
+	/**
+	 * Creates an instance of Is2StepVerificationSuccessful action.
+	 * @param payload
+	 */
+	constructor(public payload: { is2StepVerificationSuccessful: boolean }) {}
+}
+
+/**
+ * Is two step verification protocol required to sign user in.
+ */
+export class Is2StepVerificationRequired {
+	/**
+	 * Type of action.
+	 */
+	static readonly type = '[Auth] Is2StepVerificationRequired';
+	/**
+	 * Creates an instance of Is2StepVerificationRequired action.
+	 * @param payload
+	 */
+	constructor(public payload: { is2StepVerificationRequired: boolean }) {}
+}
+
+/**
+ * Was recovery code redemption successful.
+ */
+export class IsRedeemRecoveryCodeSuccessful {
+	/**
+	 * Type of action.
+	 */
+	static readonly type = '[Auth] IsRedeemRecoveryCodeSuccessful';
+	/**
+	 * Creates an instance of IsRedeemRecoveryCodeSuccessful action.
+	 * @param payload
+	 */
+	constructor(public payload: { isRedeemRecoveryCodeSuccessful: boolean }) {}
+}
+
+/**
  * Set current user id
  */
 export class SetCurrentUserId {
@@ -95,7 +140,7 @@ export class SetCurrentUserId {
 	 * Creates an instance of set current user id.
 	 * @param payload
 	 */
-	constructor(public payload: string) {}
+	constructor(public payload: { userId: string }) {}
 }
 
 /**

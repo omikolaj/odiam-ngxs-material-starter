@@ -221,9 +221,9 @@ export class TwoFactorAuthenticationComponent {
 	 * Event handler when user requests to verify authenticator code.
 	 * @param event
 	 */
-	_onVerifyAuthenticatorSubmitted(event: TwoFactorAuthenticationVerificationCode): void {
+	_onVerifyAuthenticatorSubmitted(event: unknown): void {
 		this.facade.log.trace('_onVerifyAuthenticator fired.', this);
-		this.verifyAuthenticatorClicked.emit(event);
+		this.verifyAuthenticatorClicked.emit(event as TwoFactorAuthenticationVerificationCode);
 	}
 
 	/**
