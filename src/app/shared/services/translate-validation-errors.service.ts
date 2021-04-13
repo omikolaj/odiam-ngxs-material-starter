@@ -24,6 +24,7 @@ export class TranslateValidationErrorsService {
 	 * @param errors
 	 * @returns translated email error message
 	 */
+	// TODO remove once forgot password component has been implemented.
 	translateErrorMessage$(errors: ValidationErrors): Observable<string> {
 		const translateError = this._mapErrorToTranslation(errors);
 		return translateError.translationKey !== undefined

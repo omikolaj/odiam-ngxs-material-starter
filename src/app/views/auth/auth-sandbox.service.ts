@@ -11,7 +11,7 @@ import * as Auth from '../../core/auth/auth.store.actions';
 import { Router } from '@angular/router';
 import { AuthState } from 'app/core/auth/auth.store.state';
 import { SocialAuthService, SocialUser, GoogleLoginProvider, FacebookLoginProvider } from 'angularx-social-login';
-import { UsersAsyncService } from 'app/core/services/users-async.service';
+import { UsersAsyncService } from 'app/shared/services/users-async.service';
 import { TranslateValidationErrorsService } from 'app/shared/services/translate-validation-errors.service';
 import { LogService } from 'app/core/logger/log.service';
 import { FormBuilder } from '@angular/forms';

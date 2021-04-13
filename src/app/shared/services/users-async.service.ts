@@ -1,10 +1,10 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
-import { BACKEND_API_URL } from '../api-url-injection-token';
+import { BACKEND_API_URL } from '../../core/api-url-injection-token';
 import { Observable } from 'rxjs';
-import { AccountSecurityDetails } from '../models/account/security/account-security-details.model';
-import { AccountGeneralDetails } from '../models/account/general/account-general-details.model';
-import { PasswordReset } from '../models/auth/password-reset.model';
+import { AccountSecurityDetails } from '../../core/models/account/security/account-security-details.model';
+import { AccountGeneralDetails } from '../../core/models/account/general/account-general-details.model';
+import { PasswordReset } from '../../core/models/auth/password-reset.model';
 
 /**
  * User async service.

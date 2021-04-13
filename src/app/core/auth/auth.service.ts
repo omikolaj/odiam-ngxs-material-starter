@@ -5,7 +5,7 @@ import * as Auth from './auth.store.actions';
 import { Router } from '@angular/router';
 import { LogService } from 'app/core/logger/log.service';
 import { Store, Actions, ofActionCompleted } from '@ngxs/store';
-import { JsonWebTokenService } from 'app/core/services/json-web-token.service';
+import { JsonWebTokenService } from 'app/core/auth/json-web-token.service';
 import { MatDialog, MatDialogRef, MatDialogConfig } from '@angular/material/dialog';
 import { AuthDialogComponent } from '../../views/auth/auth-dialog/auth-dialog.component';
 import { AuthState } from 'app/core/auth/auth.store.state';

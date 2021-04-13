@@ -9,5 +9,8 @@ export interface TwoFactorAuthenticationSetupResult {
 	 */
 	recoveryCodes: UserRecoveryCodes;
 
+	/**
+	 * Result status of the setup operation.
+	 */
 	status: 'None' | 'Succeeded' | 'Failed';
 }

@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { TwoFactorAuthenticationAsyncService } from 'app/core/services/two-factor-authentication-async.service';
+import { TwoFactorAuthenticationAsyncService } from 'app/core/auth/two-factor-authentication-async.service';
 import { tap } from 'rxjs/operators';
 import * as TwoFactorAuthentication from './security-container/two-factor-authentication/two-factor-authentication.store.actions';
 import { Store, Select, Actions, ofActionCompleted } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { UsersAsyncService } from 'app/core/services/users-async.service';
+import { UsersAsyncService } from 'app/shared/services/users-async.service';
 import { AuthState } from 'app/core/auth/auth.store.state';
 import { AccountSecurityState } from './security-container/security-container.store.state';
 import { AccountSecurityDetails } from 'app/core/models/account/security/account-security-details.model';

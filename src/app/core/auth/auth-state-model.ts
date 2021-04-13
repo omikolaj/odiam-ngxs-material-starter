@@ -1,4 +1,4 @@
-import { ActiveAuthType } from './active-auth-type.model';
+import { ActiveAuthType } from '../models/auth/active-auth-type.model';
 
 /**
  * Key used as a key for user auth object when persisting to local storage.

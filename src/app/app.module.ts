@@ -6,7 +6,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app/app.component';
 import { setRootInjector } from './root-injector';
 import { MatDialogModule } from '@angular/material/dialog';
-import { AppInitializerService } from './core/services/app-initializer.service';
+import { AppInitializerService } from './core/app-initializer/app-initializer.service';
 import { AppSandboxService } from './app-sandbox.service';
 
 /**
