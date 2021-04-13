@@ -1,6 +1,6 @@
-import { AccessToken } from './models/access-token.model';
-import { ActiveAuthType } from './models/active-auth-type.model';
-import { AuthStateModel } from './models/auth-state-model';
+import { AccessToken } from '../models/auth/access-token.model';
+import { ActiveAuthType } from '../models/auth/active-auth-type.model';
+import { AuthStateModel } from '../models/auth/auth-state-model';
 
 /**
  * Init auth state from local storage.

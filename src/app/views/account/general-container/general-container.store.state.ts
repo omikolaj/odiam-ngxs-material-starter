@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import * as GeneralContainer from './general-container.store.actions';
 import produce from 'immer';
 import { GeneralContainerStateModel } from './general-container-state.model';
-import { AccountGeneralDetails } from 'app/core/models/account-general-details.model';
+import { AccountGeneralDetails } from 'app/core/models/account/general/account-general-details.model';
 import { LogService } from 'app/core/logger/log.service';
 
 const ACCOUNT_GENERAL_STATE_TOKEN = new StateToken<GeneralContainerStateModel>('general');
@@ -32,9 +32,9 @@ export class AccountGeneralState {
 
 	/**
 	 * Creates an instance of account general state.
-	 * @param log
+	 * @param _log
 	 */
-	constructor(private log: LogService) {}
+	constructor(private _log: LogService) {}
 
 	/**
 	 * Action handler for setting general details settings.
@@ -43,7 +43,7 @@ export class AccountGeneralState {
 	 */
 	@Action(GeneralContainer.SetAccountGeneralDetails)
 	setAccountGeneralDetails(ctx: StateContext<GeneralContainerStateModel>, action: GeneralContainer.SetAccountGeneralDetails): void {
-		this.log.info('setAccountGeneralDetails action handler fired.', this);
+		this._log.info('setAccountGeneralDetails action handler fired.', this);
 		ctx.setState(
 			produce((draft: GeneralContainerStateModel) => {
 				draft = { ...draft, ...action.payload };

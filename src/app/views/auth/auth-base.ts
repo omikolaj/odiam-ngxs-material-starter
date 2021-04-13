@@ -103,11 +103,15 @@ export class AuthBase {
 
 	/**
 	 * Creates an instance of auth base.
-	 * @param translateErrorValidationService
+	 * @param _translateErrorValidationService
 	 * @param log
-	 * @param cd
+	 * @param _cd
 	 */
-	constructor(private translateErrorValidationService: TranslateValidationErrorsService, protected log: LogService, private cd: ChangeDetectorRef) {}
+	constructor(
+		private _translateErrorValidationService: TranslateValidationErrorsService,
+		protected log: LogService,
+		private _cd: ChangeDetectorRef
+	) {}
 
 	/**
 	 * Checks if the control field is invalid by also checking server side validations.
@@ -183,7 +187,7 @@ export class AuthBase {
 		control.setErrors({ serverError: { errorDescription } });
 		control.markAsPristine();
 		this._internalServerErrorDetailsHandled = true;
-		this.cd.detectChanges();
+		this._cd.detectChanges();
 	}
 
 	/**
@@ -222,7 +226,7 @@ export class AuthBase {
 				control.setErrors({ serverError: { errorDescription } });
 				control.markAsPristine();
 				this._problemDetailsServerErrorHandled = true;
-				this.cd.detectChanges();
+				this._cd.detectChanges();
 			}
 		}
 	}
@@ -250,7 +254,7 @@ export class AuthBase {
 		control.setErrors({ serverError: { errorDescription } });
 		control.markAsPristine();
 		this._problemDetailsServerErrorHandled = true;
-		this.cd.detectChanges();
+		this._cd.detectChanges();
 	}
 
 	/**
@@ -259,7 +263,7 @@ export class AuthBase {
 	 * @returns translated error message
 	 */
 	private _getTranslatedValidationErrorMessage$(errors: ValidationErrors): Observable<string> {
-		return this.translateErrorValidationService.translateValidationErrorMessage$(errors);
+		return this._translateErrorValidationService.translateValidationErrorMessage$(errors);
 	}
 
 	/**

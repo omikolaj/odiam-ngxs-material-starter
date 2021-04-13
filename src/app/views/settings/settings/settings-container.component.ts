@@ -5,7 +5,7 @@ import { tap } from 'rxjs/operators';
 import { MatSelectChange } from '@angular/material/select';
 import { Language, SettingsStateModel } from 'app/core/settings/settings-state.model';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
-import { SettingsFacadeService } from '../settings-facade.service';
+import { SettingsSandboxService } from '../settings-sandbox.service';
 
 /**
  * Component that contains the settings view.
@@ -51,22 +51,23 @@ export class SettingsContainerComponent implements OnInit, OnDestroy {
 
 	/**
 	 * Creates an instance of settings container component.
+	 * @param _sb
 	 */
-	constructor(private facade: SettingsFacadeService) {}
+	constructor(private _sb: SettingsSandboxService) {}
 
 	/**
 	 * NgOnInit life cycle.
 	 */
 	ngOnInit(): void {
-		this.facade.log.trace('Initialized.', this);
-		this._settings$ = this.facade.settings$.pipe(tap((settings) => this.facade.log.trace('[ngOnInit]: Settings data.', this, settings)));
+		this._sb.log.trace('Initialized.', this);
+		this._settings$ = this._sb.settings$.pipe(tap((settings) => this._sb.log.trace('[ngOnInit]: Settings data.', this, settings)));
 	}
 
 	/**
 	 * NgOnDestroy life cycle.
 	 */
 	ngOnDestroy(): void {
-		this.facade.log.trace('Destroyed.', this);
+		this._sb.log.trace('Destroyed.', this);
 	}
 
 	/**
@@ -74,9 +75,9 @@ export class SettingsContainerComponent implements OnInit, OnDestroy {
 	 * @param event
 	 */
 	_onLanguageSelectChanged(event: MatSelectChange): void {
-		this.facade.log.trace(`onLanguageSelect handler fired with: ${event.value as Language}.`, this);
+		this._sb.log.trace(`onLanguageSelect handler fired with: ${event.value as Language}.`, this);
 		const languageSelected = { language: event.value as Language };
-		this.facade.onLanguageSelected(languageSelected);
+		this._sb.onLanguageSelected(languageSelected);
 	}
 
 	/**
@@ -84,9 +85,9 @@ export class SettingsContainerComponent implements OnInit, OnDestroy {
 	 * @param event
 	 */
 	_onThemeSelectChanged(event: MatSelectChange): void {
-		this.facade.log.trace(`onThemeSelect handler fired with: ${event.value as string}.`, this);
+		this._sb.log.trace(`onThemeSelect handler fired with: ${event.value as string}.`, this);
 		const themeSelected = { theme: event.value as string };
-		this.facade.onThemeSelected(themeSelected);
+		this._sb.onThemeSelected(themeSelected);
 	}
 
 	/**
@@ -94,9 +95,9 @@ export class SettingsContainerComponent implements OnInit, OnDestroy {
 	 * @param event
 	 */
 	_onAutoNightModeToggleChanged(event: MatSlideToggle): void {
-		this.facade.log.trace(`onAutoNightModeToggle handler fired with: ${String(event.checked)}.`, this);
+		this._sb.log.trace(`onAutoNightModeToggle handler fired with: ${String(event.checked)}.`, this);
 		const autoNightModeToggle = { autoNightMode: event.checked };
-		this.facade.onAutoNightModeToggle(autoNightModeToggle);
+		this._sb.onAutoNightModeToggle(autoNightModeToggle);
 	}
 
 	/**
@@ -104,9 +105,9 @@ export class SettingsContainerComponent implements OnInit, OnDestroy {
 	 * @param event
 	 */
 	_onStickyHeaderToggleChanged(event: MatSlideToggle): void {
-		this.facade.log.trace(`onStickyHeaderToggle handler fired with: ${String(event.checked)}.`, this);
+		this._sb.log.trace(`onStickyHeaderToggle handler fired with: ${String(event.checked)}.`, this);
 		const stickyHeaderToggle = { stickyHeader: event.checked };
-		this.facade.onStickyHeaderToggle(stickyHeaderToggle);
+		this._sb.onStickyHeaderToggle(stickyHeaderToggle);
 	}
 
 	/**
@@ -114,9 +115,9 @@ export class SettingsContainerComponent implements OnInit, OnDestroy {
 	 * @param event
 	 */
 	_onPageAnimationsToggleChanged(event: MatSlideToggle): void {
-		this.facade.log.trace(`onPageAnimationsToggle handler fired with: ${String(event.checked)}.`, this);
+		this._sb.log.trace(`onPageAnimationsToggle handler fired with: ${String(event.checked)}.`, this);
 		const pageAnimationsToggle = { pageAnimations: event.checked };
-		this.facade.onPageAnimationsToggle(pageAnimationsToggle);
+		this._sb.onPageAnimationsToggle(pageAnimationsToggle);
 	}
 
 	/**
@@ -124,8 +125,8 @@ export class SettingsContainerComponent implements OnInit, OnDestroy {
 	 * @param event
 	 */
 	_onElementsAnimationsToggleChanged(event: MatSlideToggle): void {
-		this.facade.log.trace(`onElementsAnimationsToggle handler fired with: ${String(event.checked)}.`, this);
+		this._sb.log.trace(`onElementsAnimationsToggle handler fired with: ${String(event.checked)}.`, this);
 		const elementsAnimationsToggle = { elementsAnimations: event.checked };
-		this.facade.onElementsAnimationsToggle(elementsAnimationsToggle);
+		this._sb.onElementsAnimationsToggle(elementsAnimationsToggle);
 	}
 }

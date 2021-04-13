@@ -5,19 +5,17 @@ import { AuthState } from 'app/core/auth/auth.store.state';
 import { Observable } from 'rxjs';
 
 /**
- * Examples facade service.
+ * Examples sandbox service.
  */
-@Injectable({
-	providedIn: 'root'
-})
-export class ExamplesFacadeService {
+@Injectable()
+export class ExamplesSandboxService {
 	/**
 	 * Whether user is authenticated or not.
 	 */
 	@Select(AuthState.selectIsAuthenticated) isAuthenticated$: Observable<boolean>;
 
 	/**
-	 * Creates an instance of examples facade service.
+	 * Creates an instance of examples sandbox service.
 	 * @param log
 	 */
 	constructor(public log: LogService) {}

@@ -43,16 +43,16 @@ export class ForgotPasswordComponent {
 
 	/**
 	 * Creates an instance of forgot password component.
-	 * @param fb
-	 * @param facade
+	 * @param _log
+	 * @param _translateError
 	 */
-	constructor(private log: LogService, private translateError: TranslateValidationErrorsService) {}
+	constructor(private _log: LogService, private _translateError: TranslateValidationErrorsService) {}
 
 	/**
 	 * Event handler for when the form is submitted.
 	 */
 	_onFormSubmitted(): void {
-		this.log.trace('_onFormSubmitted fired.', this);
+		this._log.trace('_onFormSubmitted fired.', this);
 		const model = this.forgotPasswordForm.value as { email: string };
 		this.submitFormClicked.emit(model);
 	}
@@ -61,7 +61,7 @@ export class ForgotPasswordComponent {
 	 * Event handler for when user clicks finish on forgot password component.
 	 */
 	_onFinishClicked(): void {
-		this.log.trace('_onFinishClicked fired.', this);
+		this._log.trace('_onFinishClicked fired.', this);
 		this.finishClicked.emit();
 	}
 
@@ -69,7 +69,7 @@ export class ForgotPasswordComponent {
 	 * Event handler for when forgot-password form is cancelled.
 	 */
 	_onCancelClicked(): void {
-		this.log.trace('_onCancelClicked fired.', this);
+		this._log.trace('_onCancelClicked fired.', this);
 		this.cancelClicked.emit();
 	}
 
@@ -80,6 +80,6 @@ export class ForgotPasswordComponent {
 	 */
 	_getTranslatedErrorMessage$(): Observable<string> {
 		const control = this.forgotPasswordForm.get('email');
-		return this.translateError.translateErrorMessage$(control.errors);
+		return this._translateError.translateErrorMessage$(control.errors);
 	}
 }

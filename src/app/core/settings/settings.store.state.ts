@@ -77,7 +77,7 @@ export class SettingsState implements NgxsOnInit {
 	 * @param isNightHour rather if its night time.
 	 * @returns effective theme.
 	 */
-	@Selector([SettingsState.selectTheme, SettingsState.selectNightTheme, SettingsState.selectIsNightHour])
+	@Selector([SettingsState._selectTheme, SettingsState._selectNightTheme, SettingsState._selectIsNightHour])
 	static selectEffectiveTheme(state: SettingsState, theme: string, nightTheme: string, isNightHour: boolean): string {
 		return (isNightHour ? nightTheme : theme).toLowerCase();
 	}
@@ -88,7 +88,7 @@ export class SettingsState implements NgxsOnInit {
 	 * @returns theme.
 	 */
 	@Selector([SETTINGS_STATE_TOKEN])
-	private static selectTheme(state: SettingsStateModel): string {
+	private static _selectTheme(state: SettingsStateModel): string {
 		return state.theme;
 	}
 
@@ -98,7 +98,7 @@ export class SettingsState implements NgxsOnInit {
 	 * @returns night theme.
 	 */
 	@Selector([SETTINGS_STATE_TOKEN])
-	private static selectNightTheme(state: SettingsStateModel): string {
+	private static _selectNightTheme(state: SettingsStateModel): string {
 		return state.nightTheme;
 	}
 
@@ -109,8 +109,8 @@ export class SettingsState implements NgxsOnInit {
 	 * @param hour current hour.
 	 * @returns true if is night hour.
 	 */
-	@Selector([SettingsState.selectAutoNightMode, SettingsState.selectHour])
-	private static selectIsNightHour(state: SettingsState, autoNightMode: string, hour: number): boolean {
+	@Selector([SettingsState._selectAutoNightMode, SettingsState._selectHour])
+	private static _selectIsNightHour(state: SettingsState, autoNightMode: string, hour: number): boolean {
 		return autoNightMode && (hour >= 21 || hour <= 7);
 	}
 
@@ -120,7 +120,7 @@ export class SettingsState implements NgxsOnInit {
 	 * @returns true if auto night mode is enabled.
 	 */
 	@Selector([SETTINGS_STATE_TOKEN])
-	private static selectAutoNightMode(state: SettingsStateModel): boolean {
+	private static _selectAutoNightMode(state: SettingsStateModel): boolean {
 		return state.autoNightMode;
 	}
 
@@ -130,24 +130,24 @@ export class SettingsState implements NgxsOnInit {
 	 * @returns hour.
 	 */
 	@Selector([SETTINGS_STATE_TOKEN])
-	private static selectHour(state: SettingsStateModel): number {
+	private static _selectHour(state: SettingsStateModel): number {
 		return state.hour;
 	}
 
 	/**
 	 * Sets the current hour setting.
 	 */
-	private changeSetHour = (ctx: StateContext<SettingsStateModel>): void => {
+	private _changeSetHour = (ctx: StateContext<SettingsStateModel>): void => {
 		const hour = new Date().getHours();
-		this.log.trace(
+		this._log.trace(
 			`ngxsOnInit setInterval fired. Hour: ${hour} | prevHour: ${this._hour}. Is hour update required: ${String(hour !== this._hour)}.`,
 			this
 		);
 		if (hour !== this._hour) {
 			this._hour = hour;
 			const hourToSet = { hour };
-			this.log.trace(`ngxsOnInit setInterval dispatching action Settings.ChangeHour with data.`, this, hour);
-			this.ngZone.runOutsideAngular(() => ctx.dispatch(new Settings.ChangeHour(hourToSet)));
+			this._log.trace(`ngxsOnInit setInterval dispatching action Settings.ChangeHour with data.`, this, hour);
+			this._ngZone.runOutsideAngular(() => ctx.dispatch(new Settings.ChangeHour(hourToSet)));
 		}
 	};
 
@@ -159,14 +159,14 @@ export class SettingsState implements NgxsOnInit {
 	 * @param router
 	 */
 	constructor(
-		private localStorageService: LocalStorageService,
-		private translateService: TranslateService,
-		private titleService: TitleService,
-		private animationsService: AnimationsService,
-		private overlayContainer: OverlayContainer,
-		private log: LogService,
-		private router: Router,
-		private ngZone: NgZone
+		private _localStorageService: LocalStorageService,
+		private _translateService: TranslateService,
+		private _titleService: TitleService,
+		private _animationsService: AnimationsService,
+		private _overlayContainer: OverlayContainer,
+		private _log: LogService,
+		private _router: Router,
+		private _ngZone: NgZone
 	) {}
 
 	/**
@@ -174,17 +174,17 @@ export class SettingsState implements NgxsOnInit {
 	 * @param ctx
 	 */
 	ngxsOnInit(ctx: StateContext<SettingsStateModel>): void {
-		this.log.info('ngxsOnInit invoked.', this);
+		this._log.info('ngxsOnInit invoked.', this);
 		const theme = ctx.getState().theme;
 		ctx.dispatch(new Settings.ChangeTheme({ theme }));
 		ctx.dispatch(new Settings.UpdateRouteAnimationType());
 		ctx.dispatch(new Settings.SetTranslateLanguage());
-		this.ngZone.runOutsideAngular(() => {
+		this._ngZone.runOutsideAngular(() => {
 			// Fire immediately to check what hour it is.
-			this.changeSetHour(ctx);
+			this._changeSetHour(ctx);
 
 			// Set interval function to check if hour has changed every minute.
-			setInterval(this.changeSetHour, 60_000, ctx);
+			setInterval(this._changeSetHour, 60_000, ctx);
 		});
 	}
 
@@ -195,9 +195,9 @@ export class SettingsState implements NgxsOnInit {
 	 */
 	@Action(Settings.SetTranslateLanguage)
 	setTranslateLanguage(ctx: StateContext<SettingsStateModel>): Observable<void> {
-		this.log.info('setTranslateLanguage action handler fired.', this);
+		this._log.info('setTranslateLanguage action handler fired.', this);
 		const language = ctx.getState().language;
-		this.translateService.use(language);
+		this._translateService.use(language);
 		return ctx.dispatch(new Settings.SetTitle());
 	}
 
@@ -216,8 +216,8 @@ export class SettingsState implements NgxsOnInit {
 	 */
 	@Action(Settings.SetTitle)
 	setTitle(): void {
-		this.log.info('setTitle action handler fired.', this);
-		this.titleService.setTitle(this.router.routerState.snapshot.root, this.translateService);
+		this._log.info('setTitle action handler fired.', this);
+		this._titleService.setTitle(this._router.routerState.snapshot.root, this._translateService);
 	}
 
 	/**
@@ -228,7 +228,7 @@ export class SettingsState implements NgxsOnInit {
 	 */
 	@Action(Settings.ChangeLanguage)
 	changeLanguage(ctx: StateContext<SettingsStateModel>, action: Settings.ChangeLanguage): Observable<void> {
-		this.log.info('changeLanguage action handler fired.', this, action.payload);
+		this._log.info('changeLanguage action handler fired.', this, action.payload);
 		ctx.setState(
 			produce((draft: SettingsStateModel) => {
 				draft = { ...draft, ...action.payload };
@@ -247,7 +247,7 @@ export class SettingsState implements NgxsOnInit {
 	 */
 	@Action(Settings.ChangeTheme)
 	changeTheme(ctx: StateContext<SettingsStateModel>, action: Settings.ChangeTheme): Observable<void> {
-		this.log.info('changeTheme action handler fired.', this, action.payload);
+		this._log.info('changeTheme action handler fired.', this, action.payload);
 		this._handleBackgroundOverlay(action.payload.theme);
 		ctx.setState(
 			produce((draft: SettingsStateModel) => {
@@ -267,7 +267,7 @@ export class SettingsState implements NgxsOnInit {
 	 */
 	@Action(Settings.ChangeAutoNightMode)
 	changeAutoNightMode(ctx: StateContext<SettingsStateModel>, action: Settings.ChangeAutoNightMode): Observable<void> {
-		this.log.info('changeAutoNightMode action handler fired.', this);
+		this._log.info('changeAutoNightMode action handler fired.', this);
 		ctx.setState(
 			produce((draft: SettingsStateModel) => {
 				draft = { ...draft, ...action.payload };
@@ -286,7 +286,7 @@ export class SettingsState implements NgxsOnInit {
 	 */
 	@Action(Settings.ChangeHour)
 	changeHour(ctx: StateContext<SettingsStateModel>, action: Settings.ChangeHour): Observable<void> {
-		this.log.info('changeHour action handler fired.', this, action.payload);
+		this._log.info('changeHour action handler fired.', this, action.payload);
 		ctx.setState(
 			produce((draft: SettingsStateModel) => {
 				draft = { ...draft, ...action.payload };
@@ -305,7 +305,7 @@ export class SettingsState implements NgxsOnInit {
 	 */
 	@Action(Settings.ChangeAnimationsPage)
 	changeAnimationsPage(ctx: StateContext<SettingsStateModel>, action: Settings.ChangeAnimationsPage): Observable<void> {
-		this.log.info('changeAnimationsPage action handler fired.', this, action.payload);
+		this._log.info('changeAnimationsPage action handler fired.', this, action.payload);
 		ctx.setState(
 			produce((draft: SettingsStateModel) => {
 				draft = { ...draft, ...action.payload };
@@ -324,7 +324,7 @@ export class SettingsState implements NgxsOnInit {
 	 */
 	@Action(Settings.ChangeAnimationsElements)
 	changeAnimationsElements(ctx: StateContext<SettingsStateModel>, action: Settings.ChangeAnimationsElements): Observable<void> {
-		this.log.info('changeAnimationsElements action handler fired.', this, action.payload);
+		this._log.info('changeAnimationsElements action handler fired.', this, action.payload);
 		ctx.setState(
 			produce((draft: SettingsStateModel) => {
 				draft = { ...draft, ...action.payload };
@@ -341,11 +341,11 @@ export class SettingsState implements NgxsOnInit {
 	 */
 	@Action(Settings.UpdateRouteAnimationType)
 	updateRouteAnimationType(ctx: StateContext<SettingsStateModel>): void {
-		this.log.info('updateRouteAnimationType action handler fired.', this);
+		this._log.info('updateRouteAnimationType action handler fired.', this);
 		const pageAnimations = ctx.getState().pageAnimations;
 		const elementsAnimations = ctx.getState().elementsAnimations;
 
-		this.animationsService.updateRouteAnimationType(pageAnimations, elementsAnimations);
+		this._animationsService.updateRouteAnimationType(pageAnimations, elementsAnimations);
 	}
 
 	/**
@@ -356,7 +356,7 @@ export class SettingsState implements NgxsOnInit {
 	 */
 	@Action(Settings.ChangeAnimationsPageDisabled)
 	changeAnimationsPageDisabled(ctx: StateContext<SettingsStateModel>, action: Settings.ChangeAnimationsPageDisabled): Observable<void> {
-		this.log.info('changeAnimationsPageDisabled action handler fired.', this, action.payload);
+		this._log.info('changeAnimationsPageDisabled action handler fired.', this, action.payload);
 		ctx.setState(
 			produce((draft: SettingsStateModel) => {
 				draft = { ...draft, ...action.payload };
@@ -376,7 +376,7 @@ export class SettingsState implements NgxsOnInit {
 	 */
 	@Action(Settings.ChangeStickyHeader)
 	changeStickyHeader(ctx: StateContext<SettingsStateModel>, action: Settings.ChangeStickyHeader): Observable<void> {
-		this.log.info('changeStickyHeader action handler fired.', this, action.payload);
+		this._log.info('changeStickyHeader action handler fired.', this, action.payload);
 		ctx.setState(
 			produce((draft: SettingsStateModel) => {
 				draft = { ...draft, ...action.payload };
@@ -394,8 +394,8 @@ export class SettingsState implements NgxsOnInit {
 	 */
 	@Action(Settings.PersistSettings)
 	persistSettings(ctx: StateContext<SettingsStateModel>, action: Settings.PersistSettings): void {
-		this.log.info('persistSettings action handler fired.', this, action.payload);
-		this.localStorageService.setItem(SETTINGS_KEY, action.payload);
+		this._log.info('persistSettings action handler fired.', this, action.payload);
+		this._localStorageService.setItem(SETTINGS_KEY, action.payload);
 	}
 
 	/**
@@ -405,7 +405,7 @@ export class SettingsState implements NgxsOnInit {
 	private _handleBackgroundOverlay(theme: string): void {
 		// removes/adds background to overlay container. For example without this code
 		// all select drop down menus do not have a background and are transparent
-		const classList = this.overlayContainer.getContainerElement().classList;
+		const classList = this._overlayContainer.getContainerElement().classList;
 		const toRemove = Array.from(classList).filter((item: string) => item.includes('-theme'));
 		if (toRemove.length) {
 			classList.remove(...toRemove);

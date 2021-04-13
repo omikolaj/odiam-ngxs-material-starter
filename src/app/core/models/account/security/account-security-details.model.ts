@@ -1,4 +1,4 @@
-import { UserRecoveryCodes } from 'app/views/account/security-container/models/user-recovery-codes.model';
+import { UserRecoveryCodes } from 'app/core/models/account/security/user-recovery-codes.model';
 
 /**
  * Account security details model.

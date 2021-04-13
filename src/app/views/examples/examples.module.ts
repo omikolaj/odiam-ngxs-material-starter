@@ -1,14 +1,13 @@
 import { NgModule } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { LazyElementsModule } from '@angular-extensions/elements';
-
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-
 import { SharedModule } from '../../shared/shared.module';
 import { environment } from '../../../environments/environment';
 import { ExamplesRoutingModule } from './examples-routing.module';
 import { ExamplesComponent } from './examples/examples.component';
+import { ExamplesSandboxService } from './examples-sandbox.service';
 
 /**
  * Loads specific translations file.
@@ -36,7 +35,8 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
 			isolate: true
 		})
 	],
-	declarations: [ExamplesComponent]
+	declarations: [ExamplesComponent],
+	providers: [ExamplesSandboxService]
 })
 export class ExamplesModule {
 	constructor() {}

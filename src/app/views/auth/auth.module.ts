@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthRoutingModule } from './auth-routing.module';
 import { SharedModule } from 'app/shared/shared.module';
-import { AuthFacadeService } from './auth-facade.service';
 import { SocialLoginModule, SocialAuthServiceConfig, GoogleLoginProvider, FacebookLoginProvider } from 'angularx-social-login';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
@@ -15,6 +14,7 @@ import { ForgotPasswordContainerComponent } from './forgot-password-container/fo
 import { AuthDialogComponent } from './auth-dialog/auth-dialog.component';
 import { TwoStepVerificationComponent } from './two-step-verification/two-step-verification.component';
 import { RedeemRecoveryCodeComponent } from './redeem-recovery-code/redeem-recovery-code.component';
+import { AuthSandboxService } from './auth-sandbox.service';
 
 /**
  * Auth module.
@@ -35,7 +35,7 @@ import { RedeemRecoveryCodeComponent } from './redeem-recovery-code/redeem-recov
 	],
 	imports: [CommonModule, AuthRoutingModule, SharedModule, SocialLoginModule],
 	providers: [
-		AuthFacadeService,
+		AuthSandboxService,
 		{
 			provide: 'SocialAuthServiceConfig',
 			useValue: {

@@ -1,8 +1,6 @@
 import { Injectable, ErrorHandler } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-
 import { environment } from '../../../environments/environment';
-
 import { NotificationService } from '../notifications/notification.service';
 import { InternalServerErrorDetails } from '../models/internal-server-error-details.model';
 
@@ -13,10 +11,9 @@ import { InternalServerErrorDetails } from '../models/internal-server-error-deta
 export class AppErrorHandler extends ErrorHandler {
 	/**
 	 * Creates an instance of global error handler.
-	 * @param notificationsService
-	 * @param log
+	 * @param _notificationsService
 	 */
-	constructor(private notificationsService: NotificationService) {
+	constructor(private _notificationsService: NotificationService) {
 		super();
 	}
 
@@ -31,7 +28,7 @@ export class AppErrorHandler extends ErrorHandler {
 			displayMessage += ' See console for details.';
 		}
 
-		this.notificationsService.error(displayMessage);
+		this._notificationsService.error(displayMessage);
 
 		super.handleError(error);
 	}

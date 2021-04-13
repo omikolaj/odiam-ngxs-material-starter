@@ -8,13 +8,13 @@ import { Injectable } from '@angular/core';
 })
 export class AnimationsService {
 	constructor() {
-		AnimationsService.routeAnimationType = 'NONE';
+		AnimationsService._routeAnimationType = 'NONE';
 	}
 
 	/**
 	 * Route animation type.
 	 */
-	private static routeAnimationType: RouteAnimationType = 'NONE';
+	private static _routeAnimationType: RouteAnimationType = 'NONE';
 
 	/**
 	 * Determines whetherthe set route animations type is same as the one passed in. Used by route.animations.ts file.
@@ -22,7 +22,7 @@ export class AnimationsService {
 	 * @returns true if route animations type.
 	 */
 	static isRouteAnimationsType(type: RouteAnimationType): boolean {
-		return AnimationsService.routeAnimationType === type;
+		return AnimationsService._routeAnimationType === type;
 	}
 
 	/**
@@ -31,7 +31,7 @@ export class AnimationsService {
 	 * @param elementsAnimations
 	 */
 	updateRouteAnimationType(pageAnimations: boolean, elementsAnimations: boolean): void {
-		AnimationsService.routeAnimationType =
+		AnimationsService._routeAnimationType =
 			pageAnimations && elementsAnimations ? 'ALL' : pageAnimations ? 'PAGE' : elementsAnimations ? 'ELEMENTS' : 'NONE';
 	}
 }

@@ -17,9 +17,9 @@ import { implementsOdmWebApiException } from '../utilities/implements-odm-web-ap
 export class HttpStatusInterceptor implements HttpInterceptor {
 	/**
 	 * Creates an instance of http status interceptor.
-	 * @param serverErrorService
+	 * @param _serverErrorService
 	 */
-	constructor(private serverErrorService: ServerErrorService) {}
+	constructor(private _serverErrorService: ServerErrorService) {}
 
 	/**
 	 * Intercepts requests checking for specific http status codes.
@@ -32,13 +32,13 @@ export class HttpStatusInterceptor implements HttpInterceptor {
 			catchError((e: HttpErrorResponse) => {
 				if (e.status === 400 || e.status === 401) {
 					// check if we have validation problem details
-					this.serverErrorService.problemDetails = e.error as ProblemDetails;
+					this._serverErrorService.problemDetails = e.error as ProblemDetails;
 					return NEVER;
 				} else if (e.status === 500 || e.status === 504) {
 					const internalServerError = e.error as InternalServerErrorDetails;
 					// if this is OdmApiException it implements same interface as problem details
 					if (implementsOdmWebApiException(internalServerError)) {
-						this.serverErrorService.internalServerErrorDetails = e.error as InternalServerErrorDetails;
+						this._serverErrorService.internalServerErrorDetails = e.error as InternalServerErrorDetails;
 						return throwError(internalServerError);
 					}
 
@@ -53,7 +53,7 @@ export class HttpStatusInterceptor implements HttpInterceptor {
 						error.message = `Server is down.`;
 					}
 
-					this.serverErrorService.internalServerErrorDetails = error;
+					this._serverErrorService.internalServerErrorDetails = error;
 
 					return throwError(error);
 				}

@@ -10,9 +10,9 @@ import { CdkStepper } from '@angular/cdk/stepper';
 export class MatVerticalStepperScrollerDirective {
 	/**
 	 * Creates an instance of mat vertical stepper scroller directive.
-	 * @param stepper
+	 * @param _stepper
 	 */
-	constructor(private stepper: CdkStepper) {}
+	constructor(private _stepper: CdkStepper) {}
 
 	/**
 	 * Scrolls vertically when mat-vertical-stepper is displayed.
@@ -20,7 +20,7 @@ export class MatVerticalStepperScrollerDirective {
 	 */
 	@HostListener('animationDone')
 	selectionChanged(): void {
-		const stepId = this.stepper._getStepLabelId(this.stepper.selectedIndex);
+		const stepId = this._stepper._getStepLabelId(this._stepper.selectedIndex);
 		const stepElement = document.getElementById(stepId);
 		if (stepElement) {
 			stepElement.scrollIntoView({ block: 'start', inline: 'nearest', behavior: 'smooth' });

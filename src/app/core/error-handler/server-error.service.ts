@@ -13,33 +13,33 @@ export class ServerErrorService {
 	/**
 	 * Problem details subject for emiting problem details error.
 	 */
-	private readonly problemDetailsSub$ = new Subject<ProblemDetails>();
+	private readonly _problemDetailsSub$ = new Subject<ProblemDetails>();
 	/**
 	 * Internal server error subject for emtting insternal server error.
 	 */
-	private readonly internalServerErrorSub$ = new Subject<InternalServerErrorDetails>();
+	private readonly _internalServerErrorSub$ = new Subject<InternalServerErrorDetails>();
 
 	/**
 	 * Gets problem details error observable.
 	 */
-	getProblemDetails$: Observable<ProblemDetails> = this.problemDetailsSub$.asObservable();
+	getProblemDetails$: Observable<ProblemDetails> = this._problemDetailsSub$.asObservable();
 
 	/**
 	 * Get internal server error observable.
 	 */
-	getInternalServerError$: Observable<InternalServerErrorDetails> = this.internalServerErrorSub$.asObservable();
+	getInternalServerError$: Observable<InternalServerErrorDetails> = this._internalServerErrorSub$.asObservable();
 
 	/**
 	 * Sets problem details error object.
 	 */
 	set problemDetails(error: ProblemDetails) {
-		this.problemDetailsSub$.next(error);
+		this._problemDetailsSub$.next(error);
 	}
 
 	/**
 	 * Sets internal server error.
 	 */
 	set internalServerErrorDetails(error: InternalServerErrorDetails) {
-		this.internalServerErrorSub$.next(error);
+		this._internalServerErrorSub$.next(error);
 	}
 }

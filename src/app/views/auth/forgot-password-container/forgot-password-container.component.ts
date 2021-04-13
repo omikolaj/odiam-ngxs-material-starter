@@ -1,8 +1,8 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { AuthFacadeService } from '../auth-facade.service';
 import { FormGroup } from '@angular/forms';
 import { OdmValidators } from 'app/core/form-validators/odm-validators';
 import { leftRightFadeInAnimation } from 'app/core/core.module';
+import { AuthSandboxService } from '../auth-sandbox.service';
 
 /**
  * Forgot password container component.
@@ -27,15 +27,15 @@ export class ForgotPasswordContainerComponent implements OnInit {
 
 	/**
 	 * Creates an instance of forgot password container component.
-	 * @param authFacade
+	 * @param _sb
 	 */
-	constructor(private facade: AuthFacadeService) {}
+	constructor(private _sb: AuthSandboxService) {}
 
 	/**
 	 * NgOnInit life cycle.
 	 */
 	ngOnInit(): void {
-		this.facade.log.trace('Initialized.', this);
+		this._sb.log.trace('Initialized.', this);
 		this._initForm();
 	}
 
@@ -43,8 +43,8 @@ export class ForgotPasswordContainerComponent implements OnInit {
 	 * Event handler for when the form is submitted.
 	 */
 	_onFormSubmitted(model: { email: string }): void {
-		this.facade.log.trace('_onFormSubmitted fired.', this);
-		this.facade.forgotPassword(model.email);
+		this._sb.log.trace('_onFormSubmitted fired.', this);
+		this._sb.forgotPassword(model.email);
 		this._formSubmitted = true;
 	}
 
@@ -52,17 +52,17 @@ export class ForgotPasswordContainerComponent implements OnInit {
 	 * Event handler for when forgot-password form is cancelled.
 	 */
 	_onCancelClicked(): void {
-		this.facade.log.trace('_onCancelClicked fired.', this);
-		this.facade.onUpdateActiveAuthType({ activeAuthType: 'sign-in-active' });
-		void this.facade.router.navigate(['auth']);
+		this._sb.log.trace('_onCancelClicked fired.', this);
+		this._sb.onUpdateActiveAuthType({ activeAuthType: 'sign-in-active' });
+		void this._sb.router.navigate(['auth']);
 	}
 
 	/**
 	 * Event handler for when user clicks finish on forgot password component.
 	 */
 	_onFinishClicked(): void {
-		this.facade.log.trace('_onFinishClicked fired.', this);
-		void this.facade.router.navigate(['auth']);
+		this._sb.log.trace('_onFinishClicked fired.', this);
+		void this._sb.router.navigate(['auth']);
 	}
 
 	/**
@@ -77,8 +77,8 @@ export class ForgotPasswordContainerComponent implements OnInit {
 	 * @returns forgot password form
 	 */
 	private _initForgotPasswordForm(): FormGroup {
-		return this.facade.fb.group({
-			email: this.facade.fb.control('', [OdmValidators.required, OdmValidators.email])
+		return this._sb.fb.group({
+			email: this._sb.fb.control('', [OdmValidators.required, OdmValidators.email])
 		});
 	}
 }

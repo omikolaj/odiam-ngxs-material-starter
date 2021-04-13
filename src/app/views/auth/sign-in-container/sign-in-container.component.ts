@@ -1,5 +1,4 @@
 import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
-import { AuthFacadeService } from '../auth-facade.service';
 import { ActivatedRoute } from '@angular/router';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
@@ -8,10 +7,11 @@ import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { MinScreenSizeQuery } from 'app/shared/screen-size-queries';
 import { OdmValidators } from 'app/core/form-validators/odm-validators';
-import { SigninUser } from 'app/core/auth/models/signin-user.model';
-import { ActiveAuthType } from 'app/core/auth/models/active-auth-type.model';
-import { AuthTypeRouteUrl } from 'app/core/auth/models/auth-type-route-url.model';
 import { leftRightFadeInAnimation } from 'app/core/core.module';
+import { AuthSandboxService } from '../auth-sandbox.service';
+import { SigninUser } from 'app/core/models/auth/signin-user.model';
+import { ActiveAuthType } from 'app/core/models/auth/active-auth-type.model';
+import { AuthTypeRouteUrl } from 'app/core/models/auth/auth-type-route-url.model';
 
 /**
  * Sign in container component.
@@ -61,25 +61,24 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 
 	/**
 	 * Creates an instance of sign in container component.
-	 * @param facade
-	 * @param asyncValidators
-	 * @param route
+	 * @param _sb
+	 * @param _route
 	 * @param breakpointObserver
 	 */
-	constructor(private facade: AuthFacadeService, private route: ActivatedRoute, breakpointObserver: BreakpointObserver) {
-		this._problemDetails$ = facade.problemDetails$;
-		this._internalServerErrorDetails$ = facade.internalServerErrorDetails$;
-		this._rememberMe$ = facade.rememberMe$;
-		this._username$ = facade.username$;
+	constructor(private _sb: AuthSandboxService, private _route: ActivatedRoute, breakpointObserver: BreakpointObserver) {
+		this._problemDetails$ = _sb.problemDetails$;
+		this._internalServerErrorDetails$ = _sb.internalServerErrorDetails$;
+		this._rememberMe$ = _sb.rememberMe$;
+		this._username$ = _sb.username$;
 		this._breakpointStateScreenMatcher$ = breakpointObserver.observe([MinScreenSizeQuery.md]);
-		this._activeAuthType$ = facade.activeAuthType$;
+		this._activeAuthType$ = _sb.activeAuthType$;
 	}
 
 	/**
 	 * NgOnInit life cycle.
 	 */
 	ngOnInit(): void {
-		this.facade.log.trace('Initialized.', this);
+		this._sb.log.trace('Initialized.', this);
 		this._initForm();
 	}
 
@@ -87,32 +86,32 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 	 * NgOnDestroy life cycle.
 	 */
 	ngOnDestroy(): void {
-		this.facade.log.trace('Destroyed.', this);
+		this._sb.log.trace('Destroyed.', this);
 	}
 
 	/**
 	 * Event handler for when user clicks forgot password.
 	 */
 	_onForgotPasswordClicked(): void {
-		this.facade.log.trace('_onForgotPasswordClicked fired.', this);
-		this.facade.onUpdateActiveAuthType({ activeAuthType: 'forgot-password-active' });
-		void this.facade.router.navigate(['forgot-password'], { relativeTo: this.route.parent });
+		this._sb.log.trace('_onForgotPasswordClicked fired.', this);
+		this._sb.onUpdateActiveAuthType({ activeAuthType: 'forgot-password-active' });
+		void this._sb.router.navigate(['forgot-password'], { relativeTo: this._route.parent });
 	}
 
 	/**
 	 * Event handler for when user signs in with facebook.
 	 */
 	_onSigninWithFacebookSubmitted(): void {
-		this.facade.log.trace('_onSigninWithFacebookSubmitted event handler fired.', this);
-		this.facade.signinUserWithFacebook();
+		this._sb.log.trace('_onSigninWithFacebookSubmitted event handler fired.', this);
+		this._sb.signinUserWithFacebook();
 	}
 
 	/**
 	 * Event handler for when user signs in with google.
 	 */
 	_onSigninWithGoogleSubmitted(): void {
-		this.facade.log.trace('_onSigninWithGoogleSubmitted event handler fired.', this);
-		this.facade.signinUserWithGoogle();
+		this._sb.log.trace('_onSigninWithGoogleSubmitted event handler fired.', this);
+		this._sb.signinUserWithGoogle();
 	}
 
 	/**
@@ -120,8 +119,8 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 	 * @param model
 	 */
 	_onSigninSubmitted(model: SigninUser): void {
-		this.facade.log.trace('_onSigninSubmitted event handler fired.', this);
-		this.facade.signinUser(model);
+		this._sb.log.trace('_onSigninSubmitted event handler fired.', this);
+		this._sb.signinUser(model);
 	}
 
 	/**
@@ -129,8 +128,8 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 	 * @param event
 	 */
 	_onRememberMeChanged(event: boolean): void {
-		this.facade.log.trace('_onRememberMeChanged event handler fired.', this, event);
-		this.facade.onRememberMeChanged(event);
+		this._sb.log.trace('_onRememberMeChanged event handler fired.', this, event);
+		this._sb.onRememberMeChanged(event);
 	}
 
 	/**
@@ -138,10 +137,10 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 	 * @param event
 	 */
 	_onSwitchToSignupClicked(event: ActiveAuthType): void {
-		this.facade.log.trace('__onSwitchToSignupClicked event handler fired', this, event);
+		this._sb.log.trace('__onSwitchToSignupClicked event handler fired', this, event);
 		const activeAuthType = { activeAuthType: event };
 		const routeUrl: AuthTypeRouteUrl = event === 'sign-in-active' ? 'sign-in' : 'sign-up';
-		this.facade.onSwitchAuth(activeAuthType, routeUrl);
+		this._sb.onSwitchAuth(activeAuthType, routeUrl);
 	}
 
 	/**
@@ -156,13 +155,13 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 	 * @returns signin form
 	 */
 	private _initSigninForm(): FormGroup {
-		return this.facade.fb.group({
-			email: this.facade.fb.control('', {
+		return this._sb.fb.group({
+			email: this._sb.fb.control('', {
 				validators: [OdmValidators.required, OdmValidators.email],
 				updateOn: 'blur'
 			}),
-			password: this.facade.fb.control('', [OdmValidators.required]),
-			rememberMe: this.facade.fb.control(false)
+			password: this._sb.fb.control('', [OdmValidators.required]),
+			rememberMe: this._sb.fb.control(false)
 		});
 	}
 }

@@ -19,15 +19,16 @@ export class OdmGhostBlockComponent implements OnInit {
 
 	/**
 	 * Creates an instance of ghost block component.
-	 * @param ghostAnimationService
+	 * @param _ghostAnimationService
+	 * @param _log
 	 */
-	constructor(private ghostAnimationService: OdmGhostAnimationService, private logger: LogService) {}
+	constructor(private _ghostAnimationService: OdmGhostAnimationService, private _log: LogService) {}
 
 	/**
 	 * NgOnInit life cycle.
 	 */
 	ngOnInit(): void {
-		this.logger.trace('Initialized.', this);
-		this.ghostAnimationService.syncAnimation();
+		this._log.trace('Initialized.', this);
+		this._ghostAnimationService.syncAnimation();
 	}
 }

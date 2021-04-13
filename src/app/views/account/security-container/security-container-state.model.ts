@@ -1,4 +1,4 @@
-import { UserRecoveryCodes } from './models/user-recovery-codes.model';
+import { UserRecoveryCodes } from '../../../core/models/account/security/user-recovery-codes.model';
 
 /**
  * Security state model for ngxs store.

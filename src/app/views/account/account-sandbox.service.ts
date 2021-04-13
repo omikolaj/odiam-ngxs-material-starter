@@ -4,13 +4,10 @@ import { tap } from 'rxjs/operators';
 import * as TwoFactorAuthentication from './security-container/two-factor-authentication/two-factor-authentication.store.actions';
 import { Store, Select, Actions, ofActionCompleted } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { TwoFactorAuthenticationSetup } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-setup.model';
-import { TwoFactorAuthenticationVerificationCode } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-verification-code.model';
-import { TwoFactorAuthenticationSetupResult } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-setup-result.model';
 import { UsersAsyncService } from 'app/core/services/users-async.service';
 import { AuthState } from 'app/core/auth/auth.store.state';
 import { AccountSecurityState } from './security-container/security-container.store.state';
-import { AccountSecurityDetails } from 'app/core/models/account-security-details.model';
+import { AccountSecurityDetails } from 'app/core/models/account/security/account-security-details.model';
 import * as SecurityContainer from './security-container/security-container.store.actions';
 import * as GeneralContainer from './general-container/general-container.store.actions';
 import { TwoFactorAuthenticationState } from './security-container/two-factor-authentication/two-factor-authentication.store.state';
@@ -22,13 +19,16 @@ import { LogService } from 'app/core/logger/log.service';
 import { FormBuilder } from '@angular/forms';
 import { TranslateValidationErrorsService } from 'app/shared/services/translate-validation-errors.service';
 import { AccountGeneralState } from './general-container/general-container.store.state';
-import { AccountGeneralDetails } from 'app/core/models/account-general-details.model';
+import { AccountGeneralDetails } from 'app/core/models/account/general/account-general-details.model';
+import { TwoFactorAuthenticationSetup } from 'app/core/models/account/security/two-factor-authentication-setup.model';
+import { TwoFactorAuthenticationSetupResult } from 'app/core/models/account/security/two-factor-authentication-setup-result.model';
+import { TwoFactorAuthenticationVerificationCode } from 'app/core/models/account/security/two-factor-authentication-verification-code.model';
 
 /**
- * User account facade service.
+ * Account sandbox service.
  */
 @Injectable()
-export class AccountFacadeService {
+export class AccountSandboxService {
 	/**
 	 * Problem details error for account module.
 	 */
@@ -55,19 +55,31 @@ export class AccountFacadeService {
 		TwoFactorAuthenticationSetupResult
 	>;
 
+	/**
+	 * Select users general details.
+	 */
 	@Select(AccountGeneralState.selectAccountGeneralDetails) accountGeneralDetails$: Observable<AccountGeneralDetails>;
 
-	onCompletedUpdateRecoveryCodesAction$ = this.actions$.pipe(ofActionCompleted(SecurityContainer.UpdateRecoveryCodes));
+	/**
+	 * Emits when SecurityContainer.UpdateRecoveryCodes action has triggered.
+	 */
+	onCompletedUpdateRecoveryCodesAction$ = this._actions$.pipe(ofActionCompleted(SecurityContainer.UpdateRecoveryCodes));
 
 	/**
-	 * Creates an instance of account facade service.
-	 * @param twoFactorAuthenticationAsync
+	 * Creates an instance of account sandbox service.
+	 * @param _twoFactorAuthenticationAsync
+	 * @param _store
+	 * @param _userAsyncService
+	 * @param _actions$
+	 * @param log
+	 * @param fb
+	 * @param translateValidationErrorService
 	 */
 	constructor(
-		private twoFactorAuthenticationAsync: TwoFactorAuthenticationAsyncService,
-		private store: Store,
-		private userAsyncService: UsersAsyncService,
-		private actions$: Actions,
+		private _twoFactorAuthenticationAsync: TwoFactorAuthenticationAsyncService,
+		private _store: Store,
+		private _userAsyncService: UsersAsyncService,
+		private _actions$: Actions,
 		public log: LogService,
 		public fb: FormBuilder,
 		public translateValidationErrorService: TranslateValidationErrorsService
@@ -77,10 +89,10 @@ export class AccountFacadeService {
 	 * Gets user account security details.
 	 */
 	getAccountSecurityInfo(): void {
-		const id = this.store.selectSnapshot(AuthState.selectCurrentUserId);
-		this.userAsyncService
+		const id = this._store.selectSnapshot(AuthState.selectCurrentUserId);
+		this._userAsyncService
 			.getAccountSecurityDetails$(id)
-			.pipe(tap((accountSecurityDetails) => this.store.dispatch(new SecurityContainer.SetAccountSecurityDetails(accountSecurityDetails))))
+			.pipe(tap((accountSecurityDetails) => this._store.dispatch(new SecurityContainer.SetAccountSecurityDetails(accountSecurityDetails))))
 			.subscribe();
 	}
 
@@ -88,10 +100,10 @@ export class AccountFacadeService {
 	 * Gets user account general details.
 	 */
 	getAccountGeneralInfo(): void {
-		const id = this.store.selectSnapshot(AuthState.selectCurrentUserId);
-		this.userAsyncService
+		const id = this._store.selectSnapshot(AuthState.selectCurrentUserId);
+		this._userAsyncService
 			.getAccountGeneralDetails$(id)
-			.pipe(tap((accountGeneralDetails) => this.store.dispatch(new GeneralContainer.SetAccountGeneralDetails(accountGeneralDetails))))
+			.pipe(tap((accountGeneralDetails) => this._store.dispatch(new GeneralContainer.SetAccountGeneralDetails(accountGeneralDetails))))
 			.subscribe();
 	}
 
@@ -99,9 +111,9 @@ export class AccountFacadeService {
 	 * Gets information for setting up authenticator for 2FA.
 	 */
 	setupAuthenticator(): void {
-		this.twoFactorAuthenticationAsync
+		this._twoFactorAuthenticationAsync
 			.setupAuthenticator$()
-			.pipe(tap((authenticatorInfo) => this.store.dispatch([new TwoFactorAuthentication.SetupTwoFactorAuthentication(authenticatorInfo)])))
+			.pipe(tap((authenticatorInfo) => this._store.dispatch([new TwoFactorAuthentication.SetupTwoFactorAuthentication(authenticatorInfo)])))
 			.subscribe();
 	}
 
@@ -110,9 +122,9 @@ export class AccountFacadeService {
 	 * @param model
 	 */
 	verifyAuthenticator(model: TwoFactorAuthenticationVerificationCode): void {
-		this.twoFactorAuthenticationAsync
+		this._twoFactorAuthenticationAsync
 			.verifyAuthenticator$(model)
-			.pipe(tap((result) => this.store.dispatch(new TwoFactorAuthentication.AuthenticatorVerificationResult(result))))
+			.pipe(tap((result) => this._store.dispatch(new TwoFactorAuthentication.AuthenticatorVerificationResult(result))))
 			.subscribe();
 	}
 
@@ -120,7 +132,7 @@ export class AccountFacadeService {
 	 * Cancels two factor authentication setup wizard.
 	 */
 	cancel2faSetupWizard(): void {
-		this.store.dispatch(new TwoFactorAuthentication.Reset2faSetupWizard());
+		this._store.dispatch(new TwoFactorAuthentication.Reset2faSetupWizard());
 	}
 
 	/**
@@ -128,7 +140,7 @@ export class AccountFacadeService {
 	 * @param model
 	 */
 	finish2faSetup(model: TwoFactorAuthenticationSetupResult): void {
-		this.store.dispatch([
+		this._store.dispatch([
 			new TwoFactorAuthentication.Reset2faSetupWizard(),
 			new SecurityContainer.UpdateAccountSecurityDetailsSettings({
 				hasAuthenticator: true,
@@ -143,9 +155,9 @@ export class AccountFacadeService {
 	 * Generates recovery codes.
 	 */
 	generateRecoveryCodes(): void {
-		this.twoFactorAuthenticationAsync
+		this._twoFactorAuthenticationAsync
 			.generate2FaRecoveryCodes$()
-			.pipe(tap((result) => this.store.dispatch(new SecurityContainer.UpdateRecoveryCodes(result))))
+			.pipe(tap((result) => this._store.dispatch(new SecurityContainer.UpdateRecoveryCodes(result))))
 			.subscribe();
 	}
 
@@ -153,9 +165,11 @@ export class AccountFacadeService {
 	 * Disables two factor authentication.
 	 */
 	disable2Fa(): void {
-		this.twoFactorAuthenticationAsync
+		this._twoFactorAuthenticationAsync
 			.disable2Fa$()
-			.pipe(tap(() => this.store.dispatch([new TwoFactorAuthentication.Reset2faSetupWizard(), new SecurityContainer.ResetAccountSecuritySettings()])))
+			.pipe(
+				tap(() => this._store.dispatch([new TwoFactorAuthentication.Reset2faSetupWizard(), new SecurityContainer.ResetAccountSecuritySettings()]))
+			)
 			.subscribe();
 	}
 
@@ -163,7 +177,7 @@ export class AccountFacadeService {
 	 * Resends email verification.
 	 */
 	resendEmailVerification(): void {
-		const id = this.store.selectSnapshot(AuthState.selectCurrentUserId);
-		this.userAsyncService.resendEmailVerification$(id).subscribe();
+		const id = this._store.selectSnapshot(AuthState.selectCurrentUserId);
+		this._userAsyncService.resendEmailVerification$(id).subscribe();
 	}
 }

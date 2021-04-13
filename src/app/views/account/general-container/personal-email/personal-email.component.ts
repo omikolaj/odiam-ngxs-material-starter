@@ -33,15 +33,15 @@ export class PersonalEmailComponent {
 
 	/**
 	 * Creates an instance of personal email component.
-	 * @param log
+	 * @param _log
 	 */
-	constructor(private log: LogService) {}
+	constructor(private _log: LogService) {}
 
 	/**
 	 * Event handler that resends user's email verification link.
 	 */
 	_onResendEmailVerificationClicked(): void {
-		this.log.trace('_onResendEmailVerificationClicked fired.', this);
+		this._log.trace('_onResendEmailVerificationClicked fired.', this);
 		this.resendEmailVerificationClicked.emit();
 	}
 }

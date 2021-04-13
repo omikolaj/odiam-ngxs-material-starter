@@ -10,8 +10,9 @@ import { catchError } from 'rxjs/operators';
 export class LogWebApi extends LogPublisher {
 	/**
 	 * Creates an instance of LogWebApi and initializes location property.
+	 * @param _http
 	 */
-	constructor(private http: HttpClient) {
+	constructor(private _http: HttpClient) {
 		super();
 		this.location = '/api/log';
 	}
@@ -24,7 +25,7 @@ export class LogWebApi extends LogPublisher {
 	log(record: LogEntry): Observable<boolean> {
 		const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
 		const options = { headers: headers };
-		return this.http.post<boolean>(this.location, record, options).pipe(catchError((err) => this.handleErrors(err)));
+		return this._http.post<boolean>(this.location, record, options).pipe(catchError((err) => this._handleErrors(err)));
 	}
 
 	/**
@@ -41,7 +42,7 @@ export class LogWebApi extends LogPublisher {
 	 * @param error HttpErrorResponse.
 	 * @returns Observable<never>.
 	 */
-	private handleErrors(error: HttpErrorResponse): Observable<never> {
+	private _handleErrors(error: HttpErrorResponse): Observable<never> {
 		const errors: string[] = [];
 		let msg = `Status: ${error.status} - Status Text: ${error.statusText}`;
 

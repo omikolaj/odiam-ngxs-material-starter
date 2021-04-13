@@ -1,13 +1,13 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { leftRightFadeInAnimation } from 'app/core/core.module';
 import { FormGroup } from '@angular/forms';
-import { AuthFacadeService } from '../auth-facade.service';
-import { TwoFactorAuthenticationVerificationCode } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-verification-code.model';
 import { Observable } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { tap } from 'rxjs/operators';
+import { AuthSandboxService } from '../auth-sandbox.service';
+import { TwoFactorAuthenticationVerificationCode } from 'app/core/models/account/security/two-factor-authentication-verification-code.model';
 
 /**
  * When two step verification is required to sign user in, this component will be displayed.
@@ -57,21 +57,22 @@ export class TwoStepVerificationComponent implements OnInit {
 
 	/**
 	 * Creates an instance of two step verification container component.
-	 * @param facade
+	 * @param _sb
+	 * @param _route
 	 */
-	constructor(private facade: AuthFacadeService, private route: ActivatedRoute) {
-		this._codeVerificationSucceeded$ = facade.is2StepVerificationSuccessful$;
+	constructor(private _sb: AuthSandboxService, private _route: ActivatedRoute) {
+		this._codeVerificationSucceeded$ = _sb.is2StepVerificationSuccessful$;
 		// reset code verification value to false when server error occurs.
-		this._problemDetails$ = facade.problemDetails$.pipe(tap(() => (this._codeVerificationInProgress = false)));
+		this._problemDetails$ = _sb.problemDetails$.pipe(tap(() => (this._codeVerificationInProgress = false)));
 		// reset code verification value to false when server error occurs.
-		this._internalServerErrorDetails$ = facade.internalServerErrorDetails$.pipe(tap(() => (this._codeVerificationInProgress = false)));
+		this._internalServerErrorDetails$ = _sb.internalServerErrorDetails$.pipe(tap(() => (this._codeVerificationInProgress = false)));
 	}
 
 	/**
 	 * NgOnInit life cycle.
 	 */
 	ngOnInit(): void {
-		this.facade.log.trace('Initialized.', this);
+		this._sb.log.trace('Initialized.', this);
 		this._setPropertiesFromQueryParams();
 	}
 
@@ -79,30 +80,30 @@ export class TwoStepVerificationComponent implements OnInit {
 	 * Event handler when user submits two factor authentication verification code required to sign in.
 	 */
 	_onVerificationCodeSubmitted(event: unknown): void {
-		this.facade.log.trace('_onVerificationCodeSubmitted fired.', this);
+		this._sb.log.trace('_onVerificationCodeSubmitted fired.', this);
 		this._codeVerificationInProgress = true;
 		const model = event as TwoFactorAuthenticationVerificationCode;
-		this.facade.log.debug('[_onVerificationCodeSubmitted]: Setting [email] value query params.', this);
+		this._sb.log.debug('[_onVerificationCodeSubmitted]: Setting [email] value query params.', this);
 		model.email = this._email;
-		this.facade.log.debug('[_onVerificationCodeSubmitted]: Setting [provider] value from query params.', this);
+		this._sb.log.debug('[_onVerificationCodeSubmitted]: Setting [provider] value from query params.', this);
 		model.provider = this._provider;
-		this.facade.verifyTwoStepVerificationCode(model);
+		this._sb.verifyTwoStepVerificationCode(model);
 	}
 
 	/**
 	 * Event handler when user clicks to cancel the setup wizard.
 	 */
 	_onCancelClicked(): void {
-		this.facade.log.trace('_onCancelClicked fired.', this);
-		this.facade.cancelTwoStepVerificationCodeProcess();
+		this._sb.log.trace('_onCancelClicked fired.', this);
+		this._sb.cancelTwoStepVerificationCodeProcess();
 	}
 
 	/**
 	 * Event handler when user chooses to sign in redeeming their backup code.
 	 */
 	_onUseRecoveryCode(): void {
-		this.facade.log.trace('_onUseRecoveryCode fired.', this);
-		void this.facade.router.navigate(['auth/redeem-recovery-code'], { queryParams: { email: this._email } });
+		this._sb.log.trace('_onUseRecoveryCode fired.', this);
+		void this._sb.router.navigate(['auth/redeem-recovery-code'], { queryParams: { email: this._email } });
 	}
 
 	/**
@@ -110,8 +111,8 @@ export class TwoStepVerificationComponent implements OnInit {
 	 */
 	private _setPropertiesFromQueryParams(): void {
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-		this._provider = this.route.snapshot.queryParams['provider'];
+		this._provider = this._route.snapshot.queryParams['provider'];
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-		this._email = this.route.snapshot.queryParams['email'];
+		this._email = this._route.snapshot.queryParams['email'];
 	}
 }

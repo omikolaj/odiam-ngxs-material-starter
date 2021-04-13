@@ -1,4 +1,4 @@
-import { AccountGeneralDetails } from 'app/core/models/account-general-details.model';
+import { AccountGeneralDetails } from 'app/core/models/account/general/account-general-details.model';
 
 /**
  * Sets account genral details for the logged in user.

@@ -1,14 +1,14 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, Output, EventEmitter, Input, OnDestroy } from '@angular/core';
-import { AuthFacadeService } from '../auth-facade.service';
 import { tap } from 'rxjs/operators';
-import { SignupUser } from 'app/core/auth/models/signup-user.model';
 import { Subscription, Observable } from 'rxjs';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { FormGroup } from '@angular/forms';
 import { BreakpointState } from '@angular/cdk/layout';
-import { ActiveAuthType } from 'app/core/auth/models/active-auth-type.model';
 import { AuthBase } from '../auth-base';
+import { ActiveAuthType } from 'app/core/models/auth/active-auth-type.model';
+import { SignupUser } from 'app/core/models/auth/signup-user.model';
+import { AuthSandboxService } from '../auth-sandbox.service';
 
 /**
  * Sign up component.
@@ -24,7 +24,7 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	 * Emitted when server responds with 40X error.
 	 */
 	@Input() set problemDetails(value: ProblemDetails) {
-		this.facade.log.debug('Problem details emitted.', this);
+		this._sb.log.debug('Problem details emitted.', this);
 		this.problemDetailsError = value;
 	}
 
@@ -32,7 +32,7 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	 * Emitted when server responds with 50X error.
 	 */
 	@Input() set internalServerErrorDetails(value: InternalServerErrorDetails) {
-		this.facade.log.debug('Internal server error emitted.', this);
+		this._sb.log.debug('Internal server error emitted.', this);
 		this.internalServerError = value;
 	}
 
@@ -40,7 +40,7 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	 * Signup form of auth component.
 	 */
 	@Input() set signupForm(value: FormGroup) {
-		this.facade.log.debug('Signup form emitted.', this);
+		this._sb.log.debug('Signup form emitted.', this);
 		this._signupForm = value;
 		this._subscription.add(this._validateFormPasswordField(value).subscribe());
 		this._subscription.add(this._validateFormConfirmPasswordField(value).subscribe());
@@ -133,18 +133,18 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 
 	/**
 	 * Creates an instance of sign up component.
-	 * @param facade
+	 * @param _sb
 	 * @param cd
 	 */
-	constructor(private facade: AuthFacadeService, cd: ChangeDetectorRef) {
-		super(facade.translateValidationErrorService, facade.log, cd);
+	constructor(private _sb: AuthSandboxService, cd: ChangeDetectorRef) {
+		super(_sb.translateValidationErrorService, _sb.log, cd);
 	}
 
 	/**
 	 * NgOnInit life cycle.
 	 */
 	ngOnInit(): void {
-		this.facade.log.trace('Initialized.', this);
+		this._sb.log.trace('Initialized.', this);
 		this._signupFormEmailControlStatusChanges$ = this._signupForm
 			.get('email')
 			// null out internalServerErrorDetails
@@ -156,7 +156,7 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	 * NgOnDestroy life cycle.
 	 */
 	ngOnDestroy(): void {
-		this.facade.log.trace('Destroyed.', this);
+		this._sb.log.trace('Destroyed.', this);
 		this._subscription.unsubscribe();
 	}
 
@@ -164,7 +164,7 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	 * Event handler for when new user is attempting to sign up.
 	 */
 	_onSignup(): void {
-		this.facade.log.trace('onSignup event handler emitted.', this);
+		this._sb.log.trace('onSignup event handler emitted.', this);
 		const model = this._signupForm.value as SignupUser;
 		this.signupFormSubmitted.emit(model);
 	}
@@ -173,7 +173,7 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	 * Event handler for when user is attempting to sign in with google.
 	 */
 	_onSigninWithGoogle(): void {
-		this.facade.log.trace('_onSigninWithGoogle fired.', this);
+		this._sb.log.trace('_onSigninWithGoogle fired.', this);
 		this.signinWithGoogleSubmitted.emit();
 	}
 
@@ -181,7 +181,7 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	 * Event handler for when user is attempting to sign in with facebook.
 	 */
 	_onSigninWithFacebook(): void {
-		this.facade.log.trace('_onSigninWithFacebook fired.', this);
+		this._sb.log.trace('_onSigninWithFacebook fired.', this);
 		this.signinWithFacebookSubmitted.emit();
 	}
 
@@ -189,7 +189,7 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	 * Used to switch view to signin context.
 	 */
 	_switchToSignin(): void {
-		this.facade.log.trace('_switchToSignin fired.', this);
+		this._sb.log.trace('_switchToSignin fired.', this);
 		this.switchToSigninClicked.emit('sign-in-active');
 		// allow for the animation before cleaning up the form.
 		setTimeout(() => {

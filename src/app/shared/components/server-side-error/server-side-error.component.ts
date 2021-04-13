@@ -25,7 +25,7 @@ export class ServerSideErrorComponent implements OnInit {
 	 * Sets problem detials.
 	 */
 	@Input() set problemDetails(value: ProblemDetails) {
-		this.log.debug('problemDetails emitted.', this);
+		this._log.debug('problemDetails emitted.', this);
 		this._problemDetails = value;
 	}
 
@@ -35,7 +35,7 @@ export class ServerSideErrorComponent implements OnInit {
 	 * Sets internal server error details.
 	 */
 	@Input() set internalServerErrorDetails(value: InternalServerErrorDetails) {
-		this.log.debug('internalServerErrorDetails emitted.', this);
+		this._log.debug('internalServerErrorDetails emitted.', this);
 		this._internalServerErrorDetails = value;
 	}
 
@@ -43,15 +43,15 @@ export class ServerSideErrorComponent implements OnInit {
 
 	/**
 	 * Creates an instance of odm server side error component.
-	 * @param log
+	 * @param _log
 	 */
-	constructor(private log: LogService) {}
+	constructor(private _log: LogService) {}
 
 	/**
 	 * NgOnInit life cycle.
 	 */
 	ngOnInit(): void {
-		this.log.trace('Initialized', this);
+		this._log.trace('Initialized', this);
 	}
 
 	/**

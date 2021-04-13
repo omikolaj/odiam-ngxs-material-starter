@@ -12,9 +12,9 @@ import { LogService } from '../logger/log.service';
 export class JsonWebTokenService {
 	/**
 	 * Creates an instance of json web token service.
-	 * @param log
+	 * @param _log
 	 */
-	constructor(private log: LogService) {}
+	constructor(private _log: LogService) {}
 
 	/**
 	 * Gets subject claim from the access_token.
@@ -22,10 +22,10 @@ export class JsonWebTokenService {
 	 * @returns sub claim
 	 */
 	getSubClaim(access_token: string): string {
-		this.log.trace('getSubClaim executed.', this);
+		this._log.trace('getSubClaim executed.', this);
 		const decoded = this._getRawJwt(access_token);
 		if (decoded === null) {
-			this.log.debug('[getSubClaim] decoded value is null.', this);
+			this._log.debug('[getSubClaim] decoded value is null.', this);
 			return '';
 		}
 		return decoded.sub;
@@ -46,12 +46,12 @@ export class JsonWebTokenService {
 	 * @returns jwt
 	 */
 	private _decodeJwt(jwt: string): JsonWebToken {
-		this.log.trace('_getRawJwt executed.', this);
+		this._log.trace('_getRawJwt executed.', this);
 		try {
-			this.log.debug('jwt_decode executing.', this);
+			this._log.debug('jwt_decode executing.', this);
 			return jwt_decode(jwt);
 		} catch (error) {
-			this.log.error('Failed to decode jwt.', this, error);
+			this._log.error('Failed to decode jwt.', this, error);
 			return null;
 		}
 	}

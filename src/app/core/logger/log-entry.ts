@@ -53,7 +53,7 @@ export class LogEntry {
 		}
 		ret += this.message;
 		if (this.extraInfo.length) {
-			ret += ' [Data]: ' + this.formatParams(this.extraInfo);
+			ret += ' [Data]: ' + this._formatParams(this.extraInfo);
 		}
 
 		return ret;
@@ -64,7 +64,7 @@ export class LogEntry {
 	 * @param params list of additional items to be logged.
 	 * @returns string.
 	 */
-	private formatParams(params: any[]): string {
+	private _formatParams(params: any[]): string {
 		return params.join(',');
 	}
 }

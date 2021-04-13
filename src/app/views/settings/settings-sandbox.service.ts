@@ -7,27 +7,25 @@ import { Observable } from 'rxjs';
 import * as Settings from 'app/core/settings/settings.store.actions';
 
 /**
- * Settings facade service.
+ * Settings sandbox service.
  */
-@Injectable({
-	providedIn: 'root'
-})
-export class SettingsFacadeService {
+@Injectable()
+export class SettingsSandboxService {
 	@Select(SettingsState.selectSettings) settings$: Observable<SettingsStateModel>;
 
 	/**
-	 * Creates an instance of settings facade service.
-	 * @param store
+	 * Creates an instance of settings sandbox service.
+	 * @param _store
 	 * @param log
 	 */
-	constructor(private store: Store, public log: LogService) {}
+	constructor(private _store: Store, public log: LogService) {}
 
 	/**
 	 * Updates current language setting.
 	 * @param languageSelected
 	 */
 	onLanguageSelected(languageSelected: { language: Language }): void {
-		this.store.dispatch(new Settings.ChangeLanguage(languageSelected));
+		this._store.dispatch(new Settings.ChangeLanguage(languageSelected));
 	}
 
 	/**
@@ -35,7 +33,7 @@ export class SettingsFacadeService {
 	 * @param themeSelected
 	 */
 	onThemeSelected(themeSelected: { theme: string }): void {
-		this.store.dispatch(new Settings.ChangeTheme(themeSelected));
+		this._store.dispatch(new Settings.ChangeTheme(themeSelected));
 	}
 
 	/**
@@ -43,7 +41,7 @@ export class SettingsFacadeService {
 	 * @param autoNightModeToggle
 	 */
 	onAutoNightModeToggle(autoNightModeToggle: { autoNightMode: boolean }): void {
-		this.store.dispatch(new Settings.ChangeAutoNightMode(autoNightModeToggle));
+		this._store.dispatch(new Settings.ChangeAutoNightMode(autoNightModeToggle));
 	}
 
 	/**
@@ -51,7 +49,7 @@ export class SettingsFacadeService {
 	 * @param stickyHeaderToggle
 	 */
 	onStickyHeaderToggle(stickyHeaderToggle: { stickyHeader: boolean }): void {
-		this.store.dispatch(new Settings.ChangeStickyHeader(stickyHeaderToggle));
+		this._store.dispatch(new Settings.ChangeStickyHeader(stickyHeaderToggle));
 	}
 
 	/**
@@ -59,7 +57,7 @@ export class SettingsFacadeService {
 	 * @param pageAnimationToggle
 	 */
 	onPageAnimationsToggle(pageAnimationsToggle: { pageAnimations: boolean }): void {
-		this.store.dispatch(new Settings.ChangeAnimationsPage(pageAnimationsToggle));
+		this._store.dispatch(new Settings.ChangeAnimationsPage(pageAnimationsToggle));
 	}
 
 	/**
@@ -67,6 +65,6 @@ export class SettingsFacadeService {
 	 * @param elementsAnimationsToggle
 	 */
 	onElementsAnimationsToggle(elementsAnimationsToggle: { elementsAnimations: boolean }): void {
-		this.store.dispatch(new Settings.ChangeAnimationsElements(elementsAnimationsToggle));
+		this._store.dispatch(new Settings.ChangeAnimationsElements(elementsAnimationsToggle));
 	}
 }

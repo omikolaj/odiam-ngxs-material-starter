@@ -1,8 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Observable } from 'rxjs';
-
 import { routeAnimations } from '../../../core/core.module';
-import { ExamplesFacadeService } from '../examples-facade.service';
+import { ExamplesSandboxService } from '../examples-sandbox.service';
 
 /**
  * Examples component.
@@ -31,16 +30,16 @@ export class ExamplesComponent implements OnInit {
 
 	/**
 	 * Creates an instance of examples component.
-	 * @param facade
+	 * @param _sb
 	 */
-	constructor(private facade: ExamplesFacadeService) {
-		this.isAuthenticated$ = this.facade.isAuthenticated$;
+	constructor(private _sb: ExamplesSandboxService) {
+		this.isAuthenticated$ = this._sb.isAuthenticated$;
 	}
 
 	/**
 	 * NgOnInit life cycle.
 	 */
 	ngOnInit(): void {
-		this.facade.log.trace('Initialized.', this);
+		this._sb.log.trace('Initialized.', this);
 	}
 }

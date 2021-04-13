@@ -1,14 +1,14 @@
 import { StateToken, StateContext, State, Selector, Action } from '@ngxs/store';
-import { AuthStateModel, AUTH_KEY } from './models/auth-state-model';
 import { Injectable } from '@angular/core';
 import produce from 'immer';
 import * as Auth from './auth.store.actions';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import { isBefore, add, getUnixTime, fromUnixTime } from 'date-fns';
 import { LogService } from '../logger/log.service';
-import { ActiveAuthType } from './models/active-auth-type.model';
 import { ACTIVE_UNTIL } from '../user-session-activity/user-session-activity-key';
 import { Observable } from 'rxjs';
+import { AuthStateModel, AUTH_KEY } from '../models/auth/auth-state-model';
+import { ActiveAuthType } from '../models/auth/active-auth-type.model';
 
 const AUTH_STATE_TOKEN = new StateToken<AuthStateModel>('auth');
 
@@ -130,7 +130,7 @@ export class AuthState {
 	 * @param state
 	 * @returns true if is authenticated.
 	 */
-	@Selector([AuthState.selectExpiresAt])
+	@Selector([AuthState._selectExpiresAt])
 	static selectIsAuthenticated(state: AuthStateModel, expires_at: Date): boolean {
 		return state.isAuthenticated && isBefore(new Date(), expires_at);
 	}
@@ -140,7 +140,7 @@ export class AuthState {
 	 * @param state
 	 * @returns is authenticated func
 	 */
-	@Selector([AuthState.selectExpiresAt])
+	@Selector([AuthState._selectExpiresAt])
 	static selectIsAuthenticatedFunc(state: AuthStateModel): (date: Date, expires_at: Date) => boolean {
 		return (date: Date, expires_at: Date) => state.isAuthenticated && isBefore(date, expires_at);
 	}
@@ -151,7 +151,7 @@ export class AuthState {
 	 * @param expires_at
 	 * @returns expires in seconds
 	 */
-	@Selector([AuthState.selectExpiresAt])
+	@Selector([AuthState._selectExpiresAt])
 	static selectExpiresInSeconds(state: AuthStateModel, expires_at: Date): number {
 		const difference = expires_at.getTime() - new Date().getTime();
 		const seconds = difference / 1000;
@@ -174,7 +174,7 @@ export class AuthState {
 	 * @returns date of expires at
 	 */
 	@Selector([AUTH_STATE_TOKEN])
-	private static selectExpiresAt(state: AuthStateModel): Date {
+	private static _selectExpiresAt(state: AuthStateModel): Date {
 		return fromUnixTime(state.expires_at || 0);
 	}
 
@@ -183,7 +183,7 @@ export class AuthState {
 	 * @param router
 	 * @param localStorageService
 	 */
-	constructor(private localStorageService: LocalStorageService, private log: LogService) {}
+	constructor(private _localStorageService: LocalStorageService, private _log: LogService) {}
 
 	/**
 	 * Action handler that updates remember me option.
@@ -192,7 +192,7 @@ export class AuthState {
 	 */
 	@Action(Auth.RememberMeOptionChange)
 	rememberMe(ctx: StateContext<AuthStateModel>, action: Auth.RememberMeOptionChange): Observable<void> {
-		this.log.info('rememberMe action handler fired.', this);
+		this._log.info('rememberMe action handler fired.', this);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft = { ...draft, ...action.payload };
@@ -212,7 +212,7 @@ export class AuthState {
 	 */
 	@Action(Auth.UpdateRememberMeUsername)
 	updateRememberMeUsername(ctx: StateContext<AuthStateModel>, action: Auth.UpdateRememberMeUsername): Observable<void> {
-		this.log.info('updateRememberMeUsername action handler fired.', this);
+		this._log.info('updateRememberMeUsername action handler fired.', this);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft = { ...draft, ...action.payload };
@@ -231,7 +231,7 @@ export class AuthState {
 	 */
 	@Action(Auth.StaySignedinOptionChange)
 	staySignedIn(ctx: StateContext<AuthStateModel>, action: Auth.StaySignedinOptionChange): Observable<void> {
-		this.log.info('staySignedIn action handler fired.', this);
+		this._log.info('staySignedIn action handler fired.', this);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft.staySignedIn = action.payload;
@@ -249,9 +249,9 @@ export class AuthState {
 	 */
 	@Action(Auth.Signin)
 	signin(ctx: StateContext<AuthStateModel>, action: Auth.Signin): Observable<void> {
-		this.log.info('signin action handler fired.', this);
-		this.log.info(`Jwt token expires in: ${action.payload.accessToken.expires_in} seconds.`, this);
-		this.log.info(`Jwt token expirey date`, this, add(new Date(), { seconds: action.payload.accessToken.expires_in }));
+		this._log.info('signin action handler fired.', this);
+		this._log.info(`Jwt token expires in: ${action.payload.accessToken.expires_in} seconds.`, this);
+		this._log.info(`Jwt token expirey date`, this, add(new Date(), { seconds: action.payload.accessToken.expires_in }));
 		const expires_at = getUnixTime(add(new Date(), { seconds: action.payload.accessToken.expires_in }));
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
@@ -273,7 +273,7 @@ export class AuthState {
 	 */
 	@Action(Auth.SetCurrentUserId)
 	setCurrentUserId(ctx: StateContext<AuthStateModel>, action: Auth.SetCurrentUserId): Observable<void> {
-		this.log.info('setCurrentUserId action handler fired.', this);
+		this._log.info('setCurrentUserId action handler fired.', this);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft = { ...draft, ...action.payload };
@@ -291,7 +291,7 @@ export class AuthState {
 	 */
 	@Action(Auth.Signout)
 	signout(ctx: StateContext<AuthStateModel>): Observable<void> {
-		this.log.info('signout action handler fired.', this);
+		this._log.info('signout action handler fired.', this);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft.isAuthenticated = false;
@@ -303,8 +303,8 @@ export class AuthState {
 				draft.userId = '';
 			})
 		);
-		this.log.debug('[signout]: Removing ACTIVE_UNTIL from local storage.');
-		this.localStorageService.removeItem(ACTIVE_UNTIL);
+		this._log.debug('[signout]: Removing ACTIVE_UNTIL from local storage.');
+		this._localStorageService.removeItem(ACTIVE_UNTIL);
 		const auth = ctx.getState();
 		return ctx.dispatch(new Auth.PersistSettings(auth));
 	}
@@ -316,7 +316,7 @@ export class AuthState {
 	@Action(Auth.KeepOrRemoveRememberMeUsername)
 	keepOrRemoveRememberMeUsername(ctx: StateContext<AuthStateModel>): Observable<void> {
 		const rememberMe = ctx.getState().rememberMe;
-		this.log.info('keepOrRemoveRememberMeUsername action handler fired. Remember me options is set to:', this, rememberMe);
+		this._log.info('keepOrRemoveRememberMeUsername action handler fired. Remember me options is set to:', this, rememberMe);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft.username = rememberMe ? draft.username : '';
@@ -333,7 +333,7 @@ export class AuthState {
 	 */
 	@Action(Auth.SwitchAuthType)
 	switchAuthType(ctx: StateContext<AuthStateModel>, action: Auth.SwitchAuthType): Observable<void> {
-		this.log.info('switchAuthType action handler fired.', this);
+		this._log.info('switchAuthType action handler fired.', this);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft = { ...draft, ...action.payload };
@@ -351,7 +351,7 @@ export class AuthState {
 	 */
 	@Action(Auth.Is2StepVerificationSuccessful)
 	is2StepVerificationSuccessful(ctx: StateContext<AuthStateModel>, action: Auth.Is2StepVerificationSuccessful): Observable<void> {
-		this.log.info('is2StepVerificationSuccessful action handler fired.', this);
+		this._log.info('is2StepVerificationSuccessful action handler fired.', this);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft = { ...draft, ...action.payload };
@@ -369,7 +369,7 @@ export class AuthState {
 	 */
 	@Action(Auth.Is2StepVerificationSuccessful)
 	is2StepVerificationRequired(ctx: StateContext<AuthStateModel>, action: Auth.Is2StepVerificationRequired): Observable<void> {
-		this.log.info('is2StepVerificationRequired action handler fired.', this);
+		this._log.info('is2StepVerificationRequired action handler fired.', this);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft = { ...draft, ...action.payload };
@@ -387,7 +387,7 @@ export class AuthState {
 	 */
 	@Action(Auth.IsRedeemRecoveryCodeSuccessful)
 	isRedeemRecoveryCodeSuccessful(ctx: StateContext<AuthStateModel>, action: Auth.IsRedeemRecoveryCodeSuccessful): Observable<void> {
-		this.log.info('isRedeemRecoveryCodeSuccessful action handler fired.', this);
+		this._log.info('isRedeemRecoveryCodeSuccessful action handler fired.', this);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft = { ...draft, ...action.payload };
@@ -405,7 +405,7 @@ export class AuthState {
 	 */
 	@Action(Auth.PersistSettings)
 	persistSettings(ctx: StateContext<AuthStateModel>, action: Auth.PersistSettings): void {
-		this.log.info('persistSettings action handler fired.', this);
-		this.localStorageService.setItem(AUTH_KEY, action.payload);
+		this._log.info('persistSettings action handler fired.', this);
+		this._localStorageService.setItem(AUTH_KEY, action.payload);
 	}
 }

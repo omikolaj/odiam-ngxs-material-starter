@@ -25,7 +25,7 @@ export class VerificationCodeComponent extends AuthBase implements OnInit {
 	 * Emitted when server responds with 40X error.
 	 */
 	@Input() set problemDetails(value: ProblemDetails) {
-		this.log.debug('Problem Ddetails emitted.', this);
+		this._log.debug('Problem Ddetails emitted.', this);
 		this.problemDetailsError = value;
 	}
 
@@ -33,7 +33,7 @@ export class VerificationCodeComponent extends AuthBase implements OnInit {
 	 * Emitted when server responds with 50X error.
 	 */
 	@Input() set internalServerErrorDetails(value: InternalServerErrorDetails) {
-		this.log.debug('Internal server error emitted.', this);
+		this._log.debug('Internal server error emitted.', this);
 		this.internalServerError = value;
 	}
 
@@ -42,7 +42,7 @@ export class VerificationCodeComponent extends AuthBase implements OnInit {
 	 */
 	@Input() set form(value: FormGroup) {
 		if (value) {
-			this.log.debug('Setting custom form.', this);
+			this._log.debug('Setting custom form.', this);
 			this._form = this._validateForm(value);
 		}
 	}
@@ -67,7 +67,7 @@ export class VerificationCodeComponent extends AuthBase implements OnInit {
 	 */
 	@Input() set verificationCodeInputLength(value: number) {
 		if (value) {
-			this.log.debug('verificationCodeInputLength specified. Setting max input field length to:', this, value);
+			this._log.debug('verificationCodeInputLength specified. Setting max input field length to:', this, value);
 			this._verificationCodeInputLength = value;
 		}
 	}
@@ -110,31 +110,31 @@ export class VerificationCodeComponent extends AuthBase implements OnInit {
 	/**
 	 * Creates an instance of verification code component.
 	 * @param translateErrorValidationService
-	 * @param log
+	 * @param _log
 	 * @param cd
 	 */
 	constructor(
-		private fb: FormBuilder,
-		private translateService: TranslateService,
+		private _fb: FormBuilder,
+		private _translateService: TranslateService,
 		translateErrorValidationService: TranslateValidationErrorsService,
-		log: LogService,
+		private _log: LogService,
 		cd: ChangeDetectorRef
 	) {
-		super(translateErrorValidationService, log, cd);
+		super(translateErrorValidationService, _log, cd);
 	}
 
 	/**
 	 * ngOnInit life cycle.
 	 */
 	ngOnInit(): void {
-		this.log.trace('Initialized.', this);
+		this._log.trace('Initialized.', this);
 		if (!this._form) {
-			this.log.debug('Custom form has not been specified, using default', this);
+			this._log.debug('Custom form has not been specified, using default', this);
 			this._initForm();
 		}
 
 		// 'odm.auth.form.placeholders.verification-code' string contains '{number}' placeholder that has to be replaced at run time.
-		this._verificationCodeLabel$ = this.translateService
+		this._verificationCodeLabel$ = this._translateService
 			.get(this._translationKey)
 			.pipe(map((str: string) => (str = str.replace('{number}', this._verificationCodeInputLength.toString()))));
 	}
@@ -143,7 +143,7 @@ export class VerificationCodeComponent extends AuthBase implements OnInit {
 	 * Event handler when user submits two factor authentication setup verification code.
 	 */
 	_onVerificationCodeSubmitted(): void {
-		this.log.trace('_onVerificationCodeSubmitted fired.', this);
+		this._log.trace('_onVerificationCodeSubmitted fired.', this);
 		const code = this._form.value as unknown;
 		this.verificationCodeSubmitted.emit(code);
 	}
@@ -152,7 +152,7 @@ export class VerificationCodeComponent extends AuthBase implements OnInit {
 	 * Event handler when user clicks to cancel the setup wizard.
 	 */
 	_onCancelClicked(): void {
-		this.log.trace('_onCancelClicked fired.', this);
+		this._log.trace('_onCancelClicked fired.', this);
 		this.cancelSetupWizardClicked.emit();
 	}
 
@@ -164,7 +164,7 @@ export class VerificationCodeComponent extends AuthBase implements OnInit {
 	private _validateForm(form: FormGroup): FormGroup {
 		// if custom form does not contain code field throw an error
 		if (!form.get('code')) {
-			this.log.fatal("Custom form has to contain contral with the name 'code'!");
+			this._log.fatal("Custom form has to contain contral with the name 'code'!");
 			throw new Error();
 		}
 		return form;
@@ -174,8 +174,8 @@ export class VerificationCodeComponent extends AuthBase implements OnInit {
 	 * Inits Recovery code form.
 	 */
 	private _initForm(): void {
-		this._form = this.fb.group({
-			code: this.fb.control('', {
+		this._form = this._fb.group({
+			code: this._fb.control('', {
 				validators: [
 					OdmValidators.required,
 					OdmValidators.minLength(this.verificationCodeInputLength),

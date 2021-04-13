@@ -1,16 +1,16 @@
 import { Component, ChangeDetectionStrategy, Input, ViewChild, Output, EventEmitter } from '@angular/core';
 import { MatSlideToggleChange, MatSlideToggle } from '@angular/material/slide-toggle';
-import { TwoFactorAuthenticationSetup } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-setup.model';
 import { FormGroup } from '@angular/forms';
-import { TwoFactorAuthenticationSetupResult } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-setup-result.model';
-import { TwoFactorAuthenticationVerificationCode } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-verification-code.model';
-import { AccountFacadeService } from '../../account-facade.service';
+import { AccountSandboxService } from '../../account-sandbox.service';
 import { upDownFadeInAnimation, fadeInAnimation } from 'app/core/core.module';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { Observable, merge } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ODM_SMALL_SPINNER_DIAMETER, ODM_SMALL_SPINNER_STROKE_WIDTH } from 'app/shared/global-settings/mat-spinner-settings';
+import { TwoFactorAuthenticationSetup } from 'app/core/models/account/security/two-factor-authentication-setup.model';
+import { TwoFactorAuthenticationSetupResult } from 'app/core/models/account/security/two-factor-authentication-setup-result.model';
+import { TwoFactorAuthenticationVerificationCode } from 'app/core/models/account/security/two-factor-authentication-verification-code.model';
 
 /**
  * Two factor authentication component responsible for handling user's 2fa settings.
@@ -42,7 +42,7 @@ export class TwoFactorAuthenticationComponent {
 	 * Whether there is an outgoing request to enable/disable two factor authentication.
 	 */
 	@Input() set twoFactorAuthToggleLoading(value: boolean) {
-		this.facade.log.debug('twoFactorAuthToggleLoading emitted.', this);
+		this._sb.log.debug('twoFactorAuthToggleLoading emitted.', this);
 		this._twoFactorAuthToggleLoading = value;
 
 		setTimeout(() => {
@@ -58,7 +58,7 @@ export class TwoFactorAuthenticationComponent {
 	 * Two factor authentication setup information.
 	 */
 	@Input() set authenticatorSetup(value: TwoFactorAuthenticationSetup) {
-		this.facade.log.debug('authenticatorSetup emitted.', this);
+		this._sb.log.debug('authenticatorSetup emitted.', this);
 		this._authenticatorSetup = value;
 		if (value.authenticatorUri !== '' && value.sharedKey !== '') {
 			// Notifies parent that two fa setup wizard is displayed.
@@ -173,13 +173,13 @@ export class TwoFactorAuthenticationComponent {
 
 	/**
 	 * Creates an instance of two factor authentication component.
-	 * @param facade
+	 * @param _sb
 	 */
-	constructor(private facade: AccountFacadeService) {
-		this._problemDetails$ = facade.problemDetails$;
-		this._internalServerErrorDetails$ = facade.internalServerErrorDetails$;
+	constructor(private _sb: AccountSandboxService) {
+		this._problemDetails$ = _sb.problemDetails$;
+		this._internalServerErrorDetails$ = _sb.internalServerErrorDetails$;
 		// filters out server errors that might have been displayed prior to opening up user recovery codes.
-		this._serverError$ = merge(facade.problemDetails$, facade.internalServerErrorDetails$).pipe(filter(() => this._userRecoveryCodesOpened === true));
+		this._serverError$ = merge(_sb.problemDetails$, _sb.internalServerErrorDetails$).pipe(filter(() => this._userRecoveryCodesOpened === true));
 	}
 
 	/**
@@ -187,7 +187,7 @@ export class TwoFactorAuthenticationComponent {
 	 * @param event
 	 */
 	_onTwoFactorAuthToggleChanged(event: MatSlideToggleChange): void {
-		this.facade.log.trace('_onTwoFactorAuthToggle fired.', this);
+		this._sb.log.trace('_onTwoFactorAuthToggle fired.', this);
 		this.twoFactorAuthToggleChanged.emit(event);
 	}
 
@@ -195,7 +195,7 @@ export class TwoFactorAuthenticationComponent {
 	 * Event handler when user cancels the two factor authentication setup wizard.
 	 */
 	_onCancelSetupWizardClicked(): void {
-		this.facade.log.trace('_onCancelSetupWizard fired.', this);
+		this._sb.log.trace('_onCancelSetupWizard fired.', this);
 		this._showTwoFactorAuthSetupWizard = false;
 		this.cancelSetupWizardClicked.emit();
 	}
@@ -204,7 +204,7 @@ export class TwoFactorAuthenticationComponent {
 	 * Event handler when user finishes two factor authentication setup.
 	 */
 	_onFinish2faSetupClicked(event: TwoFactorAuthenticationSetupResult): void {
-		this.facade.log.trace('_onFinish2faSetup fired.', this);
+		this._sb.log.trace('_onFinish2faSetup fired.', this);
 		this._showTwoFactorAuthSetupWizard = false;
 		this.finish2faSetupClicked.emit(event);
 	}
@@ -213,7 +213,7 @@ export class TwoFactorAuthenticationComponent {
 	 * Event handler when user requests to generate new recovery codes.
 	 */
 	_onGenerateNew2FaRecoveryCodesClicked(): void {
-		this.facade.log.trace('_onGenerateNew2FaRecoveryCodes fired.', this);
+		this._sb.log.trace('_onGenerateNew2FaRecoveryCodes fired.', this);
 		this.generateNew2faRecoveryCodesClicked.emit();
 	}
 
@@ -222,7 +222,7 @@ export class TwoFactorAuthenticationComponent {
 	 * @param event
 	 */
 	_onVerifyAuthenticatorSubmitted(event: unknown): void {
-		this.facade.log.trace('_onVerifyAuthenticator fired.', this);
+		this._sb.log.trace('_onVerifyAuthenticator fired.', this);
 		this.verifyAuthenticatorClicked.emit(event as TwoFactorAuthenticationVerificationCode);
 	}
 
@@ -230,7 +230,7 @@ export class TwoFactorAuthenticationComponent {
 	 * Event handler when user opens 'user codes' expansion panel.
 	 */
 	_onUserRecoveryCodesOpened(): void {
-		this.facade.log.trace('_onUserRecoveryCodesOpened fired.', this);
+		this._sb.log.trace('_onUserRecoveryCodesOpened fired.', this);
 		this._userRecoveryCodesOpened = true;
 		this.userRecoveryCodesOpened.emit();
 	}
@@ -239,7 +239,7 @@ export class TwoFactorAuthenticationComponent {
 	 * Event handler when user closes 'user codes' expansion panel.
 	 */
 	_onUserCodesPanelClosed(): void {
-		this.facade.log.trace('_onUserCodesPanelClosed fired.', this);
+		this._sb.log.trace('_onUserCodesPanelClosed fired.', this);
 		this._userRecoveryCodesOpened = false;
 		this.userRecoveryCodesClosed.emit();
 	}

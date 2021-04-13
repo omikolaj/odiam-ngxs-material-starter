@@ -1,4 +1,4 @@
-import { UserRecoveryCodes } from '../../models/user-recovery-codes.model';
+import { UserRecoveryCodes } from './user-recovery-codes.model';
 
 /**
  * Authenticator setup result model.

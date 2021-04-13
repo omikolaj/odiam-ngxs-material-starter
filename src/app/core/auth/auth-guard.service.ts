@@ -15,21 +15,21 @@ import { LogService } from '../logger/log.service';
 export class AuthGuardService implements CanActivate {
 	/**
 	 * Creates an instance of auth guard service.
-	 * @param store
-	 * @param router
-	 * @param log
+	 * @param _store
+	 * @param _router
+	 * @param _log
 	 */
-	constructor(private store: Store, private router: Router, private log: LogService) {}
+	constructor(private _store: Store, private _router: Router, private _log: LogService) {}
 
 	/**
 	 * Determines whether user can activate this route.
 	 * @returns user is authentication status.
 	 */
 	canActivate(): Observable<boolean> {
-		this.log.trace('canActivate executed.', this);
-		return this.store.select(AuthState.selectIsAuthenticated).pipe(
-			tap((isAuthenticated) => this.log.debug('canActivate: Is user authenticated:', this, isAuthenticated)),
-			tap((isAuthenticated) => (isAuthenticated ? null : void this.router.navigate(['auth/sign-in'])))
+		this._log.trace('canActivate executed.', this);
+		return this._store.select(AuthState.selectIsAuthenticated).pipe(
+			tap((isAuthenticated) => this._log.debug('canActivate: Is user authenticated:', this, isAuthenticated)),
+			tap((isAuthenticated) => (isAuthenticated ? null : void this._router.navigate(['auth/sign-in'])))
 		);
 	}
 }

@@ -13,9 +13,9 @@ import { UsersAsyncService } from '../services/users-async.service';
 export class AsyncValidatorsService {
 	/**
 	 * Creates an instance of validators async service.
-	 * @param userService
+	 * @param _userService
 	 */
-	constructor(private usersAsyncService: UsersAsyncService) {}
+	constructor(private _usersAsyncService: UsersAsyncService) {}
 
 	/**
 	 * Determines whether the value coming from the input is empty.
@@ -44,7 +44,7 @@ export class AsyncValidatorsService {
 					take(1),
 					// eslint-disable-next-line @typescript-eslint/no-unused-vars
 					switchMap((_) => {
-						return this.usersAsyncService
+						return this._usersAsyncService
 							.checkIfEmailExists$(control.value)
 							.pipe(map((exists) => (exists ? { nonUnique: control.value as string } : null)));
 					})

@@ -1,19 +1,18 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { AccountFacadeService } from '../account-facade.service';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { AccountSandboxService } from '../account-sandbox.service';
 import { Observable, Subscription, merge, BehaviorSubject } from 'rxjs';
-import { AccountSecurityDetails } from 'app/core/models/account-security-details.model';
+import { AccountSecurityDetails } from 'app/core/models/account/security/account-security-details.model';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { skip, filter, tap } from 'rxjs/operators';
-import { TwoFactorAuthenticationSetupResult } from './two-factor-authentication/models/two-factor-authentication-setup-result.model';
-import { TwoFactorAuthenticationSetup } from './two-factor-authentication/models/two-factor-authentication-setup.model';
 import { FormGroup } from '@angular/forms';
 import { OdmValidators } from 'app/core/form-validators/odm-validators';
-import { TwoFactorAuthenticationVerificationCode } from './two-factor-authentication/models/two-factor-authentication-verification-code.model';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
-
 import { upDownFadeInAnimation } from 'app/core/core.module';
 import { ActionCompletion } from '@ngxs/store';
+import { TwoFactorAuthenticationSetupResult } from 'app/core/models/account/security/two-factor-authentication-setup-result.model';
+import { TwoFactorAuthenticationSetup } from 'app/core/models/account/security/two-factor-authentication-setup.model';
+import { TwoFactorAuthenticationVerificationCode } from 'app/core/models/account/security/two-factor-authentication-verification-code.model';
 
 /**
  * Security component container that houses user security functionality.
@@ -113,25 +112,25 @@ export class SecurityContainerComponent implements OnInit {
 
 	/**
 	 * Creates an instance of security container component.
-	 * @param facade
+	 * @param _sb
 	 */
-	constructor(private facade: AccountFacadeService, private cd: ChangeDetectorRef) {
-		this._accountSecurityDetails$ = facade.accountSecurityDetails$;
-		this._authenticatorSetup$ = facade.twoFactorAuthenticationSetup$;
-		this._authenticatorSetupResult$ = facade.twoFactorAuthenticationSetupResult$;
-		this._problemDetails$ = facade.problemDetails$;
-		this._internalServerErrorDetails$ = facade.internalServerErrorDetails$;
+	constructor(private _sb: AccountSandboxService) {
+		this._accountSecurityDetails$ = _sb.accountSecurityDetails$;
+		this._authenticatorSetup$ = _sb.twoFactorAuthenticationSetup$;
+		this._authenticatorSetupResult$ = _sb.twoFactorAuthenticationSetupResult$;
+		this._problemDetails$ = _sb.problemDetails$;
+		this._internalServerErrorDetails$ = _sb.internalServerErrorDetails$;
 	}
 
 	/**
 	 * NgOnInit life cycle. Emits loading value then fetches data for this component
 	 */
 	ngOnInit(): void {
-		this.facade.log.trace('Initialized.', this);
+		this._sb.log.trace('Initialized.', this);
 		// initializes loading for fetching account security info.
 		this._loadingSub.next(true);
 		// fetches account security info.
-		this.facade.getAccountSecurityInfo();
+		this._sb.getAccountSecurityInfo();
 		// subscribes to security container component. Used to handle loading flags.
 		this._subscription.add(this._listenToSecurityEvents$().subscribe());
 		// serverError used for components that display server side errors without adding them to AbstractControl.
@@ -145,15 +144,15 @@ export class SecurityContainerComponent implements OnInit {
 	 * @param event
 	 */
 	_onTwoFactorAuthToggle(event: MatSlideToggleChange): void {
-		this.facade.log.trace('_onTwoFactorAuthToggle fired.', this);
+		this._sb.log.trace('_onTwoFactorAuthToggle fired.', this);
 		this._twoFactorAuthToggleLoadingSub.next(true);
 
 		if (event.checked) {
-			this.facade.log.debug('_onTwoFactorAuthToggle: enter 2fa setup.', this);
-			this.facade.setupAuthenticator();
+			this._sb.log.debug('_onTwoFactorAuthToggle: enter 2fa setup.', this);
+			this._sb.setupAuthenticator();
 		} else {
-			this.facade.log.debug('_onTwoFactorAuthToggle: disable 2fa.', this);
-			this.facade.disable2Fa();
+			this._sb.log.debug('_onTwoFactorAuthToggle: disable 2fa.', this);
+			this._sb.disable2Fa();
 		}
 	}
 
@@ -162,7 +161,7 @@ export class SecurityContainerComponent implements OnInit {
 	 */
 	_onServerErrorHandled(event: boolean): void {
 		// when two factor authentication setup wizard is displayed, hide the error in security-container component.
-		this.facade.log.trace('_onServerErrorHandled fired.', this);
+		this._sb.log.trace('_onServerErrorHandled fired.', this);
 		// if server error was handled, do not show error
 		this._showServerError = !event;
 	}
@@ -172,45 +171,45 @@ export class SecurityContainerComponent implements OnInit {
 	 * @param event
 	 */
 	_onVerifyAuthenticatorClicked(event: TwoFactorAuthenticationVerificationCode): void {
-		this.facade.log.trace('_onVerifyAuthenticator fired.', this);
+		this._sb.log.trace('_onVerifyAuthenticator fired.', this);
 		this._codeVerificationInProgress = true;
-		this.facade.verifyAuthenticator(event);
+		this._sb.verifyAuthenticator(event);
 	}
 
 	/**
 	 * Event handler when user cancels the two factor authentication setup wizard.
 	 */
 	_onCancelSetupWizardClicked(): void {
-		this.facade.log.trace('_onCancelSetupWizard fired.', this);
+		this._sb.log.trace('_onCancelSetupWizard fired.', this);
 		this._showServerError = false;
 		this._verificationCodeForm.reset();
-		this.facade.cancel2faSetupWizard();
+		this._sb.cancel2faSetupWizard();
 	}
 
 	/**
 	 * Event handler when user finishes two factor authentication setup.
 	 */
 	_onFinish2faSetupClicked(event: TwoFactorAuthenticationSetupResult): void {
-		this.facade.log.trace('_onFinish2faSetup fired.', this);
+		this._sb.log.trace('_onFinish2faSetup fired.', this);
 		this._showServerError = false;
 		this._verificationCodeForm.reset();
-		this.facade.finish2faSetup(event);
+		this._sb.finish2faSetup(event);
 	}
 
 	/**
 	 * Event handler when user requests to generate new recovery codes.
 	 */
 	_onGenerateNew2faRecoveryCodesClicked(): void {
-		this.facade.log.trace('_onGenerateNew2FaRecoveryCodes fired.', this);
+		this._sb.log.trace('_onGenerateNew2FaRecoveryCodes fired.', this);
 		this._generatingNewRecoveryCodes = true;
-		this.facade.generateRecoveryCodes();
+		this._sb.generateRecoveryCodes();
 	}
 
 	/**
 	 * Fired when user recovery code panel is opened.
 	 */
 	_onUserRecoveryCodesOpened(): void {
-		this.facade.log.trace('_onUserRecoveryCodesOpened fired.', this);
+		this._sb.log.trace('_onUserRecoveryCodesOpened fired.', this);
 		this._showServerError = false;
 		this._userRecoveryCodesPanelOpened = true;
 	}
@@ -219,7 +218,7 @@ export class SecurityContainerComponent implements OnInit {
 	 * Fired when user recovery code panel is closed.
 	 */
 	_onUserRecoveryCodesClosed(): void {
-		this.facade.log.trace('_onUserRecoveryCodesClosed fired.', this);
+		this._sb.log.trace('_onUserRecoveryCodesClosed fired.', this);
 		this._userRecoveryCodesPanelOpened = false;
 	}
 
@@ -244,13 +243,13 @@ export class SecurityContainerComponent implements OnInit {
 		| ProblemDetails
 		| InternalServerErrorDetails
 	> {
-		this.facade.log.trace('_listenToSecurityEvents executed.', this);
+		this._sb.log.trace('_listenToSecurityEvents executed.', this);
 		return merge(
 			// skip first value that emits, which is the default value.
 			this._accountSecurityDetails$.pipe(skip(1)),
 			// skip first value that emits, which is the default value.
 			this._authenticatorSetupResult$.pipe(skip(1)),
-			this.facade.onCompletedUpdateRecoveryCodesAction$,
+			this._sb.onCompletedUpdateRecoveryCodesAction$,
 			// skip first value that emits, which is the default value.
 			this._authenticatorSetup$.pipe(skip(1)),
 			// if problem details is emitted make sure to stop loading state.
@@ -277,8 +276,8 @@ export class SecurityContainerComponent implements OnInit {
 	 * Initializes verification code form.
 	 */
 	private _initVerificationCodeForm(): void {
-		this._verificationCodeForm = this.facade.fb.group({
-			verificationCode: this.facade.fb.control(
+		this._verificationCodeForm = this._sb.fb.group({
+			verificationCode: this._sb.fb.control(
 				{ value: '', disabled: true },
 				{
 					validators: [OdmValidators.required, OdmValidators.minLength(6), OdmValidators.maxLength(6)],

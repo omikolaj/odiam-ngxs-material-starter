@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
-import { AccountFacadeService } from '../account-facade.service';
+import { AccountSandboxService } from '../account-sandbox.service';
 import { BehaviorSubject, Subscription, Observable, merge } from 'rxjs';
-import { AccountGeneralDetails } from 'app/core/models/account-general-details.model';
+import { AccountGeneralDetails } from 'app/core/models/account/general/account-general-details.model';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { skip, filter, tap } from 'rxjs/operators';
@@ -51,22 +51,22 @@ export class GeneralContainerComponent implements OnInit, OnDestroy {
 
 	/**
 	 * Creates an instance of general container component.
-	 * @param facade
+	 * @param _sb
 	 */
-	constructor(private facade: AccountFacadeService) {
-		this._accountGeneralDetails$ = facade.accountGeneralDetails$;
-		this._internalServerErrorDetails$ = facade.internalServerErrorDetails$;
-		this._problemDetails$ = facade.problemDetails$;
+	constructor(private _sb: AccountSandboxService) {
+		this._accountGeneralDetails$ = _sb.accountGeneralDetails$;
+		this._internalServerErrorDetails$ = _sb.internalServerErrorDetails$;
+		this._problemDetails$ = _sb.problemDetails$;
 	}
 
 	/**
 	 * NgOnInit life cycle.
 	 */
 	ngOnInit(): void {
-		this.facade.log.trace('Initialized.', this);
+		this._sb.log.trace('Initialized.', this);
 
 		this._loadingSub.next(true);
-		this.facade.getAccountGeneralInfo();
+		this._sb.getAccountGeneralInfo();
 
 		this._subscription.add(
 			merge(
@@ -87,7 +87,7 @@ export class GeneralContainerComponent implements OnInit, OnDestroy {
 	 * NgOnDestroy life cycle.
 	 */
 	ngOnDestroy(): void {
-		this.facade.log.trace('Destroyed.', this);
+		this._sb.log.trace('Destroyed.', this);
 		this._subscription.unsubscribe();
 	}
 
@@ -95,7 +95,7 @@ export class GeneralContainerComponent implements OnInit, OnDestroy {
 	 * Event handler when user requests to have email verification re-sent.
 	 */
 	_onResendEmailVerificationClicked(): void {
-		this.facade.resendEmailVerification();
+		this._sb.resendEmailVerification();
 	}
 
 	/**

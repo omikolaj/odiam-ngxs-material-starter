@@ -15,10 +15,10 @@ import { environment as env } from '../../../environments/environment';
 export class TitleService {
 	/**
 	 * Creates an instance of title service.
-	 * @param translateService
-	 * @param title
+	 * @param _translateService
+	 * @param _title
 	 */
-	constructor(private translateService: TranslateService, private title: Title) {}
+	constructor(private _translateService: TranslateService, private _title: Title) {}
 
 	/**
 	 * Sets web page title.
@@ -31,14 +31,14 @@ export class TitleService {
 			lastChild = lastChild.children[0];
 		}
 		const { title } = lastChild.data;
-		const translate = lazyTranslateService || this.translateService;
+		const translate = lazyTranslateService || this._translateService;
 		if (title) {
 			translate
 				.get(title)
 				.pipe(filter((translatedTitle: string) => translatedTitle !== title))
-				.subscribe((translatedTitle) => this.title.setTitle(`${translatedTitle} - ${env.appName}`));
+				.subscribe((translatedTitle) => this._title.setTitle(`${translatedTitle} - ${env.appName}`));
 		} else {
-			this.title.setTitle(env.appName);
+			this._title.setTitle(env.appName);
 		}
 	}
 }

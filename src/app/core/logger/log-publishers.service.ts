@@ -21,15 +21,16 @@ export class LogPublishersService {
 
 	/**
 	 * Initializes the publishers list from JSON file.
+	 * @param _http
 	 */
-	constructor(private http: HttpClient) {
-		this.buildPublishers();
+	constructor(private _http: HttpClient) {
+		this._buildPublishers();
 	}
 
 	/**
 	 * Builds a list of publishers.
 	 */
-	private buildPublishers(): void {
+	private _buildPublishers(): void {
 		let logPub: LogPublisher;
 		const loggerConfig = LoggersConfig as LoggerConfig;
 		this.level = LogLevel[loggerConfig.level] as LogLevel;
@@ -45,7 +46,7 @@ export class LogPublishersService {
 						logPub = new LogLocalStorage();
 						break;
 					case 'webapi':
-						logPub = new LogWebApi(this.http);
+						logPub = new LogWebApi(this._http);
 						break;
 				}
 

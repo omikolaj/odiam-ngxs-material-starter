@@ -1,5 +1,4 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { AuthFacadeService } from '../auth-facade.service';
 import { AsyncValidatorsService } from 'app/core/form-validators/validators-async.service';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
@@ -8,10 +7,11 @@ import { InternalServerErrorDetails } from 'app/core/models/internal-server-erro
 import { FormGroup } from '@angular/forms';
 import { MinScreenSizeQuery } from 'app/shared/screen-size-queries';
 import { OdmValidators } from 'app/core/form-validators/odm-validators';
-import { SignupUser } from 'app/core/auth/models/signup-user.model';
-import { ActiveAuthType } from 'app/core/auth/models/active-auth-type.model';
-import { AuthTypeRouteUrl } from 'app/core/auth/models/auth-type-route-url.model';
 import { rightLeftFadeInAnimation } from 'app/core/core.module';
+import { AuthSandboxService } from '../auth-sandbox.service';
+import { SignupUser } from 'app/core/models/auth/signup-user.model';
+import { ActiveAuthType } from 'app/core/models/auth/active-auth-type.model';
+import { AuthTypeRouteUrl } from 'app/core/models/auth/auth-type-route-url.model';
 
 /**
  * Sign up container component.
@@ -51,22 +51,22 @@ export class SignUpContainerComponent implements OnInit {
 
 	/**
 	 * Creates an instance of sign up container component.
-	 * @param facade
-	 * @param asyncValidators
+	 * @param _sb
+	 * @param _asyncValidators
 	 * @param breakpointObserver
 	 */
-	constructor(private facade: AuthFacadeService, private asyncValidators: AsyncValidatorsService, breakpointObserver: BreakpointObserver) {
-		this._problemDetails$ = facade.problemDetails$;
-		this._internalServerErrorDetails$ = facade.internalServerErrorDetails$;
+	constructor(private _sb: AuthSandboxService, private _asyncValidators: AsyncValidatorsService, breakpointObserver: BreakpointObserver) {
+		this._problemDetails$ = _sb.problemDetails$;
+		this._internalServerErrorDetails$ = _sb.internalServerErrorDetails$;
 		this._breakpointStateScreenMatcher$ = breakpointObserver.observe([MinScreenSizeQuery.md]);
-		this._activeAuthType$ = facade.activeAuthType$;
+		this._activeAuthType$ = _sb.activeAuthType$;
 	}
 
 	/**
 	 * NgOnInit life cycle.
 	 */
 	ngOnInit(): void {
-		this.facade.log.trace('Initialized.', this);
+		this._sb.log.trace('Initialized.', this);
 		this._initForms();
 	}
 
@@ -75,34 +75,34 @@ export class SignUpContainerComponent implements OnInit {
 	 * @param model
 	 */
 	_onSignupSubmitted(model: SignupUser): void {
-		this.facade.log.trace('_onSignupSubmitted event handler fired.', this);
-		this.facade.signupUser(model);
+		this._sb.log.trace('_onSignupSubmitted event handler fired.', this);
+		this._sb.signupUser(model);
 	}
 
 	/**
 	 * Event handler for when user signs in with google.
 	 */
 	_onSigninWithGoogleSubmitted(): void {
-		this.facade.log.trace('_onSigninWithGoogleSubmitted event handler fired.', this);
-		this.facade.signinUserWithGoogle();
+		this._sb.log.trace('_onSigninWithGoogleSubmitted event handler fired.', this);
+		this._sb.signinUserWithGoogle();
 	}
 
 	/**
 	 * Event handler for when user signs in with facebook.
 	 */
 	_onSigninWithFacebookSubmitted(): void {
-		this.facade.log.trace('_onSigninWithFacebookSubmitted event handler fired.', this);
-		this.facade.signinUserWithFacebook();
+		this._sb.log.trace('_onSigninWithFacebookSubmitted event handler fired.', this);
+		this._sb.signinUserWithFacebook();
 	}
 
 	/**
 	 * Used to switch view to signin context.
 	 */
 	_onSwitchToSigninClicked(event: ActiveAuthType): void {
-		this.facade.log.trace('_switchToSignup fired.', this);
+		this._sb.log.trace('_switchToSignup fired.', this);
 		const activeAuthType = { activeAuthType: event };
 		const routeUrl: AuthTypeRouteUrl = event === 'sign-in-active' ? 'sign-in' : 'sign-up';
-		this.facade.onSwitchAuth(activeAuthType, routeUrl);
+		this._sb.onSwitchAuth(activeAuthType, routeUrl);
 	}
 
 	/**
@@ -117,14 +117,14 @@ export class SignUpContainerComponent implements OnInit {
 	 * @returns signup form
 	 */
 	private _initSignupForm(): FormGroup {
-		return this.facade.fb.group(
+		return this._sb.fb.group(
 			{
-				email: this.facade.fb.control('', {
+				email: this._sb.fb.control('', {
 					validators: [OdmValidators.required, OdmValidators.email],
-					asyncValidators: [this.asyncValidators.checkIfEmailIsUnique()],
+					asyncValidators: [this._asyncValidators.checkIfEmailIsUnique()],
 					updateOn: 'blur'
 				}),
-				password: this.facade.fb.control('', {
+				password: this._sb.fb.control('', {
 					validators: [
 						OdmValidators.required,
 						OdmValidators.minLength(8),
@@ -136,7 +136,7 @@ export class SignUpContainerComponent implements OnInit {
 					],
 					updateOn: 'change'
 				}),
-				confirmPassword: this.facade.fb.control('', OdmValidators.required)
+				confirmPassword: this._sb.fb.control('', OdmValidators.required)
 			},
 			{
 				validators: OdmValidators.requireConfirmPassword,

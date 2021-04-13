@@ -1,5 +1,5 @@
-import { AccountSecurityDetails } from 'app/core/models/account-security-details.model';
-import { UserRecoveryCodes } from './models/user-recovery-codes.model';
+import { AccountSecurityDetails } from 'app/core/models/account/security/account-security-details.model';
+import { UserRecoveryCodes } from '../../../core/models/account/security/user-recovery-codes.model';
 
 /**
  * Set account security details.

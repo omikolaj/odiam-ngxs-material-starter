@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
-import { SignupUser } from 'app/core/auth/models/signup-user.model';
 import { AuthAsyncService } from 'app/core/auth/auth-async.service';
 import { Observable } from 'rxjs';
-import { SigninUser } from 'app/core/auth/models/signin-user.model';
 import { ProblemDetailsError } from 'app/core/error-handler/problem-details-error.decorator';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerError } from 'app/core/error-handler/internal-server-error.decorator';
@@ -11,26 +9,27 @@ import { switchMap, tap } from 'rxjs/operators';
 import { Store, Select } from '@ngxs/store';
 import * as Auth from '../../core/auth/auth.store.actions';
 import { Router } from '@angular/router';
-import { AccessToken } from 'app/core/auth/models/access-token.model';
 import { AuthState } from 'app/core/auth/auth.store.state';
 import { SocialAuthService, SocialUser, GoogleLoginProvider, FacebookLoginProvider } from 'angularx-social-login';
 import { UsersAsyncService } from 'app/core/services/users-async.service';
-import { PasswordReset } from 'app/core/auth/models/password-reset.model';
 import { TranslateValidationErrorsService } from 'app/shared/services/translate-validation-errors.service';
 import { LogService } from 'app/core/logger/log.service';
 import { FormBuilder } from '@angular/forms';
-import { ActiveAuthType } from 'app/core/auth/models/active-auth-type.model';
-import { AuthTypeRouteUrl } from 'app/core/auth/models/auth-type-route-url.model';
-
 import { AuthService } from '../../core/auth/auth.service';
-import { TwoFactorAuthenticationVerificationCode } from '../account/security-container/two-factor-authentication/models/two-factor-authentication-verification-code.model';
-import { TwoFactorRecoveryCode } from 'app/core/auth/models/two-factor-recovery-code.model';
+import { ActiveAuthType } from 'app/core/models/auth/active-auth-type.model';
+import { AuthTypeRouteUrl } from 'app/core/models/auth/auth-type-route-url.model';
+import { PasswordReset } from 'app/core/models/auth/password-reset.model';
+import { TwoFactorAuthenticationVerificationCode } from 'app/core/models/account/security/two-factor-authentication-verification-code.model';
+import { TwoFactorRecoveryCode } from 'app/core/models/auth/two-factor-recovery-code.model';
+import { AccessToken } from 'app/core/models/auth/access-token.model';
+import { SignupUser } from 'app/core/models/auth/signup-user.model';
+import { SigninUser } from 'app/core/models/auth/signin-user.model';
 
 /**
- * Auth facade service.
+ * Auth sandbox service.
  */
 @Injectable()
-export class AuthFacadeService {
+export class AuthSandboxService {
 	/**
 	 * Emitted when server responds with 40X error.
 	 */
@@ -72,22 +71,27 @@ export class AuthFacadeService {
 	@Select(AuthState.selectIsRedeemRecoveryCodeSuccessful) isRecoveryCodeRedemptionSuccessful$: Observable<boolean>;
 
 	/**
-	 * Creates an instance of auth facade service.
-	 * @param authAsyncService
-	 * @param notification
-	 * @param store
+	 * Creates an instance of auth sandbox service.
+	 * @param translateValidationErrorService
+	 * @param log
+	 * @param fb
 	 * @param router
+	 * @param _authAsyncService
+	 * @param _usersAsyncService
+	 * @param _store
+	 * @param _socialAuthService
+	 * @param _authService
 	 */
 	constructor(
 		public translateValidationErrorService: TranslateValidationErrorsService,
 		public log: LogService,
 		public fb: FormBuilder,
 		public router: Router,
-		private authAsyncService: AuthAsyncService,
-		private usersAsyncService: UsersAsyncService,
-		private store: Store,
-		private socialAuthService: SocialAuthService,
-		private authService: AuthService
+		private _authAsyncService: AuthAsyncService,
+		private _usersAsyncService: UsersAsyncService,
+		private _store: Store,
+		private _socialAuthService: SocialAuthService,
+		private _authService: AuthService
 	) {}
 
 	/**
@@ -106,7 +110,7 @@ export class AuthFacadeService {
 	 * @param activePanel
 	 */
 	onUpdateActiveAuthType(activePanel: { activeAuthType: ActiveAuthType }): void {
-		this.store.dispatch(new Auth.SwitchAuthType(activePanel));
+		this._store.dispatch(new Auth.SwitchAuthType(activePanel));
 	}
 
 	/**
@@ -114,7 +118,7 @@ export class AuthFacadeService {
 	 * @param event
 	 */
 	onRememberMeChanged(event: boolean): void {
-		this.store.dispatch(new Auth.RememberMeOptionChange({ rememberMe: event }));
+		this._store.dispatch(new Auth.RememberMeOptionChange({ rememberMe: event }));
 	}
 
 	/**
@@ -122,7 +126,7 @@ export class AuthFacadeService {
 	 * @param event
 	 */
 	onStaySignedinChanged(event: boolean): void {
-		this.store.dispatch(new Auth.StaySignedinOptionChange(event));
+		this._store.dispatch(new Auth.StaySignedinOptionChange(event));
 	}
 
 	/**
@@ -130,7 +134,7 @@ export class AuthFacadeService {
 	 * @param email
 	 */
 	forgotPassword(email: string): void {
-		this.usersAsyncService.forgotPassword$(email).subscribe();
+		this._usersAsyncService.forgotPassword$(email).subscribe();
 	}
 
 	/**
@@ -138,7 +142,7 @@ export class AuthFacadeService {
 	 * @param model
 	 */
 	onResetPassword(model: PasswordReset): void {
-		this.usersAsyncService.resetPassword$(model).subscribe();
+		this._usersAsyncService.resetPassword$(model).subscribe();
 	}
 
 	/**
@@ -146,7 +150,7 @@ export class AuthFacadeService {
 	 * @param model
 	 */
 	signupUser(model: SignupUser): void {
-		this.authAsyncService
+		this._authAsyncService
 			.signup$(model)
 			.pipe(
 				switchMap((token) => this._authenticate$(token)),
@@ -160,7 +164,7 @@ export class AuthFacadeService {
 	 * @param model
 	 */
 	signinUser(model: SigninUser): void {
-		this.authAsyncService
+		this._authAsyncService
 			.signin$(model)
 			.pipe(
 				switchMap((resp) => this._authenticate$(resp.accessToken, model.rememberMe, model.email, resp.is2StepVerificationRequired, resp.provider))
@@ -173,10 +177,10 @@ export class AuthFacadeService {
 	 * @param model
 	 */
 	verifyTwoStepVerificationCode(model: TwoFactorAuthenticationVerificationCode): void {
-		this.authAsyncService
+		this._authAsyncService
 			.verifyTwoStepVerificationCode$(model)
 			.pipe(
-				tap(() => this.store.dispatch(new Auth.Is2StepVerificationSuccessful({ is2StepVerificationSuccessful: true }))),
+				tap(() => this._store.dispatch(new Auth.Is2StepVerificationSuccessful({ is2StepVerificationSuccessful: true }))),
 				switchMap((accessToken) => this._authenticate$(accessToken))
 			)
 			.subscribe();
@@ -195,10 +199,10 @@ export class AuthFacadeService {
 	 * @param model
 	 */
 	redeemRecoveryCode(model: TwoFactorRecoveryCode): void {
-		this.authAsyncService
+		this._authAsyncService
 			.redeemRecoveryCode$(model)
 			.pipe(
-				tap(() => this.store.dispatch(new Auth.IsRedeemRecoveryCodeSuccessful({ isRedeemRecoveryCodeSuccessful: true }))),
+				tap(() => this._store.dispatch(new Auth.IsRedeemRecoveryCodeSuccessful({ isRedeemRecoveryCodeSuccessful: true }))),
 				switchMap((accessToken) => this._authenticate$(accessToken))
 			)
 			.subscribe();
@@ -208,8 +212,8 @@ export class AuthFacadeService {
 	 * Signs user in with google.
 	 */
 	signinUserWithGoogle(): void {
-		void this.socialAuthService.signIn(GoogleLoginProvider.PROVIDER_ID).then((model: SocialUser) => {
-			this.authAsyncService
+		void this._socialAuthService.signIn(GoogleLoginProvider.PROVIDER_ID).then((model: SocialUser) => {
+			this._authAsyncService
 				.signinWithGoogle$(model)
 				.pipe(
 					switchMap((token) => this._authenticate$(token)),
@@ -223,8 +227,8 @@ export class AuthFacadeService {
 	 * Signs user in with facebook.
 	 */
 	signinUserWithFacebook(): void {
-		void this.socialAuthService.signIn(FacebookLoginProvider.PROVIDER_ID).then((model: SocialUser) => {
-			this.authAsyncService
+		void this._socialAuthService.signIn(FacebookLoginProvider.PROVIDER_ID).then((model: SocialUser) => {
+			this._authAsyncService
 				.signinWithFacebook$(model)
 				.pipe(
 					switchMap((token) => this._authenticate$(token)),
@@ -250,7 +254,7 @@ export class AuthFacadeService {
 		is2StepVerificationRequired?: boolean,
 		provider?: string
 	): Observable<any> {
-		return this.authService.processUserAuthentication$(accessToken, rememberMe, email, is2StepVerificationRequired, provider);
+		return this._authService.processUserAuthentication$(accessToken, rememberMe, email, is2StepVerificationRequired, provider);
 	}
 
 	/**
@@ -258,6 +262,6 @@ export class AuthFacadeService {
 	 * @returns Observable<any>
 	 */
 	private _monitorUserSession$(): Observable<any> {
-		return this.authService.monitorSessionActivity$();
+		return this._authService.monitorSessionActivity$();
 	}
 }

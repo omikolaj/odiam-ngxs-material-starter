@@ -67,10 +67,10 @@ export class UserSessionActivityService {
 	/**
 	 * Creates an instance of user session activity service.
 	 * @param rendererFactory
-	 * @param localStorageService
-	 * @param log
+	 * @param _localStorageService
+	 * @param _log
 	 */
-	constructor(rendererFactory: RendererFactory2, private localStorageService: LocalStorageService, private log: LogService) {
+	constructor(rendererFactory: RendererFactory2, private _localStorageService: LocalStorageService, private _log: LogService) {
 		// renderer 2 https://stackoverflow.com/questions/44989666/service-no-provider-for-renderer2
 		this._renderer = rendererFactory.createRenderer(null, null);
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -82,7 +82,7 @@ export class UserSessionActivityService {
 	 * @returns if user is active
 	 */
 	monitorSessionActivity$(): Observable<boolean> {
-		this.log.trace('monitorSessionActivity$ fired.', this);
+		this._log.trace('monitorSessionActivity$ fired.', this);
 		this._tracker();
 		return this._isUserActive$().pipe(startWith(true));
 	}
@@ -91,7 +91,7 @@ export class UserSessionActivityService {
 	 * Starts activity timer.
 	 */
 	startActivityTimer(): void {
-		this.log.trace('startActivityTimer executed.', this);
+		this._log.trace('startActivityTimer executed.', this);
 		this._start.next();
 	}
 
@@ -99,7 +99,7 @@ export class UserSessionActivityService {
 	 * Stops activity timer.
 	 */
 	stopActivityTimer(): void {
-		this.log.trace('stopActivityTimer executed.', this);
+		this._log.trace('stopActivityTimer executed.', this);
 		this._stop.next();
 	}
 
@@ -107,7 +107,7 @@ export class UserSessionActivityService {
 	 * Cleans up 'mousemove', 'scroll' and 'keydown' events from the page.
 	 */
 	cleanUp(): void {
-		this.log.trace('cleanUp executed.', this);
+		this._log.trace('cleanUp executed.', this);
 		this._unlistenFromMouseMove();
 		this._unlistenFromKeyDown();
 		this._unlistenFromScroll();
@@ -118,10 +118,10 @@ export class UserSessionActivityService {
 	 */
 	private _unlistenFromMouseMove(): void {
 		try {
-			this.log.debug("Unlistening 'mousemove' event.", this);
+			this._log.debug("Unlistening 'mousemove' event.", this);
 			this._unlistenMouseMove();
 		} catch (error) {
-			this.log.error("Error occured when unlistening 'mousemove'.", this, error);
+			this._log.error("Error occured when unlistening 'mousemove'.", this, error);
 		}
 	}
 
@@ -130,10 +130,10 @@ export class UserSessionActivityService {
 	 */
 	private _unlistenFromKeyDown(): void {
 		try {
-			this.log.debug("Unlistening 'keydown' event.", this);
+			this._log.debug("Unlistening 'keydown' event.", this);
 			this._unlistenKeydown();
 		} catch (error) {
-			this.log.error("Error occured when unlistening 'keydown'.", this, error);
+			this._log.error("Error occured when unlistening 'keydown'.", this, error);
 		}
 	}
 
@@ -142,10 +142,10 @@ export class UserSessionActivityService {
 	 */
 	private _unlistenFromScroll(): void {
 		try {
-			this.log.debug("Unlistening 'scroll' event.", this);
+			this._log.debug("Unlistening 'scroll' event.", this);
 			this._unlistenScroll();
 		} catch (error) {
-			this.log.error("Error occured when unlistening 'scroll'.", this, error);
+			this._log.error("Error occured when unlistening 'scroll'.", this, error);
 		}
 	}
 
@@ -159,7 +159,7 @@ export class UserSessionActivityService {
 		return timer(this._checkActivityIntervalInSeconds * 1000).pipe(
 			takeUntil(this._stop),
 			map(() => {
-				const expiredTime = parseInt(this.localStorageService.getItem(ACTIVE_UNTIL), 10);
+				const expiredTime = parseInt(this._localStorageService.getItem(ACTIVE_UNTIL), 10);
 				return isBefore(Date.now(), expiredTime);
 			}),
 			repeatWhen(() => this._start)
@@ -174,8 +174,8 @@ export class UserSessionActivityService {
 			clearTimeout(this._timeoutTracker);
 		}
 		this._timeoutTracker = setTimeout(() => {
-			this.log.trace('Updating ACTIVE_UNTIL value.', this);
-			this.localStorageService.setItem(ACTIVE_UNTIL, add(new Date(), { seconds: this._userInactivityTimeoutInSeconds }).getTime());
+			this._log.trace('Updating ACTIVE_UNTIL value.', this);
+			this._localStorageService.setItem(ACTIVE_UNTIL, add(new Date(), { seconds: this._userInactivityTimeoutInSeconds }).getTime());
 		}, 300);
 	}
 
@@ -184,11 +184,11 @@ export class UserSessionActivityService {
 	 * These events track user's activity on the page and are used to determine if user is active/inactive.
 	 */
 	private _tracker(): void {
-		this.log.debug("Listening for 'mousemove' event.", this);
+		this._log.debug("Listening for 'mousemove' event.", this);
 		this._unlistenMouseMove = this._renderer.listen('window', 'mousemove', this._eventHandler);
-		this.log.debug("Listening for 'keydown' event.", this);
+		this._log.debug("Listening for 'keydown' event.", this);
 		this._unlistenKeydown = this._renderer.listen('window', 'keydown', this._eventHandler);
-		this.log.debug("Listening for 'scroll' event.", this);
+		this._log.debug("Listening for 'scroll' event.", this);
 		this._unlistenScroll = this._renderer.listen('window', 'scroll', this._eventHandler);
 	}
 }

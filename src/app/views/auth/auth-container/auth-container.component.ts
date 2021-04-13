@@ -3,10 +3,10 @@ import { Observable, Subscription } from 'rxjs';
 import { BreakpointState, BreakpointObserver } from '@angular/cdk/layout';
 import { MinScreenSizeQuery } from 'app/shared/screen-size-queries';
 import { ROUTE_ANIMATIONS_ELEMENTS, routeAnimations, leftRightFadeInAnimation } from 'app/core/core.module';
-import { AuthFacadeService } from '../auth-facade.service';
-import { ActiveAuthType } from 'app/core/auth/models/active-auth-type.model';
 import { tap, startWith } from 'rxjs/operators';
 import { NavigationEnd } from '@angular/router';
+import { ActiveAuthType } from 'app/core/models/auth/active-auth-type.model';
+import { AuthSandboxService } from '../auth-sandbox.service';
 
 /**
  * Auth container component that houses all functionality responsible for displaying sign-in/sign-up/forgot-password.
@@ -44,28 +44,28 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 * Whether user is on forgot-password route.
 	 */
 	get _forgotPasswordIsDisplayed(): boolean {
-		return this.facade.router.url === '/auth/forgot-password';
+		return this._sb.router.url === '/auth/forgot-password';
 	}
 
 	/**
 	 * Whether user is on two step verification route.
 	 */
 	get _twoStepVerificationIsDisplayed(): boolean {
-		return this.facade.router.url.includes('/auth/two-step-verification');
+		return this._sb.router.url.includes('/auth/two-step-verification');
 	}
 
 	/**
 	 * Whether user is on redeem recovery code route.
 	 */
 	get _redeemRecoveryCodeIsDisplayed(): boolean {
-		return this.facade.router.url.includes('/auth/redeem-recovery-code');
+		return this._sb.router.url.includes('/auth/redeem-recovery-code');
 	}
 
 	/**
 	 * Whether user is on two step verification route.
 	 */
 	get _signInIsDisplayed(): boolean {
-		return this.facade.router.url === '/auth/sign-in';
+		return this._sb.router.url === '/auth/sign-in';
 	}
 
 	/**
@@ -76,23 +76,23 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	/**
 	 * Creates an instance of auth container component.
 	 * @param breakpointObserver
-	 * @param facade
+	 * @param _sb
 	 */
-	constructor(breakpointObserver: BreakpointObserver, private facade: AuthFacadeService) {
+	constructor(breakpointObserver: BreakpointObserver, private _sb: AuthSandboxService) {
 		this._breakpointStateScreenMatcher$ = breakpointObserver.observe([MinScreenSizeQuery.md]);
-		this._activeAuthType$ = facade.activeAuthType$;
+		this._activeAuthType$ = _sb.activeAuthType$;
 	}
 
 	/**
 	 * NgOnInit life cycle.
 	 */
 	ngOnInit(): void {
-		this.facade.log.trace('Initialized.', this);
+		this._sb.log.trace('Initialized.', this);
 
 		this._subscription.add(
-			this.facade.router.events
+			this._sb.router.events
 				.pipe(
-					startWith(this._setActiveAuthTypeBasedOnUrl(this.facade.router.url)),
+					startWith(this._setActiveAuthTypeBasedOnUrl(this._sb.router.url)),
 					// we need to always respond to route events when this component is loaded.
 					// That's what loads sign-in/sign-up/forgot-password components based on the current url.
 					tap((event) => {
@@ -109,7 +109,7 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 * NgOnDestroy life cycle.
 	 */
 	ngOnDestroy(): void {
-		this.facade.log.trace('Destroyed.', this);
+		this._sb.log.trace('Destroyed.', this);
 		this._subscription.unsubscribe();
 	}
 
@@ -119,11 +119,11 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 */
 	private _setActiveAuthTypeBasedOnUrl(url: string): void {
 		if (url === '/auth/sign-in' || url === '/auth') {
-			this.facade.onSwitchAuth({ activeAuthType: 'sign-in-active' }, 'sign-in');
+			this._sb.onSwitchAuth({ activeAuthType: 'sign-in-active' }, 'sign-in');
 		} else if (url === '/auth/sign-up') {
-			this.facade.onSwitchAuth({ activeAuthType: 'sign-up-active' }, 'sign-up');
+			this._sb.onSwitchAuth({ activeAuthType: 'sign-up-active' }, 'sign-up');
 		} else if (url === '/auth/forgot-password') {
-			this.facade.onUpdateActiveAuthType({ activeAuthType: 'forgot-password-active' });
+			this._sb.onUpdateActiveAuthType({ activeAuthType: 'forgot-password-active' });
 		}
 	}
 
@@ -131,14 +131,14 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 * Switchs to signin.
 	 */
 	_switchToSignin(): void {
-		this.facade.onSwitchAuth({ activeAuthType: 'sign-in-active' }, 'sign-in');
+		this._sb.onSwitchAuth({ activeAuthType: 'sign-in-active' }, 'sign-in');
 	}
 
 	/**
 	 * Switchs to signup.
 	 */
 	_switchToSignup(): void {
-		this.facade.onSwitchAuth({ activeAuthType: 'sign-up-active' }, 'sign-up');
+		this._sb.onSwitchAuth({ activeAuthType: 'sign-up-active' }, 'sign-up');
 	}
 
 	/**

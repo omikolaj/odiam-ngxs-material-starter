@@ -1,13 +1,13 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { AuthFacadeService } from '../auth-facade.service';
 import { ActivatedRoute } from '@angular/router';
 import { FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { tap } from 'rxjs/operators';
-import { TwoFactorRecoveryCode } from 'app/core/auth/models/two-factor-recovery-code.model';
 import { leftRightFadeInAnimation } from 'app/core/core.module';
+import { AuthSandboxService } from '../auth-sandbox.service';
+import { TwoFactorRecoveryCode } from 'app/core/models/auth/two-factor-recovery-code.model';
 
 /**
  * When user chooses to redeem two factor authentication Recovery code, this compnent will be displayed.
@@ -57,22 +57,22 @@ export class RedeemRecoveryCodeComponent implements OnInit {
 
 	/**
 	 * Creates an instance of redeem Recovery code component.
-	 * @param facade
-	 * @param route
+	 * @param _sb
+	 * @param _route
 	 */
-	constructor(private facade: AuthFacadeService, private route: ActivatedRoute) {
-		this._recoveryCodeVerificationSucceeded$ = facade.isRecoveryCodeRedemptionSuccessful$;
+	constructor(private _sb: AuthSandboxService, private _route: ActivatedRoute) {
+		this._recoveryCodeVerificationSucceeded$ = _sb.isRecoveryCodeRedemptionSuccessful$;
 		// reset code verification value to false when server error occurs.
-		this._problemDetails$ = facade.problemDetails$.pipe(tap(() => (this._recoveryCodeVerificationInProgress = false)));
+		this._problemDetails$ = _sb.problemDetails$.pipe(tap(() => (this._recoveryCodeVerificationInProgress = false)));
 		// reset code verification value to false when server error occurs.
-		this._internalServerErrorDetails$ = facade.internalServerErrorDetails$.pipe(tap(() => (this._recoveryCodeVerificationInProgress = false)));
+		this._internalServerErrorDetails$ = _sb.internalServerErrorDetails$.pipe(tap(() => (this._recoveryCodeVerificationInProgress = false)));
 	}
 
 	/**
 	 * ngOnInit life cycle.
 	 */
 	ngOnInit(): void {
-		this.facade.log.trace('Initialized.', this);
+		this._sb.log.trace('Initialized.', this);
 		this._setPropertiesFromQueryParams();
 	}
 
@@ -80,20 +80,20 @@ export class RedeemRecoveryCodeComponent implements OnInit {
 	 * Event handler when user submits Recovery code to be redeemed.
 	 */
 	_onRecoveryCodeSubmitted(event: unknown): void {
-		this.facade.log.trace('_onRecoveryCodeSubmitted fired.', this);
+		this._sb.log.trace('_onRecoveryCodeSubmitted fired.', this);
 		this._recoveryCodeVerificationInProgress = true;
 		const model = event as TwoFactorRecoveryCode;
-		this.facade.log.debug('[_onRecoveryCodeSubmitted]: Setting [email] value query params.', this);
+		this._sb.log.debug('[_onRecoveryCodeSubmitted]: Setting [email] value query params.', this);
 		model.email = this._email;
-		this.facade.redeemRecoveryCode(model);
+		this._sb.redeemRecoveryCode(model);
 	}
 
 	/**
 	 * Event handler when user clicks to cancel the setup wizard.
 	 */
 	_onCancelClicked(): void {
-		this.facade.log.trace('_onCancelClicked fired.', this);
-		this.facade.cancelTwoStepVerificationCodeProcess();
+		this._sb.log.trace('_onCancelClicked fired.', this);
+		this._sb.cancelTwoStepVerificationCodeProcess();
 	}
 
 	/**
@@ -101,6 +101,6 @@ export class RedeemRecoveryCodeComponent implements OnInit {
 	 */
 	private _setPropertiesFromQueryParams(): void {
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-		this._email = this.route.snapshot.queryParams['email'];
+		this._email = this._route.snapshot.queryParams['email'];
 	}
 }

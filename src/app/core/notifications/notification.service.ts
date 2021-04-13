@@ -13,14 +13,14 @@ export class NotificationService {
 	 * @param snackBar
 	 * @param zone
 	 */
-	constructor(private readonly snackBar: MatSnackBar, private readonly zone: NgZone) {}
+	constructor(private readonly _snackBar: MatSnackBar, private readonly _zone: NgZone) {}
 
 	/**
 	 * Defaults notification.
 	 * @param message
 	 */
 	default(message: string): void {
-		this.show(message, {
+		this._show(message, {
 			duration: 2000,
 			panelClass: 'default-notification-overlay'
 		});
@@ -31,7 +31,7 @@ export class NotificationService {
 	 * @param message
 	 */
 	info(message: string): void {
-		this.show(message, {
+		this._show(message, {
 			duration: 2000,
 			panelClass: 'info-notification-overlay'
 		});
@@ -42,7 +42,7 @@ export class NotificationService {
 	 * @param message
 	 */
 	success(message: string): void {
-		this.show(message, {
+		this._show(message, {
 			duration: 2000,
 			panelClass: 'success-notification-overlay'
 		});
@@ -53,7 +53,7 @@ export class NotificationService {
 	 * @param message
 	 */
 	warn(message: string): void {
-		this.show(message, {
+		this._show(message, {
 			duration: 2500,
 			panelClass: 'warning-notification-overlay'
 		});
@@ -64,7 +64,7 @@ export class NotificationService {
 	 * @param message
 	 */
 	error(message: string): void {
-		this.show(message, {
+		this._show(message, {
 			duration: 3000,
 			panelClass: 'error-notification-overlay'
 		});
@@ -75,9 +75,9 @@ export class NotificationService {
 	 * @param message
 	 * @param configuration
 	 */
-	private show(message: string, configuration: MatSnackBarConfig): void {
+	private _show(message: string, configuration: MatSnackBarConfig): void {
 		// Need to open snackBar from Angular zone to prevent issues with its position per
 		// https://stackoverflow.com/questions/50101912/snackbar-position-wrong-when-use-errorhandler-in-angular-5-and-material
-		this.zone.run(() => this.snackBar.open(message, null, configuration));
+		this._zone.run(() => this._snackBar.open(message, null, configuration));
 	}
 }

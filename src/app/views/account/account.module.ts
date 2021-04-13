@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AccountRoutingModule } from './account-routing.module';
 import { SharedModule } from 'app/shared/shared.module';
-import { AccountFacadeService } from './account-facade.service';
+import { AccountSandboxService } from './account-sandbox.service';
 import { NgxsModule } from '@ngxs/store';
 import { QRCodeModule } from 'angularx-qrcode';
 import { AccountComponent } from './account/account.component';
@@ -36,6 +36,6 @@ import { AccountGeneralState } from './general-container/general-container.store
 		SharedModule,
 		NgxsModule.forFeature([AccountSecurityState, AccountGeneralState, TwoFactorAuthenticationState])
 	],
-	providers: [AccountFacadeService]
+	providers: [AccountSandboxService]
 })
 export class AccountModule {}

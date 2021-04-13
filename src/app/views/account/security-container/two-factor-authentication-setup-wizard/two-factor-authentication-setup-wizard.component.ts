@@ -1,13 +1,13 @@
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { TwoFactorAuthenticationSetupResult } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-setup-result.model';
-import { TwoFactorAuthenticationVerificationCode } from '../two-factor-authentication/models/two-factor-authentication-verification-code.model';
-import { TwoFactorAuthenticationSetup } from 'app/views/account/security-container/two-factor-authentication/models/two-factor-authentication-setup.model';
 import { ODM_BIG_SPINNER_DIAMETER, ODM_BIG_SPINNER_STROKE_WIDTH } from 'app/shared/global-settings/mat-spinner-settings';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { CdkStepper } from '@angular/cdk/stepper';
-import { AccountFacadeService } from '../../account-facade.service';
+import { AccountSandboxService } from '../../account-sandbox.service';
+import { TwoFactorAuthenticationSetupResult } from 'app/core/models/account/security/two-factor-authentication-setup-result.model';
+import { TwoFactorAuthenticationSetup } from 'app/core/models/account/security/two-factor-authentication-setup.model';
+import { TwoFactorAuthenticationVerificationCode } from 'app/core/models/account/security/two-factor-authentication-verification-code.model';
 
 /**
  * Two factor authentication setup wizard component.
@@ -43,7 +43,7 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 	 * Two factor authentication setup result.
 	 */
 	@Input() set twoFactorAuthenticationSetupResult(value: TwoFactorAuthenticationSetupResult) {
-		this.facade.log.debug('twoFactorAuthenticationSetupResult emitted.', this);
+		this._sb.log.debug('twoFactorAuthenticationSetupResult emitted.', this);
 		if (value.status === 'Succeeded') {
 			this._codeVerificationSucceeded = true;
 			this._is2faSetupCompleted = true;
@@ -64,7 +64,7 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 	 * Two factor authentication setup information.
 	 */
 	@Input() set twoFactorAuthenticationSetup(value: TwoFactorAuthenticationSetup) {
-		this.facade.log.debug('twoFactorAuthenticationSetup emitted.', this);
+		this._sb.log.debug('twoFactorAuthenticationSetup emitted.', this);
 		this._twoFactorAuthenticationSetup = value;
 		if (value.authenticatorUri && value.sharedKey) {
 			// enable verification code control
@@ -138,15 +138,15 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 
 	/**
 	 * Creates an instance of two factor authentication setup wizard component.
-	 * @param facade
+	 * @param _sb
 	 */
-	constructor(private facade: AccountFacadeService) {}
+	constructor(private _sb: AccountSandboxService) {}
 
 	/**
 	 * Event handler when user submits two factor authentication setup verification code.
 	 */
 	_onVerificationCodeSubmitted(event: unknown): void {
-		this.facade.log.trace('_onVerificationCodeSubmitted fired.', this);
+		this._sb.log.trace('_onVerificationCodeSubmitted fired.', this);
 		this.verificationCodeSubmitted.emit(event as TwoFactorAuthenticationVerificationCode);
 	}
 
@@ -155,7 +155,7 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 	 * @param stepper
 	 */
 	_onFinishSetup(): void {
-		this.facade.log.trace('_onRestartOrFinishClicked fired.', this);
+		this._sb.log.trace('_onRestartOrFinishClicked fired.', this);
 		this.finish2faSetupClicked.emit(this._twoFactorAuthenticationSetupResult);
 	}
 
@@ -163,7 +163,7 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 	 * Event handler when user clicks to cancel the setup wizard.
 	 */
 	_onCancelClicked(): void {
-		this.facade.log.trace('_onCancelClicked fired.', this);
+		this._sb.log.trace('_onCancelClicked fired.', this);
 		this.cancelSetupWizardClicked.emit();
 	}
 }

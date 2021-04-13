@@ -11,9 +11,9 @@ import { AuthState } from '../auth/auth.store.state';
 export class HttpAccessTokenInterceptor implements HttpInterceptor {
 	/**
 	 * Creates an instance of http access token interceptor.
-	 * @param store
+	 * @param _store
 	 */
-	constructor(private store: Store) {}
+	constructor(private _store: Store) {}
 
 	/**
 	 * Intercepts request going out and adds access token to it.
@@ -22,7 +22,7 @@ export class HttpAccessTokenInterceptor implements HttpInterceptor {
 	 * @returns intercept
 	 */
 	intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-		const access_token = this.store.selectSnapshot(AuthState.selectAccessToken);
+		const access_token = this._store.selectSnapshot(AuthState.selectAccessToken);
 		request = request.clone({
 			setHeaders: {
 				Authorization: `Bearer ${access_token}`

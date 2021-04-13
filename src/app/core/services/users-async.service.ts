@@ -2,10 +2,9 @@ import { Injectable, Inject } from '@angular/core';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { BACKEND_API_URL } from '../api-url-injection-token';
 import { Observable } from 'rxjs';
-import { PasswordReset } from '../auth/models/password-reset.model';
-import { AccountDetails } from '../models/account-details.model';
-import { AccountSecurityDetails } from '../models/account-security-details.model';
-import { AccountGeneralDetails } from '../models/account-general-details.model';
+import { AccountSecurityDetails } from '../models/account/security/account-security-details.model';
+import { AccountGeneralDetails } from '../models/account/general/account-general-details.model';
+import { PasswordReset } from '../models/auth/password-reset.model';
 
 /**
  * User async service.
@@ -23,19 +22,10 @@ export class UsersAsyncService {
 
 	/**
 	 * Creates an instance of users service.
-	 * @param apiUrl
-	 * @param http
+	 * @param _apiUrl
+	 * @param _http
 	 */
-	constructor(@Inject(BACKEND_API_URL) private apiUrl: string, private http: HttpClient) {}
-
-	/**
-	 * Gets user profile.
-	 * @param id
-	 * @returns user profile
-	 */
-	getUserProfile$(id: string): Observable<AccountDetails> {
-		return this.http.get<AccountDetails>(`${this.apiUrl}/users/${id}`);
-	}
+	constructor(@Inject(BACKEND_API_URL) private _apiUrl: string, private _http: HttpClient) {}
 
 	/**
 	 * Gets user account security details.
@@ -43,7 +33,7 @@ export class UsersAsyncService {
 	 * @returns account security details
 	 */
 	getAccountSecurityDetails$(id: string): Observable<AccountSecurityDetails> {
-		return this.http.get<AccountSecurityDetails>(`${this.apiUrl}/users/${id}/account/security`);
+		return this._http.get<AccountSecurityDetails>(`${this._apiUrl}/users/${id}/account/security`);
 	}
 
 	/**
@@ -52,7 +42,7 @@ export class UsersAsyncService {
 	 * @returns account general details
 	 */
 	getAccountGeneralDetails$(id: string): Observable<AccountGeneralDetails> {
-		return this.http.get<AccountGeneralDetails>(`${this.apiUrl}/users/${id}/account/general`);
+		return this._http.get<AccountGeneralDetails>(`${this._apiUrl}/users/${id}/account/general`);
 	}
 
 	/**
@@ -61,7 +51,7 @@ export class UsersAsyncService {
 	 * @returns email verification
 	 */
 	resendEmailVerification$(id: string): Observable<void> {
-		return this.http.get<void>(`${this.apiUrl}/users/${id}/account/resend-email-verification`);
+		return this._http.get<void>(`${this._apiUrl}/users/${id}/account/resend-email-verification`);
 	}
 
 	/**
@@ -70,7 +60,7 @@ export class UsersAsyncService {
 	 * @returns if email exists
 	 */
 	checkIfEmailExists$(email: string): Observable<boolean> {
-		return this.http.get<boolean>(`${this.apiUrl}/users/email`, { params: { email: email }, headers: this._headers });
+		return this._http.get<boolean>(`${this._apiUrl}/users/email`, { params: { email: email }, headers: this._headers });
 	}
 
 	/**
@@ -79,7 +69,7 @@ export class UsersAsyncService {
 	 * @returns password
 	 */
 	forgotPassword$(email: string): Observable<void> {
-		return this.http.post<void>(`${this.apiUrl}/users/password`, JSON.stringify(email), { headers: this._headers });
+		return this._http.post<void>(`${this._apiUrl}/users/password`, JSON.stringify(email), { headers: this._headers });
 	}
 
 	/**
@@ -88,7 +78,7 @@ export class UsersAsyncService {
 	 * @returns password
 	 */
 	resetPassword$(model: PasswordReset): Observable<void> {
-		return this.http.put<void>(`${this.apiUrl}/users/password`, JSON.stringify(model), { headers: this._headers });
+		return this._http.put<void>(`${this._apiUrl}/users/password`, JSON.stringify(model), { headers: this._headers });
 	}
 
 	/**
@@ -97,6 +87,6 @@ export class UsersAsyncService {
 	 * @returns username for remember me
 	 */
 	fetchUsernameForRememberMe$(id: string): Observable<string> {
-		return this.http.get<string>(`${this.apiUrl}/users/${id}/username`, { headers: this._headers });
+		return this._http.get<string>(`${this._apiUrl}/users/${id}/username`, { headers: this._headers });
 	}
 }

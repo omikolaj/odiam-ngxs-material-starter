@@ -23,7 +23,7 @@ export class TwoFactorAuthenticationCodesComponent {
 	 * Event emitter when server responds with 40X or 50X error.
 	 */
 	@Input() set serverError(value: ProblemDetails | InternalServerErrorDetails) {
-		this.log.debug('serverError emitted.', this);
+		this._log.debug('serverError emitted.', this);
 		this._serverError = value;
 	}
 
@@ -33,7 +33,7 @@ export class TwoFactorAuthenticationCodesComponent {
 	 * Recovery codes user has left to redeem for logging in.
 	 */
 	@Input() set codes(value: string[]) {
-		this.log.debug('codes emitted.', this);
+		this._log.debug('codes emitted.', this);
 		this._codes = value;
 		// each time we successfully emit new codes null out serverError.
 		this._removeServerError();
@@ -88,15 +88,15 @@ export class TwoFactorAuthenticationCodesComponent {
 
 	/**
 	 * Creates an instance of two factor authentication codes component.
-	 * @param facade
+	 * @param _log
 	 */
-	constructor(private log: LogService) {}
+	constructor(private _log: LogService) {}
 
 	/**
 	 * Event handler when user requests to generate new recovery codes.
 	 */
 	_onGenerateNewRecoveryCodes(): void {
-		this.log.trace('_onGenerateNewRecoveryCodes fired.', this);
+		this._log.trace('_onGenerateNewRecoveryCodes fired.', this);
 		this.generateNewRecoveryCodesClicked.emit();
 	}
 
@@ -104,7 +104,7 @@ export class TwoFactorAuthenticationCodesComponent {
 	 * Event handler when user closes expansion panel.
 	 */
 	_onUserCodesClosed(): void {
-		this.log.trace('_onUserCodesClosed fired.', this);
+		this._log.trace('_onUserCodesClosed fired.', this);
 		this._removeServerError();
 		this.userCodesPanelClosed.emit();
 	}
@@ -113,7 +113,7 @@ export class TwoFactorAuthenticationCodesComponent {
 	 * Event handler when user opens expansion panel.
 	 */
 	_onUserCodesOpened(): void {
-		this.log.trace('_onUserCodesOpened fired.', this);
+		this._log.trace('_onUserCodesOpened fired.', this);
 		this.userCodesPanelOpened.emit();
 	}
 
@@ -121,7 +121,7 @@ export class TwoFactorAuthenticationCodesComponent {
 	 * Sets serverError to null.
 	 */
 	private _removeServerError(): void {
-		this.log.trace('_removeServerError fired.', this);
+		this._log.trace('_removeServerError fired.', this);
 		this.serverError = null;
 	}
 }

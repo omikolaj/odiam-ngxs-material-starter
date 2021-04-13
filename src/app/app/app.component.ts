@@ -2,7 +2,7 @@ import browser from 'browser-detect';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { environment as env } from '../../environments/environment';
-import { routeAnimations, LocalStorageService } from '../core/core.module';
+import { routeAnimations } from '../core/core.module';
 
 import { Language } from 'app/core/settings/settings-state.model';
 import { MatSelectChange } from '@angular/material/select';
@@ -10,7 +10,7 @@ import { MatSelectChange } from '@angular/material/select';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter, tap } from 'rxjs/operators';
 
-import { AppFacadeService } from '../app-facade.service';
+import { AppSandboxService } from '../app-sandbox.service';
 
 /**
  * AppComponent displays navbar, footer and named router-outlet '#o=outlet'.
@@ -93,16 +93,13 @@ export class AppComponent implements OnInit, OnDestroy {
 
 	/**
 	 * Creates an instance of app component.
-	 * @param store
-	 * @param storageService
-	 * @param store
-	 * @param log
-	 * @param router
+	 * @param _router
+	 * @param _sb
 	 */
-	constructor(private storageService: LocalStorageService, private router: Router, private facade: AppFacadeService) {
+	constructor(private _router: Router, private _sb: AppSandboxService) {
 		// Set up google analytics
 		this._subscription.add(
-			router.events
+			_router.events
 				.pipe(
 					filter((event) => event instanceof NavigationEnd),
 					tap((event: NavigationEnd) => {
@@ -127,11 +124,11 @@ export class AppComponent implements OnInit, OnDestroy {
 	 * NgOnInit life cycle. Performs local storage test as well as sets the state of the application.
 	 */
 	ngOnInit(): void {
-		this.facade.log.trace('Initialized.', this);
-		this.storageService.testLocalStorage();
+		this._sb.log.trace('Initialized.', this);
+		this._sb.testLocalStorage();
 
 		if (AppComponent.isIEorEdgeOrSafari()) {
-			this.facade.disablePageAnimations();
+			this._sb.disablePageAnimations();
 		}
 
 		this._onInitSetSettingOptions();
@@ -148,34 +145,34 @@ export class AppComponent implements OnInit, OnDestroy {
 	 * Initializes settings options from the store.
 	 */
 	private _onInitSetSettingOptions(): void {
-		this._isAuthenticated$ = this.facade.isAuthenticated$;
-		this._stickyHeader$ = this.facade.stickyHeader$;
-		this._language$ = this.facade.language$;
-		this._theme$ = this.facade.theme$;
+		this._isAuthenticated$ = this._sb.isAuthenticated$;
+		this._stickyHeader$ = this._sb.stickyHeader$;
+		this._language$ = this._sb.language$;
+		this._theme$ = this._sb.theme$;
 	}
 
 	/**
 	 * Event handler for logging user in.
 	 */
 	_onSigninClicked(): void {
-		this.facade.log.debug('onSigninClick handler fired.', this);
-		void this.router.navigate(['auth/sign-in']);
+		this._sb.log.debug('onSigninClick handler fired.', this);
+		void this._router.navigate(['auth/sign-in']);
 	}
 
 	/**
 	 * Event handler for when user clicks the account button.
 	 */
 	_onDashboardClicked(): void {
-		this.facade.log.debug('onDashboardClick event handler fired.', this);
-		void this.router.navigate(['account']);
+		this._sb.log.debug('onDashboardClick event handler fired.', this);
+		void this._router.navigate(['account']);
 	}
 
 	/**
 	 * Event handler for signing user out.
 	 */
 	_onSignoutClicked(): void {
-		this.facade.log.debug('onSignoutClick handler fired.', this);
-		this.facade.signOut();
+		this._sb.log.debug('onSignoutClick handler fired.', this);
+		this._sb.signOut();
 	}
 
 	/**
@@ -183,7 +180,7 @@ export class AppComponent implements OnInit, OnDestroy {
 	 * @param MatSelectChange
 	 */
 	_onLanguageSelectChanged(event: MatSelectChange): void {
-		this.facade.log.debug(`onLanguageSelect handler fired with: ${event.value as Language}.`, this);
-		this.facade.changeLanguage(event.value as string);
+		this._sb.log.debug(`onLanguageSelect handler fired with: ${event.value as Language}.`, this);
+		this._sb.changeLanguage(event.value as string);
 	}
 }

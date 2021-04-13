@@ -15,9 +15,9 @@ import { map } from 'rxjs/operators';
 export class TranslateValidationErrorsService {
 	/**
 	 * Creates an instance of translate errors service.
-	 * @param translateService
+	 * @param _translateService
 	 */
-	constructor(private translateService: TranslateService) {}
+	constructor(private _translateService: TranslateService) {}
 
 	/**
 	 * Translates email error messages.
@@ -27,7 +27,7 @@ export class TranslateValidationErrorsService {
 	translateErrorMessage$(errors: ValidationErrors): Observable<string> {
 		const translateError = this._mapErrorToTranslation(errors);
 		return translateError.translationKey !== undefined
-			? this.translateService
+			? this._translateService
 					.get(translateError.translationKey)
 					.pipe(map((translated: string) => this._buildTranslatedString(translateError, translated)))
 			: of(translateError.extras as string);
@@ -41,7 +41,7 @@ export class TranslateValidationErrorsService {
 	translateValidationErrorMessage$(errors: ValidationErrors): Observable<string> {
 		const translateError = this._mapErrorToTranslation(errors);
 		return translateError.translationKey !== undefined
-			? this.translateService
+			? this._translateService
 					.get(translateError.translationKey)
 					.pipe(map((translated: string) => this._buildTranslatedString(translateError, translated)))
 			: of(translateError.extras as string).pipe(map((error: string) => this._buildTranslatedString(translateError, error)));

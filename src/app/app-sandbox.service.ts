@@ -7,14 +7,13 @@ import { Observable } from 'rxjs';
 import { Language } from './core/settings/settings-state.model';
 import { AuthService } from './core/auth/auth.service';
 import { LogService } from './core/logger/log.service';
+import { LocalStorageService } from './core/core.module';
 
 /**
- * App facade service.
+ * App sandbox service.
  */
-@Injectable({
-	providedIn: 'root'
-})
-export class AppFacadeService {
+@Injectable()
+export class AppSandboxService {
 	/**
 	 * Selects whether user is authenticated.
 	 */
@@ -36,25 +35,34 @@ export class AppFacadeService {
 	@Select(SettingsState.selectEffectiveTheme) theme$: Observable<string>;
 
 	/**
-	 * Creates an instance of app facade service.
-	 * @param authService
-	 * @param store
+	 * Creates an instance of app sandbox service.
+	 * @param _authService
+	 * @param _store
+	 * @param _storageService
+	 * @param log
 	 */
-	constructor(private authService: AuthService, private store: Store, public log: LogService) {}
+	constructor(private _authService: AuthService, private _store: Store, private _storageService: LocalStorageService, public log: LogService) {}
 
 	/**
 	 * Signs user out of the application.
 	 */
 	signOut(): void {
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-call
-		this.authService.signUserOut$().subscribe();
+		this._authService.signUserOut$().subscribe();
+	}
+
+	/**
+	 * Tests that localStorage exists, can be written to, and read from.
+	 */
+	testLocalStorage(): void {
+		this._storageService.testLocalStorage();
 	}
 
 	/**
 	 * Disables page animations.
 	 */
 	disablePageAnimations(): void {
-		this.store.dispatch(new Settings.ChangeAnimationsPageDisabled({ pageAnimationsDisabled: true }));
+		this._store.dispatch(new Settings.ChangeAnimationsPageDisabled({ pageAnimationsDisabled: true }));
 	}
 
 	/**
@@ -62,6 +70,6 @@ export class AppFacadeService {
 	 * @param languageSelected
 	 */
 	changeLanguage(languageSelected: string): void {
-		this.store.dispatch(new Settings.ChangeLanguage({ language: languageSelected as Language }));
+		this._store.dispatch(new Settings.ChangeLanguage({ language: languageSelected as Language }));
 	}
 }
