@@ -12,6 +12,8 @@ import { AuthSandboxService } from '../auth-sandbox.service';
 import { SignupUser } from 'app/core/models/auth/signup-user.model';
 import { ActiveAuthType } from 'app/core/models/auth/active-auth-type.model';
 import { AuthTypeRouteUrl } from 'app/core/models/auth/auth-type-route-url.model';
+import { PasswordRequirement } from 'app/core/models/auth/password-requirement.model';
+import { PasswordRequirementType } from 'app/core/models/auth/password-requirement-type.enum';
 
 /**
  * Sign up container component.
@@ -50,6 +52,11 @@ export class SignUpContainerComponent implements OnInit {
 	_activeAuthType$: Observable<string>;
 
 	/**
+	 * Password requirements required for new user.
+	 */
+	_passwordRequirements: PasswordRequirement[] = [];
+
+	/**
 	 * Creates an instance of sign up container component.
 	 * @param _sb
 	 * @param _asyncValidators
@@ -68,6 +75,7 @@ export class SignUpContainerComponent implements OnInit {
 	ngOnInit(): void {
 		this._sb.log.trace('Initialized.', this);
 		this._initForms();
+		this._passwordRequirements = this._initPasswordRequirements();
 	}
 
 	/**
@@ -110,6 +118,44 @@ export class SignUpContainerComponent implements OnInit {
 	 */
 	private _initForms(): void {
 		this._signupForm = this._initSignupForm();
+	}
+
+	/**
+	 * Inits new user's password requirements.
+	 */
+	private _initPasswordRequirements(): PasswordRequirement[] {
+		return [
+			{
+				name: 'odm.auth.form.requirements.title',
+				type: PasswordRequirementType.None,
+				children: [
+					{
+						name: 'odm.auth.form.requirements.min-chars-long',
+						type: PasswordRequirementType.MinCharsLength
+					},
+					{
+						name: 'odm.auth.form.requirements.one-upper-case',
+						type: PasswordRequirementType.UpperCase
+					},
+					{
+						name: 'odm.auth.form.requirements.one-lower-case',
+						type: PasswordRequirementType.LowerCase
+					},
+					{
+						name: 'odm.auth.form.requirements.digit',
+						type: PasswordRequirementType.Digit
+					},
+					{
+						name: 'odm.auth.form.requirements.three-unique-chars',
+						type: PasswordRequirementType.ThreeUniqueChar
+					},
+					{
+						name: 'odm.auth.form.requirements.one-special-char',
+						type: PasswordRequirementType.SpecialChar
+					}
+				]
+			}
+		] as PasswordRequirement[];
 	}
 
 	/**

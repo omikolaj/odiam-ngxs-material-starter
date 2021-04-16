@@ -110,7 +110,7 @@ export class AuthBase {
 	constructor(
 		private _translateErrorValidationService: TranslateValidationErrorsService,
 		protected log: LogService,
-		private _cd: ChangeDetectorRef
+		protected cd: ChangeDetectorRef
 	) {}
 
 	/**
@@ -187,7 +187,7 @@ export class AuthBase {
 		control.setErrors({ serverError: { errorDescription } });
 		control.markAsPristine();
 		this._internalServerErrorDetailsHandled = true;
-		this._cd.detectChanges();
+		this.cd.detectChanges();
 	}
 
 	/**
@@ -226,7 +226,7 @@ export class AuthBase {
 				control.setErrors({ serverError: { errorDescription } });
 				control.markAsPristine();
 				this._problemDetailsServerErrorHandled = true;
-				this._cd.detectChanges();
+				this.cd.detectChanges();
 			}
 		}
 	}
@@ -254,7 +254,7 @@ export class AuthBase {
 		control.setErrors({ serverError: { errorDescription } });
 		control.markAsPristine();
 		this._problemDetailsServerErrorHandled = true;
-		this._cd.detectChanges();
+		this.cd.detectChanges();
 	}
 
 	/**

@@ -1,14 +1,16 @@
+/* eslint-disable @typescript-eslint/member-ordering */
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, Output, EventEmitter, Input, OnDestroy } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { Subscription, Observable } from 'rxjs';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, AbstractControl } from '@angular/forms';
 import { BreakpointState } from '@angular/cdk/layout';
 import { AuthBase } from '../auth-base';
 import { ActiveAuthType } from 'app/core/models/auth/active-auth-type.model';
 import { SignupUser } from 'app/core/models/auth/signup-user.model';
 import { AuthSandboxService } from '../auth-sandbox.service';
+import { PasswordRequirement } from 'app/core/models/auth/password-requirement.model';
 
 /**
  * Sign up component.
@@ -42,7 +44,8 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	@Input() set signupForm(value: FormGroup) {
 		this._sb.log.debug('Signup form emitted.', this);
 		this._signupForm = value;
-		this._subscription.add(this._validateFormPasswordField(value).subscribe());
+		// this._subscription.add(this._validateFormPasswordField(value).subscribe());
+		this._passwordControl = value.get('password');
 		this._subscription.add(this._validateFormConfirmPasswordField(value).subscribe());
 	}
 
@@ -55,6 +58,11 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	 * Whether to show overlay. Used for desktop view
 	 */
 	@Input() matcher: BreakpointState;
+
+	/**
+	 * Password requirements.
+	 */
+	@Input() passwordRequrements: PasswordRequirement[];
 
 	/**
 	 * Whether sign-in or sign-up component is active.
@@ -87,44 +95,19 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	_signupFormEmailControlStatusChanges$: Observable<string>;
 
 	/**
-	 * Password length requirement for password control.
-	 * Used to inform user about password requirement.
+	 * Password control of sign up component.
 	 */
-	_passwordLengthReqMet = false;
-
-	/**
-	 * Password uppercase requirement for password control.
-	 * Used to inform user about password requirement.
-	 */
-	_passwordUppercaseReqMet = false;
-
-	/**
-	 * Password lowercase requirement for password control.
-	 * Used to inform user about password requirement.
-	 */
-	_passwordLowercaseReqMet = false;
-
-	/**
-	 * Password digit requirement for password control.
-	 * Used to inform user about password requirement.
-	 */
-	_passwordDigitReqMet = false;
-
-	/**
-	 * Requires user to enter in at least three unique characters.
-	 */
-	_passwordThreeUniqueCharacterCountReqMet = false;
-
-	/**
-	 * Password special character requirement for password control.
-	 * Used to inform user about password requirement.
-	 */
-	_passwordSpecialCharacterReqMet = false;
+	_passwordControl: AbstractControl;
 
 	/**
 	 * Requires user to enter the same password for confirm password field.
 	 */
-	_confirmPasswordNotMatchReqMet = false;
+	_confirmPasswordMatchReqMet = false;
+
+	/**
+	 * Password help toggle class.
+	 */
+	_passwordHelpToggleClass: 'auth__password-field-help-on' | 'auth__password-field-help-off' = 'auth__password-field-help-off';
 
 	/**
 	 * Rxjs subscriptions for this component.
@@ -136,7 +119,7 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	 * @param _sb
 	 * @param cd
 	 */
-	constructor(private _sb: AuthSandboxService, cd: ChangeDetectorRef) {
+	constructor(private _sb: AuthSandboxService, protected cd: ChangeDetectorRef) {
 		super(_sb.translateValidationErrorService, _sb.log, cd);
 	}
 
@@ -186,6 +169,18 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	}
 
 	/**
+	 * Event handler when user toggles on password help.
+	 */
+	_onPasswordHelpToggled(): void {
+		this._sb.log.trace('_onPasswordHelpToggled fired.', this);
+		if (this._passwordHelpToggleClass === 'auth__password-field-help-off') {
+			this._passwordHelpToggleClass = 'auth__password-field-help-on';
+		} else {
+			this._passwordHelpToggleClass = 'auth__password-field-help-off';
+		}
+	}
+
+	/**
 	 * Used to switch view to signin context.
 	 */
 	_switchToSignin(): void {
@@ -208,52 +203,9 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			tap((_) => {
 				if (form.hasError('notSame')) {
-					this._confirmPasswordNotMatchReqMet = false;
+					this._confirmPasswordMatchReqMet = false;
 				} else {
-					this._confirmPasswordNotMatchReqMet = true;
-				}
-			})
-		);
-	}
-
-	/**
-	 * Validates form password field.
-	 * @param form
-	 * @returns form password field
-	 */
-	private _validateFormPasswordField(form: FormGroup): Observable<any> {
-		const passwordControl = form.get('password');
-		return passwordControl.valueChanges.pipe(
-			tap((value: string) => {
-				if (passwordControl.hasError('number')) {
-					this._passwordDigitReqMet = false;
-				} else {
-					this._passwordDigitReqMet = true;
-				}
-				if (passwordControl.hasError('uppercase')) {
-					this._passwordUppercaseReqMet = false;
-				} else {
-					this._passwordUppercaseReqMet = true;
-				}
-				if (passwordControl.hasError('lowercase')) {
-					this._passwordLowercaseReqMet = false;
-				} else {
-					this._passwordLowercaseReqMet = true;
-				}
-				if (passwordControl.hasError('nonAlphanumeric')) {
-					this._passwordSpecialCharacterReqMet = false;
-				} else {
-					this._passwordSpecialCharacterReqMet = true;
-				}
-				if (passwordControl.hasError('uniqueChars')) {
-					this._passwordThreeUniqueCharacterCountReqMet = false;
-				} else {
-					this._passwordThreeUniqueCharacterCountReqMet = true;
-				}
-				if ((value || '').length === 0 || passwordControl.hasError('minlength')) {
-					this._passwordLengthReqMet = false;
-				} else if (passwordControl.hasError('minlength') === false) {
-					this._passwordLengthReqMet = true;
+					this._confirmPasswordMatchReqMet = true;
 				}
 			})
 		);

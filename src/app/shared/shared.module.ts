@@ -24,6 +24,7 @@ import { MatNativeDateModule, ErrorStateMatcher, ShowOnDirtyErrorStateMatcher } 
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { LayoutModule } from '@angular/cdk/layout';
+import { MatTreeModule } from '@angular/material/tree';
 
 import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import {
@@ -53,6 +54,7 @@ import { OdmSpinnerComponent } from './components/odm-spinner/odm-spinner.compon
 import { MatVerticalStepperScrollerDirective } from './directives/mat-vertical-stepper-scroller.directive';
 import { ServerSideErrorComponent } from './components/server-side-error/server-side-error.component';
 import { VerificationCodeComponent } from './components/verification-code/verification-code.component';
+import { PasswordHelpComponent } from './components/password-help/password-help.component';
 
 /**
  * Shared module.
@@ -63,7 +65,8 @@ import { VerificationCodeComponent } from './components/verification-code/verifi
 		OdmSpinnerComponent,
 		MatVerticalStepperScrollerDirective,
 		ServerSideErrorComponent,
-		VerificationCodeComponent
+		VerificationCodeComponent,
+		PasswordHelpComponent
 	],
 	providers: [OdmGhostAnimationService, { provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher }],
 	imports: [
@@ -91,6 +94,7 @@ import { VerificationCodeComponent } from './components/verification-code/verifi
 		MatDividerModule,
 		MatStepperModule,
 		MatExpansionModule,
+		MatTreeModule,
 		LayoutModule,
 
 		FontAwesomeModule
@@ -123,6 +127,7 @@ import { VerificationCodeComponent } from './components/verification-code/verifi
 		MatNativeDateModule,
 		MatStepperModule,
 		MatExpansionModule,
+		MatTreeModule,
 		LayoutModule,
 
 		FontAwesomeModule,
@@ -132,6 +137,7 @@ import { VerificationCodeComponent } from './components/verification-code/verifi
 		OdmSpinnerComponent,
 		ServerSideErrorComponent,
 		VerificationCodeComponent,
+		PasswordHelpComponent,
 
 		// Directives
 		MatVerticalStepperScrollerDirective

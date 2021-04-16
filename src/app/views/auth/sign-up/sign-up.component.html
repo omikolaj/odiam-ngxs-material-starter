@@ -45,65 +45,18 @@
 				</mat-form-field>
 			</div>
 
-			<div class="auth__password-field">
+			<div class="auth__password-field" [ngClass]="_passwordHelpToggleClass">
 				<mat-form-field appearance="standard">
 					<mat-label>{{ 'odm.auth.form.label.password' | translate }}</mat-label>
 					<input matInput formControlName="password" [type]="_hide ? 'password' : 'text'" autocomplete="new-password" required />
 					<mat-icon class="auth__view-password" matSuffix (click)="_hide = !_hide">{{ _hide ? 'visibility_off' : 'visibility' }}</mat-icon>
+
 					<mat-hint>
-						<span>
-							<ng-container *ngIf="!_signupForm?.get('password').pristine">
-								<mat-icon [ngClass]="_passwordLengthReqMet ? 'auth--req-met' : 'auth--req-not-met'" matPrefix>{{
-									_passwordLengthReqMet ? 'task_alt' : 'clear'
-								}}</mat-icon>
-							</ng-container>
-							{{ 'odm.auth.form.requirements.eight-chars-long' | translate }}
-						</span>
-						<br />
-						<span>
-							<ng-container *ngIf="!_signupForm?.get('password').pristine">
-								<mat-icon [ngClass]="_passwordUppercaseReqMet ? 'auth--req-met' : 'auth--req-not-met'" matPrefix>{{
-									_passwordUppercaseReqMet ? 'task_alt' : 'clear'
-								}}</mat-icon>
-							</ng-container>
-							{{ 'odm.auth.form.requirements.one-upper-case' | translate }}
-						</span>
-						<br />
-						<span>
-							<ng-container *ngIf="!_signupForm?.get('password').pristine">
-								<mat-icon [ngClass]="_passwordLowercaseReqMet ? 'auth--req-met' : 'auth--req-not-met'" matPrefix>{{
-									_passwordLowercaseReqMet ? 'task_alt' : 'clear'
-								}}</mat-icon>
-							</ng-container>
-							{{ 'odm.auth.form.requirements.one-lower-case' | translate }}
-						</span>
-						<br />
-						<span>
-							<ng-container *ngIf="!_signupForm?.get('password').pristine">
-								<mat-icon [ngClass]="_passwordDigitReqMet ? 'auth--req-met' : 'auth--req-not-met'" matPrefix>{{
-									_passwordDigitReqMet ? 'task_alt' : 'clear'
-								}}</mat-icon>
-							</ng-container>
-							{{ 'odm.auth.form.requirements.one-digit' | translate }}
-						</span>
-						<br />
-						<span>
-							<ng-container *ngIf="!_signupForm?.get('password').pristine">
-								<mat-icon [ngClass]="_passwordThreeUniqueCharacterCountReqMet ? 'auth--req-met' : 'auth--req-not-met'" matPrefix>{{
-									_passwordThreeUniqueCharacterCountReqMet ? 'task_alt' : 'clear'
-								}}</mat-icon>
-							</ng-container>
-							{{ 'odm.auth.form.requirements.three-unique-chars' | translate }}
-						</span>
-						<br />
-						<span>
-							<ng-container *ngIf="!_signupForm?.get('password').pristine">
-								<mat-icon [ngClass]="_passwordSpecialCharacterReqMet ? 'auth--req-met' : 'auth--req-not-met'" matPrefix>{{
-									_passwordSpecialCharacterReqMet ? 'task_alt' : 'clear'
-								}}</mat-icon>
-							</ng-container>
-							{{ 'odm.auth.form.requirements.one-special-char' | translate }}
-						</span>
+						<odm-password-help
+							(passwordHelpClicked)="_onPasswordHelpToggled()"
+							[passwordRequirements]="passwordRequrements"
+							[passwordControl]="_passwordControl"
+						></odm-password-help>
 					</mat-hint>
 					<mat-error *ngIf="_ifServerErrorOccured(_signupForm?.get('password'), 'password')">{{
 						_getErrorMessage$(_signupForm?.get('password')) | async
@@ -111,7 +64,7 @@
 				</mat-form-field>
 			</div>
 
-			<div>
+			<div class="auth__confirm-password-field">
 				<mat-form-field appearance="standard">
 					<mat-label>{{ 'odm.auth.form.label.confirm-password' | translate }}</mat-label>
 					<input matInput formControlName="confirmPassword" [type]="_hide ? 'password' : 'text'" autocomplete="new-password" />
@@ -119,8 +72,8 @@
 					<mat-hint>
 						<span>
 							<ng-container *ngIf="!_signupForm?.get('confirmPassword').pristine && _signupForm?.get('password').valid">
-								<mat-icon [ngClass]="_confirmPasswordNotMatchReqMet ? 'auth--req-met' : 'auth--req-not-met'" matPrefix>{{
-									_confirmPasswordNotMatchReqMet ? 'task_alt' : 'clear'
+								<mat-icon [ngClass]="_confirmPasswordMatchReqMet ? 'auth--req-met' : 'auth--req-not-met'" matPrefix>{{
+									_confirmPasswordMatchReqMet ? 'task_alt' : 'clear'
 								}}</mat-icon>
 							</ng-container>
 							{{ 'odm.auth.form.requirements.pass-must-match' | translate }}

@@ -81,11 +81,12 @@
 					"verification-code": "{number}-digit verification code"
 				},
 				"requirements": {
+					"title": "Password help",
 					"pass-must-match": "Passwords must match",
 					"one-upper-case": "Must contain 1 upper case letter",
 					"one-lower-case": "Must contain 1 lower case letter",
-					"eight-chars-long": "Must be 8 characters long",
-					"one-digit": "Must contain 1 digit",
+					"min-chars-long": "Must be 8 characters long",
+					"digit": "Must contain 1 digit",
 					"three-unique-chars": "Must contain 3 unique characters",
 					"one-special-char": "Must contain one (! @ # $ % & * _ ?)"
 				},

@@ -65,8 +65,18 @@ form {
 			color: green;
 		}
 
-		.auth__password-field {
-			margin-bottom: 85px;
+		.auth__password-field-help-on {
+			margin-bottom: 123px;
+			transition: margin-bottom 0.3s ease-in;
+		}
+
+		.auth__password-field-help-off {
+			margin-bottom: 0px;
+			transition: margin-bottom 0.3s ease-in;
+		}
+
+		.auth__confirm-password-field {
+			margin-top: 12px;
 		}
 
 		.auth__form-btn {
