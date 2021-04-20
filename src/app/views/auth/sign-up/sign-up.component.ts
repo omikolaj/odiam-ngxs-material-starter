@@ -189,7 +189,6 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 		// allow for the animation before cleaning up the form.
 		setTimeout(() => {
 			this.internalServerErrorDetails = null;
-			// formDirective.resetForm();
 		}, 600);
 	}
 

@@ -40,6 +40,7 @@ export class PasswordHelpComponent implements OnInit, OnDestroy {
 	 * Sets up datasource with password requirements.
 	 */
 	@Input() set passwordRequirements(value: PasswordRequirement[]) {
+		this._log.debug('passwordRequirements fired.', this);
 		this._dataSource.data = value;
 	}
 
@@ -172,6 +173,7 @@ export class PasswordHelpComponent implements OnInit, OnDestroy {
 	 * Event handler when user expands password help context.
 	 */
 	_onTogglePasswordHelp(): void {
+		this._log.trace('_onTogglePasswordHelp fired.', this);
 		this.passwordHelpClicked.emit();
 	}
 

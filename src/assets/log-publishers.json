@@ -9,7 +9,7 @@
 		{
 			"loggerName": "localstorage",
 			"loggerLocation": "logging",
-			"isActive": true
+			"isActive": false
 		},
 		{
 			"loggerName": "webapi",

@@ -4,7 +4,7 @@ import { BreakpointState, BreakpointObserver } from '@angular/cdk/layout';
 import { MinScreenSizeQuery } from 'app/shared/screen-size-queries';
 import { ROUTE_ANIMATIONS_ELEMENTS, routeAnimations, leftRightFadeInAnimation } from 'app/core/core.module';
 import { tap, startWith } from 'rxjs/operators';
-import { NavigationEnd } from '@angular/router';
+import { NavigationEnd, UrlSegment } from '@angular/router';
 import { ActiveAuthType } from 'app/core/models/auth/active-auth-type.model';
 import { AuthSandboxService } from '../auth-sandbox.service';
 
@@ -125,6 +125,21 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 		} else if (url === '/auth/forgot-password') {
 			this._sb.onUpdateActiveAuthType({ activeAuthType: 'forgot-password-active' });
 		}
+	}
+
+	/**
+	 * Determines whether the route is on sign-in/sign-up routes. This disables normal animation for those routes.
+	 * @param url
+	 * @returns true if not sign in or sign up
+	 */
+	_isNotSignInOrSignUp(url: UrlSegment[]): boolean {
+		const urlString = url[0]?.path;
+		if (urlString) {
+			if (urlString === 'sign-in' || urlString === 'sign-up') {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**

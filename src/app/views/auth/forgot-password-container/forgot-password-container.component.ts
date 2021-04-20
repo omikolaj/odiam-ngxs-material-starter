@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { OdmValidators } from 'app/core/form-validators/odm-validators';
-import { leftRightFadeInAnimation } from 'app/core/core.module';
+import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
 import { AuthSandboxService } from '../auth-sandbox.service';
 
 /**
@@ -11,10 +11,14 @@ import { AuthSandboxService } from '../auth-sandbox.service';
 	selector: 'odm-forgot-password-container',
 	templateUrl: './forgot-password-container.component.html',
 	styleUrls: ['./forgot-password-container.component.scss'],
-	animations: [leftRightFadeInAnimation],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ForgotPasswordContainerComponent implements OnInit {
+	/**
+	 * Route animations.
+	 */
+	readonly _routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
+
 	/**
 	 * Forgot password form collects user entered email.
 	 */

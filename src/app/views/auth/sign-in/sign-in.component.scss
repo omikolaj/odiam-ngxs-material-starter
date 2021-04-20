@@ -30,7 +30,7 @@ form {
 	overflow: hidden;
 	width: 480px;
 	max-width: 100%;
-	min-height: 500px;
+	min-height: 540px;
 	margin-top: 20px;
 	margin: 0 auto;
 
@@ -62,7 +62,7 @@ form {
 			object-fit: contain;
 			width: 25px;
 			margin: 0 5px;
-			transition: 0.15s;
+			transition: 0.3s;
 		}
 
 		.auth__form-btn {

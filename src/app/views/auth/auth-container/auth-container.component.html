@@ -11,25 +11,26 @@
 			</div>
 		</div>
 		<div [ngClass]="_setActiveAuthCssClass(_activeAuthType$ | async, matcher)" class="auth-container__routes" #scrollContainer>
-			<div>
-				<router-outlet @routeAnimations></router-outlet>
+			<div [@routeAnimations]="o.isActivated && o.activatedRoute.routeConfig.path && _isNotSignInOrSignUp(o.activatedRoute.url | async)">
+				<router-outlet #o="outlet"></router-outlet>
 			</div>
+
 			<ng-container *ngIf="matcher?.matches">
 				<div class="auth__overlay-container">
-					<div class="auth__overlay" [ngClass]="_routeAnimationsElements">
+					<div class="auth__overlay">
 						<div class="auth__overlay-panel auth__overlay-sign-in">
-							<h1>{{ 'odm.auth.sign-in.header' | translate }}</h1>
-							<p>{{ 'odm.auth.sign-in.subheader' | translate }}</p>
-							<button mat-raised-button (click)="_switchToSignin()" class="auth__form-btn-ghost auth--btn">
+							<h1 [ngClass]="_routeAnimationsElements">{{ 'odm.auth.sign-in.header' | translate }}</h1>
+							<p [ngClass]="_routeAnimationsElements">{{ 'odm.auth.sign-in.subheader' | translate }}</p>
+							<button [ngClass]="_routeAnimationsElements" mat-raised-button (click)="_switchToSignin()" class="auth__form-btn-ghost auth--btn">
 								{{ 'odm.buttons.sign-in' | translate }}
 							</button>
 						</div>
 						<div class="auth__overlay-panel auth__overlay-sign-up">
-							<h1>{{ 'odm.auth.sign-up.header' | translate }}</h1>
-							<p>
+							<h1 [ngClass]="_routeAnimationsElements">{{ 'odm.auth.sign-up.header' | translate }}</h1>
+							<p [ngClass]="_routeAnimationsElements">
 								{{ 'odm.auth.sign-up.subheader' | translate }}
 							</p>
-							<button mat-raised-button (click)="_switchToSignup()" class="auth__form-btn-ghost auth--btn">
+							<button [ngClass]="_routeAnimationsElements" mat-raised-button (click)="_switchToSignup()" class="auth__form-btn-ghost auth--btn">
 								{{ 'odm.buttons.create-account' | translate }}
 							</button>
 						</div>
