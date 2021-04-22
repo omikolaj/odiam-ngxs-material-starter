@@ -1,6 +1,6 @@
 <div [ngClass]="activeAuthType" class="auth__container">
-	<div class="auth__form-container auth__sign-in-container" [ngClass]="_routeAnimationsElements">
-		<form [formGroup]="signinForm" (ngSubmit)="_onSignin()" role="form" novalidate>
+	<div class="auth__form-container auth__sign-in-container">
+		<form [ngClass]="_routeAnimationsElements" [formGroup]="signinForm" (ngSubmit)="_onSignin()" role="form" novalidate>
 			<h3 class="auth__sign-in-header">{{ 'odm.auth.sign-in.title' | translate }}</h3>
 
 			<div>

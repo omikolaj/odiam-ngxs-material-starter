@@ -11,6 +11,7 @@ import { ActiveAuthType } from 'app/core/models/auth/active-auth-type.model';
 import { SignupUser } from 'app/core/models/auth/signup-user.model';
 import { AuthSandboxService } from '../auth-sandbox.service';
 import { PasswordRequirement } from 'app/core/models/auth/password-requirement.model';
+import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
 
 /**
  * Sign up component.
@@ -108,6 +109,11 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	 * Password help toggle class.
 	 */
 	_passwordHelpToggleClass: 'auth__password-field-help-on' | 'auth__password-field-help-off' = 'auth__password-field-help-off';
+
+	/**
+	 * Route animations.
+	 */
+	readonly _routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
 
 	/**
 	 * Rxjs subscriptions for this component.
