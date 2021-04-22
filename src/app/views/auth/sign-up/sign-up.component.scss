@@ -43,7 +43,7 @@ form {
 	.auth__form-container {
 		position: absolute;
 		top: 0;
-		// Transition that controls how fast sign-in/sign-up components start transitioning out of the view
+		// Transition that controls sign-in/sign-up components start transitioning out of the view
 		transition: all 0.6s ease-out;
 
 		.auth__text-link {
@@ -59,7 +59,6 @@ form {
 			object-fit: contain;
 			width: 25px;
 			margin: 0 5px;
-			transition: 0.3s;
 		}
 
 		.auth--req-met {
@@ -84,7 +83,6 @@ form {
 			background-size: 200%;
 			width: 250px;
 			border: none;
-			transition: 0.3s ease-in-out;
 			margin-top: 21.5px;
 		}
 
@@ -119,6 +117,15 @@ form {
 	transform: translateX(0);
 	z-index: 5;
 	opacity: 1;
+}
+
+@keyframes hideBehindOverlay {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
 }
 
 .auth__container.sign-in-active .auth__sign-up-container {

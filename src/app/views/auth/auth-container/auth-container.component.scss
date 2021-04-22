@@ -23,15 +23,6 @@ button {
 	margin-right: auto;
 	margin-left: auto;
 
-	@keyframes hideBehindOverlay {
-		from {
-			opacity: 1;
-		}
-		to {
-			opacity: 0;
-		}
-	}
-
 	.auth-container__content {
 		width: 100%;
 		padding-top: 10px;
@@ -64,8 +55,7 @@ button {
 	margin-top: 20px;
 	margin: 0 auto;
 	// animates the auth image height adjustment between 500px(.auth-container__routes) and 370px (.auth-container__sign-in)
-	transition: height 0.8s ease-out;
-	// transition-delay: 0.2s;
+	transition: height 0.6s ease-out;
 }
 
 .auth-container__sign-in {
@@ -127,7 +117,6 @@ button {
 			right: 0;
 			height: 50%;
 			width: 100%;
-			transition: transform 0.3s ease-in-out;
 
 			.auth__form-btn-ghost {
 				background-color: transparent;
