@@ -102,7 +102,7 @@ export class AuthSandboxService {
 		this.onUpdateActiveAuthType(activePanel);
 		setTimeout(() => {
 			void this.router.navigate(['/auth', routeUrl]);
-		}, 50);
+		}, 300);
 	}
 
 	/**

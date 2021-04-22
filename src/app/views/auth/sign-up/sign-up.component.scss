@@ -44,7 +44,7 @@ form {
 		position: absolute;
 		top: 0;
 		// Transition that controls how fast sign-in/sign-up components start transitioning out of the view
-		transition: all 0.6s ease-in-out;
+		transition: all 0.6s ease-out;
 
 		.auth__text-link {
 			font-size: 12px;
@@ -123,6 +123,7 @@ form {
 
 .auth__container.sign-in-active .auth__sign-up-container {
 	transform: translateX(-100%);
+	animation: hideBehindOverlay 0.2s;
 }
 
 @media (min-width: map-get($grid-breakpoints, md)) {

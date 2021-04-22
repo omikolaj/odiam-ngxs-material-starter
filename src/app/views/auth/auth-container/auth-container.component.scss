@@ -23,6 +23,15 @@ button {
 	margin-right: auto;
 	margin-left: auto;
 
+	@keyframes hideBehindOverlay {
+		from {
+			opacity: 1;
+		}
+		to {
+			opacity: 0;
+		}
+	}
+
 	.auth-container__content {
 		width: 100%;
 		padding-top: 10px;
