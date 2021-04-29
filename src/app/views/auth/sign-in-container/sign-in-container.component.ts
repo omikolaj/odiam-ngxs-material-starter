@@ -94,7 +94,7 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 	 */
 	_onForgotPasswordClicked(): void {
 		this._sb.log.trace('_onForgotPasswordClicked fired.', this);
-		this._sb.onUpdateActiveAuthType({ activeAuthType: 'forgot-password-active' });
+		this._sb.updateActiveAuthType({ activeAuthType: 'forgot-password-active' });
 		void this._sb.router.navigate(['forgot-password'], { relativeTo: this._route.parent });
 	}
 

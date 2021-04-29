@@ -19,7 +19,7 @@
 			<h3>{{ 'odm.account.security.two-step.recovery-codes.backup-codes.title' | translate }}</h3>
 			<p>{{ 'odm.account.security.two-step.recovery-codes.backup-codes.description' | translate }}</p>
 			<ol class="recovery-codes__format-codes blink">
-				<li *ngFor="let code of _codes" @fadeIn>
+				<li *ngFor="let code of _codes" @downUpFadeIn>
 					{{ code }}
 				</li>
 			</ol>

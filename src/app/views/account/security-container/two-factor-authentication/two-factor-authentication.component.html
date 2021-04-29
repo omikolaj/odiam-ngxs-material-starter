@@ -2,11 +2,11 @@
 	<div class="two-factor-settings">
 		<h3>{{ 'odm.account.security.two-step.title' | translate }}</h3>
 		<ng-container *ngIf="!loading; else loadingState">
-			<div [ngClass]="twoFactorEnabled ? 'two-factor-settings__extra-margin' : null" class="two-factor-settings__state" @fadeIn>
+			<div [ngClass]="twoFactorEnabled ? 'two-factor-settings__extra-margin' : null" class="two-factor-settings__state" @downUpFadeIn>
 				<div class="two-factor-settings__short-description">
 					<span>{{ 'odm.account.security.two-step.description' | translate }}</span>
 				</div>
-				<div class="two-factor-settings__toggle-state" @fadeIn>
+				<div class="two-factor-settings__toggle-state" @downUpFadeIn>
 					<div class="two-factor-settings__toggle-state-spinner-container">
 						<ng-container *ngIf="_twoFactorAuthToggleLoading">
 							<odm-spinner [type]="'button'" [diameter]="_twoFactorAuthToggleSpinnerDiameter" [strokeWidth]="_twoFactorAuthToggleSpinnerStrokeWidth">
@@ -23,7 +23,7 @@
 				</div>
 			</div>
 			<ng-container *ngIf="twoFactorEnabled">
-				<div @fadeIn>
+				<div @downUpFadeIn>
 					<div class="two-factor-settings__user-recovery-codes">
 						<odm-two-factor-authentication-codes
 							[codes]="userRecoveryCodes"

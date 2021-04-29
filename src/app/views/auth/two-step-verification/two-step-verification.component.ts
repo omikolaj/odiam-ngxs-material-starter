@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { leftRightFadeInAnimation } from 'app/core/core.module';
+import { downUpFadeInAnimation, ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
 import { FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
@@ -16,10 +16,15 @@ import { TwoFactorAuthenticationVerificationCode } from 'app/core/models/account
 	selector: 'odm-two-step-verification',
 	templateUrl: './two-step-verification.component.html',
 	styleUrls: ['./two-step-verification.component.scss'],
-	animations: [leftRightFadeInAnimation],
+	animations: [downUpFadeInAnimation],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TwoStepVerificationComponent implements OnInit {
+	/**
+	 * Route animations.
+	 */
+	readonly _routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
+
 	/**
 	 * Verification code form.
 	 */

@@ -51,7 +51,7 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 			setTimeout(() => {
 				this.setupWizard.next();
 				this._twoFactorAuthenticationSetupResult = value;
-			}, 1000);
+			}, 101000);
 		}
 	}
 
@@ -68,7 +68,7 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 		this._twoFactorAuthenticationSetup = value;
 		if (value.authenticatorUri && value.sharedKey) {
 			// enable verification code control
-			this.verificationCodeForm.get('verificationCode').enable();
+			this.verificationCodeForm.get('code').enable();
 		}
 	}
 	/**

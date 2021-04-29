@@ -45,6 +45,7 @@
 		},
 		"auth": {
 			"checking-availability": "Checking availability",
+			"password-help": "Verifies your password meets requirements.",
 			"forgot-password": {
 				"header": "Forgot your password?",
 				"subheader": "Enter your email address to reset your password."

@@ -57,7 +57,7 @@ export class ForgotPasswordContainerComponent implements OnInit {
 	 */
 	_onCancelClicked(): void {
 		this._sb.log.trace('_onCancelClicked fired.', this);
-		this._sb.onUpdateActiveAuthType({ activeAuthType: 'sign-in-active' });
+		this._sb.updateActiveAuthType({ activeAuthType: 'sign-in-active' });
 		void this._sb.router.navigate(['auth']);
 	}
 

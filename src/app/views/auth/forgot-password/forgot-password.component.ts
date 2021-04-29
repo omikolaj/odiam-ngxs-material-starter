@@ -3,7 +3,7 @@ import { FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { LogService } from 'app/core/logger/log.service';
 import { TranslateValidationErrorsService } from 'app/shared/services/translate-validation-errors.service';
-import { leftRightFadeInAnimation, ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
+import { ROUTE_ANIMATIONS_ELEMENTS, downUpFadeInAnimation } from 'app/core/core.module';
 
 /**
  * Forgot password component.
@@ -12,7 +12,7 @@ import { leftRightFadeInAnimation, ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/co
 	selector: 'odm-forgot-password',
 	templateUrl: './forgot-password.component.html',
 	styleUrls: ['./forgot-password.component.scss'],
-	animations: [leftRightFadeInAnimation],
+	animations: [downUpFadeInAnimation],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ForgotPasswordComponent {

@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy, Output, EventEmitter, Input } from 
 import { TooltipTouchGestures } from '@angular/material/tooltip';
 import { ODM_TOOLTIP_SHOW_DELAY_IN_MS } from 'app/shared/global-settings/mat-tooltip-settings';
 
-import { fadeInAnimation, upDownFadeInAnimation } from 'app/core/core.module';
+import { downUpFadeInAnimation } from 'app/core/core.module';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { LogService } from 'app/core/logger/log.service';
@@ -15,7 +15,7 @@ import { ODM_SMALL_SPINNER_DIAMETER, ODM_SMALL_SPINNER_STROKE_WIDTH } from 'app/
 	selector: 'odm-two-factor-authentication-codes',
 	templateUrl: './two-factor-authentication-codes.component.html',
 	styleUrls: ['./two-factor-authentication-codes.component.scss'],
-	animations: [upDownFadeInAnimation, fadeInAnimation],
+	animations: [downUpFadeInAnimation],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TwoFactorAuthenticationCodesComponent {

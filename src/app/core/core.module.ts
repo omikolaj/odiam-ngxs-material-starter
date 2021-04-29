@@ -54,7 +54,13 @@ import { BACKEND_API_URL } from './api-url-injection-token';
 import { ServerErrorService } from './error-handler/server-error.service';
 import { HttpStatusInterceptor } from './http-interceptors/http-status.interceptor';
 import { HttpAccessTokenInterceptor } from './http-interceptors/http-access-token.interceptor';
-import { rightLeftFadeInAnimation, leftRightFadeInAnimation, upDownFadeInAnimation, fadeInAnimation } from 'app/core/animations/element.animations';
+import {
+	rightLeftFadeInAnimation,
+	leftRightFadeInAnimation,
+	upDownFadeInAnimation,
+	fadeInAnimation,
+	downUpFadeInAnimation
+} from 'app/core/animations/element.animations';
 
 export {
 	TitleService,
@@ -64,6 +70,7 @@ export {
 	rightLeftFadeInAnimation,
 	leftRightFadeInAnimation,
 	upDownFadeInAnimation,
+	downUpFadeInAnimation,
 	fadeInAnimation,
 	AnimationsService,
 	AuthGuardService,

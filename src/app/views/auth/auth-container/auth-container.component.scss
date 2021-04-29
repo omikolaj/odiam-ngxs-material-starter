@@ -74,8 +74,9 @@ button {
 
 // OVERLAY STYLES
 
-// disables over lay container when viewing forgot-password component
-.auth-container__routes.forgot-password-active .auth__overlay-container {
+// disables over lay container when viewing forgot-password, or two factor authentication component
+.auth-container__routes.forgot-password-active .auth__overlay-container,
+.auth-container__routes.two-step-verification-active .auth__overlay-container {
 	display: none;
 }
 

@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy, Input, ViewChild, Output, EventEmit
 import { MatSlideToggleChange, MatSlideToggle } from '@angular/material/slide-toggle';
 import { FormGroup } from '@angular/forms';
 import { AccountSandboxService } from '../../account-sandbox.service';
-import { upDownFadeInAnimation, fadeInAnimation } from 'app/core/core.module';
+import { ROUTE_ANIMATIONS_ELEMENTS, downUpFadeInAnimation } from 'app/core/core.module';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { Observable, merge } from 'rxjs';
@@ -19,10 +19,14 @@ import { TwoFactorAuthenticationVerificationCode } from 'app/core/models/account
 	selector: 'odm-two-factor-authentication',
 	templateUrl: './two-factor-authentication.component.html',
 	styleUrls: ['./two-factor-authentication.component.scss'],
-	animations: [fadeInAnimation, upDownFadeInAnimation],
+	animations: [downUpFadeInAnimation],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TwoFactorAuthenticationComponent {
+	/**
+	 * Route animations.
+	 */
+	readonly _routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
 	/**
 	 * Whether the two factor authentication data is being fetched.
 	 */

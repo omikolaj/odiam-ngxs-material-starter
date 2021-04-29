@@ -8,7 +8,9 @@ import { Subscription, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { PasswordRequirementType } from 'app/core/models/auth/password-requirement-type.enum';
 import { LogService } from 'app/core/logger/log.service';
-import { fadeInAnimation } from 'app/core/core.module';
+import { downUpFadeInAnimation } from 'app/core/core.module';
+import { TooltipTouchGestures } from '@angular/material/tooltip';
+import { ODM_TOOLTIP_SHOW_DELAY_IN_MS } from 'app/shared/global-settings/mat-tooltip-settings';
 
 /**
  * Displays password help and validates users password.
@@ -19,7 +21,7 @@ import { fadeInAnimation } from 'app/core/core.module';
 	styleUrls: ['./password-help.component.scss'],
 	// has to be default because nothing changes in the template when requirements go from passed to failed.
 	changeDetection: ChangeDetectionStrategy.Default,
-	animations: [fadeInAnimation]
+	animations: [downUpFadeInAnimation]
 })
 export class PasswordHelpComponent implements OnInit, OnDestroy {
 	/**
@@ -53,6 +55,16 @@ export class PasswordHelpComponent implements OnInit, OnDestroy {
 	 * Event emitter when password help is clicked.
 	 */
 	@Output() passwordHelpClicked = new EventEmitter<void>();
+
+	/**
+	 * Touch gestrues of two factor authentication codes component.
+	 */
+	readonly _touchGestrues: TooltipTouchGestures = 'on';
+
+	/**
+	 * Delay in ms for toolip.
+	 */
+	readonly _showDelayInMs = ODM_TOOLTIP_SHOW_DELAY_IN_MS;
 
 	/**
 	 * Indent of mat-tree-node component.
@@ -200,6 +212,26 @@ export class PasswordHelpComponent implements OnInit, OnDestroy {
 				this._log.warn('_passwordRequirementMet method passed in node without a valid type property.');
 				return false;
 		}
+	}
+
+	/**
+	 * Gets class for password state. Three possible states:
+	 * 1. Validation ran, not valid,
+	 * 2. Validation ran, valid,
+	 * 3. Validation NOT ran
+	 * @param node
+	 * @param pristine
+	 * @returns class for password state
+	 */
+	_getClassForPasswordState(node: PasswordRequirement, pristine: boolean): string {
+		if (pristine === true) {
+			return 'auth--req-not-validated';
+		} else {
+			if (this._passwordRequirementMet(node)) {
+				return 'auth--req-met';
+			}
+		}
+		return 'auth--req-not-met';
 	}
 
 	/**

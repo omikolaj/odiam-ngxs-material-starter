@@ -277,7 +277,7 @@ export class SecurityContainerComponent implements OnInit {
 	 */
 	private _initVerificationCodeForm(): void {
 		this._verificationCodeForm = this._sb.fb.group({
-			verificationCode: this._sb.fb.control(
+			code: this._sb.fb.control(
 				{ value: '', disabled: true },
 				{
 					validators: [OdmValidators.required, OdmValidators.minLength(6), OdmValidators.maxLength(6)],

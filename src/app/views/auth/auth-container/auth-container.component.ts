@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy, OnInit, OnDestroy } from '@angular/
 import { Observable, Subscription } from 'rxjs';
 import { BreakpointState, BreakpointObserver } from '@angular/cdk/layout';
 import { MinScreenSizeQuery } from 'app/shared/screen-size-queries';
-import { ROUTE_ANIMATIONS_ELEMENTS, routeAnimations, leftRightFadeInAnimation } from 'app/core/core.module';
+import { ROUTE_ANIMATIONS_ELEMENTS, routeAnimations } from 'app/core/core.module';
 import { tap, startWith } from 'rxjs/operators';
 import { NavigationEnd, UrlSegment } from '@angular/router';
 import { ActiveAuthType } from 'app/core/models/auth/active-auth-type.model';
@@ -15,7 +15,7 @@ import { AuthSandboxService } from '../auth-sandbox.service';
 	selector: 'odm-auth-container',
 	templateUrl: './auth-container.component.html',
 	styleUrls: ['./auth-container.component.scss'],
-	animations: [routeAnimations, leftRightFadeInAnimation],
+	animations: [routeAnimations],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AuthContainerComponent implements OnInit, OnDestroy {
@@ -118,12 +118,17 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 * @param url
 	 */
 	private _setActiveAuthTypeBasedOnUrl(url: string): void {
+		console.log('url', url);
 		if (url === '/auth/sign-in' || url === '/auth') {
 			this._sb.onSwitchAuth({ activeAuthType: 'sign-in-active' }, 'sign-in');
 		} else if (url === '/auth/sign-up') {
 			this._sb.onSwitchAuth({ activeAuthType: 'sign-up-active' }, 'sign-up');
 		} else if (url === '/auth/forgot-password') {
-			this._sb.onUpdateActiveAuthType({ activeAuthType: 'forgot-password-active' });
+			this._sb.updateActiveAuthType({ activeAuthType: 'forgot-password-active' });
+		} else if (url.includes('/auth/two-step-verification')) {
+			this._sb.updateActiveAuthType({ activeAuthType: 'two-step-verification-active' });
+		} else {
+			this._sb.log.error('the auth url does not match any configured paths.', this);
 		}
 	}
 

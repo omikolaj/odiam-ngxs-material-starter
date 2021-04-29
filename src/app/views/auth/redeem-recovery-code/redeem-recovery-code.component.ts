@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { tap } from 'rxjs/operators';
-import { leftRightFadeInAnimation } from 'app/core/core.module';
+import { downUpFadeInAnimation } from 'app/core/core.module';
 import { AuthSandboxService } from '../auth-sandbox.service';
 import { TwoFactorRecoveryCode } from 'app/core/models/auth/two-factor-recovery-code.model';
 
@@ -16,7 +16,7 @@ import { TwoFactorRecoveryCode } from 'app/core/models/auth/two-factor-recovery-
 	selector: 'odm-redeem-recovery-code',
 	templateUrl: './redeem-recovery-code.component.html',
 	styleUrls: ['./redeem-recovery-code.component.scss'],
-	animations: [leftRightFadeInAnimation],
+	animations: [downUpFadeInAnimation],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RedeemRecoveryCodeComponent implements OnInit {

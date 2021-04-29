@@ -20,6 +20,22 @@ export const upDownFadeInAnimation = trigger('upDownFadeIn', [
 ]);
 
 /*
+ * Up down fade in animation that can be used to display elements fading in from the top and leaving fading up.
+ * Example: @downUpFadeIn
+ */
+export const downUpFadeInAnimation = trigger('downUpFadeIn', [
+	transition(':enter', [
+		animate('0.5s ease-in-out', keyframes([style({ opacity: 0, transform: 'translateY(10px)' }), style({ opacity: 1, transform: 'translateY(0%)' })]))
+	]),
+	transition(':leave', [
+		animate(
+			'0.2s ease-in-out',
+			keyframes([style({ opacity: 1, transform: 'translateY(-10px)' }), style({ opacity: 0, transform: 'translateY(0%)' })])
+		)
+	])
+]);
+
+/*
  * Right to left fade in animation used to display and hide elements incoming from right hand side to left hand side.
  * Example: @rightLeftFadeIn
  */

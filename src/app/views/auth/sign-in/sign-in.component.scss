@@ -35,8 +35,11 @@ form {
 	margin: 0 auto;
 
 	.auth--btn {
-		color: white;
 		text-transform: uppercase;
+	}
+
+	.auth--btn:not([disabled]) {
+		color: white;
 	}
 
 	// FORM CONTAINER
@@ -63,6 +66,7 @@ form {
 			object-fit: contain;
 			width: 25px;
 			margin: 0 5px;
+			cursor: pointer;
 		}
 
 		.auth__form-btn {

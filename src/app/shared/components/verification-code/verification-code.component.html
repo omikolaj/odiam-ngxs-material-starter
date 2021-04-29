@@ -10,11 +10,11 @@
 		<button mat-button (click)="_onCancelClicked()" color="warn">
 			{{ 'odm.buttons.cancel' | translate }}
 		</button>
-		<button mat-button color="primary" type="submit" [disabled]="!_form.valid || codeVerificationInProgress">
+		<button mat-button mat-stroked-button color="accent" type="submit" [disabled]="!_form.valid || codeVerificationInProgress">
 			<!-- If code verification is not in progress and code verification succeeded display green check mark and display spinner inside the button -->
 			<ng-container *ngIf="!codeVerificationInProgress && codeVerificationSucceeded">
 				{{ 'odm.buttons.verified' | translate }}
-				<mat-icon class="verification-code__req-met" matSuffix>{{ 'task_alt' }}</mat-icon>
+				<mat-icon color="accent" matSuffix>{{ 'task_alt' }}</mat-icon>
 				<odm-spinner
 					[type]="'button'"
 					[diameter]="_verifiedNextStepSpinnerDiameter"

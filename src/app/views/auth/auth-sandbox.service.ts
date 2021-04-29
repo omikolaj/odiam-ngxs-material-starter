@@ -99,7 +99,7 @@ export class AuthSandboxService {
 	 * @param activePanel
 	 */
 	onSwitchAuth(activePanel: { activeAuthType: ActiveAuthType }, routeUrl: AuthTypeRouteUrl): void {
-		this.onUpdateActiveAuthType(activePanel);
+		this.updateActiveAuthType(activePanel);
 		setTimeout(() => {
 			void this.router.navigate(['/auth', routeUrl]);
 		}, 300);
@@ -109,7 +109,7 @@ export class AuthSandboxService {
 	 * Updates active auth type for sign-in/sign-up/forgot-password.
 	 * @param activePanel
 	 */
-	onUpdateActiveAuthType(activePanel: { activeAuthType: ActiveAuthType }): void {
+	updateActiveAuthType(activePanel: { activeAuthType: ActiveAuthType }): void {
 		this._store.dispatch(new Auth.SwitchAuthType(activePanel));
 	}
 

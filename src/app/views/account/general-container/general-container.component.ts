@@ -6,7 +6,7 @@ import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { skip, filter, tap } from 'rxjs/operators';
 import { implementsOdmWebApiException } from 'app/core/utilities/implements-odm-web-api-exception';
-import { fadeInAnimation, upDownFadeInAnimation } from 'app/core/core.module';
+import { downUpFadeInAnimation } from 'app/core/core.module';
 
 /**
  * General component container that houses user's general settings functionality.
@@ -15,7 +15,7 @@ import { fadeInAnimation, upDownFadeInAnimation } from 'app/core/core.module';
 	selector: 'odm-general-container',
 	templateUrl: './general-container.component.html',
 	styleUrls: ['./general-container.component.scss'],
-	animations: [fadeInAnimation, upDownFadeInAnimation],
+	animations: [downUpFadeInAnimation],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GeneralContainerComponent implements OnInit, OnDestroy {
