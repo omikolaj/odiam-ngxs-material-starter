@@ -66,6 +66,10 @@ button {
 	height: 270px;
 }
 
+.auth-container__routes.reset-password-active {
+	height: 500px;
+}
+
 .auth-container__routes.two-step-verification-active {
 	height: auto;
 }
@@ -80,7 +84,8 @@ button {
 
 // disables over lay container when viewing forgot-password, or two factor authentication component
 .auth-container__routes.forgot-password-active .auth__overlay-container,
-.auth-container__routes.two-step-verification-active .auth__overlay-container {
+.auth-container__routes.two-step-verification-active .auth__overlay-container,
+.auth-container__routes.reset-password-active .auth__overlay-container {
 	display: none;
 }
 

@@ -12,6 +12,7 @@ import { PasswordReset } from 'app/core/models/auth/password-reset.model';
 import { PasswordHelpToggleClass } from 'app/core/models/auth/password-help-toggle-class.model';
 import { PasswordRequirement } from 'app/core/models/auth/password-requirement.model';
 import { getPasswordRequirements } from 'app/core/utilities/password-requirements.utility';
+import { ActivatedRoute } from '@angular/router';
 
 /**
  * Reset password component.
@@ -84,7 +85,7 @@ export class ResetPasswordComponent extends AuthBase implements OnInit, OnDestro
 	 * @param _fb
 	 * @param _sb
 	 */
-	constructor(private _sb: AuthSandboxService, cd: ChangeDetectorRef) {
+	constructor(private _sb: AuthSandboxService, protected cd: ChangeDetectorRef, private _route: ActivatedRoute) {
 		super(_sb.translateValidationErrorService, _sb.log, cd);
 	}
 
@@ -96,6 +97,7 @@ export class ResetPasswordComponent extends AuthBase implements OnInit, OnDestro
 		this._initForm();
 		this._passwordRequirements = this._initPasswordRequirements();
 		this._passwordControl = this._resetPasswordForm.get('password');
+		this._subscription.add(this._validateFormConfirmPasswordField(this._resetPasswordForm).subscribe());
 		this._listenForServerErrors();
 	}
 
@@ -108,18 +110,13 @@ export class ResetPasswordComponent extends AuthBase implements OnInit, OnDestro
 	}
 
 	/**
-	 * Inits new user's password requirements.
-	 */
-	private _initPasswordRequirements(): PasswordRequirement[] {
-		return getPasswordRequirements();
-	}
-
-	/**
 	 * Event handler for when user submits password reset form.
 	 */
 	_onSubmit(): void {
 		this._sb.log.trace('_onSubmit fired.', this);
 		const model = this._resetPasswordForm.value as PasswordReset;
+		model.userId = this._route.snapshot.queryParams['userId'] as string;
+		model.passwordResetToken = this._route.snapshot.queryParams['code'] as string;
 		this._sb.onResetPassword(model);
 	}
 
@@ -139,8 +136,51 @@ export class ResetPasswordComponent extends AuthBase implements OnInit, OnDestro
 	 * Subscribes to server errors and sets problem details and internal server error details.
 	 */
 	private _listenForServerErrors(): void {
-		this._subscription.add(this._sb.problemDetails$.pipe(tap((value) => (this.problemDetails = value))).subscribe());
-		this._subscription.add(this._sb.internalServerErrorDetails$.pipe(tap((value) => (this.internalServerErrorDetails = value))).subscribe());
+		this._subscription.add(
+			this._sb.problemDetails$
+				.pipe(
+					tap((value) => {
+						this.problemDetails = value;
+						this.cd.detectChanges();
+					})
+				)
+				.subscribe()
+		);
+		this._subscription.add(
+			this._sb.internalServerErrorDetails$
+				.pipe(
+					tap((value) => {
+						this.internalServerErrorDetails = value;
+						this.cd.detectChanges();
+					})
+				)
+				.subscribe()
+		);
+	}
+
+	/**
+	 * Inits new user's password requirements.
+	 */
+	private _initPasswordRequirements(): PasswordRequirement[] {
+		return getPasswordRequirements();
+	}
+
+	/**
+	 * Validates form confirm password field.
+	 * @param form
+	 * @returns form confirm password field
+	 */
+	private _validateFormConfirmPasswordField(form: FormGroup): Observable<any> {
+		return form.valueChanges.pipe(
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			tap((_) => {
+				if (form.hasError('notSame')) {
+					this._confirmPasswordMatchReqMet = false;
+				} else {
+					this._confirmPasswordMatchReqMet = true;
+				}
+			})
+		);
 	}
 
 	/**

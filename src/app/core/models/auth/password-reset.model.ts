@@ -3,12 +3,17 @@
  */
 export interface PasswordReset {
 	/**
-	 * User's password.
+	 * User's id.
 	 */
-	email: string;
+	userId: string;
 
 	/**
-	 * Users' new password.
+	 * User's new password.
 	 */
 	password: string;
+
+	/**
+	 * User's password reset token.
+	 */
+	passwordResetToken: string;
 }

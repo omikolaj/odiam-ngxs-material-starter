@@ -1,6 +1,6 @@
 <div class="auth-container" [ngClass]="_routeAnimationsElements">
 	<div *ngIf="_breakpointStateScreenMatcher$ | async as matcher" class="auth-container__content">
-		<div *ngIf="!_forgotPasswordIsDisplayed && !_twoStepVerificationIsDisplayed && !_redeemRecoveryCodeIsDisplayed">
+		<div *ngIf="!_forgotPasswordIsDisplayed && !_twoStepVerificationIsDisplayed && !_redeemRecoveryCodeIsDisplayed && !_resetPasswordIsDisplayed">
 			<div *ngIf="!matcher?.matches" class="auth-container__header">
 				<h1 class="auth-container__heading" [ngClass]="_routeAnimationsElements">
 					{{ _signInIsDisplayed ? ('odm.auth.sign-in.header' | translate) : ('odm.auth.sign-up.header' | translate) }}

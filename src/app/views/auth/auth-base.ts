@@ -31,6 +31,7 @@ export class AuthBase {
 	 * Sets internal server error.
 	 */
 	protected set internalServerError(value: InternalServerErrorDetails) {
+		this.log.debug('[AuthBase]: Setting internalServerError.', this);
 		this._internalServerErrorDetailsHandled = false;
 		this._problemDetails = null;
 		this._internalServerErrorDetails = value;
@@ -50,6 +51,7 @@ export class AuthBase {
 	 * Sets problem details error.
 	 */
 	protected set problemDetailsError(value: ProblemDetails) {
+		this.log.debug('[AuthBase]: Setting problemDetailsError.', this);
 		this._problemDetailsServerErrorHandled = false;
 		this._internalServerErrorDetails = null;
 		this._problemDetails = value;
@@ -150,14 +152,17 @@ export class AuthBase {
 	_ifServerErrorOccured(control: AbstractControl, controlType?: AuthControlType): boolean {
 		// if internal server error occured set control as invalid.
 		if (this._internalServerErrorOccured) {
+			this.log.debug('[_ifServerErrorOccured]: InternalServerErrorOccured.', this);
 			return this._handleInternalServerError(control);
 		}
-		// else if server validation error occured set control as invalid.
+		// else if server validation error occured set control as invalid.d
 		else if (this._serverValidationErrorOccured) {
+			this.log.debug('[_ifServerErrorOccured]: ServerValidationErrorOccured.', this);
 			return this._handleServerValidationError(control, controlType);
 		}
 		// else if server error occured set control as invalid.
 		else if (this._serverErrorOccured) {
+			this.log.debug('[_ifServerErrorOccured]: ServerErrorOccured.', this);
 			return this._handleServerError(control);
 		}
 
@@ -237,6 +242,7 @@ export class AuthBase {
 	 * @returns true if server error
 	 */
 	private _handleServerError(control: AbstractControl): boolean {
+		this.log.debug('[_handleServerError]: Was problemDetailsServerErrorHandled:', this, this._problemDetailsServerErrorHandled);
 		if (this._problemDetailsServerErrorHandled === false) {
 			this._setServerError(control);
 			return true;
@@ -250,10 +256,12 @@ export class AuthBase {
 	 * @param control
 	 */
 	private _setServerError(control: AbstractControl): void {
+		this.log.debug('[_setServerError]: fired.', this);
 		const errorDescription = this._problemDetails.detail;
 		control.setErrors({ serverError: { errorDescription } });
 		control.markAsPristine();
 		this._problemDetailsServerErrorHandled = true;
+		this.log.debug('[_setServerError]: running change detection.', this);
 		this.cd.detectChanges();
 	}
 

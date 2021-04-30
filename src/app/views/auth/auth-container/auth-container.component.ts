@@ -62,6 +62,13 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	}
 
 	/**
+	 * Whether user is on reset password route.
+	 */
+	get _resetPasswordIsDisplayed(): boolean {
+		return this._sb.router.url.includes('/auth/reset-password');
+	}
+
+	/**
 	 * Whether user is on two step verification route.
 	 */
 	get _signInIsDisplayed(): boolean {
@@ -126,6 +133,8 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 			this._sb.updateActiveAuthType({ activeAuthType: 'forgot-password-active' });
 		} else if (url.includes('/auth/two-step-verification')) {
 			this._sb.updateActiveAuthType({ activeAuthType: 'two-step-verification-active' });
+		} else if (url.includes('/auth/reset-password')) {
+			this._sb.updateActiveAuthType({ activeAuthType: 'reset-password-active' });
 		} else {
 			this._sb.log.error('the auth url does not match any configured paths.', this);
 		}
