@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { TwoFactorAuthenticationAsyncService } from 'app/core/auth/two-factor-authentication-async.service';
-import { tap } from 'rxjs/operators';
+import { tap, switchMap } from 'rxjs/operators';
 import * as TwoFactorAuthentication from './security-container/two-factor-authentication/two-factor-authentication.store.actions';
 import { Store, Select, Actions, ofActionCompleted } from '@ngxs/store';
 import { Observable } from 'rxjs';
@@ -23,6 +23,8 @@ import { AccountGeneralDetails } from 'app/core/models/account/general/account-g
 import { TwoFactorAuthenticationSetup } from 'app/core/models/account/security/two-factor-authentication-setup.model';
 import { TwoFactorAuthenticationSetupResult } from 'app/core/models/account/security/two-factor-authentication-setup-result.model';
 import { TwoFactorAuthenticationVerificationCode } from 'app/core/models/account/security/two-factor-authentication-verification-code.model';
+import { NotificationService } from 'app/core/core.module';
+import { TranslateService } from '@ngx-translate/core';
 
 /**
  * Account sandbox service.
@@ -79,6 +81,8 @@ export class AccountSandboxService {
 		private _twoFactorAuthenticationAsync: TwoFactorAuthenticationAsyncService,
 		private _store: Store,
 		private _userAsyncService: UsersAsyncService,
+		private _notificationService: NotificationService,
+		private _translationService: TranslateService,
 		private _actions$: Actions,
 		public log: LogService,
 		public fb: FormBuilder,
@@ -178,6 +182,14 @@ export class AccountSandboxService {
 	 */
 	resendEmailVerification(): void {
 		const id = this._store.selectSnapshot(AuthState.selectCurrentUserId);
-		this._userAsyncService.resendEmailVerification$(id).subscribe();
+		this._userAsyncService
+			.resendEmailVerification$(id)
+			.pipe(
+				switchMap(() => this._translationService.get('odm.account.general.resend-verification-toast')),
+				tap((message: string) => {
+					this._notificationService.info(message);
+				})
+			)
+			.subscribe();
 	}
 }

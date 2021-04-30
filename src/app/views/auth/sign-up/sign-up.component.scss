@@ -49,9 +49,32 @@ form {
 		// Transition that controls sign-in/sign-up components start transitioning out of the view
 		transition: all 0.6s ease-out;
 
+		.auth__form-container-switch-sign-in {
+			display: flex;
+			justify-content: flex-start;
+			width: 100%;
+			font-size: small;
+
+			mat-icon .mat-icon {
+				height: 20px;
+				width: 20px;
+			}
+
+			mat-icon .material-icons {
+				font-size: 20px;
+			}
+
+			span {
+				vertical-align: top;
+			}
+		}
+
 		.auth__text-link {
-			font-size: 12px;
 			cursor: pointer;
+		}
+
+		.auth__text-link--size {
+			font-size: 12px;
 		}
 
 		.auth__view-password {

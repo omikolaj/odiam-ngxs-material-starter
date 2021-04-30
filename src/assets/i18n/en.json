@@ -9,7 +9,10 @@
 				"title": "General",
 				"personal-email": "Personal email",
 				"verified-tooltip": "Emailed verified",
-				"pending-verification-tooltip": "Pending verification. Click to resend email verification"
+				"pending-verification-tooltip": "Verification pending",
+				"resend-verification": "Resend verification",
+				"resend-verification-toast": "Verification email has been resent",
+				"resend-verification-disabled-tooltip": "Please allow few mintues to receive email verification."
 			},
 			"security": {
 				"title": "Security",
@@ -67,6 +70,9 @@
 				"header": "Two step verification is required",
 				"subheader": "Please enter verification code found on your authenticator app.",
 				"use-recovery-code": "Use recovery code"
+			},
+			"password-reset": {
+				"title": "Password reset"
 			},
 			"recovery-code": {
 				"header": "Recovery code is required",
@@ -173,6 +179,7 @@
 		},
 		"buttons": {
 			"reset-password": "Reset Password",
+			"submit": "Submit",
 			"sign-up": "Sign up",
 			"sign-in": "Sign in",
 			"create-account": "Create Account",

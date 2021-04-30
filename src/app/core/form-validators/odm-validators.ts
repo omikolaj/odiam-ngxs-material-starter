@@ -1,6 +1,16 @@
 import { Validators, AbstractControl, ValidationErrors, FormGroup } from '@angular/forms';
 
 /**
+ * Minimum password length requirement for the application user.
+ */
+export const MinPasswordLength = 0;
+
+/**
+ * Verification code length.
+ */
+export const VerificationCodeLength = 6;
+
+/**
  * Odm validators class extends angulars native Validators class
  */
 export class OdmValidators extends Validators {

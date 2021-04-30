@@ -10,7 +10,8 @@
 
 	odm-sign-in-container odm-sign-in,
 	odm-sign-up-container odm-sign-up,
-	odm-two-step-verification {
+	odm-two-step-verification,
+	odm-reset-password {
 		h3 {
 			background-image: linear-gradient(to right, mat-color($accent, A400), mat-color($primary, 700));
 		}
@@ -23,7 +24,7 @@
 			background-color: mat-color($background, background);
 
 			.auth__form-container {
-				.auth__text-link {
+				.auth__text--link {
 					color: mat-color($foreground, secondary-text, if($is-dark-theme, 0.7, 0.6));
 				}
 
@@ -33,11 +34,6 @@
 
 				.auth__form-btn {
 					background-image: linear-gradient(to right, mat-color($accent, A200), mat-color($accent, 900));
-				}
-
-				button:disabled,
-				button[disabled] {
-					//background: mat-color($foreground, disabled);
 				}
 			}
 		}

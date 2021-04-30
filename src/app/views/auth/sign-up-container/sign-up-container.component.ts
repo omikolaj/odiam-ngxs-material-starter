@@ -6,14 +6,15 @@ import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { FormGroup } from '@angular/forms';
 import { MinScreenSizeQuery } from 'app/shared/screen-size-queries';
-import { OdmValidators } from 'app/core/form-validators/odm-validators';
+import { OdmValidators, MinPasswordLength } from 'app/core/form-validators/odm-validators';
 import { rightLeftFadeInAnimation } from 'app/core/core.module';
 import { AuthSandboxService } from '../auth-sandbox.service';
 import { SignupUser } from 'app/core/models/auth/signup-user.model';
 import { ActiveAuthType } from 'app/core/models/auth/active-auth-type.model';
 import { AuthTypeRouteUrl } from 'app/core/models/auth/auth-type-route-url.model';
 import { PasswordRequirement } from 'app/core/models/auth/password-requirement.model';
-import { PasswordRequirementType } from 'app/core/models/auth/password-requirement-type.enum';
+
+import { getPasswordRequirements } from 'app/core/utilities/password-requirements.utility';
 
 /**
  * Sign up container component.
@@ -124,38 +125,7 @@ export class SignUpContainerComponent implements OnInit {
 	 * Inits new user's password requirements.
 	 */
 	private _initPasswordRequirements(): PasswordRequirement[] {
-		return [
-			{
-				name: 'odm.auth.form.requirements.title',
-				type: PasswordRequirementType.None,
-				children: [
-					{
-						name: 'odm.auth.form.requirements.min-chars-long',
-						type: PasswordRequirementType.MinCharsLength
-					},
-					{
-						name: 'odm.auth.form.requirements.one-upper-case',
-						type: PasswordRequirementType.UpperCase
-					},
-					{
-						name: 'odm.auth.form.requirements.one-lower-case',
-						type: PasswordRequirementType.LowerCase
-					},
-					{
-						name: 'odm.auth.form.requirements.digit',
-						type: PasswordRequirementType.Digit
-					},
-					{
-						name: 'odm.auth.form.requirements.three-unique-chars',
-						type: PasswordRequirementType.ThreeUniqueChar
-					},
-					{
-						name: 'odm.auth.form.requirements.one-special-char',
-						type: PasswordRequirementType.SpecialChar
-					}
-				]
-			}
-		] as PasswordRequirement[];
+		return getPasswordRequirements();
 	}
 
 	/**
@@ -173,7 +143,7 @@ export class SignUpContainerComponent implements OnInit {
 				password: this._sb.fb.control('', {
 					validators: [
 						OdmValidators.required,
-						OdmValidators.minLength(8),
+						OdmValidators.minLength(MinPasswordLength),
 						OdmValidators.requireDigit,
 						OdmValidators.requireLowercase,
 						OdmValidators.requireUppercase,

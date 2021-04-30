@@ -31,6 +31,18 @@
 	.personal-email__pending-verification {
 		cursor: pointer;
 	}
+
+	.personal-email__pending-verification-link-container {
+		display: flex;
+
+		.personal-email__resend-verification-btn {
+			padding: 0;
+		}
+
+		.personal-email--link-size {
+			font-size: small;
+		}
+	}
 }
 
 .personal-email__ghost-loading-state {

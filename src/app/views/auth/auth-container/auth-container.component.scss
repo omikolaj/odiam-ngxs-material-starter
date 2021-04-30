@@ -66,6 +66,10 @@ button {
 	height: 270px;
 }
 
+.auth-container__routes.two-step-verification-active {
+	height: auto;
+}
+
 @media (min-width: map-get($grid-breakpoints, md)) {
 	.auth-container__routes {
 		width: 768px;

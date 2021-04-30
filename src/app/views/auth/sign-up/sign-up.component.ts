@@ -12,6 +12,7 @@ import { SignupUser } from 'app/core/models/auth/signup-user.model';
 import { AuthSandboxService } from '../auth-sandbox.service';
 import { PasswordRequirement } from 'app/core/models/auth/password-requirement.model';
 import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
+import { PasswordHelpToggleClass } from 'app/core/models/auth/password-help-toggle-class.model';
 
 /**
  * Sign up component.
@@ -63,7 +64,7 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	/**
 	 * Password requirements.
 	 */
-	@Input() passwordRequrements: PasswordRequirement[];
+	@Input() passwordRequirements: PasswordRequirement[];
 
 	/**
 	 * Whether sign-in or sign-up component is active.
@@ -108,7 +109,7 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	/**
 	 * Password help toggle class.
 	 */
-	_passwordHelpToggleClass: 'auth__password-field-help-on' | 'auth__password-field-help-off' = 'auth__password-field-help-off';
+	_passwordHelpToggleClass: PasswordHelpToggleClass = 'auth__password-field-help-off';
 
 	/**
 	 * Route animations.
@@ -175,7 +176,7 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	}
 
 	/**
-	 * Event handler when user toggles on password help.
+	 * Event handler when user toggles password help.
 	 */
 	_onPasswordHelpToggled(): void {
 		this._sb.log.trace('_onPasswordHelpToggled fired.', this);

@@ -6,4 +6,19 @@
 	.two-step-verification__header {
 		text-align: center;
 	}
+
+	.two-step-verification__verification-code {
+		display: flex;
+		justify-content: center;
+	}
+
+	.auth__form-container {
+		display: flex;
+		justify-content: center;
+		margin-top: 8px;
+
+		.auth__text-link--size {
+			font-size: 12px;
+		}
+	}
 }

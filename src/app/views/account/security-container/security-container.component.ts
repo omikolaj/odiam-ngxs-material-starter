@@ -6,7 +6,7 @@ import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { skip, filter, tap } from 'rxjs/operators';
 import { FormGroup } from '@angular/forms';
-import { OdmValidators } from 'app/core/form-validators/odm-validators';
+import { OdmValidators, VerificationCodeLength } from 'app/core/form-validators/odm-validators';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { upDownFadeInAnimation } from 'app/core/core.module';
 import { ActionCompletion } from '@ngxs/store';
@@ -280,7 +280,7 @@ export class SecurityContainerComponent implements OnInit {
 			code: this._sb.fb.control(
 				{ value: '', disabled: true },
 				{
-					validators: [OdmValidators.required, OdmValidators.minLength(6), OdmValidators.maxLength(6)],
+					validators: [OdmValidators.required, OdmValidators.minLength(VerificationCodeLength), OdmValidators.maxLength(VerificationCodeLength)],
 					updateOn: 'change'
 				}
 			)

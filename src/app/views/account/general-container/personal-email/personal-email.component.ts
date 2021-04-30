@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import { LogService } from 'app/core/logger/log.service';
+import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
 
 /**
  * User's personal email component.
@@ -11,6 +12,11 @@ import { LogService } from 'app/core/logger/log.service';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PersonalEmailComponent {
+	/**
+	 * Route animations.
+	 */
+	readonly _routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
+
 	/**
 	 * Personal email registered with user's account.
 	 */
@@ -25,6 +31,16 @@ export class PersonalEmailComponent {
 	 * Whether the general data is being fetched.
 	 */
 	@Input() loading: boolean;
+
+	/**
+	 * Whether 'Resend verification email' option is enabled/disabled.
+	 */
+	@Input() set disableResendVerification(value: boolean) {
+		this._log.debug('disableResendVerification property set.', this, value);
+		this._disabled = value;
+	}
+
+	_disabled: boolean;
 
 	/**
 	 * Event emitter when user requests to re-send email verification.

@@ -4,6 +4,7 @@
 			<odm-personal-email
 				[email]="accountGeneralDetails?.email"
 				[verified]="accountGeneralDetails?.verified"
+				[disableResendVerification]="_disableResendVerification$ | async"
 				[loading]="_loading$ | async"
 				(resendEmailVerificationClicked)="_onResendEmailVerificationClicked()"
 			>

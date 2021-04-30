@@ -35,6 +35,16 @@ export class GeneralContainerComponent implements OnInit, OnDestroy {
 	_internalServerErrorDetails$: Observable<InternalServerErrorDetails>;
 
 	/**
+	 * Controls whether 'resend notification' button is disabled/enabled.
+	 */
+	_disableResendVerificationSub = new BehaviorSubject(false);
+
+	/**
+	 * Whether 'resend notification' button is disabled/enabled.
+	 */
+	_disableResendVerification$ = this._disableResendVerificationSub.asObservable();
+
+	/**
 	 * Loading subject. Required for angular OnPush change detection to be triggered.
 	 */
 	private readonly _loadingSub = new BehaviorSubject<boolean>(true);
@@ -96,6 +106,10 @@ export class GeneralContainerComponent implements OnInit, OnDestroy {
 	 */
 	_onResendEmailVerificationClicked(): void {
 		this._sb.resendEmailVerification();
+		this._disableResendVerificationSub.next(true);
+		setTimeout(() => {
+			this._disableResendVerificationSub.next(false);
+		}, 60_000);
 	}
 
 	/**

@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
@@ -60,7 +60,7 @@ export class RedeemRecoveryCodeComponent implements OnInit {
 	 * @param _sb
 	 * @param _route
 	 */
-	constructor(private _sb: AuthSandboxService, private _route: ActivatedRoute) {
+	constructor(private _sb: AuthSandboxService, private _route: ActivatedRoute, private _router: Router) {
 		this._recoveryCodeVerificationSucceeded$ = _sb.isRecoveryCodeRedemptionSuccessful$;
 		// reset code verification value to false when server error occurs.
 		this._problemDetails$ = _sb.problemDetails$.pipe(tap(() => (this._recoveryCodeVerificationInProgress = false)));

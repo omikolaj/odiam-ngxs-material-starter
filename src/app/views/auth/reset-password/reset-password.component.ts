@@ -1,14 +1,17 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, AbstractControl } from '@angular/forms';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { Observable, Subscription } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { OdmValidators } from 'app/core/form-validators/odm-validators';
+import { OdmValidators, MinPasswordLength } from 'app/core/form-validators/odm-validators';
 import { AuthBase } from '../auth-base';
 import { AuthSandboxService } from '../auth-sandbox.service';
 import { PasswordReset } from 'app/core/models/auth/password-reset.model';
+import { PasswordHelpToggleClass } from 'app/core/models/auth/password-help-toggle-class.model';
+import { PasswordRequirement } from 'app/core/models/auth/password-requirement.model';
+import { getPasswordRequirements } from 'app/core/utilities/password-requirements.utility';
 
 /**
  * Reset password component.
@@ -47,49 +50,24 @@ export class ResetPasswordComponent extends AuthBase implements OnInit, OnDestro
 	readonly _routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
 
 	/**
-	 * Hide/show password.
+	 * Password help toggle class.
 	 */
-	_hide = true;
-
-	/**
-	 * Password length requirement for password control.
-	 * Used to inform user about password requirement.
-	 */
-	_passwordLengthReqMet = false;
-
-	/**
-	 * Password uppercase requirement for password control.
-	 * Used to inform user about password requirement.
-	 */
-	_passwordUppercaseReqMet = false;
-
-	/**
-	 * Password lowercase requirement for password control.
-	 * Used to inform user about password requirement.
-	 */
-	_passwordLowercaseReqMet = false;
-
-	/**
-	 * Password digit requirement for password control.
-	 * Used to inform user about password requirement.
-	 */
-	_passwordDigitReqMet = false;
-
-	/**
-	 * Requires user to enter in at least three unique characters.
-	 */
-	_passwordThreeUniqueCharacterCountReqMet = false;
-
-	/**
-	 * Password special character requirement for password control.
-	 * Used to inform user about password requirement.
-	 */
-	_passwordSpecialCharacterReqMet = false;
+	_passwordHelpToggleClass: PasswordHelpToggleClass = 'auth__password-field-help-off';
 
 	/**
 	 * Requires user to enter the same password for confirm password field.
 	 */
-	_confirmPasswordNotMatchReqMet = false;
+	_confirmPasswordMatchReqMet = false;
+
+	/**
+	 * Password requirements required for new user.
+	 */
+	_passwordRequirements: PasswordRequirement[] = [];
+
+	/**
+	 * Password control of sign up component.
+	 */
+	_passwordControl: AbstractControl;
 
 	/**
 	 *  Reset password form email control status changes$.
@@ -116,12 +94,9 @@ export class ResetPasswordComponent extends AuthBase implements OnInit, OnDestro
 	ngOnInit(): void {
 		this._sb.log.trace('Initialized.', this);
 		this._initForm();
+		this._passwordRequirements = this._initPasswordRequirements();
+		this._passwordControl = this._resetPasswordForm.get('password');
 		this._listenForServerErrors();
-		this._resetPasswordFormEmailControlStatusChanges$ = this._resetPasswordForm
-			.get('email')
-			// null out internalServerErrorDetails
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			.statusChanges.pipe(tap((_: string) => (this.internalServerErrorDetails = null)));
 	}
 
 	/**
@@ -133,12 +108,31 @@ export class ResetPasswordComponent extends AuthBase implements OnInit, OnDestro
 	}
 
 	/**
+	 * Inits new user's password requirements.
+	 */
+	private _initPasswordRequirements(): PasswordRequirement[] {
+		return getPasswordRequirements();
+	}
+
+	/**
 	 * Event handler for when user submits password reset form.
 	 */
 	_onSubmit(): void {
 		this._sb.log.trace('_onSubmit fired.', this);
 		const model = this._resetPasswordForm.value as PasswordReset;
 		this._sb.onResetPassword(model);
+	}
+
+	/**
+	 * Event handler when user toggles password help.
+	 */
+	_onPasswordHelpToggled(): void {
+		this._sb.log.trace('_onPasswordHelpToggled fired.', this);
+		if (this._passwordHelpToggleClass === 'auth__password-field-help-off') {
+			this._passwordHelpToggleClass = 'auth__password-field-help-on';
+		} else {
+			this._passwordHelpToggleClass = 'auth__password-field-help-off';
+		}
 	}
 
 	/**
@@ -163,11 +157,10 @@ export class ResetPasswordComponent extends AuthBase implements OnInit, OnDestro
 	private _initResetPasswordForm(): FormGroup {
 		return this._sb.fb.group(
 			{
-				email: this._sb.fb.control('', [OdmValidators.required, OdmValidators.email]),
 				password: this._sb.fb.control('', {
 					validators: [
 						OdmValidators.required,
-						OdmValidators.minLength(8),
+						OdmValidators.minLength(MinPasswordLength),
 						OdmValidators.requireDigit,
 						OdmValidators.requireLowercase,
 						OdmValidators.requireUppercase,

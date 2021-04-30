@@ -191,6 +191,7 @@ export class AuthSandboxService {
 	 * @param model
 	 */
 	cancelTwoStepVerificationCodeProcess(): void {
+		// void this.router.navigate(['auth/two-step-verification']);
 		void this.router.navigate(['auth/sign-in']);
 	}
 

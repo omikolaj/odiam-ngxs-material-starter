@@ -2,7 +2,10 @@
 	<div class="auth__form-container auth__sign-in-container">
 		<form [ngClass]="_routeAnimationsElements" [formGroup]="signinForm" (ngSubmit)="_onSignin()" role="form" novalidate>
 			<h3 class="auth__sign-in-header">{{ 'odm.auth.sign-in.title' | translate }}</h3>
-
+			<div *ngIf="!matcher?.matches" class="auth__form-container-switch-sign-up">
+				<span class="auth__text--link">{{ 'odm.buttons.sign-up' | translate }}</span>
+				<mat-icon class="auth__text--link auth__text-link" (click)="_switchToSignup()" matSuffix>arrow_forward</mat-icon>
+			</div>
 			<div>
 				<img (click)="_onSigninWithFacebook()" class="auth__form-icon" [src]="_facebookLoginIcon" alt="facebook" />
 				<img (click)="_onSigninWithGoogle()" class="auth__form-icon" [src]="_googleLoginIcon" alt="google" />
@@ -35,12 +38,15 @@
 			</div>
 
 			<div>
-				<span class="auth__text-link" (click)="_onForgotPassword()">{{ 'odm.auth.sign-in.forgot-password' | translate }} </span>
-				<span *ngIf="!matcher?.matches" class="auth__text-link" (click)="_switchToSignup()">{{ 'odm.buttons.sign-up' | translate }}</span>
+				<span class="auth__text-link auth__text-link--size auth__text--link" (click)="_onForgotPassword()"
+					>{{ 'odm.auth.sign-in.forgot-password' | translate }}
+				</span>
 			</div>
 			<div class="auth__remember-me">
 				<mat-slide-toggle [checked]="signinForm.get('rememberMe').value" (change)="_onRememberMeChange($event)" formControlName="rememberMe"
-					><span class="auth__text-link">{{ 'odm.auth.sign-in.remember-me' | translate }}</span></mat-slide-toggle
+					><span class="auth__text-link auth__text-link--size auth__text--link">{{
+						'odm.auth.sign-in.remember-me' | translate
+					}}</span></mat-slide-toggle
 				>
 			</div>
 		</form>

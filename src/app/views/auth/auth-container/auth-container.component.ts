@@ -118,7 +118,6 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 * @param url
 	 */
 	private _setActiveAuthTypeBasedOnUrl(url: string): void {
-		console.log('url', url);
 		if (url === '/auth/sign-in' || url === '/auth') {
 			this._sb.onSwitchAuth({ activeAuthType: 'sign-in-active' }, 'sign-in');
 		} else if (url === '/auth/sign-up') {

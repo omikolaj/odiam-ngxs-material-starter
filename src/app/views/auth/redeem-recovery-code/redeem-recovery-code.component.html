@@ -1,18 +1,20 @@
 <div class="recovery-code-verification" @downUpFadeIn>
 	<div>
-		<div class="recovery-code__header">
+		<div class="recovery-code-verification__header">
 			<h2>{{ 'odm.auth.recovery-code.header' | translate }}</h2>
 			<p>{{ 'odm.auth.recovery-code.subheader' | translate }}</p>
 		</div>
-		<odm-verification-code
-			[verificationCodeInputLength]="_recoveryCodeInputLength"
-			[codeVerificationInProgress]="_recoveryCodeVerificationInProgress"
-			[codeVerificationSucceeded]="_recoveryCodeVerificationSucceeded$ | async"
-			[problemDetails]="_problemDetails$ | async"
-			[internalServerErrorDetails]="_internalServerErrorDetails$ | async"
-			(verificationCodeSubmitted)="_onRecoveryCodeSubmitted($event)"
-			(cancelSetupWizardClicked)="_onCancelClicked()"
-		>
-		</odm-verification-code>
+		<div class="recovery-code-verification__code">
+			<odm-verification-code
+				[verificationCodeInputLength]="_recoveryCodeInputLength"
+				[codeVerificationInProgress]="_recoveryCodeVerificationInProgress"
+				[codeVerificationSucceeded]="_recoveryCodeVerificationSucceeded$ | async"
+				[problemDetails]="_problemDetails$ | async"
+				[internalServerErrorDetails]="_internalServerErrorDetails$ | async"
+				(verificationCodeSubmitted)="_onRecoveryCodeSubmitted($event)"
+				(cancelSetupWizardClicked)="_onCancelClicked()"
+			>
+			</odm-verification-code>
+		</div>
 	</div>
 </div>

@@ -1,20 +1,22 @@
-<div class="two-step-verification" [ngClass]="_routeAnimationsElements">
+<div class="two-step-verification auth__container" [ngClass]="_routeAnimationsElements">
 	<div>
 		<div class="two-step-verification__header">
 			<h2>{{ 'odm.auth.two-step-verification.header' | translate }}</h2>
 			<p>{{ 'odm.auth.two-step-verification.subheader' | translate }}</p>
 		</div>
-		<odm-verification-code
-			[codeVerificationInProgress]="_codeVerificationInProgress"
-			[codeVerificationSucceeded]="_codeVerificationSucceeded$ | async"
-			[problemDetails]="_problemDetails$ | async"
-			[internalServerErrorDetails]="_internalServerErrorDetails$ | async"
-			(verificationCodeSubmitted)="_onVerificationCodeSubmitted($event)"
-			(cancelSetupWizardClicked)="_onCancelClicked()"
-		>
-		</odm-verification-code>
-		<div>
-			<span class="two-step-verification__text-link" (click)="_onUseRecoveryCode()">{{
+		<div class="two-step-verification__verification-code">
+			<odm-verification-code
+				[codeVerificationInProgress]="_codeVerificationInProgress"
+				[codeVerificationSucceeded]="_codeVerificationSucceeded$ | async"
+				[problemDetails]="_problemDetails$ | async"
+				[internalServerErrorDetails]="_internalServerErrorDetails$ | async"
+				(verificationCodeSubmitted)="_onVerificationCodeSubmitted($event)"
+				(cancelSetupWizardClicked)="_onCancelClicked()"
+			>
+			</odm-verification-code>
+		</div>
+		<div class="auth__form-container">
+			<span class="auth__text--link auth__text-link--size" (click)="_onUseRecoveryCode()">{{
 				'odm.auth.two-step-verification.use-recovery-code' | translate
 			}}</span>
 		</div>

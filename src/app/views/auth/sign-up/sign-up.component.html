@@ -2,7 +2,10 @@
 	<div class="auth__form-container auth__sign-up-container">
 		<form [ngClass]="_routeAnimationsElements" [formGroup]="_signupForm" (ngSubmit)="_onSignup()" role="form" novalidate>
 			<h3 class="auth__sign-up-header">{{ 'odm.auth.sign-up.title' | translate }}</h3>
-
+			<div *ngIf="!matcher?.matches" class="auth__form-container-switch-sign-in">
+				<mat-icon class="auth__text--link auth__text-link" (click)="_switchToSignin()" matSuffix>arrow_back</mat-icon>
+				<span class="auth__text--link">{{ 'odm.buttons.sign-in' | translate }}</span>
+			</div>
 			<div>
 				<img (click)="_onSigninWithFacebook()" class="auth__form-icon" [src]="_facebookLoginIcon" alt="facebook" />
 				<img (click)="_onSigninWithGoogle()" class="auth__form-icon" [src]="_googleLoginIcon" alt="google" />
@@ -54,7 +57,7 @@
 					<mat-hint>
 						<odm-password-help
 							(passwordHelpClicked)="_onPasswordHelpToggled()"
-							[passwordRequirements]="passwordRequrements"
+							[passwordRequirements]="passwordRequirements"
 							[passwordControl]="_passwordControl"
 						></odm-password-help>
 					</mat-hint>
@@ -89,9 +92,6 @@
 				<button mat-raised-button type="submit" class="auth__form-btn auth__form-signup-btn auth--btn" [disabled]="!_signupForm?.valid">
 					{{ 'odm.buttons.sign-up' | translate }}
 				</button>
-				<div class="auth__text-align">
-					<span *ngIf="!matcher?.matches" class="auth__text-link" (click)="_switchToSignin()">{{ 'odm.buttons.sign-in' | translate }}</span>
-				</div>
 			</div>
 		</form>
 	</div>

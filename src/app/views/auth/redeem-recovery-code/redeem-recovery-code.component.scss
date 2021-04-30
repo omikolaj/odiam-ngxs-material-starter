@@ -1,9 +1,14 @@
-.backup-code-verification {
+.recovery-code-verification {
 	display: flex;
 	flex-flow: column;
 	align-items: center;
 
-	.backup-code-verification__header {
+	.recovery-code-verification__header {
 		text-align: center;
+	}
+
+	.recovery-code-verification__code {
+		display: flex;
+		justify-content: center;
 	}
 }
