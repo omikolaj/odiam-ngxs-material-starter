@@ -32,6 +32,10 @@
 					color: mat-color($warn);
 				}
 
+				.auth--req-met {
+					color: mat-color($accent);
+				}
+
 				.auth__form-btn {
 					background-image: linear-gradient(to right, mat-color($accent, A200), mat-color($accent, 900));
 				}

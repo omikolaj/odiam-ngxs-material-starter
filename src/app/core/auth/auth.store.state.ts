@@ -20,12 +20,12 @@ const AUTH_STATE_TOKEN = new StateToken<AuthStateModel>('auth');
 		expires_at: 0,
 		rememberMe: false,
 		username: '',
-		staySignedIn: false,
 		is2StepVerificationRequired: false,
 		is2StepVerificationSuccessful: false,
 		isRedeemRecoveryCodeSuccessful: false,
 		userId: '',
-		activeAuthType: 'sign-in-active'
+		activeAuthType: 'sign-in-active',
+		passwordResetCompleted: false
 	}
 })
 @Injectable()
@@ -73,16 +73,6 @@ export class AuthState {
 	@Selector([AUTH_STATE_TOKEN])
 	static selectRememberMe(state: AuthStateModel): boolean {
 		return state.rememberMe;
-	}
-
-	/**
-	 * Selects whether user selected to stay signed in option.
-	 * @param state
-	 * @returns true if stay signed in is selected
-	 */
-	@Selector([AUTH_STATE_TOKEN])
-	static selectStaySignedIn(state: AuthStateModel): boolean {
-		return state.staySignedIn;
 	}
 
 	/**
@@ -169,6 +159,16 @@ export class AuthState {
 	}
 
 	/**
+	 * Selects whether user's password reset request completed without errors.
+	 * @param state
+	 * @returns true if password reset completed
+	 */
+	@Selector([AUTH_STATE_TOKEN])
+	static selectPasswordResetCompleted(state: AuthStateModel): boolean {
+		return state.passwordResetCompleted;
+	}
+
+	/**
 	 * Selects expires_at value from local storage and converts it to Date.
 	 * @param state
 	 * @returns date of expires at
@@ -217,24 +217,6 @@ export class AuthState {
 			produce((draft: AuthStateModel) => {
 				draft = { ...draft, ...action.payload };
 				return draft;
-			})
-		);
-
-		const auth = ctx.getState();
-		return ctx.dispatch(new Auth.PersistSettings(auth));
-	}
-
-	/**
-	 * Action handler that updates stay signed in option.
-	 * @param ctx
-	 * @param action
-	 */
-	@Action(Auth.StaySignedinOptionChange)
-	staySignedIn(ctx: StateContext<AuthStateModel>, action: Auth.StaySignedinOptionChange): Observable<void> {
-		this._log.info('staySignedIn action handler fired.', this);
-		ctx.setState(
-			produce((draft: AuthStateModel) => {
-				draft.staySignedIn = action.payload;
 			})
 		);
 
@@ -388,6 +370,24 @@ export class AuthState {
 	@Action(Auth.IsRedeemRecoveryCodeSuccessful)
 	isRedeemRecoveryCodeSuccessful(ctx: StateContext<AuthStateModel>, action: Auth.IsRedeemRecoveryCodeSuccessful): Observable<void> {
 		this._log.info('isRedeemRecoveryCodeSuccessful action handler fired.', this);
+		ctx.setState(
+			produce((draft: AuthStateModel) => {
+				draft = { ...draft, ...action.payload };
+				return draft;
+			})
+		);
+		const auth = ctx.getState();
+		return ctx.dispatch(new Auth.PersistSettings(auth));
+	}
+
+	/**
+	 * Actions handler that updates state whether user's password reset request completed without errors.
+	 * @param ctx
+	 * @param action
+	 */
+	@Action(Auth.PasswordResetCompleted)
+	passwordResetCompleted(ctx: StateContext<AuthStateModel>, action: Auth.PasswordResetCompleted): Observable<void> {
+		this._log.info('passwordResetCompleted action handler fired.', this);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft = { ...draft, ...action.payload };

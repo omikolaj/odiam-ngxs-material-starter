@@ -30,11 +30,6 @@ export interface AuthStateModel {
 	username: string;
 
 	/**
-	 * Determines if stay signed in option is selected.
-	 */
-	staySignedIn: boolean;
-
-	/**
 	 * Encode json web token.
 	 */
 	access_token: string;
@@ -63,4 +58,9 @@ export interface AuthStateModel {
 	 * Whether recovery code was successfully redeemed.
 	 */
 	isRedeemRecoveryCodeSuccessful: boolean;
+
+	/**
+	 * Whether user's password reset requested completed without errors.
+	 */
+	passwordResetCompleted: boolean;
 }

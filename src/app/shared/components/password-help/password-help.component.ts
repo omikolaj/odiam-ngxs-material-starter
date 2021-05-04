@@ -11,6 +11,7 @@ import { LogService } from 'app/core/logger/log.service';
 import { downUpFadeInAnimation } from 'app/core/core.module';
 import { TooltipTouchGestures } from '@angular/material/tooltip';
 import { ODM_TOOLTIP_SHOW_DELAY_IN_MS } from 'app/shared/global-settings/mat-tooltip-settings';
+import { PasswordResetMatTreeState } from 'app/core/models/password-reset-mat-tree-state.model';
 
 /**
  * Displays password help and validates users password.
@@ -44,6 +45,15 @@ export class PasswordHelpComponent implements OnInit, OnDestroy {
 	@Input() set passwordRequirements(value: PasswordRequirement[]) {
 		this._log.debug('passwordRequirements fired.', this);
 		this._dataSource.data = value;
+	}
+
+	/**
+	 * Toggles password help control.
+	 */
+	@Input() set togglePosition(value: PasswordResetMatTreeState) {
+		if (this.matTree) {
+			this._setMatTreeStateAndNotifyParent(value);
+		}
 	}
 
 	/**
@@ -110,6 +120,12 @@ export class PasswordHelpComponent implements OnInit, OnDestroy {
 	 * Requires user to enter the same password for confirm password field.
 	 */
 	_confirmPasswordNotMatchReqMet = false;
+
+	private readonly _topLevelPasswordRequirementNode: PasswordRequirement = {
+		name: 'odm.auth.form.requirements.title',
+		type: PasswordRequirementType.None,
+		children: []
+	};
 
 	/**
 	 * Rxjs subscriptions for this component.
@@ -232,6 +248,30 @@ export class PasswordHelpComponent implements OnInit, OnDestroy {
 			}
 		}
 		return 'auth--req-not-met';
+	}
+
+	/**
+	 * Handles setting mat-tree control to either collapsed/expanded states and notifies parent of change.
+	 */
+	private _setMatTreeStateAndNotifyParent(state: PasswordResetMatTreeState): void {
+		if (state === 'collapsed') {
+			this._log.debug(`[togglePosition]: State is set to 'collapsed'`, this);
+			if (this.matTree.treeControl.isExpanded(this._topLevelPasswordRequirementNode)) {
+				this._log.debug(`[togglePosition]: topLevelPasswordRequirementNode is exapnded. Collapsing mat-tree control.`, this);
+				this.matTree.treeControl.collapseAll();
+				this.passwordHelpClicked.emit();
+			}
+		}
+		// in case state is 'undefined' we check if its exapnded.
+		else if (state === 'expanded') {
+			this._log.debug(`[togglePosition]: State is set to 'exapnded'`, this);
+			// if its collapsed
+			if (this.matTree.treeControl.isExpanded(this._topLevelPasswordRequirementNode) === false) {
+				this._log.debug(`[togglePosition]: topLevelPasswordRequirementNode is collapsed. Expanding mat-tree control.`, this);
+				this.matTree.treeControl.expandAll();
+				this.passwordHelpClicked.emit();
+			}
+		}
 	}
 
 	/**

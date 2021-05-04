@@ -51,11 +51,6 @@ export class AuthSandboxService {
 	@Select(AuthState.selectUsername) username$: Observable<string>;
 
 	/**
-	 * Whether stay signed in option is checked.
-	 */
-	@Select(AuthState.selectStaySignedIn) staySignedIn$: Observable<string>;
-
-	/**
 	 * Selects active auth type. Either sign-in/sign-up or forgot-password.
 	 */
 	@Select(AuthState.selectActiveAuthType) activeAuthType$: Observable<ActiveAuthType>;
@@ -69,6 +64,11 @@ export class AuthSandboxService {
 	 * Whether redemption of recovery code was successful.
 	 */
 	@Select(AuthState.selectIsRedeemRecoveryCodeSuccessful) isRecoveryCodeRedemptionSuccessful$: Observable<boolean>;
+
+	/**
+	 * Whether user's password reset completed successfully.
+	 */
+	@Select(AuthState.selectPasswordResetCompleted) passwordResetCompleted$: Observable<boolean>;
 
 	/**
 	 * Creates an instance of auth sandbox service.
@@ -122,14 +122,6 @@ export class AuthSandboxService {
 	}
 
 	/**
-	 * Changes stay signed in state.
-	 * @param event
-	 */
-	onStaySignedinChanged(event: boolean): void {
-		this._store.dispatch(new Auth.StaySignedinOptionChange(event));
-	}
-
-	/**
 	 * Sends reset password link to the passed in email.
 	 * @param email
 	 */
@@ -141,8 +133,19 @@ export class AuthSandboxService {
 	 * Resets user password.
 	 * @param model
 	 */
-	onResetPassword(model: PasswordReset): void {
-		this._usersAsyncService.resetPassword$(model).subscribe();
+	resetPassword(model: PasswordReset): void {
+		this._usersAsyncService
+			.resetPassword$(model)
+			.pipe(tap(() => this.resetPasswordCompleted(true)))
+			.subscribe();
+	}
+
+	/**
+	 * Dispatches an action to store indicate whether reset password request completed.
+	 * @param value
+	 */
+	resetPasswordCompleted(value: boolean): void {
+		this._store.dispatch(new Auth.PasswordResetCompleted({ passwordResetCompleted: value }));
 	}
 
 	/**

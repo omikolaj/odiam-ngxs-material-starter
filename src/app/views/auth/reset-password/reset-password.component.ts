@@ -1,9 +1,9 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { FormGroup, AbstractControl } from '@angular/forms';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
-import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
+import { ROUTE_ANIMATIONS_ELEMENTS, downUpFadeInAnimation } from 'app/core/core.module';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, merge, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { OdmValidators, MinPasswordLength } from 'app/core/form-validators/odm-validators';
 import { AuthBase } from '../auth-base';
@@ -13,6 +13,8 @@ import { PasswordHelpToggleClass } from 'app/core/models/auth/password-help-togg
 import { PasswordRequirement } from 'app/core/models/auth/password-requirement.model';
 import { getPasswordRequirements } from 'app/core/utilities/password-requirements.utility';
 import { ActivatedRoute } from '@angular/router';
+import { PasswordResetMatTreeState } from 'app/core/models/password-reset-mat-tree-state.model';
+import { ODM_SMALL_SPINNER_DIAMETER, ODM_SMALL_SPINNER_STROKE_WIDTH } from 'app/shared/global-settings/mat-spinner-settings';
 
 /**
  * Reset password component.
@@ -21,6 +23,7 @@ import { ActivatedRoute } from '@angular/router';
 	selector: 'odm-reset-password',
 	templateUrl: './reset-password.component.html',
 	styleUrls: ['./reset-password.component.scss'],
+	animations: [downUpFadeInAnimation],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ResetPasswordComponent extends AuthBase implements OnInit, OnDestroy {
@@ -76,6 +79,36 @@ export class ResetPasswordComponent extends AuthBase implements OnInit, OnDestro
 	_resetPasswordFormEmailControlStatusChanges$: Observable<string>;
 
 	/**
+	 * Password reset finished successfully.
+	 */
+	_passwordResetComplete$: Observable<boolean>;
+
+	/**
+	 * Whether password reset is in progress.
+	 */
+	_passwordResetInProgress = false;
+
+	/**
+	 * Generating recovery codes spinner diameter.
+	 */
+	readonly _resettingPasswordSpinnerDiameter = ODM_SMALL_SPINNER_DIAMETER;
+
+	/**
+	 * Generating recovery codes spinner stroke width.
+	 */
+	readonly _resettingPasswordSpinnerStrokeWidth = ODM_SMALL_SPINNER_STROKE_WIDTH;
+
+	/**
+	 * Whether password help dialog is expanded or collapsed.
+	 */
+	private _togglePositionSub = new Subject<PasswordResetMatTreeState>();
+
+	/**
+	 * Whether password help dialog is expanded or collapsed.
+	 */
+	_togglePosition$ = this._togglePositionSub.asObservable();
+
+	/**
 	 * Rxjs subscriptions for this component.
 	 */
 	private readonly _subscription = new Subscription();
@@ -87,6 +120,8 @@ export class ResetPasswordComponent extends AuthBase implements OnInit, OnDestro
 	 */
 	constructor(private _sb: AuthSandboxService, protected cd: ChangeDetectorRef, private _route: ActivatedRoute) {
 		super(_sb.translateValidationErrorService, _sb.log, cd);
+
+		this._passwordResetComplete$ = _sb.passwordResetCompleted$;
 	}
 
 	/**
@@ -105,8 +140,17 @@ export class ResetPasswordComponent extends AuthBase implements OnInit, OnDestro
 	 * NgOnDestroy life cycle.
 	 */
 	ngOnDestroy(): void {
+		this._sb.resetPasswordCompleted(false);
 		this._sb.log.trace('Destroyed.', this);
 		this._subscription.unsubscribe();
+	}
+
+	/**
+	 * navigates back to auth/sign-in
+	 */
+	_onReturnToSignIn(): void {
+		this._sb.log.trace('_onReturnToSignIn fired.', this);
+		void this._sb.router.navigate(['auth/sign-in']);
 	}
 
 	/**
@@ -114,10 +158,11 @@ export class ResetPasswordComponent extends AuthBase implements OnInit, OnDestro
 	 */
 	_onSubmit(): void {
 		this._sb.log.trace('_onSubmit fired.', this);
+		this._passwordResetInProgress = true;
 		const model = this._resetPasswordForm.value as PasswordReset;
 		model.userId = this._route.snapshot.queryParams['userId'] as string;
 		model.passwordResetToken = this._route.snapshot.queryParams['code'] as string;
-		this._sb.onResetPassword(model);
+		this._sb.resetPassword(model);
 	}
 
 	/**
@@ -137,20 +182,17 @@ export class ResetPasswordComponent extends AuthBase implements OnInit, OnDestro
 	 */
 	private _listenForServerErrors(): void {
 		this._subscription.add(
-			this._sb.problemDetails$
+			merge(this._sb.problemDetails$, this._sb.internalServerErrorDetails$)
 				.pipe(
 					tap((value) => {
-						this.problemDetails = value;
-						this.cd.detectChanges();
-					})
-				)
-				.subscribe()
-		);
-		this._subscription.add(
-			this._sb.internalServerErrorDetails$
-				.pipe(
-					tap((value) => {
-						this.internalServerErrorDetails = value;
+						if ('message' in value) {
+							this.internalServerErrorDetails = value;
+						} else {
+							this.problemDetails = value;
+						}
+						this._sb.log.debug(`Changing _togglePosition to 'collapsed'`);
+						this._togglePositionSub.next('collapsed');
+						this._passwordResetInProgress = false;
 						this.cd.detectChanges();
 					})
 				)

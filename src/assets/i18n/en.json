@@ -51,7 +51,8 @@
 			"password-help": "Verifies your password meets requirements.",
 			"forgot-password": {
 				"header": "Forgot your password?",
-				"subheader": "Enter your email address to reset your password."
+				"subheader": "Enter your email address to reset your password.",
+				"message": "If the provided e-mail is registered, you will receive an email from us shortly to reset your password."
 			},
 			"sign-in": {
 				"title": "Sign in",
@@ -72,7 +73,11 @@
 				"use-recovery-code": "Use recovery code"
 			},
 			"password-reset": {
-				"title": "Password reset"
+				"header": "Password reset",
+				"updated": {
+					"header": "Password updated",
+					"message": "You can now sign in using your new password"
+				}
 			},
 			"recovery-code": {
 				"header": "Recovery code is required",
@@ -179,6 +184,7 @@
 		},
 		"buttons": {
 			"reset-password": "Reset Password",
+			"go-to-sign-in": "Go to Sign in",
 			"submit": "Submit",
 			"sign-up": "Sign up",
 			"sign-in": "Sign in",

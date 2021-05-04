@@ -197,6 +197,13 @@ export class AuthBase {
 
 	/**
 	 * Handles server validation error.
+	 * Notes: The problem is that when server validation error occurs we only know that ProblemDetails has emitted.
+	 * It isn't clear which control type the ProblemDetails is for. The easiest but most brittle way of knowing is to
+	 * check and see if server validation errors contain the name of the control in them. For example if there was server
+	 * validation issues with control for email, then server errors will have the phrase 'email' in their descriptions
+	 * and that is what exactly what _validationErrorMatchesControlType method does. It checks to see if server validation errors
+	 * have the phrase 'email' or 'password' in them or whatever controlType value is passed in. In sign up component, email is the first
+	 * control that will be passed into this method, then password control then confirmPassword control.
 	 * @param control
 	 * @param controlType
 	 * @returns true if server validation error
@@ -204,17 +211,44 @@ export class AuthBase {
 	private _handleServerValidationError(control: AbstractControl, controlType: AuthControlType): boolean {
 		if (this._problemDetailsServerErrorHandled === false) {
 			const errors = this._problemDetailsValidationErrorsKeys;
-			if (this._validationErrorMatchesControlType(errors, controlType)) {
-				this._setServerValidationError(control);
-				return true;
-			} else if (!controlType) {
+			if (!controlType) {
 				this.log.warn('ControlType not specified!', this);
 				// fallback, in case controlType is null and not specified.
 				this._setServerValidationError(control);
+			} else if (this._validationErrorMatchesControlType(errors, controlType)) {
+				this._setServerValidationError(control);
+				return true;
+			}
+			// if server errors do not contain control's name in them. For example control's name could be
+			// 'password' or 'email'.
+			else {
+				// this will only work if all email server validation errors contain the phrase 'email' in them
+				if (controlType !== 'email') {
+					this._setServerValidationError(control);
+					return true;
+				}
+				if (controlType === 'email') {
+					// In case this if statement is executed for email just refactor this entire method to:
+					// private _handleServerValidationError(control: AbstractControl, controlType: AuthControlType): boolean {
+					//   if (this._problemDetailsServerErrorHandled === false) {
+					//     if (!controlType) {
+					//       this.log.warn('ControlType not specified!', this);
+					//       // fallback, in case controlType is null and not specified.
+					//       this._setServerValidationError(control);
+					//     } else {
+					//       this._setServerValidationError(control);
+					//       return true;
+					//     }
+					//   }
+					// }
+					this.log.warn(
+						`Server validation errors occured for 'email' controlType, however the server validations do not contain the phrase 'email' in them. Email control will now not display any server validation errors. Please refactor _handleServerValidationError method according to comments`
+					);
+				}
 			}
 		}
 
-		// if control is prestine keep the server error message displayed, else remove it.
+		// if control is prestine keep the server error message displayed.
 		return control.pristine;
 	}
 

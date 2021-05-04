@@ -53,21 +53,6 @@ export class KeepOrRemoveRememberMeUsername {
 }
 
 /**
- * Updates stay signed in option.
- */
-export class StaySignedinOptionChange {
-	/**
-	 * Type of action.
-	 */
-	static readonly type = '[Auth] Stay Signed in';
-	/**
-	 * Creates an instance of stay signed in option change action.
-	 * @param payload
-	 */
-	constructor(public payload: boolean) {}
-}
-
-/**
  * Signs user in.
  */
 export class Signin {
@@ -167,6 +152,22 @@ export class SwitchAuthType {
 	 * @param payload
 	 */
 	constructor(public payload: { activeAuthType: ActiveAuthType }) {}
+}
+
+/**
+ * Whether user's password reset request completed without errors.
+ */
+export class PasswordResetCompleted {
+	/**
+	 * Type of action.
+	 */
+	static readonly type = '[Auth] Password Reset Completed';
+
+	/**
+	 * Creates an instance of password reset completed.
+	 * @param payload
+	 */
+	constructor(public payload: { passwordResetCompleted: boolean }) {}
 }
 
 /**
