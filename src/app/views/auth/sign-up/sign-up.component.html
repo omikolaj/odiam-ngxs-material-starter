@@ -89,8 +89,11 @@
 			</div>
 
 			<div>
-				<button mat-raised-button type="submit" class="auth__form-btn auth__form-signup-btn auth--btn" [disabled]="!_signupForm?.valid">
+				<button mat-raised-button type="submit" class="auth__form-btn auth__form-signup-btn auth--btn" [disabled]="!_signupForm?.valid || signingUp">
 					{{ 'odm.buttons.sign-up' | translate }}
+					<ng-container *ngIf="signingUp">
+						<odm-spinner [type]="'button'" [diameter]="_signingUpSpinnerDiameter" [strokeWidth]="_signingUpSpinnerStrokeWidth"> </odm-spinner>
+					</ng-container>
 				</button>
 			</div>
 		</form>

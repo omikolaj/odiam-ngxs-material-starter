@@ -13,6 +13,7 @@ import { AuthSandboxService } from '../auth-sandbox.service';
 import { PasswordRequirement } from 'app/core/models/auth/password-requirement.model';
 import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
 import { PasswordHelpToggleClass } from 'app/core/models/auth/password-help-toggle-class.model';
+import { ODM_SMALL_SPINNER_DIAMETER, ODM_SMALL_SPINNER_STROKE_WIDTH } from 'app/shared/global-settings/mat-spinner-settings';
 
 /**
  * Sign up component.
@@ -72,6 +73,11 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	@Input() activeAuthType: ActiveAuthType = 'sign-up-active';
 
 	/**
+	 * Whether user is currently in the middle if signing up.
+	 */
+	@Input() signingUp: boolean;
+
+	/**
 	 * Event emitter for when the signup form is submitted.
 	 */
 	@Output() signupFormSubmitted = new EventEmitter<SignupUser>();
@@ -115,6 +121,16 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	 * Route animations.
 	 */
 	readonly _routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
+
+	/**
+	 * Signing up spinner diameter.
+	 */
+	readonly _signingUpSpinnerDiameter = ODM_SMALL_SPINNER_DIAMETER;
+
+	/**
+	 * Signing up spinner stroke width.
+	 */
+	readonly _signingUpSpinnerStrokeWidth = ODM_SMALL_SPINNER_STROKE_WIDTH;
 
 	/**
 	 * Rxjs subscriptions for this component.

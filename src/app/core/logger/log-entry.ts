@@ -27,7 +27,15 @@ export class LogEntry {
 	/**
 	 * Whether date should be inlcuded in the log.
 	 */
-	logWithDate = true;
+	private readonly _logWithDate: boolean;
+
+	/**
+	 * Creates an instance of log entry.
+	 * @param logWithDate
+	 */
+	constructor(logWithDate: boolean) {
+		this._logWithDate = logWithDate;
+	}
 
 	/**
 	 * Builds log string.
@@ -36,7 +44,7 @@ export class LogEntry {
 	buildLogString(): string {
 		let ret = '';
 
-		if (this.logWithDate) {
+		if (this._logWithDate) {
 			const date = new Date();
 
 			const dateFormated = `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date
@@ -65,6 +73,19 @@ export class LogEntry {
 	 * @returns string.
 	 */
 	private _formatParams(params: any[]): string {
-		return params.join(',');
+		let ret: string = params.join(',');
+
+		// Is there at least one object in the array?
+		if (params.some((p) => typeof p === 'object')) {
+			ret = '';
+
+			// Build comma-delimited string
+			for (let index = 0; index < params.length; index++) {
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+				const item = params[index];
+				ret += JSON.stringify(item) + ',';
+			}
+		}
+		return ret;
 	}
 }

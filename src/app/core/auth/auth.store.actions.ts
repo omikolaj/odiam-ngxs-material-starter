@@ -53,6 +53,16 @@ export class KeepOrRemoveRememberMeUsername {
 }
 
 /**
+ * Updates state with default values for properties not stored in local storage.
+ */
+export class SetDefaults {
+	/**
+	 * Type of action.
+	 */
+	static readonly type = '[Auth] Set Defaults';
+}
+
+/**
  * Signs user in.
  */
 export class Signin {
@@ -65,6 +75,36 @@ export class Signin {
 	 * @param payload
 	 */
 	constructor(public payload: { accessToken: AccessToken; userId: string }) {}
+}
+
+/**
+ * User is signign in.
+ */
+export class SigningIn {
+	/**
+	 * Type of action.
+	 */
+	static readonly type = '[Auth] SigningIn';
+	/**
+	 * Creates an instance of signingIn action.
+	 * @param payload
+	 */
+	constructor(public payload: { signingIn: boolean }) {}
+}
+
+/**
+ * User is signign up.
+ */
+export class SigningUp {
+	/**
+	 * Type of action.
+	 */
+	static readonly type = '[Auth] SigningUp';
+	/**
+	 * Creates an instance of signingIn action.
+	 * @param payload
+	 */
+	constructor(public payload: { signingUp: boolean }) {}
 }
 
 /**
@@ -110,22 +150,6 @@ export class IsRedeemRecoveryCodeSuccessful {
 	 * @param payload
 	 */
 	constructor(public payload: { isRedeemRecoveryCodeSuccessful: boolean }) {}
-}
-
-/**
- * Set current user id
- */
-export class SetCurrentUserId {
-	/**
-	 * Type of action.
-	 */
-	static readonly type = '[Auth] Set Current User Id';
-
-	/**
-	 * Creates an instance of set current user id.
-	 * @param payload
-	 */
-	constructor(public payload: { userId: string }) {}
 }
 
 /**

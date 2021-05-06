@@ -53,6 +53,11 @@ export class SignUpContainerComponent implements OnInit {
 	_activeAuthType$: Observable<string>;
 
 	/**
+	 * Whether user is in the middle if signing up.
+	 */
+	_signignUp$: Observable<boolean>;
+
+	/**
 	 * Password requirements required for new user.
 	 */
 	_passwordRequirements: PasswordRequirement[] = [];
@@ -68,6 +73,7 @@ export class SignUpContainerComponent implements OnInit {
 		this._internalServerErrorDetails$ = _sb.internalServerErrorDetails$;
 		this._breakpointStateScreenMatcher$ = breakpointObserver.observe([MinScreenSizeQuery.md]);
 		this._activeAuthType$ = _sb.activeAuthType$;
+		this._signignUp$ = _sb.signignUp$;
 	}
 
 	/**
@@ -111,7 +117,7 @@ export class SignUpContainerComponent implements OnInit {
 		this._sb.log.trace('_switchToSignup fired.', this);
 		const activeAuthType = { activeAuthType: event };
 		const routeUrl: AuthTypeRouteUrl = event === 'sign-in-active' ? 'sign-in' : 'sign-up';
-		this._sb.onSwitchAuth(activeAuthType, routeUrl);
+		this._sb.switchActiveAuthType(activeAuthType, routeUrl);
 	}
 
 	/**

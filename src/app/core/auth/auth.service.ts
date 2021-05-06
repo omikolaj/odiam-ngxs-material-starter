@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AuthAsyncService } from 'app/core/auth/auth-async.service';
-import { tap, map, finalize, switchMap, takeUntil, take } from 'rxjs/operators';
+import { tap, map, finalize, switchMap, takeUntil, take, catchError } from 'rxjs/operators';
 import * as Auth from './auth.store.actions';
 import { Router } from '@angular/router';
 import { LogService } from 'app/core/logger/log.service';
@@ -9,7 +9,7 @@ import { JsonWebTokenService } from 'app/core/auth/json-web-token.service';
 import { MatDialog, MatDialogRef, MatDialogConfig } from '@angular/material/dialog';
 import { AuthDialogComponent } from '../../views/auth/auth-dialog/auth-dialog.component';
 import { AuthState } from 'app/core/auth/auth.store.state';
-import { Observable, of, timer, race } from 'rxjs';
+import { Observable, of, timer, race, throwError } from 'rxjs';
 import { AuthDialogUserDecision } from '../models/auth/auth-dialog-user-decision.enum';
 import { fromUnixTime } from 'date-fns';
 import { UserSessionActivityService } from '../user-session-activity/user-session-activity.service';
@@ -187,8 +187,11 @@ export class AuthService {
 	signUserOut$(): Observable<any> {
 		this._log.trace('signUserOut$ executed.', this);
 		return this._authAsyncService.signout$().pipe(
-			tap(() => void this._router.navigate(['auth/sign-in'])),
+			catchError((err) => {
+				return throwError(err);
+			}),
 			finalize(() => {
+				void this._router.navigate(['auth/sign-in']);
 				this._store.dispatch([new Auth.Signout(), new Auth.KeepOrRemoveRememberMeUsername()]);
 				this._userActivityService.cleanUp();
 			})
@@ -290,7 +293,7 @@ export class AuthService {
 	 * @returns any
 	 */
 	private _updateUserSession$(result: RenewAccessTokenResult): Observable<any> {
-		this._log.trace('_updateUserSession$ executed.');
+		this._log.trace('_updateUserSession$ executed.', this);
 		if (result.succeeded) {
 			this._log.debug('[_updateUserSession$] result succeeded.', this);
 			return this.authenticate$(result.accessToken);

@@ -1,4 +1,4 @@
-import { StateToken, StateContext, State, Selector, Action } from '@ngxs/store';
+import { StateToken, StateContext, State, Selector, Action, NgxsAfterBootstrap } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import produce from 'immer';
 import * as Auth from './auth.store.actions';
@@ -25,7 +25,9 @@ const AUTH_STATE_TOKEN = new StateToken<AuthStateModel>('auth');
 		isRedeemRecoveryCodeSuccessful: false,
 		userId: '',
 		activeAuthType: 'sign-in-active',
-		passwordResetCompleted: false
+		passwordResetCompleted: false,
+		signingIn: false,
+		signingUp: false
 	}
 })
 @Injectable()
@@ -33,7 +35,7 @@ const AUTH_STATE_TOKEN = new StateToken<AuthStateModel>('auth');
 /**
  * Provides all action handlers for user authentication.
  */
-export class AuthState {
+export class AuthState implements NgxsAfterBootstrap {
 	/**
 	 * Selects state of user's token. User explicitly signed out if access token is empty string.
 	 * @param state
@@ -169,6 +171,26 @@ export class AuthState {
 	}
 
 	/**
+	 * Selects whether user is in the process of signing in.
+	 * @param state
+	 * @returns true request is made to sign user in.
+	 */
+	@Selector([AUTH_STATE_TOKEN])
+	static selectSigningIn(state: AuthStateModel): boolean {
+		return state.signingIn;
+	}
+
+	/**
+	 * Selects whether user is in the process of signing up.
+	 * @param state
+	 * @returns true request is made to sign user in.
+	 */
+	@Selector([AUTH_STATE_TOKEN])
+	static selectSigningUp(state: AuthStateModel): boolean {
+		return state.signingUp;
+	}
+
+	/**
 	 * Selects expires_at value from local storage and converts it to Date.
 	 * @param state
 	 * @returns date of expires at
@@ -186,6 +208,39 @@ export class AuthState {
 	constructor(private _localStorageService: LocalStorageService, private _log: LogService) {}
 
 	/**
+	 * Ngxs after bootstrap will be invoked after the root view and all its children have been rendered.
+	 * https://www.ngxs.io/advanced/life-cycle
+	 * @param ctx
+	 */
+	ngxsAfterBootstrap(ctx: StateContext<AuthStateModel>): void {
+		ctx.dispatch(new Auth.SetDefaults());
+	}
+
+	/**
+	 * Action handler that updates property default values that are not stored in local storage.
+	 * Otherwise those properties become undefined.
+	 * @param ctx
+	 */
+	@Action(Auth.SetDefaults)
+	setDefaults(ctx: StateContext<AuthStateModel>): void {
+		this._log.info('setDefaults action handler fired.', this);
+		ctx.setState(
+			produce((draft: AuthStateModel) => {
+				draft = {
+					...draft,
+					signingIn: false,
+					signingUp: false,
+					passwordResetCompleted: false,
+					is2StepVerificationRequired: false,
+					is2StepVerificationSuccessful: false,
+					isRedeemRecoveryCodeSuccessful: false
+				};
+				return draft;
+			})
+		);
+	}
+
+	/**
 	 * Action handler that updates remember me option.
 	 * @param ctx
 	 * @param action
@@ -198,10 +253,11 @@ export class AuthState {
 				draft = { ...draft, ...action.payload };
 				// clear out username everytime this option changes. It is set only when user successfully logs in.
 				draft.username = '';
+				return draft;
 			})
 		);
 
-		const auth = ctx.getState();
+		const auth = this._getLocalStorageProperties(ctx) as AuthStateModel;
 		return ctx.dispatch(new Auth.PersistSettings(auth));
 	}
 
@@ -220,7 +276,7 @@ export class AuthState {
 			})
 		);
 
-		const auth = ctx.getState();
+		const auth = this._getLocalStorageProperties(ctx) as AuthStateModel;
 		return ctx.dispatch(new Auth.PersistSettings(auth));
 	}
 
@@ -241,29 +297,44 @@ export class AuthState {
 				draft.access_token = action.payload.accessToken.access_token;
 				draft.expires_at = expires_at;
 				draft.userId = action.payload.userId;
+				return draft;
 			})
 		);
 
-		const auth = ctx.getState();
+		const auth = this._getLocalStorageProperties(ctx) as AuthStateModel;
 		return ctx.dispatch(new Auth.PersistSettings(auth));
 	}
 
 	/**
-	 * Action handler for setting current user id.
+	 * Action handler for when user is currently signing in.
 	 * @param ctx
 	 * @param action
 	 */
-	@Action(Auth.SetCurrentUserId)
-	setCurrentUserId(ctx: StateContext<AuthStateModel>, action: Auth.SetCurrentUserId): Observable<void> {
-		this._log.info('setCurrentUserId action handler fired.', this);
+	@Action(Auth.SigningIn)
+	setSigningIn(ctx: StateContext<AuthStateModel>, action: Auth.SigningIn): void {
+		this._log.info('setSigningIn action handler fired.', this);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft = { ...draft, ...action.payload };
 				return draft;
 			})
 		);
-		const auth = ctx.getState();
-		return ctx.dispatch(new Auth.PersistSettings(auth));
+	}
+
+	/**
+	 * Action handler for when user is currently signing in.
+	 * @param ctx
+	 * @param action
+	 */
+	@Action(Auth.SigningUp)
+	setSigningUp(ctx: StateContext<AuthStateModel>, action: Auth.SigningUp): void {
+		this._log.info('setSigningUp action handler fired.', this);
+		ctx.setState(
+			produce((draft: AuthStateModel) => {
+				draft = { ...draft, ...action.payload };
+				return draft;
+			})
+		);
 	}
 
 	/**
@@ -281,13 +352,15 @@ export class AuthState {
 				draft.is2StepVerificationSuccessful = false;
 				draft.isRedeemRecoveryCodeSuccessful = false;
 				draft.access_token = '';
+				draft.passwordResetCompleted = false;
 				draft.expires_at = 0;
 				draft.userId = '';
+				return draft;
 			})
 		);
 		this._log.debug('[signout]: Removing ACTIVE_UNTIL from local storage.');
 		this._localStorageService.removeItem(ACTIVE_UNTIL);
-		const auth = ctx.getState();
+		const auth = this._getLocalStorageProperties(ctx) as AuthStateModel;
 		return ctx.dispatch(new Auth.PersistSettings(auth));
 	}
 
@@ -302,9 +375,10 @@ export class AuthState {
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft.username = rememberMe ? draft.username : '';
+				return draft;
 			})
 		);
-		const auth = ctx.getState();
+		const auth = this._getLocalStorageProperties(ctx) as AuthStateModel;
 		return ctx.dispatch(new Auth.PersistSettings(auth));
 	}
 
@@ -322,7 +396,7 @@ export class AuthState {
 				return draft;
 			})
 		);
-		const auth = ctx.getState();
+		const auth = this._getLocalStorageProperties(ctx) as AuthStateModel;
 		return ctx.dispatch(new Auth.PersistSettings(auth));
 	}
 
@@ -332,7 +406,7 @@ export class AuthState {
 	 * @param action
 	 */
 	@Action(Auth.Is2StepVerificationSuccessful)
-	is2StepVerificationSuccessful(ctx: StateContext<AuthStateModel>, action: Auth.Is2StepVerificationSuccessful): Observable<void> {
+	is2StepVerificationSuccessful(ctx: StateContext<AuthStateModel>, action: Auth.Is2StepVerificationSuccessful): void {
 		this._log.info('is2StepVerificationSuccessful action handler fired.', this);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
@@ -340,8 +414,6 @@ export class AuthState {
 				return draft;
 			})
 		);
-		const auth = ctx.getState();
-		return ctx.dispatch(new Auth.PersistSettings(auth));
 	}
 
 	/**
@@ -350,7 +422,7 @@ export class AuthState {
 	 * @param action
 	 */
 	@Action(Auth.Is2StepVerificationSuccessful)
-	is2StepVerificationRequired(ctx: StateContext<AuthStateModel>, action: Auth.Is2StepVerificationRequired): Observable<void> {
+	is2StepVerificationRequired(ctx: StateContext<AuthStateModel>, action: Auth.Is2StepVerificationRequired): void {
 		this._log.info('is2StepVerificationRequired action handler fired.', this);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
@@ -358,8 +430,6 @@ export class AuthState {
 				return draft;
 			})
 		);
-		const auth = ctx.getState();
-		return ctx.dispatch(new Auth.PersistSettings(auth));
 	}
 
 	/**
@@ -368,7 +438,7 @@ export class AuthState {
 	 * @param action
 	 */
 	@Action(Auth.IsRedeemRecoveryCodeSuccessful)
-	isRedeemRecoveryCodeSuccessful(ctx: StateContext<AuthStateModel>, action: Auth.IsRedeemRecoveryCodeSuccessful): Observable<void> {
+	isRedeemRecoveryCodeSuccessful(ctx: StateContext<AuthStateModel>, action: Auth.IsRedeemRecoveryCodeSuccessful): void {
 		this._log.info('isRedeemRecoveryCodeSuccessful action handler fired.', this);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
@@ -376,8 +446,6 @@ export class AuthState {
 				return draft;
 			})
 		);
-		const auth = ctx.getState();
-		return ctx.dispatch(new Auth.PersistSettings(auth));
 	}
 
 	/**
@@ -386,7 +454,7 @@ export class AuthState {
 	 * @param action
 	 */
 	@Action(Auth.PasswordResetCompleted)
-	passwordResetCompleted(ctx: StateContext<AuthStateModel>, action: Auth.PasswordResetCompleted): Observable<void> {
+	passwordResetCompleted(ctx: StateContext<AuthStateModel>, action: Auth.PasswordResetCompleted): void {
 		this._log.info('passwordResetCompleted action handler fired.', this);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
@@ -394,8 +462,6 @@ export class AuthState {
 				return draft;
 			})
 		);
-		const auth = ctx.getState();
-		return ctx.dispatch(new Auth.PersistSettings(auth));
 	}
 
 	/**
@@ -407,5 +473,23 @@ export class AuthState {
 	persistSettings(ctx: StateContext<AuthStateModel>, action: Auth.PersistSettings): void {
 		this._log.info('persistSettings action handler fired.', this);
 		this._localStorageService.setItem(AUTH_KEY, action.payload);
+	}
+
+	/**
+	 * Gets Auth state properties that should be saved in local storage
+	 * @param ctx
+	 * @returns local storage properties
+	 */
+	private _getLocalStorageProperties(ctx: StateContext<AuthStateModel>): unknown {
+		const state = ctx.getState();
+		return {
+			access_token: state.access_token,
+			activeAuthType: state.activeAuthType,
+			expires_at: state.expires_at,
+			isAuthenticated: state.isAuthenticated,
+			rememberMe: state.rememberMe,
+			userId: state.userId,
+			username: state.username
+		};
 	}
 }

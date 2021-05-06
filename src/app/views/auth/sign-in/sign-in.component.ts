@@ -9,6 +9,7 @@ import { AuthBase } from '../auth-base';
 import { ActiveAuthType } from 'app/core/models/auth/active-auth-type.model';
 import { SigninUser } from 'app/core/models/auth/signin-user.model';
 import { AuthSandboxService } from '../auth-sandbox.service';
+import { ODM_SMALL_SPINNER_DIAMETER, ODM_SMALL_SPINNER_STROKE_WIDTH } from 'app/shared/global-settings/mat-spinner-settings';
 
 /**
  * Sign in component.
@@ -55,6 +56,11 @@ export class SignInComponent extends AuthBase implements OnInit {
 	 * Whether to remember username.
 	 */
 	@Input() rememberMe = false;
+
+	/**
+	 * Whether user is currently in the middle if signing in.
+	 */
+	@Input() signingIn: boolean;
 
 	/**
 	 * Username value. Empty string if remember me is false.
@@ -105,6 +111,16 @@ export class SignInComponent extends AuthBase implements OnInit {
 	 * Route animations.
 	 */
 	readonly _routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
+
+	/**
+	 * Signing in spinner diameter.
+	 */
+	readonly _signingInSpinnerDiameter = ODM_SMALL_SPINNER_DIAMETER;
+
+	/**
+	 * Signing in spinner stroke width.
+	 */
+	readonly _signingInSpinnerStrokeWidth = ODM_SMALL_SPINNER_STROKE_WIDTH;
 
 	/**
 	 * Creates an instance of sign in component.
@@ -172,5 +188,15 @@ export class SignInComponent extends AuthBase implements OnInit {
 	_switchToSignup(): void {
 		this._sb.log.trace('_switchToSignup event handler fired.', this);
 		this.switchToSignupClicked.emit('sign-up-active');
+	}
+
+	/**
+	 * Disables signin if either email control is empty or password control is empty.
+	 * @returns true if button should be disabled
+	 */
+	_disableSignin(): boolean {
+		const emailControl = this.signinForm?.get('email');
+		const passwordControl = this.signinForm?.get('password');
+		return emailControl.value === '' || passwordControl.value === '';
 	}
 }

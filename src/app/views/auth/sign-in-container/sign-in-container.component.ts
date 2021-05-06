@@ -60,6 +60,11 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 	_username$: Observable<string>;
 
 	/**
+	 * Whether user is in the middle if signing in.
+	 */
+	_signignIn$: Observable<boolean>;
+
+	/**
 	 * Creates an instance of sign in container component.
 	 * @param _sb
 	 * @param _route
@@ -72,6 +77,7 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 		this._username$ = _sb.username$;
 		this._breakpointStateScreenMatcher$ = breakpointObserver.observe([MinScreenSizeQuery.md]);
 		this._activeAuthType$ = _sb.activeAuthType$;
+		this._signignIn$ = _sb.signignIn$;
 	}
 
 	/**
@@ -120,7 +126,9 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 	 */
 	_onSigninSubmitted(model: SigninUser): void {
 		this._sb.log.trace('_onSigninSubmitted event handler fired.', this);
-		this._sb.signinUser(model);
+		if (model.email !== '' && model.password !== '') {
+			this._sb.signinUser(model);
+		}
 	}
 
 	/**
@@ -129,7 +137,7 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 	 */
 	_onRememberMeChanged(event: boolean): void {
 		this._sb.log.trace('_onRememberMeChanged event handler fired.', this, event);
-		this._sb.onRememberMeChanged(event);
+		this._sb.changeRememberMeState(event);
 	}
 
 	/**
@@ -140,7 +148,7 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 		this._sb.log.trace('__onSwitchToSignupClicked event handler fired', this, event);
 		const activeAuthType = { activeAuthType: event };
 		const routeUrl: AuthTypeRouteUrl = event === 'sign-in-active' ? 'sign-in' : 'sign-up';
-		this._sb.onSwitchAuth(activeAuthType, routeUrl);
+		this._sb.switchActiveAuthType(activeAuthType, routeUrl);
 	}
 
 	/**

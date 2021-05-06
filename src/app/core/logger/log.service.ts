@@ -155,12 +155,11 @@ export class LogService {
 	 */
 	private _writeToLog<T>(msg: string, from: string | unknown | ComponentType<T>, level: LogLevel, params: any[]): void {
 		if (this.shouldLog(level)) {
-			const entry: LogEntry = new LogEntry();
+			const entry: LogEntry = new LogEntry(this.logWithDate);
 			msg = this._addFrom<T>(msg, from);
 			entry.message = msg;
 			entry.level = level;
 			entry.extraInfo = params;
-			entry.logWithDate = this.logWithDate;
 
 			this.publishers.forEach((logger: LogPublisher) => {
 				logger.log(entry).subscribe();

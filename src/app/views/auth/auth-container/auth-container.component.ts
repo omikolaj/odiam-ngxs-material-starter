@@ -126,9 +126,9 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 */
 	private _setActiveAuthTypeBasedOnUrl(url: string): void {
 		if (url === '/auth/sign-in' || url === '/auth') {
-			this._sb.onSwitchAuth({ activeAuthType: 'sign-in-active' }, 'sign-in');
+			this._sb.switchActiveAuthType({ activeAuthType: 'sign-in-active' }, 'sign-in');
 		} else if (url === '/auth/sign-up') {
-			this._sb.onSwitchAuth({ activeAuthType: 'sign-up-active' }, 'sign-up');
+			this._sb.switchActiveAuthType({ activeAuthType: 'sign-up-active' }, 'sign-up');
 		} else if (url === '/auth/forgot-password') {
 			this._sb.updateActiveAuthType({ activeAuthType: 'forgot-password-active' });
 		} else if (url.includes('/auth/two-step-verification')) {
@@ -159,14 +159,14 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 * Switchs to signin.
 	 */
 	_switchToSignin(): void {
-		this._sb.onSwitchAuth({ activeAuthType: 'sign-in-active' }, 'sign-in');
+		this._sb.switchActiveAuthType({ activeAuthType: 'sign-in-active' }, 'sign-in');
 	}
 
 	/**
 	 * Switchs to signup.
 	 */
 	_switchToSignup(): void {
-		this._sb.onSwitchAuth({ activeAuthType: 'sign-up-active' }, 'sign-up');
+		this._sb.switchActiveAuthType({ activeAuthType: 'sign-up-active' }, 'sign-up');
 	}
 
 	/**

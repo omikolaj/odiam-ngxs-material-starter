@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { AuthAsyncService } from 'app/core/auth/auth-async.service';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { ProblemDetailsError } from 'app/core/error-handler/problem-details-error.decorator';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerError } from 'app/core/error-handler/internal-server-error.decorator';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
-import { switchMap, tap } from 'rxjs/operators';
+import { switchMap, tap, catchError, finalize } from 'rxjs/operators';
 import { Store, Select } from '@ngxs/store';
 import * as Auth from '../../core/auth/auth.store.actions';
 import { Router } from '@angular/router';
@@ -71,6 +71,16 @@ export class AuthSandboxService {
 	@Select(AuthState.selectPasswordResetCompleted) passwordResetCompleted$: Observable<boolean>;
 
 	/**
+	 * Whether user's is in the middle of signing in.
+	 */
+	@Select(AuthState.selectSigningIn) signignIn$: Observable<boolean>;
+
+	/**
+	 * Whether user's is in the middle of signing up.
+	 */
+	@Select(AuthState.selectSigningUp) signignUp$: Observable<boolean>;
+
+	/**
 	 * Creates an instance of auth sandbox service.
 	 * @param translateValidationErrorService
 	 * @param log
@@ -98,7 +108,7 @@ export class AuthSandboxService {
 	 * Whether user wants is navigating to sign-in or sign-up.
 	 * @param activePanel
 	 */
-	onSwitchAuth(activePanel: { activeAuthType: ActiveAuthType }, routeUrl: AuthTypeRouteUrl): void {
+	switchActiveAuthType(activePanel: { activeAuthType: ActiveAuthType }, routeUrl: AuthTypeRouteUrl): void {
 		this.updateActiveAuthType(activePanel);
 		setTimeout(() => {
 			void this.router.navigate(['/auth', routeUrl]);
@@ -117,7 +127,7 @@ export class AuthSandboxService {
 	 * Changes remember me state.
 	 * @param event
 	 */
-	onRememberMeChanged(event: boolean): void {
+	changeRememberMeState(event: boolean): void {
 		this._store.dispatch(new Auth.RememberMeOptionChange({ rememberMe: event }));
 	}
 
@@ -153,11 +163,17 @@ export class AuthSandboxService {
 	 * @param model
 	 */
 	signupUser(model: SignupUser): void {
+		this._store.dispatch(new Auth.SigningUp({ signingUp: true }));
+
 		this._authAsyncService
 			.signup$(model)
 			.pipe(
 				switchMap((token) => this._authenticate$(token)),
-				switchMap(() => this._monitorUserSession$())
+				switchMap(() => this._monitorUserSession$()),
+				catchError((err) => {
+					return throwError(err);
+				}),
+				finalize(() => this._store.dispatch(new Auth.SigningUp({ signingUp: false })))
 			)
 			.subscribe();
 	}
@@ -167,10 +183,16 @@ export class AuthSandboxService {
 	 * @param model
 	 */
 	signinUser(model: SigninUser): void {
+		this._store.dispatch(new Auth.SigningIn({ signingIn: true }));
+
 		this._authAsyncService
 			.signin$(model)
 			.pipe(
-				switchMap((resp) => this._authenticate$(resp.accessToken, model.rememberMe, model.email, resp.is2StepVerificationRequired, resp.provider))
+				switchMap((resp) => this._authenticate$(resp.accessToken, model.rememberMe, model.email, resp.is2StepVerificationRequired, resp.provider)),
+				catchError((err) => {
+					return throwError(err);
+				}),
+				finalize(() => this._store.dispatch(new Auth.SigningIn({ signingIn: false })))
 			)
 			.subscribe();
 	}

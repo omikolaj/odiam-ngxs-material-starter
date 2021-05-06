@@ -171,6 +171,7 @@ export class SettingsState implements NgxsOnInit {
 
 	/**
 	 * Ngxs on init will be invoked after all states from state's module definition have been initialized and pushed into the state stream.
+	 * https://www.ngxs.io/advanced/life-cycle
 	 * @param ctx
 	 */
 	ngxsOnInit(ctx: StateContext<SettingsStateModel>): void {

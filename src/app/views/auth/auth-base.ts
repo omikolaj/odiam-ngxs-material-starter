@@ -190,7 +190,7 @@ export class AuthBase {
 	private _setInternalServerError(control: AbstractControl): void {
 		const errorDescription = this._getInternalServerErrorMessage();
 		control.setErrors({ serverError: { errorDescription } });
-		control.markAsPristine();
+		// control.markAsPristine();
 		this._internalServerErrorDetailsHandled = true;
 		this.cd.detectChanges();
 	}

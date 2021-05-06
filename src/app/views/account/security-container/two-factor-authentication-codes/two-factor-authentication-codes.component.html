@@ -18,11 +18,13 @@
 		<div>
 			<h3>{{ 'odm.account.security.two-step.recovery-codes.backup-codes.title' | translate }}</h3>
 			<p>{{ 'odm.account.security.two-step.recovery-codes.backup-codes.description' | translate }}</p>
-			<ol class="recovery-codes__format-codes blink">
-				<li *ngFor="let code of _codes" @downUpFadeIn>
-					{{ code }}
-				</li>
-			</ol>
+			<ng-container *ngIf="!generatingCodes; else generating">
+				<ol class="recovery-codes__format-codes blink">
+					<li *ngFor="let code of _codes">
+						{{ code }}
+					</li>
+				</ol>
+			</ng-container>
 			<div>
 				<button mat-raised-button color="accent" (click)="_onGenerateNewRecoveryCodes()" [disabled]="generatingCodes">
 					{{ 'odm.buttons.generate' | translate }}
@@ -36,3 +38,33 @@
 		</div>
 	</mat-expansion-panel>
 </mat-accordion>
+
+<ng-template #generating>
+	<ol class="recovery-codes__format-codes">
+		<li class="generating-codes">
+			<div class="generating-code-ghost">
+				<odm-ghost-block></odm-ghost-block>
+			</div>
+		</li>
+		<li class="generating-codes">
+			<div class="generating-code-ghost">
+				<odm-ghost-block></odm-ghost-block>
+			</div>
+		</li>
+		<li class="generating-codes">
+			<div class="generating-code-ghost">
+				<odm-ghost-block></odm-ghost-block>
+			</div>
+		</li>
+		<li class="generating-codes">
+			<div class="generating-code-ghost">
+				<odm-ghost-block></odm-ghost-block>
+			</div>
+		</li>
+		<li class="generating-codes">
+			<div class="generating-code-ghost">
+				<odm-ghost-block></odm-ghost-block>
+			</div>
+		</li>
+	</ol>
+</ng-template>

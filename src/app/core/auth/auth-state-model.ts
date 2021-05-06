@@ -63,4 +63,14 @@ export interface AuthStateModel {
 	 * Whether user's password reset requested completed without errors.
 	 */
 	passwordResetCompleted: boolean;
+
+	/**
+	 * Whether user is signing in.
+	 */
+	signingIn: boolean;
+
+	/**
+	 * Whether user is signing up.
+	 */
+	signingUp: boolean;
 }
