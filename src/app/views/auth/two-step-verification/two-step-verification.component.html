@@ -16,9 +16,13 @@
 			</odm-verification-code>
 		</div>
 		<div class="auth__form-container">
-			<span class="auth__text--link auth__text-link--size" (click)="_onUseRecoveryCode()">{{
-				'odm.auth.two-step-verification.use-recovery-code' | translate
-			}}</span>
+			<span
+				class="auth__text--link auth__text-link--size auth__text"
+				[matTooltipShowDelay]="_showDelayInMs"
+				[matTooltip]="'odm.auth.two-step-verification.use-recovery-codes-tooltip' | translate"
+				(click)="_onUseRecoveryCode()"
+				>{{ 'odm.auth.two-step-verification.use-recovery-code' | translate }}</span
+			>
 		</div>
 	</div>
 </div>

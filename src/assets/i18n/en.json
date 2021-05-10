@@ -1,5 +1,6 @@
 {
 	"odm": {
+		"server-down": "Server down",
 		"title.long": "Odiam Ngxs Material Starter",
 		"title.short": "Angular Starter",
 		"header.github": "Project Github Repository",
@@ -24,7 +25,7 @@
 						"description": "Get security codes to use when you can't access your phone",
 						"backup-codes": {
 							"title": "Backup codes",
-							"description": "You can use these one time codes to access your account"
+							"description": "You can redeem these one time codes to access your account"
 						}
 					},
 					"setup-wizard": {
@@ -42,6 +43,13 @@
 							"information": "Next time you log in you will be prompted to use two factor authentication",
 							"save-codes": "Save below one time access codes in case you do not have access to your phone"
 						}
+					}
+				},
+				"password": {
+					"title": "Password",
+					"description": "Your unique password used to protect your account",
+					"change": {
+						"title": "Change password"
 					}
 				}
 			}
@@ -70,7 +78,8 @@
 			"two-step-verification": {
 				"header": "Two step verification is required",
 				"subheader": "Please enter verification code found on your authenticator app.",
-				"use-recovery-code": "Use recovery code"
+				"use-recovery-code": "Use recovery code",
+				"use-recovery-codes-tooltip": "Redeem recovery code to sign in"
 			},
 			"password-reset": {
 				"header": "Password reset",
@@ -87,6 +96,8 @@
 				"label": {
 					"email": "E-mail",
 					"password": "Password",
+					"old-password": "Old Password",
+					"new-password": "New Password",
 					"confirm-password": "Confirm Password"
 				},
 				"placeholders": {
@@ -184,6 +195,7 @@
 		},
 		"buttons": {
 			"reset-password": "Reset Password",
+			"change-password": "Change",
 			"go-to-sign-in": "Go to Sign in",
 			"submit": "Submit",
 			"sign-up": "Sign up",

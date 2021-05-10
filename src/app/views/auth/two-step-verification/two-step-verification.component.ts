@@ -8,6 +8,8 @@ import { InternalServerErrorDetails } from 'app/core/models/internal-server-erro
 import { tap } from 'rxjs/operators';
 import { AuthSandboxService } from '../auth-sandbox.service';
 import { TwoFactorAuthenticationVerificationCode } from 'app/core/models/account/security/two-factor-authentication-verification-code.model';
+import { TooltipTouchGestures } from '@angular/material/tooltip';
+import { ODM_TOOLTIP_SHOW_DELAY_IN_MS } from 'app/shared/global-settings/mat-tooltip-settings';
 
 /**
  * When two step verification is required to sign user in, this component will be displayed.
@@ -20,11 +22,6 @@ import { TwoFactorAuthenticationVerificationCode } from 'app/core/models/account
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TwoStepVerificationComponent implements OnInit {
-	/**
-	 * Route animations.
-	 */
-	readonly _routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
-
 	/**
 	 * Verification code form.
 	 */
@@ -49,6 +46,21 @@ export class TwoStepVerificationComponent implements OnInit {
 	 * Emitted when server responds with 50X error.
 	 */
 	_internalServerErrorDetails$: Observable<InternalServerErrorDetails>;
+
+	/**
+	 * Touch gestrues of two factor authentication codes component.
+	 */
+	readonly _touchGestrues: TooltipTouchGestures = 'on';
+
+	/**
+	 * Delay in ms for toolip.
+	 */
+	readonly _showDelayInMs = ODM_TOOLTIP_SHOW_DELAY_IN_MS;
+
+	/**
+	 * Route animations.
+	 */
+	readonly _routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
 
 	/**
 	 * Provider used to perform two step authentication.

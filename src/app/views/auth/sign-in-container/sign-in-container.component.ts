@@ -60,11 +60,6 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 	_username$: Observable<string>;
 
 	/**
-	 * Whether user is in the middle if signing in.
-	 */
-	_signignIn$: Observable<boolean>;
-
-	/**
 	 * Creates an instance of sign in container component.
 	 * @param _sb
 	 * @param _route
@@ -77,7 +72,6 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 		this._username$ = _sb.username$;
 		this._breakpointStateScreenMatcher$ = breakpointObserver.observe([MinScreenSizeQuery.md]);
 		this._activeAuthType$ = _sb.activeAuthType$;
-		this._signignIn$ = _sb.signignIn$;
 	}
 
 	/**

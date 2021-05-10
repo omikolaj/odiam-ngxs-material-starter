@@ -15,6 +15,8 @@ import { TwoFactorAuthenticationComponent } from './security-container/two-facto
 import { TwoFactorAuthenticationState } from './security-container/two-factor-authentication/two-factor-authentication.store.state';
 import { PersonalEmailComponent } from './general-container/personal-email/personal-email.component';
 import { AccountGeneralState } from './general-container/general-container.store.state';
+import { ChangePasswordContainerComponent } from './security-container/change-password-container/change-password-container.component';
+import { ChangePasswordComponent } from './security-container/change-password/change-password.component';
 
 /**
  * User account module.
@@ -27,7 +29,9 @@ import { AccountGeneralState } from './general-container/general-container.store
 		TwoFactorAuthenticationComponent,
 		TwoFactorAuthenticationCodesComponent,
 		TwoFactorAuthenticationSetupWizardComponent,
-		PersonalEmailComponent
+		PersonalEmailComponent,
+		ChangePasswordContainerComponent,
+		ChangePasswordComponent
 	],
 	imports: [
 		CommonModule,

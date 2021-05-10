@@ -24,10 +24,6 @@ import { TwoFactorAuthenticationVerificationCode } from 'app/core/models/account
 })
 export class TwoFactorAuthenticationComponent {
 	/**
-	 * Route animations.
-	 */
-	readonly _routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
-	/**
 	 * Whether the two factor authentication data is being fetched.
 	 */
 	@Input() loading: boolean;
@@ -159,6 +155,11 @@ export class TwoFactorAuthenticationComponent {
 	 * Whether to display two factor auth setup wizard.
 	 */
 	_showTwoFactorAuthSetupWizard = false;
+
+	/**
+	 * Route animations.
+	 */
+	readonly _routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
 
 	/**
 	 * Two factor auth toggle spinner diameter.

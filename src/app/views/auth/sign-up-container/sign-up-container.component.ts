@@ -1,7 +1,7 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { AsyncValidatorsService } from 'app/core/form-validators/validators-async.service';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { FormGroup } from '@angular/forms';
@@ -13,8 +13,9 @@ import { SignupUser } from 'app/core/models/auth/signup-user.model';
 import { ActiveAuthType } from 'app/core/models/auth/active-auth-type.model';
 import { AuthTypeRouteUrl } from 'app/core/models/auth/auth-type-route-url.model';
 import { PasswordRequirement } from 'app/core/models/auth/password-requirement.model';
-
 import { getPasswordRequirements } from 'app/core/utilities/password-requirements.utility';
+import { tap } from 'rxjs/operators';
+import { PasswordHelpToggleClass } from 'app/core/models/auth/password-help-toggle-class.model';
 
 /**
  * Sign up container component.
@@ -26,7 +27,7 @@ import { getPasswordRequirements } from 'app/core/utilities/password-requirement
 	animations: [rightLeftFadeInAnimation],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SignUpContainerComponent implements OnInit {
+export class SignUpContainerComponent implements OnInit, OnDestroy {
 	/**
 	 * Emitted when server responds with 40X error.
 	 */
@@ -53,14 +54,24 @@ export class SignUpContainerComponent implements OnInit {
 	_activeAuthType$: Observable<string>;
 
 	/**
-	 * Whether user is in the middle if signing up.
+	 * Requires user to enter the same password for confirm password field.
 	 */
-	_signignUp$: Observable<boolean>;
+	_confirmPasswordMatchReqMet = false;
 
 	/**
 	 * Password requirements required for new user.
 	 */
 	_passwordRequirements: PasswordRequirement[] = [];
+
+	/**
+	 * Password help toggle class.
+	 */
+	_passwordHelpToggleClass: PasswordHelpToggleClass = 'auth__password-field-help-off';
+
+	/**
+	 * Rxjs subscriptions for this component.
+	 */
+	private readonly _subscription = new Subscription();
 
 	/**
 	 * Creates an instance of sign up container component.
@@ -73,7 +84,6 @@ export class SignUpContainerComponent implements OnInit {
 		this._internalServerErrorDetails$ = _sb.internalServerErrorDetails$;
 		this._breakpointStateScreenMatcher$ = breakpointObserver.observe([MinScreenSizeQuery.md]);
 		this._activeAuthType$ = _sb.activeAuthType$;
-		this._signignUp$ = _sb.signignUp$;
 	}
 
 	/**
@@ -82,7 +92,18 @@ export class SignUpContainerComponent implements OnInit {
 	ngOnInit(): void {
 		this._sb.log.trace('Initialized.', this);
 		this._initForms();
+		// initialize password requirements.
 		this._passwordRequirements = this._initPasswordRequirements();
+		// subscribe to confirm password control to check if passwords match.
+		this._subscription.add(this._validateFormConfirmPasswordField$().subscribe());
+	}
+
+	/**
+	 * NgOnDestroy life cycle.
+	 */
+	ngOnDestroy(): void {
+		this._sb.log.trace('Destroyed.', this);
+		this._subscription.unsubscribe();
 	}
 
 	/**
@@ -118,6 +139,36 @@ export class SignUpContainerComponent implements OnInit {
 		const activeAuthType = { activeAuthType: event };
 		const routeUrl: AuthTypeRouteUrl = event === 'sign-in-active' ? 'sign-in' : 'sign-up';
 		this._sb.switchActiveAuthType(activeAuthType, routeUrl);
+	}
+
+	/**
+	 * Event handler when user toggles password help.
+	 */
+	_onPasswordHelpToggled(): void {
+		this._sb.log.trace('_onPasswordHelpToggled fired.', this);
+		if (this._passwordHelpToggleClass === 'auth__password-field-help-off') {
+			this._passwordHelpToggleClass = 'auth__password-field-help-on';
+		} else {
+			this._passwordHelpToggleClass = 'auth__password-field-help-off';
+		}
+	}
+
+	/**
+	 * Validates form confirm password field.
+	 * @param form
+	 * @returns form confirm password field
+	 */
+	private _validateFormConfirmPasswordField$(): Observable<any> {
+		return this._signupForm.valueChanges.pipe(
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			tap((_) => {
+				if (this._signupForm.hasError('notSame')) {
+					this._confirmPasswordMatchReqMet = false;
+				} else {
+					this._confirmPasswordMatchReqMet = true;
+				}
+			})
+		);
 	}
 
 	/**

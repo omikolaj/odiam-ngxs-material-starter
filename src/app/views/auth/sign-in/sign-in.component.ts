@@ -8,8 +8,10 @@ import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
 import { AuthBase } from '../auth-base';
 import { ActiveAuthType } from 'app/core/models/auth/active-auth-type.model';
 import { SigninUser } from 'app/core/models/auth/signin-user.model';
-import { AuthSandboxService } from '../auth-sandbox.service';
+
 import { ODM_SMALL_SPINNER_DIAMETER, ODM_SMALL_SPINNER_STROKE_WIDTH } from 'app/shared/global-settings/mat-spinner-settings';
+import { TranslateValidationErrorsService } from 'app/shared/services/translate-validation-errors.service';
+import { LogService } from 'app/core/logger/log.service';
 
 /**
  * Sign in component.
@@ -25,7 +27,8 @@ export class SignInComponent extends AuthBase implements OnInit {
 	 * Emitted when server responds with 40X error.
 	 */
 	@Input() set problemDetails(value: ProblemDetails) {
-		this._sb.log.debug('Problem details emitted.', this);
+		this.log.debug('Problem details emitted.', this);
+		this._signingIn = false;
 		this.problemDetailsError = value;
 	}
 
@@ -33,7 +36,8 @@ export class SignInComponent extends AuthBase implements OnInit {
 	 * Emitted when server responds with 50X error.
 	 */
 	@Input() set internalServerErrorDetails(value: InternalServerErrorDetails) {
-		this._sb.log.debug('Internal server error emitted.', this);
+		this.log.debug('Internal server error emitted.', this);
+		this._signingIn = false;
 		this.internalServerError = value;
 	}
 
@@ -58,15 +62,10 @@ export class SignInComponent extends AuthBase implements OnInit {
 	@Input() rememberMe = false;
 
 	/**
-	 * Whether user is currently in the middle if signing in.
-	 */
-	@Input() signingIn: boolean;
-
-	/**
 	 * Username value. Empty string if remember me is false.
 	 */
 	@Input() set username(value: string) {
-		this._sb.log.debug('Setting email value for signin form.', this, value);
+		this.log.debug('Setting email value for signin form.', this, value);
 		this._username = value;
 		// in case we fetch user's email from the server. Ensures fresh copy is reflected in the UI.
 		// if value is truthy set it, else we dont care to update the form.
@@ -108,6 +107,11 @@ export class SignInComponent extends AuthBase implements OnInit {
 	@Output() switchToSignupClicked = new EventEmitter<ActiveAuthType>();
 
 	/**
+	 * Whether user is currently in the middle if signing in.
+	 */
+	_signingIn: boolean;
+
+	/**
 	 * Route animations.
 	 */
 	readonly _routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
@@ -127,15 +131,19 @@ export class SignInComponent extends AuthBase implements OnInit {
 	 * @param _sb
 	 * @param cd
 	 */
-	constructor(private _sb: AuthSandboxService, cd: ChangeDetectorRef) {
-		super(_sb.translateValidationErrorService, _sb.log, cd);
+	constructor(
+		protected translateValidationErrorService: TranslateValidationErrorsService,
+		protected log: LogService,
+		protected cd: ChangeDetectorRef
+	) {
+		super(translateValidationErrorService, log, cd);
 	}
 
 	/**
 	 * NgOnInit life cycle.
 	 */
 	ngOnInit(): void {
-		this._sb.log.trace('Initialized.', this);
+		this.log.trace('Initialized.', this);
 		this.signinForm.get('rememberMe').setValue(this.rememberMe);
 		this.signinForm.get('email').setValue(this._username);
 	}
@@ -144,7 +152,7 @@ export class SignInComponent extends AuthBase implements OnInit {
 	 * Event handler for when user clicks forgot password button.
 	 */
 	_onForgotPassword(): void {
-		this._sb.log.trace('_onForgotPassword event handler fired.', this);
+		this.log.trace('_onForgotPassword event handler fired.', this);
 		this.forgotPasswordClicked.emit();
 	}
 
@@ -153,7 +161,7 @@ export class SignInComponent extends AuthBase implements OnInit {
 	 * @param event
 	 */
 	_onRememberMeChange(event: MatSlideToggleChange): void {
-		this._sb.log.trace('_onRememberMeChange event handler emitted.', this);
+		this.log.trace('_onRememberMeChange event handler emitted.', this);
 		this.rememberMeChanged.emit(event.checked);
 	}
 
@@ -161,8 +169,9 @@ export class SignInComponent extends AuthBase implements OnInit {
 	 * Event handler for when user is attempting to sign in.
 	 */
 	_onSignin(): void {
-		this._sb.log.trace('_onSignin event handler fired.', this);
+		this.log.trace('_onSignin event handler fired.', this);
 		const signinUserModel = this.signinForm.value as SigninUser;
+		this._signingIn = true;
 		this.signinFormSubmitted.emit(signinUserModel);
 	}
 
@@ -170,7 +179,7 @@ export class SignInComponent extends AuthBase implements OnInit {
 	 * Event handler for when user is attempting to sign in with google.
 	 */
 	_onSigninWithGoogle(): void {
-		this._sb.log.trace('_onSigninWithGoogle event handler fired.', this);
+		this.log.trace('_onSigninWithGoogle event handler fired.', this);
 		this.signinWithGoogleSubmitted.emit();
 	}
 
@@ -178,7 +187,7 @@ export class SignInComponent extends AuthBase implements OnInit {
 	 * Event handler for when user is attempting to sign in with facebook.
 	 */
 	_onSigninWithFacebook(): void {
-		this._sb.log.trace('_onSigninWithFacebook event handler fired.', this);
+		this.log.trace('_onSigninWithFacebook event handler fired.', this);
 		this.signinWithFacebookSubmitted.emit();
 	}
 
@@ -186,7 +195,7 @@ export class SignInComponent extends AuthBase implements OnInit {
 	 * Used to switch view to signup context.
 	 */
 	_switchToSignup(): void {
-		this._sb.log.trace('_switchToSignup event handler fired.', this);
+		this.log.trace('_switchToSignup event handler fired.', this);
 		this.switchToSignupClicked.emit('sign-up-active');
 	}
 

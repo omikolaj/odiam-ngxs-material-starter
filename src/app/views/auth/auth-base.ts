@@ -96,14 +96,6 @@ export class AuthBase {
 	}
 
 	/**
-	 * Gets problem details validation errors keys. For example passwordIsTooShort, passwordRequiresDigit etc.
-	 * These validation errors come from the server.
-	 */
-	private get _problemDetailsValidationErrorsKeys(): string[] {
-		return Object.keys(this._problemDetails.errors).map((err) => err.toLocaleLowerCase());
-	}
-
-	/**
 	 * Creates an instance of auth base.
 	 * @param _translateErrorValidationService
 	 * @param log
@@ -152,17 +144,17 @@ export class AuthBase {
 	_ifServerErrorOccured(control: AbstractControl, controlType?: AuthControlType): boolean {
 		// if internal server error occured set control as invalid.
 		if (this._internalServerErrorOccured) {
-			this.log.debug('[_ifServerErrorOccured]: InternalServerErrorOccured.', this);
+			this.log.trace('[_ifServerErrorOccured]: InternalServerErrorOccured.', this);
 			return this._handleInternalServerError(control);
 		}
 		// else if server validation error occured set control as invalid.d
 		else if (this._serverValidationErrorOccured) {
-			this.log.debug('[_ifServerErrorOccured]: ServerValidationErrorOccured.', this);
+			this.log.trace('[_ifServerErrorOccured]: ServerValidationErrorOccured.', this);
 			return this._handleServerValidationError(control, controlType);
 		}
 		// else if server error occured set control as invalid.
 		else if (this._serverErrorOccured) {
-			this.log.debug('[_ifServerErrorOccured]: ServerErrorOccured.', this);
+			this.log.trace('[_ifServerErrorOccured]: ServerErrorOccured.', this);
 			return this._handleServerError(control);
 		}
 
@@ -175,6 +167,7 @@ export class AuthBase {
 	 * @returns true if internal server error
 	 */
 	private _handleInternalServerError(control: AbstractControl): boolean {
+		this.log.trace('[_handleInternalServerError]: Was server error handled:', this, this._internalServerErrorDetailsHandled);
 		if (this._internalServerErrorDetailsHandled === false) {
 			this._setInternalServerError(control);
 			return true;
@@ -209,42 +202,15 @@ export class AuthBase {
 	 * @returns true if server validation error
 	 */
 	private _handleServerValidationError(control: AbstractControl, controlType: AuthControlType): boolean {
+		this.log.trace('[_handleServerValidationError]: Was server error handled:', this, this._problemDetailsServerErrorHandled);
 		if (this._problemDetailsServerErrorHandled === false) {
-			const errors = this._problemDetailsValidationErrorsKeys;
 			if (!controlType) {
 				this.log.warn('ControlType not specified!', this);
 				// fallback, in case controlType is null and not specified.
 				this._setServerValidationError(control);
-			} else if (this._validationErrorMatchesControlType(errors, controlType)) {
+			} else {
 				this._setServerValidationError(control);
 				return true;
-			}
-			// if server errors do not contain control's name in them. For example control's name could be
-			// 'password' or 'email'.
-			else {
-				// this will only work if all email server validation errors contain the phrase 'email' in them
-				if (controlType !== 'email') {
-					this._setServerValidationError(control);
-					return true;
-				}
-				if (controlType === 'email') {
-					// In case this if statement is executed for email just refactor this entire method to:
-					// private _handleServerValidationError(control: AbstractControl, controlType: AuthControlType): boolean {
-					//   if (this._problemDetailsServerErrorHandled === false) {
-					//     if (!controlType) {
-					//       this.log.warn('ControlType not specified!', this);
-					//       // fallback, in case controlType is null and not specified.
-					//       this._setServerValidationError(control);
-					//     } else {
-					//       this._setServerValidationError(control);
-					//       return true;
-					//     }
-					//   }
-					// }
-					this.log.warn(
-						`Server validation errors occured for 'email' controlType, however the server validations do not contain the phrase 'email' in them. Email control will now not display any server validation errors. Please refactor _handleServerValidationError method according to comments`
-					);
-				}
 			}
 		}
 
@@ -306,17 +272,6 @@ export class AuthBase {
 	 */
 	private _getTranslatedValidationErrorMessage$(errors: ValidationErrors): Observable<string> {
 		return this._translateErrorValidationService.translateValidationErrorMessage$(errors);
-	}
-
-	/**
-	 * Whether server side errors contain the name of the passed in control type.
-	 * Either 'email' or 'password'.
-	 * @param errors
-	 * @param controlType
-	 * @returns true if error matches control type
-	 */
-	private _validationErrorMatchesControlType(errors: string[], controlType: AuthControlType): boolean {
-		return errors.map((err) => err.includes(controlType)).includes(true);
 	}
 
 	/**

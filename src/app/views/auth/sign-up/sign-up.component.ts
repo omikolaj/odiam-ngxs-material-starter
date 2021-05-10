@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, Output, EventEmitter, Input, OnDestroy } from '@angular/core';
-import { tap } from 'rxjs/operators';
-import { Subscription, Observable } from 'rxjs';
+
+import { Subscription } from 'rxjs';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { FormGroup, AbstractControl } from '@angular/forms';
@@ -9,11 +9,13 @@ import { BreakpointState } from '@angular/cdk/layout';
 import { AuthBase } from '../auth-base';
 import { ActiveAuthType } from 'app/core/models/auth/active-auth-type.model';
 import { SignupUser } from 'app/core/models/auth/signup-user.model';
-import { AuthSandboxService } from '../auth-sandbox.service';
+
 import { PasswordRequirement } from 'app/core/models/auth/password-requirement.model';
 import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
 import { PasswordHelpToggleClass } from 'app/core/models/auth/password-help-toggle-class.model';
 import { ODM_SMALL_SPINNER_DIAMETER, ODM_SMALL_SPINNER_STROKE_WIDTH } from 'app/shared/global-settings/mat-spinner-settings';
+import { LogService } from 'app/core/logger/log.service';
+import { TranslateValidationErrorsService } from 'app/shared/services/translate-validation-errors.service';
 
 /**
  * Sign up component.
@@ -29,7 +31,8 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	 * Emitted when server responds with 40X error.
 	 */
 	@Input() set problemDetails(value: ProblemDetails) {
-		this._sb.log.debug('Problem details emitted.', this);
+		this.log.debug('Problem details emitted.', this);
+		this._signingUp = false;
 		this.problemDetailsError = value;
 	}
 
@@ -37,7 +40,8 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	 * Emitted when server responds with 50X error.
 	 */
 	@Input() set internalServerErrorDetails(value: InternalServerErrorDetails) {
-		this._sb.log.debug('Internal server error emitted.', this);
+		this.log.debug('Internal server error emitted.', this);
+		this._signingUp = false;
 		this.internalServerError = value;
 	}
 
@@ -45,11 +49,9 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	 * Signup form of auth component.
 	 */
 	@Input() set signupForm(value: FormGroup) {
-		this._sb.log.debug('Signup form emitted.', this);
+		this.log.debug('Signup form emitted.', this);
 		this._signupForm = value;
-		// this._subscription.add(this._validateFormPasswordField(value).subscribe());
 		this._passwordControl = value.get('password');
-		this._subscription.add(this._validateFormConfirmPasswordField(value).subscribe());
 	}
 
 	/**
@@ -73,9 +75,9 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	@Input() activeAuthType: ActiveAuthType = 'sign-up-active';
 
 	/**
-	 * Whether user is currently in the middle if signing up.
+	 * Password help toggle class.
 	 */
-	@Input() signingUp: boolean;
+	@Input() passwordHelpToggleClass: PasswordHelpToggleClass;
 
 	/**
 	 * Event emitter for when the signup form is submitted.
@@ -93,14 +95,19 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	@Output() signinWithFacebookSubmitted = new EventEmitter<{ rememberMe: boolean }>();
 
 	/**
+	 * Event emitter for when user toggles password help menu.
+	 */
+	@Output() passwordHelpToggled = new EventEmitter<void>();
+
+	/**
 	 * Event emitter for when user clicks sign up button.
 	 */
 	@Output() switchToSigninClicked = new EventEmitter<ActiveAuthType>();
 
 	/**
-	 * Signup form email control status changes$ of auth component.
+	 * Requires user to enter the same password for confirm password field.
 	 */
-	_signupFormEmailControlStatusChanges$: Observable<string>;
+	@Input() confirmPasswordMatchReqMet: boolean;
 
 	/**
 	 * Password control of sign up component.
@@ -108,14 +115,9 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	_passwordControl: AbstractControl;
 
 	/**
-	 * Requires user to enter the same password for confirm password field.
+	 * Whether user is currently in the middle if signing up.
 	 */
-	_confirmPasswordMatchReqMet = false;
-
-	/**
-	 * Password help toggle class.
-	 */
-	_passwordHelpToggleClass: PasswordHelpToggleClass = 'auth__password-field-help-off';
+	_signingUp = false;
 
 	/**
 	 * Route animations.
@@ -142,27 +144,26 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	 * @param _sb
 	 * @param cd
 	 */
-	constructor(private _sb: AuthSandboxService, protected cd: ChangeDetectorRef) {
-		super(_sb.translateValidationErrorService, _sb.log, cd);
+	constructor(
+		protected translateValidationErrorService: TranslateValidationErrorsService,
+		protected log: LogService,
+		protected cd: ChangeDetectorRef
+	) {
+		super(translateValidationErrorService, log, cd);
 	}
 
 	/**
 	 * NgOnInit life cycle.
 	 */
 	ngOnInit(): void {
-		this._sb.log.trace('Initialized.', this);
-		this._signupFormEmailControlStatusChanges$ = this._signupForm
-			.get('email')
-			// null out internalServerErrorDetails
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			.statusChanges.pipe(tap((_: string) => (this.internalServerErrorDetails = null)));
+		this.log.trace('Initialized.', this);
 	}
 
 	/**
 	 * NgOnDestroy life cycle.
 	 */
 	ngOnDestroy(): void {
-		this._sb.log.trace('Destroyed.', this);
+		this.log.trace('Destroyed.', this);
 		this._subscription.unsubscribe();
 	}
 
@@ -170,8 +171,9 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	 * Event handler for when new user is attempting to sign up.
 	 */
 	_onSignup(): void {
-		this._sb.log.trace('onSignup event handler emitted.', this);
+		this.log.trace('onSignup event handler emitted.', this);
 		const model = this._signupForm.value as SignupUser;
+		this._signingUp = true;
 		this.signupFormSubmitted.emit(model);
 	}
 
@@ -179,7 +181,7 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	 * Event handler for when user is attempting to sign in with google.
 	 */
 	_onSigninWithGoogle(): void {
-		this._sb.log.trace('_onSigninWithGoogle fired.', this);
+		this.log.trace('_onSigninWithGoogle fired.', this);
 		this.signinWithGoogleSubmitted.emit();
 	}
 
@@ -187,7 +189,7 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	 * Event handler for when user is attempting to sign in with facebook.
 	 */
 	_onSigninWithFacebook(): void {
-		this._sb.log.trace('_onSigninWithFacebook fired.', this);
+		this.log.trace('_onSigninWithFacebook fired.', this);
 		this.signinWithFacebookSubmitted.emit();
 	}
 
@@ -195,41 +197,19 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	 * Event handler when user toggles password help.
 	 */
 	_onPasswordHelpToggled(): void {
-		this._sb.log.trace('_onPasswordHelpToggled fired.', this);
-		if (this._passwordHelpToggleClass === 'auth__password-field-help-off') {
-			this._passwordHelpToggleClass = 'auth__password-field-help-on';
-		} else {
-			this._passwordHelpToggleClass = 'auth__password-field-help-off';
-		}
+		this.log.trace('_onPasswordHelpToggled fired.', this);
+		this.passwordHelpToggled.emit();
 	}
 
 	/**
 	 * Used to switch view to signin context.
 	 */
 	_switchToSignin(): void {
-		this._sb.log.trace('_switchToSignin fired.', this);
+		this.log.trace('_switchToSignin fired.', this);
 		this.switchToSigninClicked.emit('sign-in-active');
 		// allow for the animation before cleaning up the form.
 		setTimeout(() => {
 			this.internalServerErrorDetails = null;
 		}, 600);
-	}
-
-	/**
-	 * Validates form confirm password field.
-	 * @param form
-	 * @returns form confirm password field
-	 */
-	private _validateFormConfirmPasswordField(form: FormGroup): Observable<any> {
-		return form.valueChanges.pipe(
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			tap((_) => {
-				if (form.hasError('notSame')) {
-					this._confirmPasswordMatchReqMet = false;
-				} else {
-					this._confirmPasswordMatchReqMet = true;
-				}
-			})
-		);
 	}
 }

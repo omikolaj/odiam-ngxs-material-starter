@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { AuthAsyncService } from 'app/core/auth/auth-async.service';
-import { Observable, throwError } from 'rxjs';
+import { Observable } from 'rxjs';
 import { ProblemDetailsError } from 'app/core/error-handler/problem-details-error.decorator';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerError } from 'app/core/error-handler/internal-server-error.decorator';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
-import { switchMap, tap, catchError, finalize } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
 import { Store, Select } from '@ngxs/store';
 import * as Auth from '../../core/auth/auth.store.actions';
 import { Router } from '@angular/router';
@@ -69,16 +69,6 @@ export class AuthSandboxService {
 	 * Whether user's password reset completed successfully.
 	 */
 	@Select(AuthState.selectPasswordResetCompleted) passwordResetCompleted$: Observable<boolean>;
-
-	/**
-	 * Whether user's is in the middle of signing in.
-	 */
-	@Select(AuthState.selectSigningIn) signignIn$: Observable<boolean>;
-
-	/**
-	 * Whether user's is in the middle of signing up.
-	 */
-	@Select(AuthState.selectSigningUp) signignUp$: Observable<boolean>;
 
 	/**
 	 * Creates an instance of auth sandbox service.
@@ -163,18 +153,9 @@ export class AuthSandboxService {
 	 * @param model
 	 */
 	signupUser(model: SignupUser): void {
-		this._store.dispatch(new Auth.SigningUp({ signingUp: true }));
-
 		this._authAsyncService
 			.signup$(model)
-			.pipe(
-				switchMap((token) => this._authenticate$(token)),
-				switchMap(() => this._monitorUserSession$()),
-				catchError((err) => {
-					return throwError(err);
-				}),
-				finalize(() => this._store.dispatch(new Auth.SigningUp({ signingUp: false })))
-			)
+			.pipe(switchMap((token) => this._authenticate$(token)))
 			.subscribe();
 	}
 
@@ -183,16 +164,10 @@ export class AuthSandboxService {
 	 * @param model
 	 */
 	signinUser(model: SigninUser): void {
-		this._store.dispatch(new Auth.SigningIn({ signingIn: true }));
-
 		this._authAsyncService
 			.signin$(model)
 			.pipe(
-				switchMap((resp) => this._authenticate$(resp.accessToken, model.rememberMe, model.email, resp.is2StepVerificationRequired, resp.provider)),
-				catchError((err) => {
-					return throwError(err);
-				}),
-				finalize(() => this._store.dispatch(new Auth.SigningIn({ signingIn: false })))
+				switchMap((resp) => this._authenticate$(resp.accessToken, model.rememberMe, model.email, resp.is2StepVerificationRequired, resp.provider))
 			)
 			.subscribe();
 	}
@@ -241,10 +216,7 @@ export class AuthSandboxService {
 		void this._socialAuthService.signIn(GoogleLoginProvider.PROVIDER_ID).then((model: SocialUser) => {
 			this._authAsyncService
 				.signinWithGoogle$(model)
-				.pipe(
-					switchMap((token) => this._authenticate$(token)),
-					switchMap(() => this._monitorUserSession$())
-				)
+				.pipe(switchMap((token) => this._authenticate$(token)))
 				.subscribe();
 		});
 	}
@@ -256,10 +228,7 @@ export class AuthSandboxService {
 		void this._socialAuthService.signIn(FacebookLoginProvider.PROVIDER_ID).then((model: SocialUser) => {
 			this._authAsyncService
 				.signinWithFacebook$(model)
-				.pipe(
-					switchMap((token) => this._authenticate$(token)),
-					switchMap(() => this._monitorUserSession$())
-				)
+				.pipe(switchMap((token) => this._authenticate$(token)))
 				.subscribe();
 		});
 	}

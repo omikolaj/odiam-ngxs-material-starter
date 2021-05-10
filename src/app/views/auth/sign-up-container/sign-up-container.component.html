@@ -6,10 +6,12 @@
 		[activeAuthType]="_activeAuthType$ | async"
 		[signupForm]="_signupForm"
 		[passwordRequirements]="_passwordRequirements"
-		[signingUp]="_signignUp$ | async"
+		[passwordHelpToggleClass]="_passwordHelpToggleClass"
+		[confirmPasswordMatchReqMet]="_confirmPasswordMatchReqMet"
 		(signupFormSubmitted)="_onSignupSubmitted($event)"
 		(signinWithGoogleSubmitted)="_onSigninWithGoogleSubmitted()"
 		(signinWithFacebookSubmitted)="_onSigninWithFacebookSubmitted()"
 		(switchToSigninClicked)="_onSwitchToSigninClicked($event)"
+		(passwordHelpToggled)="_onPasswordHelpToggled()"
 	></odm-sign-up>
 </div>

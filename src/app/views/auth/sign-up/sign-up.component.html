@@ -16,11 +16,11 @@
 					<mat-label>{{ 'odm.auth.form.label.email' | translate }}</mat-label>
 					<input formControlName="email" matInput placeholder="example@gmail.com" type="email" autocomplete="email" required />
 					<mat-hint>
-						<ng-container *ngIf="_signupFormEmailControlStatusChanges$ | async as status">
-							<span *ngIf="status === 'PENDING' && !_internalServerErrorOccured" class="loading-dots-animation"
+						<ng-container *ngIf="_signupForm.get('email').statusChanges | async as status">
+							<span *ngIf="status === 'PENDING'" class="loading-dots-animation"
 								>{{ 'odm.auth.checking-availability' | translate }}<span>.</span><span>.</span><span>.</span>
 							</span>
-							<span *ngIf="status === 'VALID' && !_internalServerErrorOccured">
+							<span *ngIf="status === 'VALID'">
 								<mat-icon class="auth--req-met" matPrefix>{{ 'task_alt' }}</mat-icon>
 								{{ 'odm.auth.form.validations.valid-email' | translate }}
 							</span>
@@ -48,7 +48,7 @@
 				</mat-form-field>
 			</div>
 
-			<div class="auth__password-field" [ngClass]="_passwordHelpToggleClass">
+			<div class="auth__password-field" [ngClass]="passwordHelpToggleClass">
 				<mat-form-field appearance="standard">
 					<mat-label>{{ 'odm.auth.form.label.password' | translate }}</mat-label>
 					<input matInput formControlName="password" [type]="_hide ? 'password' : 'text'" autocomplete="new-password" required />
@@ -75,8 +75,8 @@
 					<mat-hint>
 						<span>
 							<ng-container *ngIf="!_signupForm?.get('confirmPassword').pristine && _signupForm?.get('password').valid">
-								<mat-icon [ngClass]="_confirmPasswordMatchReqMet ? 'auth--req-met' : 'auth--req-not-met'" matPrefix>{{
-									_confirmPasswordMatchReqMet ? 'task_alt' : 'clear'
+								<mat-icon [ngClass]="confirmPasswordMatchReqMet ? 'auth--req-met' : 'auth--req-not-met'" matPrefix>{{
+									confirmPasswordMatchReqMet ? 'task_alt' : 'clear'
 								}}</mat-icon>
 							</ng-container>
 							{{ 'odm.auth.form.requirements.pass-must-match' | translate }}
@@ -89,9 +89,9 @@
 			</div>
 
 			<div>
-				<button mat-raised-button type="submit" class="auth__form-btn auth__form-signup-btn auth--btn" [disabled]="!_signupForm?.valid || signingUp">
+				<button mat-raised-button type="submit" class="auth__form-btn auth__form-signup-btn auth--btn" [disabled]="!_signupForm?.valid || _signingUp">
 					{{ 'odm.buttons.sign-up' | translate }}
-					<ng-container *ngIf="signingUp">
+					<ng-container *ngIf="_signingUp">
 						<odm-spinner [type]="'button'" [diameter]="_signingUpSpinnerDiameter" [strokeWidth]="_signingUpSpinnerStrokeWidth"> </odm-spinner>
 					</ng-container>
 				</button>

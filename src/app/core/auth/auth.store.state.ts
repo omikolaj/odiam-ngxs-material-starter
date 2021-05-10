@@ -25,9 +25,7 @@ const AUTH_STATE_TOKEN = new StateToken<AuthStateModel>('auth');
 		isRedeemRecoveryCodeSuccessful: false,
 		userId: '',
 		activeAuthType: 'sign-in-active',
-		passwordResetCompleted: false,
-		signingIn: false,
-		signingUp: false
+		passwordResetCompleted: false
 	}
 })
 @Injectable()
@@ -171,26 +169,6 @@ export class AuthState implements NgxsAfterBootstrap {
 	}
 
 	/**
-	 * Selects whether user is in the process of signing in.
-	 * @param state
-	 * @returns true request is made to sign user in.
-	 */
-	@Selector([AUTH_STATE_TOKEN])
-	static selectSigningIn(state: AuthStateModel): boolean {
-		return state.signingIn;
-	}
-
-	/**
-	 * Selects whether user is in the process of signing up.
-	 * @param state
-	 * @returns true request is made to sign user in.
-	 */
-	@Selector([AUTH_STATE_TOKEN])
-	static selectSigningUp(state: AuthStateModel): boolean {
-		return state.signingUp;
-	}
-
-	/**
 	 * Selects expires_at value from local storage and converts it to Date.
 	 * @param state
 	 * @returns date of expires at
@@ -228,8 +206,6 @@ export class AuthState implements NgxsAfterBootstrap {
 			produce((draft: AuthStateModel) => {
 				draft = {
 					...draft,
-					signingIn: false,
-					signingUp: false,
 					passwordResetCompleted: false,
 					is2StepVerificationRequired: false,
 					is2StepVerificationSuccessful: false,
@@ -303,38 +279,6 @@ export class AuthState implements NgxsAfterBootstrap {
 
 		const auth = this._getLocalStorageProperties(ctx) as AuthStateModel;
 		return ctx.dispatch(new Auth.PersistSettings(auth));
-	}
-
-	/**
-	 * Action handler for when user is currently signing in.
-	 * @param ctx
-	 * @param action
-	 */
-	@Action(Auth.SigningIn)
-	setSigningIn(ctx: StateContext<AuthStateModel>, action: Auth.SigningIn): void {
-		this._log.info('setSigningIn action handler fired.', this);
-		ctx.setState(
-			produce((draft: AuthStateModel) => {
-				draft = { ...draft, ...action.payload };
-				return draft;
-			})
-		);
-	}
-
-	/**
-	 * Action handler for when user is currently signing in.
-	 * @param ctx
-	 * @param action
-	 */
-	@Action(Auth.SigningUp)
-	setSigningUp(ctx: StateContext<AuthStateModel>, action: Auth.SigningUp): void {
-		this._log.info('setSigningUp action handler fired.', this);
-		ctx.setState(
-			produce((draft: AuthStateModel) => {
-				draft = { ...draft, ...action.payload };
-				return draft;
-			})
-		);
 	}
 
 	/**

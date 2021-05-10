@@ -78,36 +78,6 @@ export class Signin {
 }
 
 /**
- * User is signign in.
- */
-export class SigningIn {
-	/**
-	 * Type of action.
-	 */
-	static readonly type = '[Auth] SigningIn';
-	/**
-	 * Creates an instance of signingIn action.
-	 * @param payload
-	 */
-	constructor(public payload: { signingIn: boolean }) {}
-}
-
-/**
- * User is signign up.
- */
-export class SigningUp {
-	/**
-	 * Type of action.
-	 */
-	static readonly type = '[Auth] SigningUp';
-	/**
-	 * Creates an instance of signingIn action.
-	 * @param payload
-	 */
-	constructor(public payload: { signingUp: boolean }) {}
-}
-
-/**
  * Was two step verification code successfully verified by the server.
  */
 export class Is2StepVerificationSuccessful {

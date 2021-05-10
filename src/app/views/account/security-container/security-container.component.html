@@ -19,12 +19,7 @@
 			(userRecoveryCodesOpened)="_onUserRecoveryCodesOpened()"
 			(userRecoveryCodesClosed)="_onUserRecoveryCodesClosed()"
 		></odm-two-factor-authentication>
-		<div>
-			<h3>Change password</h3>
-			<mat-form-field>
-				<input matInput type="text" />
-			</mat-form-field>
-		</div>
+		<odm-change-password-container></odm-change-password-container>
 		<mat-divider></mat-divider>
 		<ng-container *ngIf="_serverError$ | async as serverError">
 			<ng-container *ngIf="_showServerError">
