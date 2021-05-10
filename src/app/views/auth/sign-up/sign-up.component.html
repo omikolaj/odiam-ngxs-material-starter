@@ -35,14 +35,14 @@
                         Marking control as pristine ensure's that error message is displayed
                         until user starts changing values inside the email control field.
               -->
-							<span *ngIf="_ifControlFieldIsInvalid(_signupForm?.get('email'), 'email')">
+							<span *ngIf="_ifControlFieldIsInvalid(_signupForm?.get('email'))">
 								<mat-icon class="auth--req-not-met" matPrefix>{{ 'clear' }}</mat-icon>
 								{{ _getErrorMessage$(_signupForm?.get('email')) | async }}
 							</span>
 						</ng-container>
 					</mat-hint>
 					<mat-icon matSuffix>email</mat-icon>
-					<mat-error *ngIf="_ifControlFieldIsInvalid(_signupForm?.get('email'), 'email')">{{
+					<mat-error *ngIf="_ifControlFieldIsInvalid(_signupForm?.get('email'))">{{
 						_getErrorMessage$(_signupForm?.get('email')) | async
 					}}</mat-error>
 				</mat-form-field>
@@ -61,7 +61,7 @@
 							[passwordControl]="_passwordControl"
 						></odm-password-help>
 					</mat-hint>
-					<mat-error *ngIf="_ifServerErrorOccured(_signupForm?.get('password'), 'password')">{{
+					<mat-error *ngIf="_ifServerErrorOccured(_signupForm?.get('password'))">{{
 						_getErrorMessage$(_signupForm?.get('password')) | async
 					}}</mat-error>
 				</mat-form-field>

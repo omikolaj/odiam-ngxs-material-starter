@@ -2,7 +2,7 @@ import { ChangeDetectorRef } from '@angular/core';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { implementsOdmWebApiException } from 'app/core/utilities/implements-odm-web-api-exception';
 import { AbstractControl, ValidationErrors } from '@angular/forms';
-import { AuthControlType } from '../../shared/auth-abstract-control-type';
+
 import { Observable, of } from 'rxjs';
 import { LogService } from 'app/core/logger/log.service';
 import { TranslateValidationErrorsService } from '../../shared/services/translate-validation-errors.service';
@@ -110,14 +110,13 @@ export class AuthBase {
 	/**
 	 * Checks if the control field is invalid by also checking server side validations.
 	 * @param control
-	 * @param controlType
 	 * @returns true if control field is invalid
 	 */
-	_ifControlFieldIsInvalid(control: AbstractControl, controlType?: AuthControlType): boolean {
+	_ifControlFieldIsInvalid(control: AbstractControl): boolean {
 		if (control.invalid) {
 			return true;
 		} else {
-			return this._ifServerErrorOccured(control, controlType);
+			return this._ifServerErrorOccured(control);
 		}
 	}
 
@@ -138,10 +137,9 @@ export class AuthBase {
 	/**
 	 * Determines if any server errors occured.
 	 * @param control
-	 * @param controlType
 	 * @returns true if server error occured
 	 */
-	_ifServerErrorOccured(control: AbstractControl, controlType?: AuthControlType): boolean {
+	_ifServerErrorOccured(control: AbstractControl): boolean {
 		// if internal server error occured set control as invalid.
 		if (this._internalServerErrorOccured) {
 			this.log.trace('[_ifServerErrorOccured]: InternalServerErrorOccured.', this);
@@ -150,7 +148,7 @@ export class AuthBase {
 		// else if server validation error occured set control as invalid.d
 		else if (this._serverValidationErrorOccured) {
 			this.log.trace('[_ifServerErrorOccured]: ServerValidationErrorOccured.', this);
-			return this._handleServerValidationError(control, controlType);
+			return this._handleServerValidationError(control);
 		}
 		// else if server error occured set control as invalid.
 		else if (this._serverErrorOccured) {
@@ -190,28 +188,14 @@ export class AuthBase {
 
 	/**
 	 * Handles server validation error.
-	 * Notes: The problem is that when server validation error occurs we only know that ProblemDetails has emitted.
-	 * It isn't clear which control type the ProblemDetails is for. The easiest but most brittle way of knowing is to
-	 * check and see if server validation errors contain the name of the control in them. For example if there was server
-	 * validation issues with control for email, then server errors will have the phrase 'email' in their descriptions
-	 * and that is what exactly what _validationErrorMatchesControlType method does. It checks to see if server validation errors
-	 * have the phrase 'email' or 'password' in them or whatever controlType value is passed in. In sign up component, email is the first
-	 * control that will be passed into this method, then password control then confirmPassword control.
 	 * @param control
-	 * @param controlType
 	 * @returns true if server validation error
 	 */
-	private _handleServerValidationError(control: AbstractControl, controlType: AuthControlType): boolean {
+	private _handleServerValidationError(control: AbstractControl): boolean {
 		this.log.trace('[_handleServerValidationError]: Was server error handled:', this, this._problemDetailsServerErrorHandled);
 		if (this._problemDetailsServerErrorHandled === false) {
-			if (!controlType) {
-				this.log.warn('ControlType not specified!', this);
-				// fallback, in case controlType is null and not specified.
-				this._setServerValidationError(control);
-			} else {
-				this._setServerValidationError(control);
-				return true;
-			}
+			this._setServerValidationError(control);
+			return true;
 		}
 
 		// if control is prestine keep the server error message displayed.

@@ -16,9 +16,7 @@
 					<mat-label>{{ 'odm.auth.form.label.email' | translate }}</mat-label>
 					<input matInput formControlName="email" type="email" autocomplete="email" required />
 					<mat-icon matSuffix>email</mat-icon>
-					<mat-error *ngIf="_ifControlFieldIsInvalid(signinForm?.get('email'), 'email')">{{
-						_getErrorMessage$(signinForm?.get('email')) | async
-					}}</mat-error>
+					<mat-error *ngIf="_ifControlFieldIsInvalid(signinForm?.get('email'))">{{ _getErrorMessage$(signinForm?.get('email')) | async }}</mat-error>
 				</mat-form-field>
 			</div>
 
