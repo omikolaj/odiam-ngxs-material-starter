@@ -11,6 +11,9 @@ import { PasswordRequirement } from 'app/core/models/auth/password-requirement.m
 import { PasswordHelpToggleClass } from 'app/core/models/auth/password-help-toggle-class.model';
 import { getPasswordRequirements } from 'app/core/utilities/password-requirements.utility';
 
+/**
+ * Change user password container component.
+ */
 @Component({
 	selector: 'odm-change-password-container',
 	templateUrl: './change-password-container.component.html',
