@@ -25,6 +25,7 @@ import { TwoFactorAuthenticationSetupResult } from 'app/core/models/account/secu
 import { TwoFactorAuthenticationVerificationCode } from 'app/core/models/account/security/two-factor-authentication-verification-code.model';
 import { NotificationService } from 'app/core/core.module';
 import { TranslateService } from '@ngx-translate/core';
+import { PasswordChange } from 'app/core/models/auth/password-change.model';
 
 /**
  * Account sandbox service.
@@ -191,5 +192,10 @@ export class AccountSandboxService {
 				})
 			)
 			.subscribe();
+	}
+
+	changePassword(model: PasswordChange): void {
+		const id = this._store.selectSnapshot(AuthState.selectCurrentUserId);
+		this._userAsyncService.updateUser$(model).subscribe();
 	}
 }

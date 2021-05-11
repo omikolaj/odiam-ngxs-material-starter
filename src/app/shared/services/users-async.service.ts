@@ -89,4 +89,12 @@ export class UsersAsyncService {
 	fetchUsernameForRememberMe$(id: string): Observable<string> {
 		return this._http.get<string>(`${this._apiUrl}/users/${id}/username`, { headers: this._headers });
 	}
+
+	/**
+	 * Updates user.
+	 * @param id
+	 */
+	updateUser$(model: any): Observable<void> {
+		return this._http.patch<void>(`${this._apiUrl}/users/:id`, JSON.stringify(model), { headers: this._headers });
+	}
 }

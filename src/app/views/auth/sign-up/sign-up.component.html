@@ -51,8 +51,10 @@
 			<div class="auth__password-field" [ngClass]="passwordHelpToggleClass">
 				<mat-form-field appearance="standard">
 					<mat-label>{{ 'odm.auth.form.label.password' | translate }}</mat-label>
-					<input matInput formControlName="password" [type]="_hide ? 'password' : 'text'" autocomplete="new-password" required />
-					<mat-icon class="auth__view-password" matSuffix (click)="_hide = !_hide">{{ _hide ? 'visibility_off' : 'visibility' }}</mat-icon>
+					<input matInput formControlName="password" [type]="_hidePassword ? 'password' : 'text'" autocomplete="new-password" required />
+					<mat-icon class="auth__view-password" matSuffix (click)="_hidePassword = !_hidePassword">{{
+						_hidePassword ? 'visibility_off' : 'visibility'
+					}}</mat-icon>
 
 					<mat-hint>
 						<odm-password-help
@@ -70,8 +72,10 @@
 			<div class="auth__confirm-password-field">
 				<mat-form-field appearance="standard">
 					<mat-label>{{ 'odm.auth.form.label.confirm-password' | translate }}</mat-label>
-					<input matInput formControlName="confirmPassword" [type]="_hide ? 'password' : 'text'" autocomplete="new-password" />
-					<mat-icon class="auth__view-password" matSuffix (click)="_hide = !_hide">{{ _hide ? 'visibility_off' : 'visibility' }}</mat-icon>
+					<input matInput formControlName="confirmPassword" [type]="_hideConfirmPassword ? 'password' : 'text'" autocomplete="new-password" />
+					<mat-icon class="auth__view-password" matSuffix (click)="_hideConfirmPassword = !_hideConfirmPassword">{{
+						_hideConfirmPassword ? 'visibility_off' : 'visibility'
+					}}</mat-icon>
 					<mat-hint>
 						<span>
 							<ng-container *ngIf="!_signupForm?.get('confirmPassword').pristine && _signupForm?.get('password').valid">

@@ -165,17 +165,17 @@ export class AuthService {
 		this._log.trace('initUserSession executed.', this);
 		// If user is authenticated, treat it as a signin.
 		if (isAuthenticated) {
-			this._log.debug('initUserSession$: User is authenticated.', this);
+			this._log.trace('initUserSession$: User is authenticated.', this);
 			return this._setInitSessionResultForAuthenticatedUser$();
 		}
 		// If user is not authenticated and user did NOT explicitly sign out, try to renew their session.
 		if (didExplicitlySignout === false) {
-			this._log.debug('initUserSession$: User is not authenticated and did not explicitly sign out. Attempting to renewing session.', this);
+			this._log.trace('initUserSession$: User is not authenticated and did not explicitly sign out. Attempting to renewing session.', this);
 			return this._tryRenewSession$();
 		}
 		// else if user did not explicitly sign out, sign them out.
 		else {
-			this._log.debug('initUserSession$: User is not authenticated and user explicitly signed out. Ensuring user is signed out.', this);
+			this._log.trace('initUserSession$: User is not authenticated and user explicitly signed out. Ensuring user is signed out.', this);
 			return this._ensureUserIsSignedout$();
 		}
 	}
@@ -213,10 +213,10 @@ export class AuthService {
 		// isAuthenticatedFunc has to be a function otherwise isAuthenticated from the stored gets cached and we
 		// get outdated value.
 		if (isAuthenticatedFunc(new Date(), expires_at_date)) {
-			this._log.debug('[_manageUserSession$]: User is authenticated.', this);
+			this._log.trace('[_manageUserSession$]: User is authenticated.', this);
 			return this._handleAuthenticatedUserSession$(isActive);
 		} else {
-			this._log.debug('[_manageUserSession$]: User is not authenticated.', this);
+			this._log.trace('[_manageUserSession$]: User is not authenticated.', this);
 			return this._handleUnauthenticatedUserSession$(isActive);
 		}
 	}
@@ -229,10 +229,10 @@ export class AuthService {
 	private _handleAuthenticatedUserSession$(isActive: boolean): Observable<any> {
 		this._log.trace('_handleAuthenticatedUserSession$ executed.', this);
 		if (isActive === false) {
-			this._log.debug('[_handleAuthenticatedUserSession$] User is not active.');
+			this._log.trace('[_handleAuthenticatedUserSession$] User is not active.');
 			return this._handleSessionInactivity$();
 		} else {
-			this._log.debug('[_handleAuthenticatedUserSession$] User is active.');
+			this._log.trace('[_handleAuthenticatedUserSession$] User is active.');
 			return of(true);
 		}
 	}

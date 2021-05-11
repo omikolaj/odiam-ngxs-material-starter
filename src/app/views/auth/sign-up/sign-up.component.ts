@@ -120,6 +120,16 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	_signingUp = false;
 
 	/**
+	 * Hide/show password.
+	 */
+	_hidePassword = true;
+
+	/**
+	 * Hide/show confirm password.
+	 */
+	_hideConfirmPassword = true;
+
+	/**
 	 * Route animations.
 	 */
 	readonly _routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;

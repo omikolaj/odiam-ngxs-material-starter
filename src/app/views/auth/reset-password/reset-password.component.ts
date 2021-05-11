@@ -109,6 +109,11 @@ export class ResetPasswordComponent extends AuthBase implements OnInit, OnDestro
 	_togglePosition$ = this._togglePositionSub.asObservable();
 
 	/**
+	 * Hide/show password.
+	 */
+	_hide = true;
+
+	/**
 	 * Rxjs subscriptions for this component.
 	 */
 	private readonly _subscription = new Subscription();

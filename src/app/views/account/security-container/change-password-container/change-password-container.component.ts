@@ -1,15 +1,17 @@
-import { Component, OnInit, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { downUpFadeInAnimation } from 'app/core/core.module';
 import { AccountSandboxService } from '../../account-sandbox.service';
 import { PasswordChange } from 'app/core/models/auth/password-change.model';
 import { FormGroup } from '@angular/forms';
 import { OdmValidators, MinPasswordLength } from 'app/core/form-validators/odm-validators';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { PasswordRequirement } from 'app/core/models/auth/password-requirement.model';
 import { PasswordHelpToggleClass } from 'app/core/models/auth/password-help-toggle-class.model';
 import { getPasswordRequirements } from 'app/core/utilities/password-requirements.utility';
+import { tap } from 'rxjs/operators';
+import { MatDialog } from '@angular/material/dialog';
 
 /**
  * Change user password container component.
@@ -21,7 +23,12 @@ import { getPasswordRequirements } from 'app/core/utilities/password-requirement
 	animations: [downUpFadeInAnimation],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ChangePasswordContainerComponent implements OnInit {
+export class ChangePasswordContainerComponent implements OnInit, OnDestroy {
+	/**
+	 * Event emitter when user has clicked to change their password.
+	 */
+	@Output() changePasswordClicked = new EventEmitter<void>();
+
 	/**
 	 * Emitted when server responds with 40X error.
 	 */
@@ -63,11 +70,11 @@ export class ChangePasswordContainerComponent implements OnInit {
 	_passwordHelpToggleClass: PasswordHelpToggleClass = 'auth__password-field-help-off';
 
 	/**
-	 * Event emitter when user has clicked to change their password.
+	 * Rxjs subscriptions for this component.
 	 */
-	@Output() changePasswordClicked = new EventEmitter<void>();
+	private readonly _subscription = new Subscription();
 
-	constructor(private _sb: AccountSandboxService) {
+	constructor(private _sb: AccountSandboxService, private _dialog: MatDialog) {
 		this._problemDetails$ = _sb.problemDetails$;
 		this._internalServerErrorDetails$ = _sb.internalServerErrorDetails$;
 	}
@@ -76,8 +83,19 @@ export class ChangePasswordContainerComponent implements OnInit {
 	 * ngOnInit life cycle.
 	 */
 	ngOnInit(): void {
-		this._changePasswordForm = this._initSignupForm();
+		this._sb.log.trace('Initialized.', this);
+		this._changePasswordForm = this._initChangePasswordForm();
 		this._passwordRequirements = this._initPasswordRequirements();
+		// subscribe to confirm password control to check if passwords match.
+		this._subscription.add(this._validateFormConfirmPasswordField$().subscribe());
+	}
+
+	/**
+	 * ngOnDestroy life cycle.
+	 */
+	ngOnDestroy(): void {
+		this._sb.log.trace('Destroyed.', this);
+		this._subscription.unsubscribe();
 	}
 
 	/**
@@ -94,6 +112,7 @@ export class ChangePasswordContainerComponent implements OnInit {
 	 */
 	_onChangePasswordSubmitted(event: PasswordChange): void {
 		this._sb.log.trace('_onChangePasswordClicked fired.', this);
+		this._sb.changePassword(event);
 	}
 
 	/**
@@ -106,6 +125,18 @@ export class ChangePasswordContainerComponent implements OnInit {
 	}
 
 	/**
+	 * Event handler when user toggles password help.
+	 */
+	_onPasswordHelpToggled(): void {
+		this._sb.log.trace('_onPasswordHelpToggled fired.', this);
+		if (this._passwordHelpToggleClass === 'auth__password-field-help-off') {
+			this._passwordHelpToggleClass = 'auth__password-field-help-on';
+		} else {
+			this._passwordHelpToggleClass = 'auth__password-field-help-off';
+		}
+	}
+
+	/**
 	 * Inits new user's password requirements.
 	 */
 	private _initPasswordRequirements(): PasswordRequirement[] {
@@ -113,15 +144,33 @@ export class ChangePasswordContainerComponent implements OnInit {
 	}
 
 	/**
+	 * Validates form confirm password field.
+	 * @param form
+	 * @returns form confirm password field
+	 */
+	private _validateFormConfirmPasswordField$(): Observable<any> {
+		return this._changePasswordForm.valueChanges.pipe(
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			tap((_) => {
+				if (this._changePasswordForm.hasError('notSame')) {
+					this._confirmPasswordMatchReqMet = false;
+				} else {
+					this._confirmPasswordMatchReqMet = true;
+				}
+			})
+		);
+	}
+
+	/**
 	 * Creates FormGroup for change password form.
 	 * @returns change password form
 	 */
-	private _initSignupForm(): FormGroup {
+	private _initChangePasswordForm(): FormGroup {
 		return this._sb.fb.group(
 			{
 				oldPassword: this._sb.fb.control('', {
 					validators: [OdmValidators.required],
-					updateOn: 'blur'
+					updateOn: 'change'
 				}),
 				password: this._sb.fb.control('', {
 					validators: [

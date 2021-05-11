@@ -7,6 +7,7 @@ import { TranslateValidationErrorsService } from 'app/shared/services/translate-
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { PasswordRequirement } from 'app/core/models/auth/password-requirement.model';
+import { PasswordHelpToggleClass } from 'app/core/models/auth/password-help-toggle-class.model';
 
 /**
  * Change user password component.
@@ -35,10 +36,10 @@ export class ChangePasswordComponent extends AuthBase implements OnInit {
 	}
 
 	/**
-	 * Signup form of auth component.
+	 * Change password form.
 	 */
 	@Input() set changePasswordForm(value: FormGroup) {
-		this.log.debug('Signup form emitted.', this);
+		this.log.debug('Change password form emitted.', this);
 		this._changePasswordForm = value;
 		this._passwordControl = value.get('password');
 	}
@@ -47,6 +48,16 @@ export class ChangePasswordComponent extends AuthBase implements OnInit {
 	 * Password requirements.
 	 */
 	@Input() passwordRequirements: PasswordRequirement[];
+
+	/**
+	 * Password help toggle class.
+	 */
+	@Input() passwordHelpToggleClass: PasswordHelpToggleClass;
+
+	/**
+	 * Requires user to enter the same password for confirm password field.
+	 */
+	@Input() confirmPasswordMatchReqMet: boolean;
 
 	/**
 	 * Change password form.
@@ -72,6 +83,21 @@ export class ChangePasswordComponent extends AuthBase implements OnInit {
 	 * Event emitter for when user toggles password help menu.
 	 */
 	@Output() passwordHelpToggled = new EventEmitter<void>();
+
+	/**
+	 * Hide/show old password.
+	 */
+	_oldPasswordHide = true;
+
+	/**
+	 * Hide/show new password.
+	 */
+	_newPasswordHide = true;
+
+	/**
+	 * Hide/show confirm password.
+	 */
+	_confirmPasswordHide = true;
 
 	/**
 	 * Creates an instance of change password component.

@@ -112,6 +112,11 @@ export class SignInComponent extends AuthBase implements OnInit {
 	_signingIn: boolean;
 
 	/**
+	 * Hide/show password.
+	 */
+	_hide = true;
+
+	/**
 	 * Route animations.
 	 */
 	readonly _routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;

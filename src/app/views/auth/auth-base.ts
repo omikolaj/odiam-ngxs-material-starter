@@ -13,11 +13,6 @@ import { InternalServerErrorDetails } from 'app/core/models/internal-server-erro
  */
 export class AuthBase {
 	/**
-	 * Hide/show password.
-	 */
-	_hide = true;
-
-	/**
 	 * Facebook login icon.
 	 */
 	_facebookLoginIcon = (require('../../../assets/facebook_icon_color.svg') as { default: string }).default;
@@ -113,7 +108,7 @@ export class AuthBase {
 	 * @returns true if control field is invalid
 	 */
 	_ifControlFieldIsInvalid(control: AbstractControl): boolean {
-		if (control.invalid) {
+		if (control?.invalid) {
 			return true;
 		} else {
 			return this._ifServerErrorOccured(control);
@@ -181,7 +176,7 @@ export class AuthBase {
 	private _setInternalServerError(control: AbstractControl): void {
 		const errorDescription = this._getInternalServerErrorMessage();
 		control.setErrors({ serverError: { errorDescription } });
-		// control.markAsPristine();
+		control.markAsPristine();
 		this._internalServerErrorDetailsHandled = true;
 		this.cd.detectChanges();
 	}
