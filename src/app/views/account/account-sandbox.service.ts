@@ -40,10 +40,6 @@ export class AccountSandboxService {
 	 * Internal server error for account model.
 	 */
 	@InternalServerError() internalServerErrorDetails$: Observable<InternalServerErrorDetails>;
-	/**
-	 * Selects account security details.
-	 */
-	@Select(AccountSecurityState.selectAccountSecurityDetails) accountSecurityDetails$: Observable<AccountSecurityDetails>;
 
 	/**
 	 * Selects two factor authentication setup details.
@@ -62,6 +58,16 @@ export class AccountSandboxService {
 	 * Select users general details.
 	 */
 	@Select(AccountGeneralState.selectAccountGeneralDetails) accountGeneralDetails$: Observable<AccountGeneralDetails>;
+
+	/**
+	 * Selects account security details.
+	 */
+	@Select(AccountSecurityState.selectAccountSecurityDetails) accountSecurityDetails$: Observable<AccountSecurityDetails>;
+
+	/**
+	 * Whether user's password change request completed successfully.
+	 */
+	@Select(AccountSecurityState.selectPasswordChangeCompleted) passwordChangeCompleted$: Observable<boolean>;
 
 	/**
 	 * Emits when SecurityContainer.UpdateRecoveryCodes action has triggered.
@@ -151,7 +157,8 @@ export class AccountSandboxService {
 				hasAuthenticator: true,
 				recoveryCodes: model.recoveryCodes,
 				recoveryCodesLeft: model.recoveryCodes.items.length,
-				twoFactorEnabled: model.status === 'Succeeded'
+				twoFactorEnabled: model.status === 'Succeeded',
+				passwordChangeCompleted: false
 			})
 		]);
 	}
@@ -194,8 +201,21 @@ export class AccountSandboxService {
 			.subscribe();
 	}
 
+	/**
+	 * Changes user's password
+	 * @param model
+	 */
 	changePassword(model: PasswordChange): void {
 		const id = this._store.selectSnapshot(AuthState.selectCurrentUserId);
-		this._userAsyncService.updateUser$(model).subscribe();
+		this._userAsyncService
+			.changePassword$(id, model)
+			.pipe(
+				switchMap(() => this._translationService.get('odm.account.security.change-password.success')),
+				tap((message: string) => {
+					this._store.dispatch(new SecurityContainer.PasswordChangeCompleted({ passwordChangeCompleted: true }));
+					this._notificationService.success(message);
+				})
+			)
+			.subscribe();
 	}
 }

@@ -7,7 +7,8 @@ h3 {
 }
 
 mat-form-field {
-	margin-bottom: 8px;
+	// margin-bottom: 8px;
+	width: 100%;
 }
 
 button {
@@ -23,6 +24,7 @@ form {
 	justify-content: center;
 	flex-direction: column;
 	height: 100%;
+	padding: 0 9px; // to match padding of change password which is total of 24px. There is already 15px padding
 }
 
 .auth__container {
@@ -48,6 +50,14 @@ form {
 		top: 0;
 		// Transition that controls sign-in/sign-up components start transitioning out of the view
 		transition: all 0.6s ease-out;
+
+		.auth__email-field {
+			width: 80%;
+		}
+
+		.auth__password-field {
+			width: 80%;
+		}
 
 		.auth__form-container-switch-sign-up {
 			display: flex;
@@ -153,6 +163,14 @@ form {
 
 		.auth__form-container {
 			height: 100%;
+
+			.auth__email-field {
+				width: inherit;
+			}
+
+			.auth__password-field {
+				width: inherit;
+			}
 		}
 
 		.auth__sign-in-container {

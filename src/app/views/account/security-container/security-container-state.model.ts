@@ -23,4 +23,9 @@ export interface SecurityContainerStateModel {
 	 *  Recovery codes for this user.
 	 */
 	recoveryCodes: UserRecoveryCodes;
+
+	/**
+	 * Whether user's password change requested completed without errors.
+	 */
+	passwordChangeCompleted: boolean;
 }

@@ -89,6 +89,11 @@ export class ResetPasswordComponent extends AuthBase implements OnInit, OnDestro
 	_passwordResetInProgress = false;
 
 	/**
+	 * Hide/show password.
+	 */
+	_hide = true;
+
+	/**
 	 * Generating recovery codes spinner diameter.
 	 */
 	readonly _resettingPasswordSpinnerDiameter = ODM_SMALL_SPINNER_DIAMETER;
@@ -107,11 +112,6 @@ export class ResetPasswordComponent extends AuthBase implements OnInit, OnDestro
 	 * Whether password help dialog is expanded or collapsed.
 	 */
 	_togglePosition$ = this._togglePositionSub.asObservable();
-
-	/**
-	 * Hide/show password.
-	 */
-	_hide = true;
 
 	/**
 	 * Rxjs subscriptions for this component.
@@ -145,8 +145,8 @@ export class ResetPasswordComponent extends AuthBase implements OnInit, OnDestro
 	 * NgOnDestroy life cycle.
 	 */
 	ngOnDestroy(): void {
-		this._sb.resetPasswordCompleted(false);
 		this._sb.log.trace('Destroyed.', this);
+		this._sb.resetPasswordCompleted(false);
 		this._subscription.unsubscribe();
 	}
 
@@ -165,9 +165,9 @@ export class ResetPasswordComponent extends AuthBase implements OnInit, OnDestro
 		this._sb.log.trace('_onSubmit fired.', this);
 		this._passwordResetInProgress = true;
 		const model = this._resetPasswordForm.value as PasswordReset;
-		model.userId = this._route.snapshot.queryParams['userId'] as string;
+		const userId = this._route.snapshot.queryParams['userId'] as string;
 		model.passwordResetToken = this._route.snapshot.queryParams['code'] as string;
-		this._sb.resetPassword(model);
+		this._sb.resetPassword(userId, model);
 	}
 
 	/**

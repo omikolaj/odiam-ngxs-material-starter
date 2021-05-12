@@ -176,7 +176,6 @@ export class AuthBase {
 	private _setInternalServerError(control: AbstractControl): void {
 		const errorDescription = this._getInternalServerErrorMessage();
 		control.setErrors({ serverError: { errorDescription } });
-		control.markAsPristine();
 		this._internalServerErrorDetailsHandled = true;
 		this.cd.detectChanges();
 	}
@@ -208,7 +207,6 @@ export class AuthBase {
 			if (firstErrorDescription.length > 0) {
 				const errorDescription = `Server validation error: ${firstErrorDescription[0]}`;
 				control.setErrors({ serverError: { errorDescription } });
-				control.markAsPristine();
 				this._problemDetailsServerErrorHandled = true;
 				this.cd.detectChanges();
 			}
@@ -238,7 +236,6 @@ export class AuthBase {
 		this.log.debug('[_setServerError]: fired.', this);
 		const errorDescription = this._problemDetails.detail;
 		control.setErrors({ serverError: { errorDescription } });
-		control.markAsPristine();
 		this._problemDetailsServerErrorHandled = true;
 		this.log.debug('[_setServerError]: running change detection.', this);
 		this.cd.detectChanges();

@@ -60,6 +60,11 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	_signupForm: FormGroup;
 
 	/**
+	 * Password control of sign up component.
+	 */
+	_passwordControl: AbstractControl;
+
+	/**
 	 * Whether to show overlay. Used for desktop view
 	 */
 	@Input() matcher: BreakpointState;
@@ -108,11 +113,6 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	 * Requires user to enter the same password for confirm password field.
 	 */
 	@Input() confirmPasswordMatchReqMet: boolean;
-
-	/**
-	 * Password control of sign up component.
-	 */
-	_passwordControl: AbstractControl;
 
 	/**
 	 * Whether user is currently in the middle if signing up.

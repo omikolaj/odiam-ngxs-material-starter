@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { AccountSecurityDetails } from '../../core/models/account/security/account-security-details.model';
 import { AccountGeneralDetails } from '../../core/models/account/general/account-general-details.model';
 import { PasswordReset } from '../../core/models/auth/password-reset.model';
+import { PasswordChange } from 'app/core/models/auth/password-change.model';
 
 /**
  * User async service.
@@ -77,8 +78,8 @@ export class UsersAsyncService {
 	 * @param model
 	 * @returns password
 	 */
-	resetPassword$(model: PasswordReset): Observable<void> {
-		return this._http.put<void>(`${this._apiUrl}/users/password`, JSON.stringify(model), { headers: this._headers });
+	resetPassword$(id: string, model: PasswordReset): Observable<void> {
+		return this._http.post<void>(`${this._apiUrl}/users/${id}/reset-password`, JSON.stringify(model), { headers: this._headers });
 	}
 
 	/**
@@ -91,10 +92,10 @@ export class UsersAsyncService {
 	}
 
 	/**
-	 * Updates user.
+	 * Changes user's password.
 	 * @param id
 	 */
-	updateUser$(model: any): Observable<void> {
-		return this._http.patch<void>(`${this._apiUrl}/users/:id`, JSON.stringify(model), { headers: this._headers });
+	changePassword$(id: string, model: PasswordChange): Observable<void> {
+		return this._http.put<void>(`${this._apiUrl}/users/${id}/password`, JSON.stringify(model), { headers: this._headers });
 	}
 }

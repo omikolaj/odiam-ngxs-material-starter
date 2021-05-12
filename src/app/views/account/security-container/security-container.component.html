@@ -19,7 +19,16 @@
 			(userRecoveryCodesOpened)="_onUserRecoveryCodesOpened()"
 			(userRecoveryCodesClosed)="_onUserRecoveryCodesClosed()"
 		></odm-two-factor-authentication>
-		<odm-change-password-container></odm-change-password-container>
+		<odm-change-password-container
+			(changePasswordSubmitted)="_onChangeUserPasswordSubmitted($event)"
+			(changePasswordOpened)="_onChangePasswordOpened()"
+			(changePasswordClosed)="_onChangePasswordClosed()"
+			[passwordChangeCompleted]="_passwordChangeCompleted$ | async"
+			[problemDetails]="_problemDetails$ | async"
+			[internalServerErrorDetails]="_internalServerErrorDetails$ | async"
+			[confirmPasswordMatchReqMet]="_confirmPasswordMatchReqMet"
+			[changePasswordForm]="_changePasswordForm"
+		></odm-change-password-container>
 		<mat-divider></mat-divider>
 		<ng-container *ngIf="_serverError$ | async as serverError">
 			<ng-container *ngIf="_showServerError">

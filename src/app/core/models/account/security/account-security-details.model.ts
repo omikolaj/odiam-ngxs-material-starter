@@ -23,4 +23,9 @@ export interface AccountSecurityDetails {
 	 *  Recovery codes for this user.
 	 */
 	recoveryCodes: UserRecoveryCodes;
+
+	/**
+	 * Whether user's request to change password completed without errors.
+	 */
+	passwordChangeCompleted: boolean;
 }

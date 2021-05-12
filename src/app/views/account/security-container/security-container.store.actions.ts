@@ -58,3 +58,19 @@ export class UpdateRecoveryCodes {
 	 */
 	constructor(public payload: UserRecoveryCodes) {}
 }
+
+/**
+ * Whether user's password change request completed without errors.
+ */
+export class PasswordChangeCompleted {
+	/**
+	 * Type of action.
+	 */
+	static readonly type = '[Security] Password Change Completed';
+
+	/**
+	 * Creates an instance of password change completed.
+	 * @param payload
+	 */
+	constructor(public payload: { passwordChangeCompleted: boolean }) {}
+}

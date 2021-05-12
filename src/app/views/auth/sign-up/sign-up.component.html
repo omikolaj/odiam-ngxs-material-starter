@@ -11,7 +11,7 @@
 				<img (click)="_onSigninWithGoogle()" class="auth__form-icon" [src]="_googleLoginIcon" alt="google" />
 			</div>
 
-			<div>
+			<div class="auth__email-field">
 				<mat-form-field appearance="standard">
 					<mat-label>{{ 'odm.auth.form.label.email' | translate }}</mat-label>
 					<input formControlName="email" matInput placeholder="example@gmail.com" type="email" autocomplete="email" required />
@@ -96,7 +96,7 @@
 				<button mat-raised-button type="submit" class="auth__form-btn auth__form-signup-btn auth--btn" [disabled]="!_signupForm?.valid || _signingUp">
 					{{ 'odm.buttons.sign-up' | translate }}
 					<ng-container *ngIf="_signingUp">
-						<odm-spinner [type]="'button'" [diameter]="_signingUpSpinnerDiameter" [strokeWidth]="_signingUpSpinnerStrokeWidth"> </odm-spinner>
+						<odm-spinner [type]="'button'" [diameter]="_signingUpSpinnerDiameter" [strokeWidth]="_signingUpSpinnerStrokeWidth"></odm-spinner>
 					</ng-container>
 				</button>
 			</div>

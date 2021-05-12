@@ -16,7 +16,8 @@ const ACCOUNT_SECURITY_STATE_TOKEN = new StateToken<SecurityContainerStateModel>
 			items: []
 		},
 		recoveryCodesLeft: 0,
-		twoFactorEnabled: false
+		twoFactorEnabled: false,
+		passwordChangeCompleted: false
 	}
 })
 @Injectable()
@@ -32,6 +33,16 @@ export class AccountSecurityState {
 	@Selector([ACCOUNT_SECURITY_STATE_TOKEN])
 	static selectAccountSecurityDetails(state: SecurityContainerStateModel): AccountSecurityDetails {
 		return state as AccountSecurityDetails;
+	}
+
+	/**
+	 * Selects whether user's password reset request completed without errors.
+	 * @param state
+	 * @returns true if password change completed
+	 */
+	@Selector([ACCOUNT_SECURITY_STATE_TOKEN])
+	static selectPasswordChangeCompleted(state: SecurityContainerStateModel): boolean {
+		return state.passwordChangeCompleted;
 	}
 
 	/**
@@ -111,11 +122,28 @@ export class AccountSecurityState {
 				items: []
 			},
 			recoveryCodesLeft: 0,
-			twoFactorEnabled: false
+			twoFactorEnabled: false,
+			passwordChangeCompleted: false
 		};
 		ctx.setState(
 			produce((draft: SecurityContainerStateModel) => {
 				draft = defaults;
+				return draft;
+			})
+		);
+	}
+
+	/**
+	 * Actions handler that updates state whether user's password change request completed without errors.
+	 * @param ctx
+	 * @param action
+	 */
+	@Action(SecurityContainer.PasswordChangeCompleted)
+	passwordChangeCompleted(ctx: StateContext<SecurityContainerStateModel>, action: SecurityContainer.PasswordChangeCompleted): void {
+		this._log.info('passwordChangeCompleted action handler fired.', this);
+		ctx.setState(
+			produce((draft: SecurityContainerStateModel) => {
+				draft = { ...draft, ...action.payload };
 				return draft;
 			})
 		);

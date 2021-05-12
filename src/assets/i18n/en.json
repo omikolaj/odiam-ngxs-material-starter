@@ -17,6 +17,9 @@
 			},
 			"security": {
 				"title": "Security",
+				"change-password": {
+					"success": "Successfully updated password"
+				},
 				"two-step": {
 					"title": "Two-step verification",
 					"description": "Require security code in addition to your password",
@@ -96,7 +99,7 @@
 				"label": {
 					"email": "E-mail",
 					"password": "Password",
-					"old-password": "Old Password",
+					"current-password": "Current Password",
 					"new-password": "New Password",
 					"confirm-password": "Confirm Password"
 				},

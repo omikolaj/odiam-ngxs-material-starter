@@ -1,13 +1,14 @@
-import { Component, OnInit, ChangeDetectionStrategy, Output, EventEmitter, Input, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Output, EventEmitter, Input, ChangeDetectorRef } from '@angular/core';
 import { FormGroup, AbstractControl } from '@angular/forms';
 import { LogService } from 'app/core/logger/log.service';
 import { AuthBase } from 'app/views/auth/auth-base';
-import { PasswordChange } from 'app/core/models/auth/password-change.model';
+
 import { TranslateValidationErrorsService } from 'app/shared/services/translate-validation-errors.service';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { PasswordRequirement } from 'app/core/models/auth/password-requirement.model';
 import { PasswordHelpToggleClass } from 'app/core/models/auth/password-help-toggle-class.model';
+import { ODM_SMALL_SPINNER_DIAMETER, ODM_SMALL_SPINNER_STROKE_WIDTH } from 'app/shared/global-settings/mat-spinner-settings';
 
 /**
  * Change user password component.
@@ -18,12 +19,13 @@ import { PasswordHelpToggleClass } from 'app/core/models/auth/password-help-togg
 	styleUrls: ['./change-password.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ChangePasswordComponent extends AuthBase implements OnInit {
+export class ChangePasswordComponent extends AuthBase {
 	/**
 	 * Emitted when server responds with 40X error.
 	 */
 	@Input() set problemDetails(value: ProblemDetails) {
 		this.log.debug('Problem details emitted.', this);
+		this._changingPassword = false;
 		this.problemDetailsError = value;
 	}
 
@@ -32,6 +34,7 @@ export class ChangePasswordComponent extends AuthBase implements OnInit {
 	 */
 	@Input() set internalServerErrorDetails(value: InternalServerErrorDetails) {
 		this.log.debug('Internal server error emitted.', this);
+		this._changingPassword = false;
 		this.internalServerError = value;
 	}
 
@@ -60,19 +63,9 @@ export class ChangePasswordComponent extends AuthBase implements OnInit {
 	@Input() confirmPasswordMatchReqMet: boolean;
 
 	/**
-	 * Change password form.
-	 */
-	_changePasswordForm: FormGroup;
-
-	/**
-	 * Password control of change password component.
-	 */
-	_passwordControl: AbstractControl;
-
-	/**
 	 * Emitted when user tries to change their password.
 	 */
-	@Output() changePasswordSubmitted = new EventEmitter<PasswordChange>();
+	@Output() changePasswordSubmitted = new EventEmitter<void>();
 
 	/**
 	 * Emitted when user cancels out of change password view.
@@ -85,9 +78,24 @@ export class ChangePasswordComponent extends AuthBase implements OnInit {
 	@Output() passwordHelpToggled = new EventEmitter<void>();
 
 	/**
-	 * Hide/show old password.
+	 * Change password form.
 	 */
-	_oldPasswordHide = true;
+	_changePasswordForm: FormGroup;
+
+	/**
+	 * Password control of change password component.
+	 */
+	_passwordControl: AbstractControl;
+
+	/**
+	 * Whether there currently is a request to change user's password.
+	 */
+	_changingPassword: boolean;
+
+	/**
+	 * Hide/show current password.
+	 */
+	_currentPasswordHide = true;
 
 	/**
 	 * Hide/show new password.
@@ -98,6 +106,16 @@ export class ChangePasswordComponent extends AuthBase implements OnInit {
 	 * Hide/show confirm password.
 	 */
 	_confirmPasswordHide = true;
+
+	/**
+	 * Changing password spinner diameter.
+	 */
+	readonly _changingPasswordSpinnerDiameter = ODM_SMALL_SPINNER_DIAMETER;
+
+	/**
+	 * Changing password spinner stroke width.
+	 */
+	readonly _changingPasswordSpinnerStrokeWidth = ODM_SMALL_SPINNER_STROKE_WIDTH;
 
 	/**
 	 * Creates an instance of change password component.
@@ -113,15 +131,13 @@ export class ChangePasswordComponent extends AuthBase implements OnInit {
 		super(translateErrorValidationService, log, cd);
 	}
 
-	ngOnInit(): void {}
-
 	/**
 	 * Event handler for when user changes the password.
 	 */
 	_onChangePassword(): void {
 		this.log.trace('_onChangePassword fired.', this);
-		const model = this.changePasswordForm.value as PasswordChange;
-		this.changePasswordSubmitted.emit(model);
+		this._changingPassword = true;
+		this.changePasswordSubmitted.emit();
 	}
 
 	/**

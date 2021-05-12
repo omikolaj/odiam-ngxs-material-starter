@@ -3,17 +3,17 @@
  */
 export interface PasswordChange {
 	/**
-	 * The id of user changing the password.
-	 */
-	userId: string;
-
-	/**
 	 * User's old password.
 	 */
-	oldPassword: string;
+	currentPassword: string;
 
 	/**
 	 * User's new password.
 	 */
 	newPassword: string;
+
+	/**
+	 * User's confirm password.
+	 */
+	confirmPassword: string;
 }

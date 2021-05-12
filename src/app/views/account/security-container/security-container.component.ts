@@ -6,13 +6,14 @@ import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { skip, filter, tap } from 'rxjs/operators';
 import { FormGroup } from '@angular/forms';
-import { OdmValidators, VerificationCodeLength } from 'app/core/form-validators/odm-validators';
+import { OdmValidators, VerificationCodeLength, MinPasswordLength } from 'app/core/form-validators/odm-validators';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { upDownFadeInAnimation } from 'app/core/core.module';
 import { ActionCompletion } from '@ngxs/store';
 import { TwoFactorAuthenticationSetupResult } from 'app/core/models/account/security/two-factor-authentication-setup-result.model';
 import { TwoFactorAuthenticationSetup } from 'app/core/models/account/security/two-factor-authentication-setup.model';
 import { TwoFactorAuthenticationVerificationCode } from 'app/core/models/account/security/two-factor-authentication-verification-code.model';
+import { PasswordChange } from 'app/core/models/auth/password-change.model';
 
 /**
  * Security component container that houses user security functionality.
@@ -51,6 +52,11 @@ export class SecurityContainerComponent implements OnInit {
 	_authenticatorSetup$: Observable<TwoFactorAuthenticationSetup>;
 
 	/**
+	 * Change password form.
+	 */
+	_changePasswordForm: FormGroup;
+
+	/**
 	 * Verification code form for two factor authentication setup.
 	 */
 	_verificationCodeForm: FormGroup;
@@ -71,19 +77,24 @@ export class SecurityContainerComponent implements OnInit {
 	_twoFactorAuthToggleLoading: boolean;
 
 	/**
-	 * Whether user recovery codes pnael is open.
-	 */
-	_userRecoveryCodesPanelOpened = false;
-
-	/**
 	 * Emitted when server responds with 40X or 50X error.
 	 */
 	_serverError$: Observable<ProblemDetails | InternalServerErrorDetails>;
 
 	/**
+	 * Whether password change has completed without errors.
+	 */
+	_passwordChangeCompleted$: Observable<boolean>;
+
+	/**
 	 * Whether this component should display server side error.
 	 */
 	_showServerError: boolean;
+
+	/**
+	 * Requires user to enter the same password for confirm password field.
+	 */
+	_confirmPasswordMatchReqMet = false;
 
 	/**
 	 * Loading subject. Required for angular OnPush change detection to be triggered.
@@ -106,6 +117,16 @@ export class SecurityContainerComponent implements OnInit {
 	_twoFactorAuthToggleLoading$ = this._twoFactorAuthToggleLoadingSub.asObservable();
 
 	/**
+	 * Whether change password view is open.
+	 */
+	private _changePasswordOpened = false;
+
+	/**
+	 * Whether user recovery codes pnael is open.
+	 */
+	private _userRecoveryCodesPanelOpened = false;
+
+	/**
 	 * Rxjs subscriptions for this component.
 	 */
 	private readonly _subscription = new Subscription();
@@ -120,6 +141,7 @@ export class SecurityContainerComponent implements OnInit {
 		this._authenticatorSetupResult$ = _sb.twoFactorAuthenticationSetupResult$;
 		this._problemDetails$ = _sb.problemDetails$;
 		this._internalServerErrorDetails$ = _sb.internalServerErrorDetails$;
+		this._passwordChangeCompleted$ = _sb.passwordChangeCompleted$;
 	}
 
 	/**
@@ -135,8 +157,8 @@ export class SecurityContainerComponent implements OnInit {
 		this._subscription.add(this._listenToSecurityEvents$().subscribe());
 		// serverError used for components that display server side errors without adding them to AbstractControl.
 		this._serverError$ = merge(this._problemDetails$, this._internalServerErrorDetails$).pipe(tap(() => this.shouldDisplayError()));
-		// initializes verification code form.
-		this._initVerificationCodeForm();
+		// initializes forms for Security container component.
+		this._initForms();
 	}
 
 	/**
@@ -215,6 +237,16 @@ export class SecurityContainerComponent implements OnInit {
 	}
 
 	/**
+	 * Fired when user submits form to change password.
+	 * @param model
+	 */
+	_onChangeUserPasswordSubmitted(): void {
+		this._sb.log.trace('_onChangeUserPasswordSubmitted fired.', this);
+		const model = this._changePasswordForm.value as PasswordChange;
+		this._sb.changePassword(model);
+	}
+
+	/**
 	 * Fired when user recovery code panel is closed.
 	 */
 	_onUserRecoveryCodesClosed(): void {
@@ -223,12 +255,58 @@ export class SecurityContainerComponent implements OnInit {
 	}
 
 	/**
+	 * Fired when user change password view is opened.
+	 */
+	_onChangePasswordOpened(): void {
+		this._sb.log.trace('_onChangePasswordOpened fired.', this);
+		this._showServerError = false;
+		this._changePasswordOpened = true;
+	}
+
+	/**
+	 * Fired when user change password view is closed.
+	 */
+	_onChangePasswordClosed(): void {
+		this._sb.log.trace('_onChangePasswordClosed fired.', this);
+		this._changePasswordForm.reset();
+		this._changePasswordOpened = false;
+	}
+
+	/**
 	 * Whether or not this component should display server side error.
 	 */
 	private shouldDisplayError(): void {
-		if (this._userRecoveryCodesPanelOpened === false) {
+		if (this._userRecoveryCodesPanelOpened === false && this._changePasswordOpened === false) {
 			this._showServerError = true;
 		}
+	}
+
+	/**
+	 * Initializes forms for Security component container.
+	 */
+	private _initForms(): void {
+		this._verificationCodeForm = this._initVerificationCodeForm();
+		this._changePasswordForm = this._initChangePasswordForm();
+		// subscribe to confirm password control to check if passwords match.
+		this._subscription.add(this._validateFormConfirmPasswordField$().subscribe());
+	}
+
+	/**
+	 * Validates form confirm password field.
+	 * @param form
+	 * @returns form confirm password field
+	 */
+	private _validateFormConfirmPasswordField$(): Observable<any> {
+		return this._changePasswordForm.valueChanges.pipe(
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			tap((_) => {
+				if (this._changePasswordForm.hasError('notSame')) {
+					this._confirmPasswordMatchReqMet = false;
+				} else {
+					this._confirmPasswordMatchReqMet = true;
+				}
+			})
+		);
 	}
 
 	/**
@@ -275,8 +353,8 @@ export class SecurityContainerComponent implements OnInit {
 	/**
 	 * Initializes verification code form.
 	 */
-	private _initVerificationCodeForm(): void {
-		this._verificationCodeForm = this._sb.fb.group({
+	private _initVerificationCodeForm(): FormGroup {
+		return this._sb.fb.group({
 			code: this._sb.fb.control(
 				{ value: '', disabled: true },
 				{
@@ -285,5 +363,37 @@ export class SecurityContainerComponent implements OnInit {
 				}
 			)
 		});
+	}
+
+	/**
+	 * Creates FormGroup for change password form.
+	 * @returns change password form
+	 */
+	private _initChangePasswordForm(): FormGroup {
+		return this._sb.fb.group(
+			{
+				currentPassword: this._sb.fb.control('', {
+					validators: [OdmValidators.required],
+					updateOn: 'change'
+				}),
+				password: this._sb.fb.control('', {
+					validators: [
+						OdmValidators.required,
+						OdmValidators.minLength(MinPasswordLength),
+						OdmValidators.requireDigit,
+						OdmValidators.requireLowercase,
+						OdmValidators.requireUppercase,
+						OdmValidators.requireNonAlphanumeric,
+						OdmValidators.requireThreeUniqueCharacters
+					],
+					updateOn: 'change'
+				}),
+				confirmPassword: this._sb.fb.control('', OdmValidators.required)
+			},
+			{
+				validators: OdmValidators.requireConfirmPassword,
+				updateOn: 'change'
+			}
+		);
 	}
 }

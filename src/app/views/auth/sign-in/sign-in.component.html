@@ -11,7 +11,7 @@
 				<img (click)="_onSigninWithGoogle()" class="auth__form-icon" [src]="_googleLoginIcon" alt="google" />
 			</div>
 
-			<div>
+			<div class="auth__email-field">
 				<mat-form-field appearance="standard">
 					<mat-label>{{ 'odm.auth.form.label.email' | translate }}</mat-label>
 					<input matInput formControlName="email" type="email" autocomplete="email" required />
@@ -20,7 +20,7 @@
 				</mat-form-field>
 			</div>
 
-			<div>
+			<div class="auth__password-field">
 				<mat-form-field appearance="standard">
 					<mat-label>{{ 'odm.auth.form.label.password' | translate }}</mat-label>
 					<input matInput formControlName="password" [type]="_hide ? 'password' : 'text'" type="password" autocomplete="current-password" required />
@@ -33,7 +33,7 @@
 				<button mat-raised-button type="submit" class="auth__form-btn auth--btn" [disabled]="_disableSignin() || _signingIn">
 					{{ 'odm.buttons.sign-in' | translate }}
 					<ng-container *ngIf="_signingIn">
-						<odm-spinner [type]="'button'" [diameter]="_signingInSpinnerDiameter" [strokeWidth]="_signingInSpinnerStrokeWidth"> </odm-spinner>
+						<odm-spinner [type]="'button'" [diameter]="_signingInSpinnerDiameter" [strokeWidth]="_signingInSpinnerStrokeWidth"></odm-spinner>
 					</ng-container>
 				</button>
 			</div>

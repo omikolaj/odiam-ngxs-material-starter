@@ -7,7 +7,7 @@ h3 {
 }
 
 mat-form-field {
-	margin-bottom: 8px;
+	width: 100%;
 }
 
 button {
@@ -23,6 +23,7 @@ form {
 	justify-content: center;
 	flex-direction: column;
 	height: 100%;
+	padding: 0 9px; // to match padding of change password which is total of 24px. There is already 15px padding
 }
 
 .auth__container {
@@ -89,7 +90,7 @@ form {
 		}
 
 		.auth__password-field-help-on {
-			margin-bottom: 123px;
+			margin-bottom: 111px; //123px;
 			transition: margin-bottom 0.3s ease-in;
 		}
 
@@ -98,8 +99,17 @@ form {
 			transition: margin-bottom 0.3s ease-in;
 		}
 
+		.auth__email-field {
+			width: 80%;
+		}
+
+		.auth__password-field {
+			width: 80%;
+		}
+
 		.auth__confirm-password-field {
 			margin-top: 12px;
+			width: 80%;
 		}
 
 		.auth__form-btn {
@@ -169,6 +179,18 @@ form {
 
 		.auth__form-container {
 			height: 100%;
+
+			.auth__email-field {
+				width: inherit;
+			}
+
+			.auth__password-field {
+				width: inherit;
+			}
+
+			.auth__confirm-password-field {
+				width: inherit;
+			}
 		}
 
 		.auth__sign-up-container {

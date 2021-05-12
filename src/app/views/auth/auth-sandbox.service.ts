@@ -66,7 +66,7 @@ export class AuthSandboxService {
 	@Select(AuthState.selectIsRedeemRecoveryCodeSuccessful) isRecoveryCodeRedemptionSuccessful$: Observable<boolean>;
 
 	/**
-	 * Whether user's password reset completed successfully.
+	 * Whether user's password reset request completed successfully.
 	 */
 	@Select(AuthState.selectPasswordResetCompleted) passwordResetCompleted$: Observable<boolean>;
 
@@ -133,9 +133,9 @@ export class AuthSandboxService {
 	 * Resets user password.
 	 * @param model
 	 */
-	resetPassword(model: PasswordReset): void {
+	resetPassword(id: string, model: PasswordReset): void {
 		this._usersAsyncService
-			.resetPassword$(model)
+			.resetPassword$(id, model)
 			.pipe(tap(() => this.resetPasswordCompleted(true)))
 			.subscribe();
 	}
@@ -191,7 +191,7 @@ export class AuthSandboxService {
 	 * @param model
 	 */
 	cancelTwoStepVerificationCodeProcess(): void {
-		// void this.router.navigate(['auth/two-step-verification']);
+		// TODO remove void this.router.navigate(['auth/two-step-verification']);
 		void this.router.navigate(['auth/sign-in']);
 	}
 
@@ -252,11 +252,12 @@ export class AuthSandboxService {
 		return this._authService.processUserAuthentication$(accessToken, rememberMe, email, is2StepVerificationRequired, provider);
 	}
 
-	/**
-	 * Monitors user session and keeps track if they are active.
-	 * @returns Observable<any>
-	 */
-	private _monitorUserSession$(): Observable<any> {
-		return this._authService.monitorSessionActivity$();
-	}
+	// TODO remove
+	// /**
+	//  * Monitors user session and keeps track if they are active.
+	//  * @returns Observable<any>
+	//  */
+	// private _monitorUserSession$(): Observable<any> {
+	// 	return this._authService.monitorSessionActivity$();
+	// }
 }
