@@ -5,12 +5,12 @@
 
 	.personal-email__info {
 		display: flex;
-		flex-flow: column;
-		align-items: flex-start;
+		align-items: center;
+		justify-content: space-between;
 
 		.personal-email__title {
-			font-size: large;
-			margin-bottom: 8px;
+			font-weight: bold;
+			width: 100%;
 		}
 
 		.personal-email__verified {
@@ -22,12 +22,26 @@
 			width: 15px;
 			font-size: 15px;
 			margin-right: 8px;
+			margin-left: 8px;
 		}
 
 		fa-icon {
 			font-size: 15px;
 		}
 	}
+
+	.personal-email__data-container {
+		display: flex;
+		justify-content: flex-end;
+		width: 100%;
+
+		.personal-email__data {
+			padding-left: 12px;
+			font-size: 15px;
+			word-break: break-word;
+		}
+	}
+
 	.personal-email__pending-verification {
 		cursor: pointer;
 	}
@@ -37,6 +51,7 @@
 
 		.personal-email__resend-verification-btn {
 			padding: 0;
+			font-size: 13px;
 		}
 
 		.personal-email--link-size {
@@ -58,10 +73,6 @@
 			flex-flow: row;
 			justify-content: space-between;
 			align-items: center;
-
-			.personal-email__title {
-				margin-bottom: 0;
-			}
 		}
 	}
 }

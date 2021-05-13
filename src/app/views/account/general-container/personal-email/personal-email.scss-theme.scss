@@ -9,6 +9,12 @@
 		.personal-email__pending-verification {
 			color: mat-color($warn);
 		}
+
+		.personal-email__info {
+			.personal-email__data {
+				color: mat-color($foreground, secondary-text, if($is-dark-theme, 0.7, 0.6));
+			}
+		}
 	}
 
 	.personal-email__pending-verification-link-container {

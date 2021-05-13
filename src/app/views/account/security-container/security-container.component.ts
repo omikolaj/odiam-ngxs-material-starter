@@ -77,19 +77,9 @@ export class SecurityContainerComponent implements OnInit {
 	_twoFactorAuthToggleLoading: boolean;
 
 	/**
-	 * Emitted when server responds with 40X or 50X error.
-	 */
-	_serverError$: Observable<ProblemDetails | InternalServerErrorDetails>;
-
-	/**
 	 * Whether password change has completed without errors.
 	 */
 	_passwordChangeCompleted$: Observable<boolean>;
-
-	/**
-	 * Whether this component should display server side error.
-	 */
-	_showServerError: boolean;
 
 	/**
 	 * Requires user to enter the same password for confirm password field.
@@ -115,16 +105,6 @@ export class SecurityContainerComponent implements OnInit {
 	 * Whether there is an outgoing request to enable/disable two factor authentication setting.
 	 */
 	_twoFactorAuthToggleLoading$ = this._twoFactorAuthToggleLoadingSub.asObservable();
-
-	/**
-	 * Whether change password view is open.
-	 */
-	private _changePasswordOpened = false;
-
-	/**
-	 * Whether user recovery codes pnael is open.
-	 */
-	private _userRecoveryCodesPanelOpened = false;
 
 	/**
 	 * Rxjs subscriptions for this component.
@@ -153,10 +133,9 @@ export class SecurityContainerComponent implements OnInit {
 		this._loadingSub.next(true);
 		// fetches account security info.
 		this._sb.getAccountSecurityInfo();
+		this._authenticatorSetup$.pipe();
 		// subscribes to security container component. Used to handle loading flags.
 		this._subscription.add(this._listenToSecurityEvents$().subscribe());
-		// serverError used for components that display server side errors without adding them to AbstractControl.
-		this._serverError$ = merge(this._problemDetails$, this._internalServerErrorDetails$).pipe(tap(() => this.shouldDisplayError()));
 		// initializes forms for Security container component.
 		this._initForms();
 	}
@@ -179,16 +158,6 @@ export class SecurityContainerComponent implements OnInit {
 	}
 
 	/**
-	 * Event handler when two factor authentication setup wizard is displayed.
-	 */
-	_onServerErrorHandled(event: boolean): void {
-		// when two factor authentication setup wizard is displayed, hide the error in security-container component.
-		this._sb.log.trace('_onServerErrorHandled fired.', this);
-		// if server error was handled, do not show error
-		this._showServerError = !event;
-	}
-
-	/**
 	 * Event handler when user requests to verify authenticator code.
 	 * @param event
 	 */
@@ -200,10 +169,10 @@ export class SecurityContainerComponent implements OnInit {
 
 	/**
 	 * Event handler when user cancels the two factor authentication setup wizard.
+	 * This is also emitted when two factor authentication setup wizard's ngOnDestroy life cycle is called.
 	 */
 	_onCancelSetupWizardClicked(): void {
 		this._sb.log.trace('_onCancelSetupWizard fired.', this);
-		this._showServerError = false;
 		this._verificationCodeForm.reset();
 		this._sb.cancel2faSetupWizard();
 	}
@@ -213,7 +182,6 @@ export class SecurityContainerComponent implements OnInit {
 	 */
 	_onFinish2faSetupClicked(event: TwoFactorAuthenticationSetupResult): void {
 		this._sb.log.trace('_onFinish2faSetup fired.', this);
-		this._showServerError = false;
 		this._verificationCodeForm.reset();
 		this._sb.finish2faSetup(event);
 	}
@@ -228,15 +196,6 @@ export class SecurityContainerComponent implements OnInit {
 	}
 
 	/**
-	 * Fired when user recovery code panel is opened.
-	 */
-	_onUserRecoveryCodesOpened(): void {
-		this._sb.log.trace('_onUserRecoveryCodesOpened fired.', this);
-		this._showServerError = false;
-		this._userRecoveryCodesPanelOpened = true;
-	}
-
-	/**
 	 * Fired when user submits form to change password.
 	 * @param model
 	 */
@@ -247,38 +206,11 @@ export class SecurityContainerComponent implements OnInit {
 	}
 
 	/**
-	 * Fired when user recovery code panel is closed.
-	 */
-	_onUserRecoveryCodesClosed(): void {
-		this._sb.log.trace('_onUserRecoveryCodesClosed fired.', this);
-		this._userRecoveryCodesPanelOpened = false;
-	}
-
-	/**
-	 * Fired when user change password view is opened.
-	 */
-	_onChangePasswordOpened(): void {
-		this._sb.log.trace('_onChangePasswordOpened fired.', this);
-		this._showServerError = false;
-		this._changePasswordOpened = true;
-	}
-
-	/**
 	 * Fired when user change password view is closed.
 	 */
 	_onChangePasswordClosed(): void {
 		this._sb.log.trace('_onChangePasswordClosed fired.', this);
 		this._changePasswordForm.reset();
-		this._changePasswordOpened = false;
-	}
-
-	/**
-	 * Whether or not this component should display server side error.
-	 */
-	private shouldDisplayError(): void {
-		if (this._userRecoveryCodesPanelOpened === false && this._changePasswordOpened === false) {
-			this._showServerError = true;
-		}
 	}
 
 	/**

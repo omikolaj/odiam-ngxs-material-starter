@@ -4,7 +4,7 @@
 		<ng-container *ngIf="!loading; else loadingState">
 			<div [ngClass]="twoFactorEnabled ? 'two-factor-settings__extra-margin' : null" class="two-factor-settings__state" @downUpFadeIn>
 				<div class="two-factor-settings__short-description">
-					<span>{{ 'odm.account.security.two-step.description' | translate }}</span>
+					<span class="two-factor-settings__description">{{ 'odm.account.security.two-step.description' | translate }}</span>
 				</div>
 				<div class="two-factor-settings__toggle-state" @downUpFadeIn>
 					<div class="two-factor-settings__toggle-state-spinner-container">
@@ -31,8 +31,6 @@
 							[generatingCodes]="generatingNewRecoveryCodes"
 							[serverError]="_serverError$ | async"
 							(generateNewRecoveryCodesClicked)="_onGenerateNew2FaRecoveryCodesClicked()"
-							(userCodesPanelClosed)="_onUserCodesPanelClosed()"
-							(userCodesPanelOpened)="_onUserRecoveryCodesOpened()"
 						>
 						</odm-two-factor-authentication-codes>
 					</div>

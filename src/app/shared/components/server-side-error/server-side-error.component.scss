@@ -1,15 +1,18 @@
 .server-side-error__error {
-	color: red;
-}
-
-.server-side-error {
-	padding-top: 8px;
-	display: block;
 	font-size: 15px;
+	.server-side-error--color {
+		color: red;
+	}
+
 	.server-side-error__error-format-position {
 		width: 15px;
 		height: 15px;
 		vertical-align: text-top;
+		font-size: 15px;
+	}
+	.server-side-error {
+		padding-top: 8px;
+		display: block;
 		font-size: 15px;
 	}
 }

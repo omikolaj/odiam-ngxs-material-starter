@@ -57,16 +57,6 @@ export class TwoFactorAuthenticationCodesComponent {
 	@Output() generateNewRecoveryCodesClicked = new EventEmitter<void>();
 
 	/**
-	 * Event emitter when user closes the 'user codes' expansion panel.
-	 */
-	@Output() userCodesPanelClosed = new EventEmitter<void>();
-
-	/**
-	 * Event emitter when user opens the 'user codes' expansion panel.
-	 */
-	@Output() userCodesPanelOpened = new EventEmitter<void>();
-
-	/**
 	 * Touch gestrues of two factor authentication codes component.
 	 */
 	readonly _touchGestrues: TooltipTouchGestures = 'on';
@@ -106,15 +96,6 @@ export class TwoFactorAuthenticationCodesComponent {
 	_onUserCodesClosed(): void {
 		this._log.trace('_onUserCodesClosed fired.', this);
 		this._removeServerError();
-		this.userCodesPanelClosed.emit();
-	}
-
-	/**
-	 * Event handler when user opens expansion panel.
-	 */
-	_onUserCodesOpened(): void {
-		this._log.trace('_onUserCodesOpened fired.', this);
-		this.userCodesPanelOpened.emit();
 	}
 
 	/**

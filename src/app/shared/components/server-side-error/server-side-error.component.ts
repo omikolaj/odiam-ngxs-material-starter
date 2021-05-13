@@ -42,6 +42,11 @@ export class ServerSideErrorComponent implements OnInit {
 	_internalServerErrorDetails: InternalServerErrorDetails;
 
 	/**
+	 * Error emitted CSS class. Used to show/hide server side errors.
+	 */
+	_errorEmitted: 'server-side-error__emitted' | 'none';
+
+	/**
 	 * Creates an instance of odm server side error component.
 	 * @param _log
 	 */
@@ -60,9 +65,9 @@ export class ServerSideErrorComponent implements OnInit {
 	 * @returns error message
 	 */
 	_getErrorMessage$(): Observable<string> {
-		if ((this.serverError as InternalServerErrorDetails).message) {
+		if ((this.serverError as InternalServerErrorDetails)?.message) {
 			return of((this.serverError as InternalServerErrorDetails).message);
-		} else {
+		} else if (this.serverError) {
 			return of(this.serverError.detail);
 		}
 	}

@@ -2,14 +2,16 @@
 	<div [ngClass]="_routeAnimationsElements" class="personal-email__info">
 		<ng-container *ngIf="!loading; else loadingState">
 			<span class="personal-email__title">{{ 'odm.account.general.personal-email' | translate }}</span>
-			<span
-				>{{ email }}
-				<ng-container *ngIf="verified; else pendingVerification">
-					<mat-icon class="personal-email__verified" [matTooltip]="'odm.account.general.verified-tooltip' | translate">
-						<fa-icon icon="check"></fa-icon>
-					</mat-icon>
-				</ng-container>
-			</span>
+			<div class="personal-email__data-container">
+				<span class="personal-email__data"
+					>{{ email }}
+					<ng-container *ngIf="verified; else pendingVerification">
+						<mat-icon class="personal-email__verified" [matTooltip]="'odm.account.general.verified-tooltip' | translate">
+							<fa-icon icon="check"></fa-icon>
+						</mat-icon>
+					</ng-container>
+				</span>
+			</div>
 		</ng-container>
 	</div>
 </div>

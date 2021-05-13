@@ -61,11 +61,6 @@ export class ChangePasswordContainerComponent implements OnInit {
 	@Output() changePasswordSubmitted = new EventEmitter<void>();
 
 	/**
-	 * Event emitter when user has opened change password view.
-	 */
-	@Output() changePasswordOpened = new EventEmitter<void>();
-
-	/**
 	 * Event emitter when user has closed change password view.
 	 */
 	@Output() changePasswordClosed = new EventEmitter<void>();
@@ -110,7 +105,6 @@ export class ChangePasswordContainerComponent implements OnInit {
 	_onInitPasswordChangeClicked(): void {
 		this._log.trace('_onInitPasswordChangeClicked fired.', this);
 		this._showPasswordChange = true;
-		this.changePasswordOpened.emit();
 	}
 
 	/**

@@ -15,13 +15,9 @@
 			(finish2faSetupClicked)="_onFinish2faSetupClicked($event)"
 			(generateNew2faRecoveryCodesClicked)="_onGenerateNew2faRecoveryCodesClicked()"
 			(twoFactorAuthToggleChanged)="_onTwoFactorAuthToggle($event)"
-			(serverErrorHandled)="_onServerErrorHandled($event)"
-			(userRecoveryCodesOpened)="_onUserRecoveryCodesOpened()"
-			(userRecoveryCodesClosed)="_onUserRecoveryCodesClosed()"
 		></odm-two-factor-authentication>
 		<odm-change-password-container
-			(changePasswordSubmitted)="_onChangeUserPasswordSubmitted($event)"
-			(changePasswordOpened)="_onChangePasswordOpened()"
+			(changePasswordSubmitted)="_onChangeUserPasswordSubmitted()"
 			(changePasswordClosed)="_onChangePasswordClosed()"
 			[passwordChangeCompleted]="_passwordChangeCompleted$ | async"
 			[problemDetails]="_problemDetails$ | async"
@@ -30,10 +26,8 @@
 			[changePasswordForm]="_changePasswordForm"
 		></odm-change-password-container>
 		<mat-divider></mat-divider>
-		<ng-container *ngIf="_serverError$ | async as serverError">
-			<ng-container *ngIf="_showServerError">
-				<odm-server-side-error [serverError]="serverError"></odm-server-side-error>
-			</ng-container>
+		<ng-container *ngIf="_problemDetails$ | async as problemDetails">
+			<odm-server-side-error [problemDetails]="problemDetails"></odm-server-side-error>
 		</ng-container>
 	</div>
 </ng-container>

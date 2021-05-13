@@ -1,13 +1,14 @@
-import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, ViewChild, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ODM_BIG_SPINNER_DIAMETER, ODM_BIG_SPINNER_STROKE_WIDTH } from 'app/shared/global-settings/mat-spinner-settings';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { CdkStepper } from '@angular/cdk/stepper';
-import { AccountSandboxService } from '../../account-sandbox.service';
+
 import { TwoFactorAuthenticationSetupResult } from 'app/core/models/account/security/two-factor-authentication-setup-result.model';
 import { TwoFactorAuthenticationSetup } from 'app/core/models/account/security/two-factor-authentication-setup.model';
 import { TwoFactorAuthenticationVerificationCode } from 'app/core/models/account/security/two-factor-authentication-verification-code.model';
+import { LogService } from 'app/core/logger/log.service';
 
 /**
  * Two factor authentication setup wizard component.
@@ -18,7 +19,7 @@ import { TwoFactorAuthenticationVerificationCode } from 'app/core/models/account
 	styleUrls: ['./two-factor-authentication-setup-wizard.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TwoFactorAuthenticationSetupWizardComponent {
+export class TwoFactorAuthenticationSetupWizardComponent implements OnDestroy {
 	/**
 	 * Emitted when server responds with 40X error.
 	 */
@@ -43,7 +44,7 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 	 * Two factor authentication setup result.
 	 */
 	@Input() set twoFactorAuthenticationSetupResult(value: TwoFactorAuthenticationSetupResult) {
-		this._sb.log.debug('twoFactorAuthenticationSetupResult emitted.', this);
+		this._log.debug('twoFactorAuthenticationSetupResult emitted.', this);
 		if (value.status === 'Succeeded') {
 			this._codeVerificationSucceeded = true;
 			this._is2faSetupCompleted = true;
@@ -51,7 +52,7 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 			setTimeout(() => {
 				this.setupWizard.next();
 				this._twoFactorAuthenticationSetupResult = value;
-			}, 101000);
+			}, 1000);
 		}
 	}
 
@@ -64,7 +65,7 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 	 * Two factor authentication setup information.
 	 */
 	@Input() set twoFactorAuthenticationSetup(value: TwoFactorAuthenticationSetup) {
-		this._sb.log.debug('twoFactorAuthenticationSetup emitted.', this);
+		this._log.debug('twoFactorAuthenticationSetup emitted.', this);
 		this._twoFactorAuthenticationSetup = value;
 		if (value.authenticatorUri && value.sharedKey) {
 			// enable verification code control
@@ -90,11 +91,6 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 	 * Event emitter when user finishes 2fa setup.
 	 */
 	@Output() finish2faSetupClicked = new EventEmitter<TwoFactorAuthenticationSetupResult>();
-
-	/**
-	 * Event emitter whether server side error has been displayed by this component.
-	 */
-	@Output() serverErrorHandledEmitted = new EventEmitter<boolean>();
 
 	/**
 	 * Setup wizard stepper.
@@ -138,15 +134,24 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 
 	/**
 	 * Creates an instance of two factor authentication setup wizard component.
-	 * @param _sb
+	 * @param _log
 	 */
-	constructor(private _sb: AccountSandboxService) {}
+	constructor(private _log: LogService) {}
+
+	/**
+	 * ngOnDestroy life cycle.
+	 */
+	ngOnDestroy(): void {
+		this._log.trace('Destroyed.', this);
+		this.cancelSetupWizardClicked.emit();
+		this._log.trace('cancelSetupWizardClicked emitted from ngOnDestroy. Notifing parent that setup wizard no longer needs to be displayed.', this);
+	}
 
 	/**
 	 * Event handler when user submits two factor authentication setup verification code.
 	 */
 	_onVerificationCodeSubmitted(event: unknown): void {
-		this._sb.log.trace('_onVerificationCodeSubmitted fired.', this);
+		this._log.trace('_onVerificationCodeSubmitted fired.', this);
 		this.verificationCodeSubmitted.emit(event as TwoFactorAuthenticationVerificationCode);
 	}
 
@@ -155,7 +160,7 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 	 * @param stepper
 	 */
 	_onFinishSetup(): void {
-		this._sb.log.trace('_onRestartOrFinishClicked fired.', this);
+		this._log.trace('_onRestartOrFinishClicked fired.', this);
 		this.finish2faSetupClicked.emit(this._twoFactorAuthenticationSetupResult);
 	}
 
@@ -163,7 +168,7 @@ export class TwoFactorAuthenticationSetupWizardComponent {
 	 * Event handler when user clicks to cancel the setup wizard.
 	 */
 	_onCancelClicked(): void {
-		this._sb.log.trace('_onCancelClicked fired.', this);
+		this._log.trace('_onCancelClicked fired.', this);
 		this.cancelSetupWizardClicked.emit();
 	}
 }

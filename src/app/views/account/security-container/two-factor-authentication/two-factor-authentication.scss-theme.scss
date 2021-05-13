@@ -2,8 +2,18 @@
 
 @mixin odm-two-factor-authentication-component-theme($theme) {
 	$warn: map-get($theme, warn);
+	$foreground: map-get($theme, foreground);
+	$is-dark-theme: map-get($theme, is-dark);
 
 	.two-factor-settings__req-not-met {
 		color: mat-color($warn);
+	}
+
+	.two-factor-settings__state {
+		.two-factor-settings__short-description {
+			.two-factor-settings__description {
+				color: mat-color($foreground, secondary-text, if($is-dark-theme, 0.7, 0.6));
+			}
+		}
 	}
 }

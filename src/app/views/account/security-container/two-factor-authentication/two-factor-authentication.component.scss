@@ -41,6 +41,10 @@
 
 		.two-factor-settings__short-description {
 			display: flex;
+
+			.two-factor-settings__description {
+				font-size: 15px;
+			}
 		}
 
 		.two-factor-settings__toggle-state {

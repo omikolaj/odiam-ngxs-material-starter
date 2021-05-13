@@ -1,16 +1,18 @@
 import { Component, ChangeDetectionStrategy, Input, ViewChild, Output, EventEmitter } from '@angular/core';
 import { MatSlideToggleChange, MatSlideToggle } from '@angular/material/slide-toggle';
 import { FormGroup } from '@angular/forms';
-import { AccountSandboxService } from '../../account-sandbox.service';
 import { ROUTE_ANIMATIONS_ELEMENTS, downUpFadeInAnimation } from 'app/core/core.module';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { Observable, merge } from 'rxjs';
-import { filter } from 'rxjs/operators';
 import { ODM_SMALL_SPINNER_DIAMETER, ODM_SMALL_SPINNER_STROKE_WIDTH } from 'app/shared/global-settings/mat-spinner-settings';
 import { TwoFactorAuthenticationSetup } from 'app/core/models/account/security/two-factor-authentication-setup.model';
 import { TwoFactorAuthenticationSetupResult } from 'app/core/models/account/security/two-factor-authentication-setup-result.model';
 import { TwoFactorAuthenticationVerificationCode } from 'app/core/models/account/security/two-factor-authentication-verification-code.model';
+import { filter } from 'rxjs/operators';
+import { InternalServerError } from 'app/core/error-handler/internal-server-error.decorator';
+import { ProblemDetailsError } from 'app/core/error-handler/problem-details-error.decorator';
+import { LogService } from 'app/core/logger/log.service';
 
 /**
  * Two factor authentication component responsible for handling user's 2fa settings.
@@ -42,7 +44,7 @@ export class TwoFactorAuthenticationComponent {
 	 * Whether there is an outgoing request to enable/disable two factor authentication.
 	 */
 	@Input() set twoFactorAuthToggleLoading(value: boolean) {
-		this._sb.log.debug('twoFactorAuthToggleLoading emitted.', this);
+		this._log.debug('twoFactorAuthToggleLoading emitted.', this);
 		this._twoFactorAuthToggleLoading = value;
 
 		setTimeout(() => {
@@ -58,7 +60,7 @@ export class TwoFactorAuthenticationComponent {
 	 * Two factor authentication setup information.
 	 */
 	@Input() set authenticatorSetup(value: TwoFactorAuthenticationSetup) {
-		this._sb.log.debug('authenticatorSetup emitted.', this);
+		this._log.debug('authenticatorSetup emitted.', this);
 		this._authenticatorSetup = value;
 		if (value.authenticatorUri !== '' && value.sharedKey !== '') {
 			// Notifies parent that two fa setup wizard is displayed.
@@ -114,36 +116,25 @@ export class TwoFactorAuthenticationComponent {
 	@Output() twoFactorAuthToggleChanged = new EventEmitter<MatSlideToggleChange>();
 
 	/**
-	 * Event emitter when two factor auth setup wizard is displayed.
-	 */
-	@Output() serverErrorHandled = new EventEmitter<boolean>();
-
-	/**
-	 * Event emitter when user recovery codes panel is opened.
-	 */
-	@Output() userRecoveryCodesOpened = new EventEmitter<void>();
-
-	/**
-	 * Event emitter when user recovery codes panel is opened.
-	 */
-	@Output() userRecoveryCodesClosed = new EventEmitter<void>();
-
-	/**
 	 * MatSlideToggle for enabling/disabling two factor authentication.
 	 */
 	@ViewChild('slideToggle') twoFactorEnabledToggle: MatSlideToggle;
 
 	/**
 	 * Emitted when server responds with 40X error.
-	 * Used in components that display server side errors by invalidating AbstractControl on a form.
+	 * This component has to have a separate stream for problem details. If security container component emits
+	 * a value, the app should not re-display that same error. Instead it should wait for errors from the point it got
+	 * a reference to this stream. No reason to inject account-sandbox.service just for these streams. Using decorators instead.
 	 */
-	_problemDetails$: Observable<ProblemDetails>;
+	@ProblemDetailsError() _problemDetails$: Observable<ProblemDetails>;
 
 	/**
 	 * Emitted when server responds with 50X error.
-	 * Used in components that display server side errors by invalidating AbstractControl on a form.
+	 * This component has to have a separate stream for problem details. If security container component emits
+	 * a value, the app should not re-display that same error. Instead it should wait for errors from the point it got
+	 * a reference to this stream. No reason to inject account-sandbox.service just for these streams. Using decorators instead.
 	 */
-	_internalServerErrorDetails$: Observable<InternalServerErrorDetails>;
+	@InternalServerError() _internalServerErrorDetails$: Observable<InternalServerErrorDetails>;
 
 	/**
 	 * Emitted when server responds with 40X or 50x error.
@@ -178,13 +169,10 @@ export class TwoFactorAuthenticationComponent {
 
 	/**
 	 * Creates an instance of two factor authentication component.
-	 * @param _sb
+	 * @param _log
 	 */
-	constructor(private _sb: AccountSandboxService) {
-		this._problemDetails$ = _sb.problemDetails$;
-		this._internalServerErrorDetails$ = _sb.internalServerErrorDetails$;
-		// filters out server errors that might have been displayed prior to opening up user recovery codes.
-		this._serverError$ = merge(_sb.problemDetails$, _sb.internalServerErrorDetails$).pipe(filter(() => this._userRecoveryCodesOpened === true));
+	constructor(private _log: LogService) {
+		this._serverError$ = merge(this._problemDetails$, this._internalServerErrorDetails$).pipe(filter(() => this._userRecoveryCodesOpened === true));
 	}
 
 	/**
@@ -192,7 +180,7 @@ export class TwoFactorAuthenticationComponent {
 	 * @param event
 	 */
 	_onTwoFactorAuthToggleChanged(event: MatSlideToggleChange): void {
-		this._sb.log.trace('_onTwoFactorAuthToggle fired.', this);
+		this._log.trace('_onTwoFactorAuthToggle fired.', this);
 		this.twoFactorAuthToggleChanged.emit(event);
 	}
 
@@ -200,7 +188,7 @@ export class TwoFactorAuthenticationComponent {
 	 * Event handler when user cancels the two factor authentication setup wizard.
 	 */
 	_onCancelSetupWizardClicked(): void {
-		this._sb.log.trace('_onCancelSetupWizard fired.', this);
+		this._log.trace('_onCancelSetupWizard fired.', this);
 		this._showTwoFactorAuthSetupWizard = false;
 		this.cancelSetupWizardClicked.emit();
 	}
@@ -209,7 +197,7 @@ export class TwoFactorAuthenticationComponent {
 	 * Event handler when user finishes two factor authentication setup.
 	 */
 	_onFinish2faSetupClicked(event: TwoFactorAuthenticationSetupResult): void {
-		this._sb.log.trace('_onFinish2faSetup fired.', this);
+		this._log.trace('_onFinish2faSetup fired.', this);
 		this._showTwoFactorAuthSetupWizard = false;
 		this.finish2faSetupClicked.emit(event);
 	}
@@ -218,7 +206,7 @@ export class TwoFactorAuthenticationComponent {
 	 * Event handler when user requests to generate new recovery codes.
 	 */
 	_onGenerateNew2FaRecoveryCodesClicked(): void {
-		this._sb.log.trace('_onGenerateNew2FaRecoveryCodes fired.', this);
+		this._log.trace('_onGenerateNew2FaRecoveryCodes fired.', this);
 		this.generateNew2faRecoveryCodesClicked.emit();
 	}
 
@@ -227,25 +215,7 @@ export class TwoFactorAuthenticationComponent {
 	 * @param event
 	 */
 	_onVerifyAuthenticatorSubmitted(event: unknown): void {
-		this._sb.log.trace('_onVerifyAuthenticator fired.', this);
+		this._log.trace('_onVerifyAuthenticator fired.', this);
 		this.verifyAuthenticatorClicked.emit(event as TwoFactorAuthenticationVerificationCode);
-	}
-
-	/**
-	 * Event handler when user opens 'user codes' expansion panel.
-	 */
-	_onUserRecoveryCodesOpened(): void {
-		this._sb.log.trace('_onUserRecoveryCodesOpened fired.', this);
-		this._userRecoveryCodesOpened = true;
-		this.userRecoveryCodesOpened.emit();
-	}
-
-	/**
-	 * Event handler when user closes 'user codes' expansion panel.
-	 */
-	_onUserCodesPanelClosed(): void {
-		this._sb.log.trace('_onUserCodesPanelClosed fired.', this);
-		this._userRecoveryCodesOpened = false;
-		this.userRecoveryCodesClosed.emit();
 	}
 }
