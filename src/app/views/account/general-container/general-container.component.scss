@@ -1,4 +1,12 @@
 .account-general {
+	.account-general__spacer-top {
+		padding-top: var(--general-padding-list-item);
+	}
+
+	.account-general__spacer-bottom {
+		padding-bottom: var(--general-padding-list-item);
+	}
+
 	.account-general__error {
 		padding-top: 8px;
 		display: block;

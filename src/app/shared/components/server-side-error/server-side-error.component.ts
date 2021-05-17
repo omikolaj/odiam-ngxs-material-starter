@@ -4,6 +4,7 @@ import { InternalServerErrorDetails } from 'app/core/models/internal-server-erro
 import { LogService } from 'app/core/logger/log.service';
 import { Observable, of } from 'rxjs';
 import { upDownFadeInAnimation } from 'app/core/core.module';
+import { ODM_GLOBAL_ERROR_FONT_SIZE } from 'app/shared/global-settings/global-settings';
 
 /**
  * Server side error component that handles displaying server side errors.
@@ -42,9 +43,9 @@ export class ServerSideErrorComponent implements OnInit {
 	_internalServerErrorDetails: InternalServerErrorDetails;
 
 	/**
-	 * Error emitted CSS class. Used to show/hide server side errors.
+	 * Error font size for server errors.
 	 */
-	_errorEmitted: 'server-side-error__emitted' | 'none';
+	readonly _errorFontSize = ODM_GLOBAL_ERROR_FONT_SIZE;
 
 	/**
 	 * Creates an instance of odm server side error component.

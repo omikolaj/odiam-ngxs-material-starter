@@ -7,6 +7,7 @@ import { PasswordHelpToggleClass } from 'app/core/models/auth/password-help-togg
 import { getPasswordRequirements } from 'app/core/utilities/password-requirements.utility';
 import { LogService } from 'app/core/logger/log.service';
 import { FormGroup } from '@angular/forms';
+import { ODM_GLOBAL_SECURITY_SHORT_DESCRIPTION } from 'app/shared/global-settings/global-settings';
 
 /**
  * Change user password container component.
@@ -19,11 +20,6 @@ import { FormGroup } from '@angular/forms';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ChangePasswordContainerComponent implements OnInit {
-	/**
-	 * Emitted when server responds with 40X or 50X error.
-	 */
-	@Input() serverError: ProblemDetails | InternalServerErrorDetails;
-
 	/**
 	 * Emitted when server responds with 40X error.
 	 */
@@ -84,6 +80,11 @@ export class ChangePasswordContainerComponent implements OnInit {
 	 * Password help toggle class.
 	 */
 	_passwordHelpToggleClass: PasswordHelpToggleClass = 'auth__password-field-help-off';
+
+	/**
+	 * Short description font size.
+	 */
+	readonly _shortDescription = ODM_GLOBAL_SECURITY_SHORT_DESCRIPTION;
 
 	/**
 	 * Creates an instance of change password container component.

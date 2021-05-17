@@ -1,15 +1,12 @@
 @import '../../../../../styles-variables.scss';
 
 .personal-email {
-	padding: 18.72px 0;
-
 	.personal-email__info {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 
 		.personal-email__title {
-			font-weight: bold;
 			width: 100%;
 		}
 
@@ -32,8 +29,14 @@
 
 	.personal-email__data-container {
 		display: flex;
-		justify-content: flex-end;
+		justify-content: start;
+		flex-flow: column;
+		align-items: flex-end;
 		width: 100%;
+
+		.personal-email__data-container-child-one {
+			padding-right: 16px;
+		}
 
 		.personal-email__data {
 			padding-left: 12px;
@@ -50,7 +53,6 @@
 		display: flex;
 
 		.personal-email__resend-verification-btn {
-			padding: 0;
 			font-size: 13px;
 		}
 

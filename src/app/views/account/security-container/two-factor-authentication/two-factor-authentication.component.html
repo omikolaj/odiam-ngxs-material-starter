@@ -4,22 +4,31 @@
 		<ng-container *ngIf="!loading; else loadingState">
 			<div [ngClass]="twoFactorEnabled ? 'two-factor-settings__extra-margin' : null" class="two-factor-settings__state" @downUpFadeIn>
 				<div class="two-factor-settings__short-description">
-					<span class="two-factor-settings__description">{{ 'odm.account.security.two-step.description' | translate }}</span>
+					<span [style.--short-description]="_shortDescriptionFontSize" class="two-factor-settings__description">{{
+						'odm.account.security.two-step.description' | translate
+					}}</span>
 				</div>
-				<div class="two-factor-settings__toggle-state" @downUpFadeIn>
-					<div class="two-factor-settings__toggle-state-spinner-container">
-						<ng-container *ngIf="_twoFactorAuthToggleLoading">
-							<odm-spinner [type]="'button'" [diameter]="_twoFactorAuthToggleSpinnerDiameter" [strokeWidth]="_twoFactorAuthToggleSpinnerStrokeWidth">
-							</odm-spinner>
-						</ng-container>
+				<div @downUpFadeIn>
+					<div class="two-factor-settings__toggle-state">
+						<div class="two-factor-settings__toggle-state-spinner-container">
+							<ng-container *ngIf="_twoFactorAuthToggleLoading">
+								<odm-spinner
+									[spinnerColor]="'accent'"
+									[type]="'button'"
+									[diameter]="_twoFactorAuthToggleSpinnerDiameter"
+									[strokeWidth]="_twoFactorAuthToggleSpinnerStrokeWidth"
+								>
+								</odm-spinner>
+							</ng-container>
+						</div>
+						<mat-slide-toggle
+							#slideToggle
+							[disabled]="_twoFactorAuthToggleLoading"
+							[checked]="twoFactorEnabled"
+							(change)="_onTwoFactorAuthToggleChanged($event)"
+							color="primary"
+						></mat-slide-toggle>
 					</div>
-					<mat-slide-toggle
-						#slideToggle
-						[disabled]="_twoFactorAuthToggleLoading"
-						[checked]="twoFactorEnabled"
-						(change)="_onTwoFactorAuthToggleChanged($event)"
-						color="primary"
-					></mat-slide-toggle>
 				</div>
 			</div>
 			<ng-container *ngIf="twoFactorEnabled">
@@ -29,7 +38,6 @@
 							[codes]="userRecoveryCodes"
 							[disabled]="_twoFactorAuthToggleLoading"
 							[generatingCodes]="generatingNewRecoveryCodes"
-							[serverError]="_serverError$ | async"
 							(generateNewRecoveryCodesClicked)="_onGenerateNew2FaRecoveryCodesClicked()"
 						>
 						</odm-two-factor-authentication-codes>
@@ -38,6 +46,7 @@
 			</ng-container>
 		</ng-container>
 	</div>
+	<odm-server-side-error [internalServerErrorDetails]="_internalServerErrorDetails" [problemDetails]="_problemDetails"></odm-server-side-error>
 </ng-container>
 
 <ng-template #twoFactorAuthenticationSetupWizard>
@@ -45,9 +54,9 @@
 		[verificationCodeForm]="verificationCodeForm"
 		[twoFactorAuthenticationSetupResult]="authenticatorSetupResult"
 		[twoFactorAuthenticationSetup]="_authenticatorSetup"
-		[problemDetails]="_problemDetails$ | async"
-		[internalServerErrorDetails]="_internalServerErrorDetails$ | async"
 		[codeVerificationInProgress]="codeVerificationInProgress"
+		[problemDetails]="_problemDetails"
+		[internalServerErrorDetails]="_internalServerErrorDetails"
 		(verificationCodeSubmitted)="_onVerifyAuthenticatorSubmitted($event)"
 		(cancelSetupWizardClicked)="_onCancelSetupWizardClicked()"
 		(finish2faSetupClicked)="_onFinish2faSetupClicked($event)"

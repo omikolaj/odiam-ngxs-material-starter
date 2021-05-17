@@ -1,5 +1,8 @@
+span {
+	font-size: var(--error);
+}
+
 .server-side-error__error {
-	font-size: 15px;
 	.server-side-error--color {
 		color: red;
 	}
@@ -10,9 +13,9 @@
 		vertical-align: text-top;
 		font-size: 15px;
 	}
+
 	.server-side-error {
 		padding-top: 8px;
 		display: block;
-		font-size: 15px;
 	}
 }

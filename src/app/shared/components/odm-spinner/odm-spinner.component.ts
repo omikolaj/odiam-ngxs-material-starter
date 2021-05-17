@@ -24,6 +24,11 @@ export class OdmSpinnerComponent {
 	@Input() diameter: number;
 
 	/**
+	 * Color of the spinner.
+	 */
+	@Input() spinnerColor: 'primary' | 'accent' | 'warn' = 'primary';
+
+	/**
 	 * Type of spinner. Controls the size.
 	 */
 	@Input() type: 'button' | 'default' = 'default';

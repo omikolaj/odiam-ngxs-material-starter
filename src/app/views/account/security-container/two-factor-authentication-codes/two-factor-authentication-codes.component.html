@@ -29,7 +29,12 @@
 				<button mat-raised-button color="accent" (click)="_onGenerateNewRecoveryCodes()" [disabled]="generatingCodes">
 					{{ 'odm.buttons.generate' | translate }}
 					<ng-container *ngIf="generatingCodes">
-						<odm-spinner [type]="'button'" [diameter]="_generatingCodesSpinnerDiameter" [strokeWidth]="_generatingCodesSpinnerStrokeWidth">
+						<odm-spinner
+							[type]="'button'"
+							[spinnerColor]="'accent'"
+							[diameter]="_generatingCodesSpinnerDiameter"
+							[strokeWidth]="_generatingCodesSpinnerStrokeWidth"
+						>
 						</odm-spinner>
 					</ng-container>
 				</button>

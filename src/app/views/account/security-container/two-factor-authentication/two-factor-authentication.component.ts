@@ -4,15 +4,14 @@ import { FormGroup } from '@angular/forms';
 import { ROUTE_ANIMATIONS_ELEMENTS, downUpFadeInAnimation } from 'app/core/core.module';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
-import { Observable, merge } from 'rxjs';
+
 import { ODM_SMALL_SPINNER_DIAMETER, ODM_SMALL_SPINNER_STROKE_WIDTH } from 'app/shared/global-settings/mat-spinner-settings';
 import { TwoFactorAuthenticationSetup } from 'app/core/models/account/security/two-factor-authentication-setup.model';
 import { TwoFactorAuthenticationSetupResult } from 'app/core/models/account/security/two-factor-authentication-setup-result.model';
 import { TwoFactorAuthenticationVerificationCode } from 'app/core/models/account/security/two-factor-authentication-verification-code.model';
-import { filter } from 'rxjs/operators';
-import { InternalServerError } from 'app/core/error-handler/internal-server-error.decorator';
-import { ProblemDetailsError } from 'app/core/error-handler/problem-details-error.decorator';
+
 import { LogService } from 'app/core/logger/log.service';
+import { ODM_GLOBAL_SECURITY_SHORT_DESCRIPTION } from 'app/shared/global-settings/global-settings';
 
 /**
  * Two factor authentication component responsible for handling user's 2fa settings.
@@ -25,6 +24,24 @@ import { LogService } from 'app/core/logger/log.service';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TwoFactorAuthenticationComponent {
+	/**
+	 * Emitted when server responds with 40X error.
+	 */
+	@Input() set problemDetails(value: ProblemDetails) {
+		this._problemDetails = value;
+	}
+
+	_problemDetails: ProblemDetails;
+
+	/**
+	 * Emitted when server responds with 50X error.
+	 */
+	@Input() set internalServerErrorDetails(value: InternalServerErrorDetails) {
+		this._internalServerErrorDetails = value;
+	}
+
+	_internalServerErrorDetails: InternalServerErrorDetails;
+
 	/**
 	 * Whether the two factor authentication data is being fetched.
 	 */
@@ -121,28 +138,6 @@ export class TwoFactorAuthenticationComponent {
 	@ViewChild('slideToggle') twoFactorEnabledToggle: MatSlideToggle;
 
 	/**
-	 * Emitted when server responds with 40X error.
-	 * This component has to have a separate stream for problem details. If security container component emits
-	 * a value, the app should not re-display that same error. Instead it should wait for errors from the point it got
-	 * a reference to this stream. No reason to inject account-sandbox.service just for these streams. Using decorators instead.
-	 */
-	@ProblemDetailsError() _problemDetails$: Observable<ProblemDetails>;
-
-	/**
-	 * Emitted when server responds with 50X error.
-	 * This component has to have a separate stream for problem details. If security container component emits
-	 * a value, the app should not re-display that same error. Instead it should wait for errors from the point it got
-	 * a reference to this stream. No reason to inject account-sandbox.service just for these streams. Using decorators instead.
-	 */
-	@InternalServerError() _internalServerErrorDetails$: Observable<InternalServerErrorDetails>;
-
-	/**
-	 * Emitted when server responds with 40X or 50x error.
-	 * Used in components that display server side errors without using AbstractControl.
-	 */
-	_serverError$: Observable<ProblemDetails | InternalServerErrorDetails>;
-
-	/**
 	 * Whether to display two factor auth setup wizard.
 	 */
 	_showTwoFactorAuthSetupWizard = false;
@@ -151,6 +146,11 @@ export class TwoFactorAuthenticationComponent {
 	 * Route animations.
 	 */
 	readonly _routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
+
+	/**
+	 * Short description font size.
+	 */
+	readonly _shortDescriptionFontSize = ODM_GLOBAL_SECURITY_SHORT_DESCRIPTION;
 
 	/**
 	 * Two factor auth toggle spinner diameter.
@@ -163,17 +163,10 @@ export class TwoFactorAuthenticationComponent {
 	readonly _twoFactorAuthToggleSpinnerStrokeWidth = ODM_SMALL_SPINNER_STROKE_WIDTH;
 
 	/**
-	 * Used to filter out server side errors for two factor authentication codes that occur before the panel is opened.
-	 */
-	private _userRecoveryCodesOpened = false;
-
-	/**
 	 * Creates an instance of two factor authentication component.
 	 * @param _log
 	 */
-	constructor(private _log: LogService) {
-		this._serverError$ = merge(this._problemDetails$, this._internalServerErrorDetails$).pipe(filter(() => this._userRecoveryCodesOpened === true));
-	}
+	constructor(private _log: LogService) {}
 
 	/**
 	 * Event handler when user requests to enable/disable two factor authentication.
@@ -181,6 +174,7 @@ export class TwoFactorAuthenticationComponent {
 	 */
 	_onTwoFactorAuthToggleChanged(event: MatSlideToggleChange): void {
 		this._log.trace('_onTwoFactorAuthToggle fired.', this);
+		this._clearServerErrors();
 		this.twoFactorAuthToggleChanged.emit(event);
 	}
 
@@ -190,6 +184,7 @@ export class TwoFactorAuthenticationComponent {
 	_onCancelSetupWizardClicked(): void {
 		this._log.trace('_onCancelSetupWizard fired.', this);
 		this._showTwoFactorAuthSetupWizard = false;
+		this._clearServerErrors();
 		this.cancelSetupWizardClicked.emit();
 	}
 
@@ -199,6 +194,7 @@ export class TwoFactorAuthenticationComponent {
 	_onFinish2faSetupClicked(event: TwoFactorAuthenticationSetupResult): void {
 		this._log.trace('_onFinish2faSetup fired.', this);
 		this._showTwoFactorAuthSetupWizard = false;
+		this._clearServerErrors();
 		this.finish2faSetupClicked.emit(event);
 	}
 
@@ -207,6 +203,7 @@ export class TwoFactorAuthenticationComponent {
 	 */
 	_onGenerateNew2FaRecoveryCodesClicked(): void {
 		this._log.trace('_onGenerateNew2FaRecoveryCodes fired.', this);
+		this._clearServerErrors();
 		this.generateNew2faRecoveryCodesClicked.emit();
 	}
 
@@ -217,5 +214,14 @@ export class TwoFactorAuthenticationComponent {
 	_onVerifyAuthenticatorSubmitted(event: unknown): void {
 		this._log.trace('_onVerifyAuthenticator fired.', this);
 		this.verifyAuthenticatorClicked.emit(event as TwoFactorAuthenticationVerificationCode);
+	}
+
+	/**
+	 * Clears server errors. On each event handled by this component clear server errors.
+	 */
+	private _clearServerErrors(): void {
+		this._log.trace('_clearServerErrors fired.', this);
+		this._problemDetails = null;
+		this._internalServerErrorDetails = null;
 	}
 }

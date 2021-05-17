@@ -10,6 +10,8 @@
 			[verificationCodeForm]="_verificationCodeForm"
 			[authenticatorSetup]="_authenticatorSetup$ | async"
 			[authenticatorSetupResult]="_authenticatorSetupResult$ | async"
+			[problemDetails]="_problemDetails$ | async"
+			[internalServerErrorDetails]="_internalServerErrorDetails$ | async"
 			(verifyAuthenticatorClicked)="_onVerifyAuthenticatorClicked($event)"
 			(cancelSetupWizardClicked)="_onCancelSetupWizardClicked()"
 			(finish2faSetupClicked)="_onFinish2faSetupClicked($event)"
@@ -26,8 +28,5 @@
 			[changePasswordForm]="_changePasswordForm"
 		></odm-change-password-container>
 		<mat-divider></mat-divider>
-		<ng-container *ngIf="_problemDetails$ | async as problemDetails">
-			<odm-server-side-error [problemDetails]="problemDetails"></odm-server-side-error>
-		</ng-container>
 	</div>
 </ng-container>

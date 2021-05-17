@@ -38,12 +38,14 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		margin: 8px;
+		height: 48px;
 
 		.two-factor-settings__short-description {
 			display: flex;
 
 			.two-factor-settings__description {
-				font-size: 15px;
+				font-size: var(--short-description);
 			}
 		}
 

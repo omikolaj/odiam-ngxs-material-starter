@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { AccountSandboxService } from '../account-sandbox.service';
-import { Observable, Subscription, merge, BehaviorSubject } from 'rxjs';
+import { Observable, Subscription, merge, BehaviorSubject, EMPTY } from 'rxjs';
 import { AccountSecurityDetails } from 'app/core/models/account/security/account-security-details.model';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
@@ -211,6 +211,15 @@ export class SecurityContainerComponent implements OnInit {
 	_onChangePasswordClosed(): void {
 		this._sb.log.trace('_onChangePasswordClosed fired.', this);
 		this._changePasswordForm.reset();
+		this._clearServerErrors();
+	}
+
+	/**
+	 * Clears server errors.
+	 */
+	private _clearServerErrors(): void {
+		this._problemDetails$ = EMPTY;
+		this._internalServerErrorDetails$ = EMPTY;
 	}
 
 	/**

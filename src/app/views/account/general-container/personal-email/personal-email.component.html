@@ -3,14 +3,28 @@
 		<ng-container *ngIf="!loading; else loadingState">
 			<span class="personal-email__title">{{ 'odm.account.general.personal-email' | translate }}</span>
 			<div class="personal-email__data-container">
-				<span class="personal-email__data"
-					>{{ email }}
+				<div class="personal-email__data-container-child-one">
+					<span class="personal-email__data">{{ email }} </span>
 					<ng-container *ngIf="verified; else pendingVerification">
 						<mat-icon class="personal-email__verified" [matTooltip]="'odm.account.general.verified-tooltip' | translate">
 							<fa-icon icon="check"></fa-icon>
 						</mat-icon>
 					</ng-container>
-				</span>
+				</div>
+				<ng-container *ngIf="verified === false">
+					<div class="personal-email__pending-verification-link-container personal-email__pending-verification">
+						<button
+							[matTooltip]="_disabled ? ('odm.account.general.resend-verification-disabled-tooltip' | translate) : ''"
+							mat-button
+							type="button"
+							class="personal-email__resend-verification-btn personal-email--link"
+							(click)="_onResendEmailVerificationClicked()"
+							[disabled]="_disabled"
+						>
+							{{ 'odm.account.general.resend-verification' | translate }}
+						</button>
+					</div>
+				</ng-container>
 			</div>
 		</ng-container>
 	</div>
@@ -20,18 +34,6 @@
 	<mat-icon class="personal-email__pending-verification" [matTooltip]="'odm.account.general.pending-verification-tooltip' | translate">
 		<fa-icon icon="exclamation-triangle"></fa-icon>
 	</mat-icon>
-	<div class="personal-email__pending-verification-link-container personal-email__pending-verification">
-		<button
-			[matTooltip]="_disabled ? ('odm.account.general.resend-verification-disabled-tooltip' | translate) : ''"
-			mat-button
-			type="button"
-			class="personal-email__resend-verification-btn personal-email--link"
-			(click)="_onResendEmailVerificationClicked()"
-			[disabled]="_disabled"
-		>
-			{{ 'odm.account.general.resend-verification' | translate }}
-		</button>
-	</div>
 </ng-template>
 
 <ng-template #loadingState>

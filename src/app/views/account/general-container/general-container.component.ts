@@ -7,6 +7,7 @@ import { InternalServerErrorDetails } from 'app/core/models/internal-server-erro
 import { skip, filter, tap } from 'rxjs/operators';
 import { implementsOdmWebApiException } from 'app/core/utilities/implements-odm-web-api-exception';
 import { downUpFadeInAnimation } from 'app/core/core.module';
+import { ODM_GLOBAL_GENERAL_SECTION_PADDING } from 'app/shared/global-settings/global-settings';
 
 /**
  * General component container that houses user's general settings functionality.
@@ -38,6 +39,11 @@ export class GeneralContainerComponent implements OnInit, OnDestroy {
 	 * Controls whether 'resend notification' button is disabled/enabled.
 	 */
 	_disableResendVerificationSub = new BehaviorSubject(false);
+
+	/**
+	 * Padding top value for all items listed under 'General' section.
+	 */
+	readonly _paddingValue = ODM_GLOBAL_GENERAL_SECTION_PADDING;
 
 	/**
 	 * Whether 'resend notification' button is disabled/enabled.

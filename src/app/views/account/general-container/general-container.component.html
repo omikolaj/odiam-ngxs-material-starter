@@ -1,6 +1,7 @@
 <ng-container *ngIf="_accountGeneralDetails$ | async as accountGeneralDetails">
 	<div class="account-general">
 		<div class="account-general__personal-email">
+			<div [style.--general-padding-list-item]="_paddingValue" class="account-general__spacer-top"></div>
 			<odm-personal-email
 				[email]="accountGeneralDetails?.email"
 				[verified]="accountGeneralDetails?.verified"
@@ -9,6 +10,7 @@
 				(resendEmailVerificationClicked)="_onResendEmailVerificationClicked()"
 			>
 			</odm-personal-email>
+			<div [style.--general-padding-list-item]="_paddingValue" class="account-general__spacer-bottom"></div>
 		</div>
 		<mat-divider></mat-divider>
 		<div class="account-general__error">

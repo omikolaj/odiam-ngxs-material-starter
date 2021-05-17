@@ -1,18 +1,18 @@
 <div class="server-side-error__error">
 	<ng-container *ngIf="serverError">
-		<span @upDownFadeIn>
+		<span [style.--error]="_errorFontSize" @upDownFadeIn>
 			<mat-icon class="server-side-error--color server-side-error__error-format-position" matPrefix>{{ 'clear' }}</mat-icon>
 			{{ _getErrorMessage$() | async }}
 		</span>
 	</ng-container>
-	<ng-container [ngClass]="_errorEmitted" *ngIf="_problemDetails">
-		<span @upDownFadeIn>
+	<ng-container *ngIf="_problemDetails">
+		<span [style.--error]="_errorFontSize" @upDownFadeIn>
 			<mat-icon class="server-side-error--color server-side-error__error-format-position" matPrefix>{{ 'clear' }}</mat-icon>
 			{{ _problemDetails?.detail }}
 		</span>
 	</ng-container>
 	<ng-container *ngIf="_internalServerErrorDetails">
-		<span @upDownFadeIn>
+		<span [style.--error]="_errorFontSize" @upDownFadeIn>
 			<mat-icon class="server-side-error--color server-side-error__error-format-position" matPrefix>{{ 'clear' }}</mat-icon>
 			{{ _internalServerErrorDetails?.message }}
 		</span>

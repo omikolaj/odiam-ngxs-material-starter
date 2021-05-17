@@ -1,5 +1,5 @@
 <div [ngClass]="type === 'default' ? 'default-spinner' : 'button-spinner'">
-	<mat-spinner [strokeWidth]="strokeWidth" color="primary" [diameter]="diameter"></mat-spinner>
+	<mat-spinner [strokeWidth]="strokeWidth" [color]="spinnerColor" [diameter]="diameter"></mat-spinner>
 	<ng-container *ngIf="type === 'default'">
 		<ng-container *ngIf="internalServerErrorDetails$ | async">
 			<div>
