@@ -106,6 +106,10 @@ export class ChangePasswordContainerComponent implements OnInit {
 	_onInitPasswordChangeClicked(): void {
 		this._log.trace('_onInitPasswordChangeClicked fired.', this);
 		this._showPasswordChange = true;
+		setTimeout(() => {
+			const el = document.getElementById('changePassword');
+			el.scrollIntoView(true);
+		}, 100);
 	}
 
 	/**

@@ -23,7 +23,8 @@ export class MatVerticalStepperScrollerDirective {
 		const stepId = this._stepper._getStepLabelId(this._stepper.selectedIndex);
 		const stepElement = document.getElementById(stepId);
 		if (stepElement) {
-			stepElement.scrollIntoView({ block: 'start', inline: 'nearest', behavior: 'smooth' });
+			// not supported in iOS or Safari, or few other mobile websites { block: 'start', inline: 'nearest', behavior: 'smooth' }
+			stepElement.scrollIntoView(true);
 		}
 	}
 }
