@@ -8,6 +8,7 @@ import { getPasswordRequirements } from 'app/core/utilities/password-requirement
 import { LogService } from 'app/core/logger/log.service';
 import { FormGroup } from '@angular/forms';
 import { ODM_GLOBAL_SECURITY_SHORT_DESCRIPTION } from 'app/shared/global-settings/global-settings';
+import { Router, ActivatedRoute } from '@angular/router';
 
 /**
  * Change user password container component.
@@ -23,7 +24,11 @@ export class ChangePasswordContainerComponent implements OnInit {
 	/**
 	 * Emitted when server responds with 40X error.
 	 */
-	@Input() problemDetails: ProblemDetails;
+	@Input() set problemDetails(value: ProblemDetails) {
+		this._problemDetails = value;
+	}
+
+	_problemDetails: ProblemDetails;
 
 	/**
 	 * Emitted when server responds with 50X error.
@@ -39,6 +44,11 @@ export class ChangePasswordContainerComponent implements OnInit {
 	 * Change password form.
 	 */
 	@Input() changePasswordForm: FormGroup;
+
+	/**
+	 * Whether there is an active request attempting to update user's password.
+	 */
+	@Input() passwordChangeInProgress: boolean;
 
 	/**
 	 * Whether user's password change request completed without errors.
@@ -67,11 +77,6 @@ export class ChangePasswordContainerComponent implements OnInit {
 	_showPasswordChange = false;
 
 	/**
-	 * Whether there is an active request attempting to update user's password.
-	 */
-	loading = false;
-
-	/**
 	 * Password requirements required for new user.
 	 */
 	_passwordRequirements: PasswordRequirement[] = [];
@@ -90,7 +95,7 @@ export class ChangePasswordContainerComponent implements OnInit {
 	 * Creates an instance of change password container component.
 	 * @param _log
 	 */
-	constructor(private _log: LogService) {}
+	constructor(private _log: LogService, private _router: Router, private _route: ActivatedRoute) {}
 
 	/**
 	 * ngOnInit life cycle.
@@ -105,11 +110,13 @@ export class ChangePasswordContainerComponent implements OnInit {
 	 */
 	_onInitPasswordChangeClicked(): void {
 		this._log.trace('_onInitPasswordChangeClicked fired.', this);
-		this._showPasswordChange = true;
-		setTimeout(() => {
-			const el = document.getElementById('changePassword');
-			el.scrollIntoView(true);
-		}, 100);
+		void this._router.navigate(['change-password'], { relativeTo: this._route.parent });
+		// this._showPasswordChange = true;
+		// // scroll change password UI into view.
+		// setTimeout(() => {
+		// 	const el = document.getElementById('changePassword');
+		// 	el.scrollIntoView(true);
+		// }, 100);
 	}
 
 	/**

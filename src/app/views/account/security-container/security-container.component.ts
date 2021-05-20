@@ -14,6 +14,7 @@ import { TwoFactorAuthenticationSetupResult } from 'app/core/models/account/secu
 import { TwoFactorAuthenticationSetup } from 'app/core/models/account/security/two-factor-authentication-setup.model';
 import { TwoFactorAuthenticationVerificationCode } from 'app/core/models/account/security/two-factor-authentication-verification-code.model';
 import { PasswordChange } from 'app/core/models/auth/password-change.model';
+import { ActivatedRoute, Router } from '@angular/router';
 
 /**
  * Security component container that houses user security functionality.
@@ -87,12 +88,22 @@ export class SecurityContainerComponent implements OnInit {
 	_confirmPasswordMatchReqMet = false;
 
 	/**
+	 * Password change in progress loading subject.
+	 */
+	private readonly _passwordChangeInProgressSub = new BehaviorSubject<boolean>(false);
+
+	/**
+	 * Whether user is in process of updating their password.
+	 */
+	_passwordChangeInProgress$ = this._passwordChangeInProgressSub.asObservable();
+
+	/**
 	 * Loading subject. Required for angular OnPush change detection to be triggered.
 	 */
 	private readonly _loadingSub = new BehaviorSubject<boolean>(false);
 
 	/**
-	 * Whether this component is fetching data for the view.
+	 * Whether this component is fetching data for view.
 	 */
 	_loading$ = this._loadingSub.asObservable();
 
@@ -115,7 +126,7 @@ export class SecurityContainerComponent implements OnInit {
 	 * Creates an instance of security container component.
 	 * @param _sb
 	 */
-	constructor(private _sb: AccountSandboxService) {
+	constructor(private _sb: AccountSandboxService, private _router: Router, private _route: ActivatedRoute) {
 		this._accountSecurityDetails$ = _sb.accountSecurityDetails$;
 		this._authenticatorSetup$ = _sb.twoFactorAuthenticationSetup$;
 		this._authenticatorSetupResult$ = _sb.twoFactorAuthenticationSetupResult$;
@@ -151,6 +162,7 @@ export class SecurityContainerComponent implements OnInit {
 		if (event.checked) {
 			this._sb.log.debug('_onTwoFactorAuthToggle: enter 2fa setup.', this);
 			this._sb.setupAuthenticator();
+			void this._router.navigate(['two-factor-authentication-setup'], { relativeTo: this._route.parent });
 		} else {
 			this._sb.log.debug('_onTwoFactorAuthToggle: disable 2fa.', this);
 			this._sb.disable2Fa();
@@ -201,6 +213,7 @@ export class SecurityContainerComponent implements OnInit {
 	 */
 	_onChangeUserPasswordSubmitted(): void {
 		this._sb.log.trace('_onChangeUserPasswordSubmitted fired.', this);
+		this._passwordChangeInProgressSub.next(true);
 		const model = this._changePasswordForm.value as PasswordChange;
 		this._sb.changePassword(model);
 	}
@@ -220,6 +233,9 @@ export class SecurityContainerComponent implements OnInit {
 	private _clearServerErrors(): void {
 		this._problemDetails$ = EMPTY;
 		this._internalServerErrorDetails$ = EMPTY;
+		setTimeout(() => {
+			this._problemDetails$ = this._sb.problemDetails$;
+		});
 	}
 
 	/**
@@ -287,6 +303,8 @@ export class SecurityContainerComponent implements OnInit {
 				this._twoFactorAuthToggleLoadingSub.next(false);
 				// manual subject is necessary because when loading changes nothing else emits so OnPush change detection is not triggered.
 				this._loadingSub.next(false);
+				// manual subject is necessary because OnPush change detection is not triggered when simple value changes.
+				this._passwordChangeInProgressSub.next(false);
 			})
 		);
 	}

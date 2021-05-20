@@ -25,7 +25,7 @@ export class ChangePasswordComponent extends AuthBase {
 	 */
 	@Input() set problemDetails(value: ProblemDetails) {
 		this.log.debug('Problem details emitted.', this);
-		this._changingPassword = false;
+		// this._changingPassword = false;
 		this.problemDetailsError = value;
 	}
 
@@ -34,7 +34,7 @@ export class ChangePasswordComponent extends AuthBase {
 	 */
 	@Input() set internalServerErrorDetails(value: InternalServerErrorDetails) {
 		this.log.debug('Internal server error emitted.', this);
-		this._changingPassword = false;
+		// this._changingPassword = false;
 		this.internalServerError = value;
 	}
 
@@ -63,6 +63,11 @@ export class ChangePasswordComponent extends AuthBase {
 	@Input() confirmPasswordMatchReqMet: boolean;
 
 	/**
+	 * Whether there currently is a request to change user's password.
+	 */
+	@Input() passwordChangeInProgress: boolean;
+
+	/**
 	 * Emitted when user tries to change their password.
 	 */
 	@Output() changePasswordSubmitted = new EventEmitter<void>();
@@ -86,11 +91,6 @@ export class ChangePasswordComponent extends AuthBase {
 	 * Password control of change password component.
 	 */
 	_passwordControl: AbstractControl;
-
-	/**
-	 * Whether there currently is a request to change user's password.
-	 */
-	_changingPassword: boolean;
 
 	/**
 	 * Hide/show current password.
@@ -136,7 +136,7 @@ export class ChangePasswordComponent extends AuthBase {
 	 */
 	_onChangePassword(): void {
 		this.log.trace('_onChangePassword fired.', this);
-		this._changingPassword = true;
+		// this._changingPassword = true;
 		this.changePasswordSubmitted.emit();
 	}
 

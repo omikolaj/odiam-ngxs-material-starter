@@ -1,5 +1,8 @@
 <ng-container *ngIf="_accountSecurityDetails$ | async as accountSecurityDetails">
 	<div class="account-security">
+		<div>
+			<router-outlet></router-outlet>
+		</div>
 		<odm-two-factor-authentication
 			[userRecoveryCodes]="accountSecurityDetails?.recoveryCodes?.items"
 			[twoFactorEnabled]="accountSecurityDetails?.twoFactorEnabled"
@@ -18,6 +21,7 @@
 			(generateNew2faRecoveryCodesClicked)="_onGenerateNew2faRecoveryCodesClicked()"
 			(twoFactorAuthToggleChanged)="_onTwoFactorAuthToggle($event)"
 		></odm-two-factor-authentication>
+		<mat-divider></mat-divider>
 		<odm-change-password-container
 			(changePasswordSubmitted)="_onChangeUserPasswordSubmitted()"
 			(changePasswordClosed)="_onChangePasswordClosed()"
@@ -26,6 +30,7 @@
 			[internalServerErrorDetails]="_internalServerErrorDetails$ | async"
 			[confirmPasswordMatchReqMet]="_confirmPasswordMatchReqMet"
 			[changePasswordForm]="_changePasswordForm"
+			[passwordChangeInProgress]="_passwordChangeInProgress$ | async"
 		></odm-change-password-container>
 		<mat-divider></mat-divider>
 	</div>

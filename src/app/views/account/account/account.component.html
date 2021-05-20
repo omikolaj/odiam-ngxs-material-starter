@@ -1,15 +1,24 @@
 <div class="account">
 	<h2>{{ 'odm.account.header' | translate }}</h2>
-	<mat-tab-group mat-align-tabs="left" class="account__tabs">
-		<mat-tab [label]="'odm.account.general.title' | translate">
+	<nav mat-tab-nav-bar>
+		<a mat-tab-link routerLink="general" routerLinkActive #rla="routerLinkActive" [active]="rla.isActive">
+			<span>General</span>
+		</a>
+		<a mat-tab-link routerLink="security" routerLinkActive #rla="routerLinkActive" [active]="rla.isActive">
+			<span>Security</span>
+		</a>
+	</nav>
+	<router-outlet></router-outlet>
+	<!-- <mat-tab-group #tabGroup mat-align-tabs="left" class="account__tabs">
+		<mat-tab [label]="'odm.account.general.title' | translate" [routerLink]="'/account/general'">
 			<ng-template matTabContent>
 				<odm-general-container></odm-general-container>
 			</ng-template>
 		</mat-tab>
-		<mat-tab [label]="'odm.account.security.title' | translate">
+		<mat-tab [label]="'odm.account.security.title' | translate" [routerLink]="'/account/security'">
 			<ng-template matTabContent>
 				<odm-security-container></odm-security-container>
 			</ng-template>
 		</mat-tab>
-	</mat-tab-group>
+	</mat-tab-group> -->
 </div>
