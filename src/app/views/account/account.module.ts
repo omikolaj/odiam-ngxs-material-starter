@@ -2,15 +2,9 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AccountRoutingModule } from './account-routing.module';
 
-import { AccountSandboxService } from './account-sandbox.service';
 import { NgxsModule } from '@ngxs/store';
-
 import { AccountComponent } from './account/account.component';
-import { GeneralContainerComponent } from './general-container/general-container.component';
-
 import { AccountSecurityState } from './security-container/security-container.store.state';
-
-import { PersonalEmailComponent } from './general-container/personal-email/personal-email.component';
 import { SharedModule } from 'app/shared/shared.module';
 
 /**
@@ -18,13 +12,13 @@ import { SharedModule } from 'app/shared/shared.module';
  */
 @NgModule({
 	declarations: [
-		AccountComponent,
-		GeneralContainerComponent,
+		AccountComponent
+		// GeneralContainerComponent,
 		// SecurityContainerComponent,
 		// TwoFactorAuthenticationComponent,
 		// TwoFactorAuthenticationCodesComponent,
 		// TwoFactorAuthenticationSetupWizardComponent,
-		PersonalEmailComponent
+		// PersonalEmailComponent
 		// ChangePasswordContainerComponent,
 		// ChangePasswordComponent
 	],
@@ -34,7 +28,7 @@ import { SharedModule } from 'app/shared/shared.module';
 		// QRCodeModule,
 		SharedModule,
 		NgxsModule.forFeature([AccountSecurityState])
-	],
-	providers: [AccountSandboxService]
+	]
+	// providers: [AccountSandboxService]
 })
 export class AccountModule {}

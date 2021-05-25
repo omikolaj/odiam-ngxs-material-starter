@@ -7,7 +7,7 @@
 		<mat-error *ngIf="_ifControlFieldIsInvalid(_form.get('code'))"> {{ _getErrorMessage$(_form.get('code')) | async }}</mat-error>
 	</mat-form-field>
 	<div class="verification-code__action-buttons">
-		<button mat-button (click)="_onCancelClicked()" color="warn">
+		<button mat-button type="button" (click)="_onCancelClicked()" color="warn">
 			{{ 'odm.buttons.cancel' | translate }}
 		</button>
 		<button mat-button mat-stroked-button color="accent" type="submit" [disabled]="!_form.valid || codeVerificationInProgress">

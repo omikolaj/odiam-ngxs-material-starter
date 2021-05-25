@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import { LogService } from 'app/core/logger/log.service';
-import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
+import { ROUTE_ANIMATIONS_ELEMENTS, downUpFadeInAnimation } from 'app/core/core.module';
 
 /**
  * User's personal email component.
@@ -9,6 +9,7 @@ import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
 	selector: 'odm-personal-email',
 	templateUrl: './personal-email.component.html',
 	styleUrls: ['./personal-email.component.scss'],
+	animations: [downUpFadeInAnimation],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PersonalEmailComponent {

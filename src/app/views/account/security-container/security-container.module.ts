@@ -12,6 +12,8 @@ import { SharedModule } from 'app/shared/shared.module';
 import { NgxsModule } from '@ngxs/store';
 import { AccountSecurityState } from './security-container.store.state';
 import { TwoFactorAuthenticationState } from './two-factor-authentication/two-factor-authentication.store.state';
+import { SecuritySandboxService } from './security-sandbox.service';
+import { TwoFactorAuthenticationSetupWizardContainerComponent } from './two-factor-authentication-setup-wizard-container/two-factor-authentication-setup-wizard-container.component';
 
 @NgModule({
 	declarations: [
@@ -20,7 +22,8 @@ import { TwoFactorAuthenticationState } from './two-factor-authentication/two-fa
 		SecurityContainerComponent,
 		TwoFactorAuthenticationComponent,
 		TwoFactorAuthenticationCodesComponent,
-		TwoFactorAuthenticationSetupWizardComponent
+		TwoFactorAuthenticationSetupWizardComponent,
+		TwoFactorAuthenticationSetupWizardContainerComponent
 	],
 	imports: [
 		CommonModule,
@@ -28,6 +31,7 @@ import { TwoFactorAuthenticationState } from './two-factor-authentication/two-fa
 		QRCodeModule,
 		SharedModule,
 		NgxsModule.forFeature([AccountSecurityState, TwoFactorAuthenticationState])
-	]
+	],
+	providers: [SecuritySandboxService]
 })
 export class SecurityContainerModule {}

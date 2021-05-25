@@ -1,20 +1,21 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { AccountSandboxService } from '../account-sandbox.service';
+
 import { Observable, Subscription, merge, BehaviorSubject, EMPTY } from 'rxjs';
 import { AccountSecurityDetails } from 'app/core/models/account/security/account-security-details.model';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { skip, filter, tap } from 'rxjs/operators';
 import { FormGroup } from '@angular/forms';
-import { OdmValidators, VerificationCodeLength, MinPasswordLength } from 'app/core/form-validators/odm-validators';
+import { OdmValidators, MinPasswordLength } from 'app/core/form-validators/odm-validators';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
-import { upDownFadeInAnimation } from 'app/core/core.module';
+import { upDownFadeInAnimation, ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
 import { ActionCompletion } from '@ngxs/store';
 import { TwoFactorAuthenticationSetupResult } from 'app/core/models/account/security/two-factor-authentication-setup-result.model';
 import { TwoFactorAuthenticationSetup } from 'app/core/models/account/security/two-factor-authentication-setup.model';
 import { TwoFactorAuthenticationVerificationCode } from 'app/core/models/account/security/two-factor-authentication-verification-code.model';
 import { PasswordChange } from 'app/core/models/auth/password-change.model';
 import { ActivatedRoute, Router } from '@angular/router';
+import { SecuritySandboxService } from './security-sandbox.service';
 
 /**
  * Security component container that houses user security functionality.
@@ -27,6 +28,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 	changeDetection: ChangeDetectionStrategy.Default
 })
 export class SecurityContainerComponent implements OnInit {
+	/**
+	 * Route animations.
+	 */
+	readonly _routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
+
 	/**
 	 * Account security details for the given user.
 	 */
@@ -126,7 +132,7 @@ export class SecurityContainerComponent implements OnInit {
 	 * Creates an instance of security container component.
 	 * @param _sb
 	 */
-	constructor(private _sb: AccountSandboxService, private _router: Router, private _route: ActivatedRoute) {
+	constructor(private _sb: SecuritySandboxService, private _router: Router, private _route: ActivatedRoute) {
 		this._accountSecurityDetails$ = _sb.accountSecurityDetails$;
 		this._authenticatorSetup$ = _sb.twoFactorAuthenticationSetup$;
 		this._authenticatorSetupResult$ = _sb.twoFactorAuthenticationSetupResult$;
@@ -242,7 +248,7 @@ export class SecurityContainerComponent implements OnInit {
 	 * Initializes forms for Security component container.
 	 */
 	private _initForms(): void {
-		this._verificationCodeForm = this._initVerificationCodeForm();
+		// this._verificationCodeForm = this._initVerificationCodeForm();
 		this._changePasswordForm = this._initChangePasswordForm();
 		// subscribe to confirm password control to check if passwords match.
 		this._subscription.add(this._validateFormConfirmPasswordField$().subscribe());
@@ -309,20 +315,20 @@ export class SecurityContainerComponent implements OnInit {
 		);
 	}
 
-	/**
-	 * Initializes verification code form.
-	 */
-	private _initVerificationCodeForm(): FormGroup {
-		return this._sb.fb.group({
-			code: this._sb.fb.control(
-				{ value: '', disabled: true },
-				{
-					validators: [OdmValidators.required, OdmValidators.minLength(VerificationCodeLength), OdmValidators.maxLength(VerificationCodeLength)],
-					updateOn: 'change'
-				}
-			)
-		});
-	}
+	// /**
+	//  * Initializes verification code form.
+	//  */
+	// private _initVerificationCodeForm(): FormGroup {
+	// 	return this._sb.fb.group({
+	// 		code: this._sb.fb.control(
+	// 			{ value: '', disabled: true },
+	// 			{
+	// 				validators: [OdmValidators.required, OdmValidators.minLength(VerificationCodeLength), OdmValidators.maxLength(VerificationCodeLength)],
+	// 				updateOn: 'change'
+	// 			}
+	// 		)
+	// 	});
+	// }
 
 	/**
 	 * Creates FormGroup for change password form.

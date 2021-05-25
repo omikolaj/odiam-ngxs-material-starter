@@ -1,14 +1,16 @@
 <div class="account">
 	<h2>{{ 'odm.account.header' | translate }}</h2>
 	<nav mat-tab-nav-bar>
-		<a mat-tab-link routerLink="general" routerLinkActive #rla="routerLinkActive" [active]="rla.isActive">
+		<a mat-tab-link routerLink="general" routerLinkActive #general="routerLinkActive" [active]="general.isActive">
 			<span>General</span>
 		</a>
-		<a mat-tab-link routerLink="security" routerLinkActive #rla="routerLinkActive" [active]="rla.isActive">
+		<a mat-tab-link routerLink="security" routerLinkActive #security="routerLinkActive" [active]="security.isActive">
 			<span>Security</span>
 		</a>
 	</nav>
-	<router-outlet></router-outlet>
+	<div [@routeAnimations]="o.isActivated && o.activatedRoute.routeConfig.path">
+		<router-outlet #o="outlet"></router-outlet>
+	</div>
 	<!-- <mat-tab-group #tabGroup mat-align-tabs="left" class="account__tabs">
 		<mat-tab [label]="'odm.account.general.title' | translate" [routerLink]="'/account/general'">
 			<ng-template matTabContent>

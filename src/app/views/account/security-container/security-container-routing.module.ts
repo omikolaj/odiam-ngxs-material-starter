@@ -4,7 +4,7 @@ import { SecurityContainerComponent } from './security-container.component';
 import { Routes, RouterModule } from '@angular/router';
 
 import { ChangePasswordComponent } from './change-password/change-password.component';
-import { TwoFactorAuthenticationSetupWizardComponent } from './two-factor-authentication-setup-wizard/two-factor-authentication-setup-wizard.component';
+import { TwoFactorAuthenticationSetupWizardContainerComponent } from './two-factor-authentication-setup-wizard-container/two-factor-authentication-setup-wizard-container.component';
 
 const routes: Routes = [
 	{
@@ -13,7 +13,7 @@ const routes: Routes = [
 		children: [
 			{
 				path: 'two-factor-authentication-setup',
-				component: TwoFactorAuthenticationSetupWizardComponent
+				component: TwoFactorAuthenticationSetupWizardContainerComponent
 			},
 			{
 				path: 'change-password',

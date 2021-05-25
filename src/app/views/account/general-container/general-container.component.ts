@@ -1,13 +1,15 @@
 import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
-import { AccountSandboxService } from '../account-sandbox.service';
+
 import { BehaviorSubject, Subscription, Observable, merge } from 'rxjs';
 import { AccountGeneralDetails } from 'app/core/models/account/general/account-general-details.model';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { skip, filter, tap } from 'rxjs/operators';
 import { implementsOdmWebApiException } from 'app/core/utilities/implements-odm-web-api-exception';
-import { downUpFadeInAnimation } from 'app/core/core.module';
+import { downUpFadeInAnimation, ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
 import { ODM_GLOBAL_GENERAL_SECTION_PADDING } from 'app/shared/global-settings/global-settings';
+import { GeneralSandboxService } from './general-sandbox.service';
+import { LogService } from 'app/core/logger/log.service';
 
 /**
  * General component container that houses user's general settings functionality.
@@ -20,6 +22,11 @@ import { ODM_GLOBAL_GENERAL_SECTION_PADDING } from 'app/shared/global-settings/g
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GeneralContainerComponent implements OnInit, OnDestroy {
+	/**
+	 * Route animations.
+	 */
+	readonly _routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
+
 	/**
 	 * Account general details for the given user.
 	 */
@@ -69,7 +76,7 @@ export class GeneralContainerComponent implements OnInit, OnDestroy {
 	 * Creates an instance of general container component.
 	 * @param _sb
 	 */
-	constructor(private _sb: AccountSandboxService) {
+	constructor(private _sb: GeneralSandboxService, private _log: LogService) {
 		this._accountGeneralDetails$ = _sb.accountGeneralDetails$;
 		this._internalServerErrorDetails$ = _sb.internalServerErrorDetails$;
 		this._problemDetails$ = _sb.problemDetails$;
@@ -79,7 +86,10 @@ export class GeneralContainerComponent implements OnInit, OnDestroy {
 	 * NgOnInit life cycle.
 	 */
 	ngOnInit(): void {
-		this._sb.log.trace('Initialized.', this);
+		this._log.trace('Initialized.', this);
+		this._accountGeneralDetails$.subscribe((v) => {
+			console.log('details', v);
+		});
 
 		this._loadingSub.next(true);
 		this._sb.getAccountGeneralInfo();
@@ -103,7 +113,7 @@ export class GeneralContainerComponent implements OnInit, OnDestroy {
 	 * NgOnDestroy life cycle.
 	 */
 	ngOnDestroy(): void {
-		this._sb.log.trace('Destroyed.', this);
+		this._log.trace('Destroyed.', this);
 		this._subscription.unsubscribe();
 	}
 

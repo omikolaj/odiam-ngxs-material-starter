@@ -1,8 +1,8 @@
 <div class="personal-email">
 	<div [ngClass]="_routeAnimationsElements" class="personal-email__info">
 		<ng-container *ngIf="!loading; else loadingState">
-			<span class="personal-email__title">{{ 'odm.account.general.personal-email' | translate }}</span>
-			<div class="personal-email__data-container">
+			<span @downUpFadeIn class="personal-email__title">{{ 'odm.account.general.personal-email' | translate }}</span>
+			<div @downUpFadeIn class="personal-email__data-container">
 				<div class="personal-email__data-container-child-one">
 					<span class="personal-email__data">{{ email }} </span>
 					<ng-container *ngIf="verified; else pendingVerification">

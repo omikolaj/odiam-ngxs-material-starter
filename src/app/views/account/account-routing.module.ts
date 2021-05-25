@@ -11,14 +11,18 @@ const routes: Routes = [
 		data: { title: 'odm.account' },
 		children: [
 			{
+				path: '',
+				redirectTo: 'general',
+				pathMatch: 'full'
+			},
+			{
+				path: 'general',
+				loadChildren: () => import('./general-container/general-container.module').then((m) => m.GeneralContainerModule)
+			},
+			{
 				path: 'security',
 				loadChildren: () => import('./security-container/security-container.module').then((m) => m.SecurityContainerModule)
 			}
-			// {
-			// 	path: 'general',
-			// 	component: GeneralContainerComponent,
-			// 	data: { title: 'odm.account.general' }
-			// }
 		]
 	}
 ];

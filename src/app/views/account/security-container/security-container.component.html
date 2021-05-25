@@ -3,35 +3,39 @@
 		<div>
 			<router-outlet></router-outlet>
 		</div>
-		<odm-two-factor-authentication
-			[userRecoveryCodes]="accountSecurityDetails?.recoveryCodes?.items"
-			[twoFactorEnabled]="accountSecurityDetails?.twoFactorEnabled"
-			[generatingNewRecoveryCodes]="_generatingNewRecoveryCodes"
-			[codeVerificationInProgress]="_codeVerificationInProgress"
-			[loading]="_loading$ | async"
-			[twoFactorAuthToggleLoading]="_twoFactorAuthToggleLoading$ | async"
-			[verificationCodeForm]="_verificationCodeForm"
-			[authenticatorSetup]="_authenticatorSetup$ | async"
-			[authenticatorSetupResult]="_authenticatorSetupResult$ | async"
-			[problemDetails]="_problemDetails$ | async"
-			[internalServerErrorDetails]="_internalServerErrorDetails$ | async"
-			(verifyAuthenticatorClicked)="_onVerifyAuthenticatorClicked($event)"
-			(cancelSetupWizardClicked)="_onCancelSetupWizardClicked()"
-			(finish2faSetupClicked)="_onFinish2faSetupClicked($event)"
-			(generateNew2faRecoveryCodesClicked)="_onGenerateNew2faRecoveryCodesClicked()"
-			(twoFactorAuthToggleChanged)="_onTwoFactorAuthToggle($event)"
-		></odm-two-factor-authentication>
+		<div [ngClass]="_routeAnimationsElements">
+			<odm-two-factor-authentication
+				[userRecoveryCodes]="accountSecurityDetails?.recoveryCodes?.items"
+				[twoFactorEnabled]="accountSecurityDetails?.twoFactorEnabled"
+				[generatingNewRecoveryCodes]="_generatingNewRecoveryCodes"
+				[codeVerificationInProgress]="_codeVerificationInProgress"
+				[loading]="_loading$ | async"
+				[twoFactorAuthToggleLoading]="_twoFactorAuthToggleLoading$ | async"
+				[verificationCodeForm]="_verificationCodeForm"
+				[authenticatorSetup]="_authenticatorSetup$ | async"
+				[authenticatorSetupResult]="_authenticatorSetupResult$ | async"
+				[problemDetails]="_problemDetails$ | async"
+				[internalServerErrorDetails]="_internalServerErrorDetails$ | async"
+				(verifyAuthenticatorClicked)="_onVerifyAuthenticatorClicked($event)"
+				(cancelSetupWizardClicked)="_onCancelSetupWizardClicked()"
+				(finish2faSetupClicked)="_onFinish2faSetupClicked($event)"
+				(generateNew2faRecoveryCodesClicked)="_onGenerateNew2faRecoveryCodesClicked()"
+				(twoFactorAuthToggleChanged)="_onTwoFactorAuthToggle($event)"
+			></odm-two-factor-authentication>
+		</div>
 		<mat-divider></mat-divider>
-		<odm-change-password-container
-			(changePasswordSubmitted)="_onChangeUserPasswordSubmitted()"
-			(changePasswordClosed)="_onChangePasswordClosed()"
-			[passwordChangeCompleted]="_passwordChangeCompleted$ | async"
-			[problemDetails]="_problemDetails$ | async"
-			[internalServerErrorDetails]="_internalServerErrorDetails$ | async"
-			[confirmPasswordMatchReqMet]="_confirmPasswordMatchReqMet"
-			[changePasswordForm]="_changePasswordForm"
-			[passwordChangeInProgress]="_passwordChangeInProgress$ | async"
-		></odm-change-password-container>
+		<div [ngClass]="_routeAnimationsElements">
+			<odm-change-password-container
+				(changePasswordSubmitted)="_onChangeUserPasswordSubmitted()"
+				(changePasswordClosed)="_onChangePasswordClosed()"
+				[passwordChangeCompleted]="_passwordChangeCompleted$ | async"
+				[problemDetails]="_problemDetails$ | async"
+				[internalServerErrorDetails]="_internalServerErrorDetails$ | async"
+				[confirmPasswordMatchReqMet]="_confirmPasswordMatchReqMet"
+				[changePasswordForm]="_changePasswordForm"
+				[passwordChangeInProgress]="_passwordChangeInProgress$ | async"
+			></odm-change-password-container>
+		</div>
 		<mat-divider></mat-divider>
 	</div>
 </ng-container>

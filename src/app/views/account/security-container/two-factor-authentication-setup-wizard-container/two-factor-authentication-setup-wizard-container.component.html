@@ -1,0 +1,14 @@
+<div>
+	<odm-two-factor-authentication-setup-wizard
+		[verificationCodeForm]="_verificationCodeForm"
+		[twoFactorAuthenticationSetupResult]="_authenticatorSetupResult$ | async"
+		[twoFactorAuthenticationSetup]="_authenticatorSetup$ | async"
+		[codeVerificationInProgress]="_codeVerificationInProgress"
+		[problemDetails]="_problemDetails$ | async"
+		[internalServerErrorDetails]="_internalServerErrorDetails$ | async"
+		(verificationCodeSubmitted)="_onVerifyAuthenticatorSubmitted($event)"
+		(cancelSetupWizardClicked)="_onCancelSetupWizardClicked()"
+		(finish2faSetupClicked)="_onFinish2faSetupClicked($event)"
+	>
+	</odm-two-factor-authentication-setup-wizard>
+</div>
