@@ -1,40 +1,25 @@
 <ng-container *ngIf="_accountSecurityDetails$ | async as accountSecurityDetails">
 	<div class="account-security">
-		<div>
-			<router-outlet></router-outlet>
+		<div [@routeAnimations]="o.isActivated && o.activatedRoute.routeConfig.path">
+			<router-outlet #o="outlet"></router-outlet>
 		</div>
 		<div [ngClass]="_routeAnimationsElements">
 			<odm-two-factor-authentication
 				[userRecoveryCodes]="accountSecurityDetails?.recoveryCodes?.items"
 				[twoFactorEnabled]="accountSecurityDetails?.twoFactorEnabled"
+				[authenticatorSetup]="_authenticatorSetup$ | async"
 				[generatingNewRecoveryCodes]="_generatingNewRecoveryCodes"
-				[codeVerificationInProgress]="_codeVerificationInProgress"
 				[loading]="_loading$ | async"
 				[twoFactorAuthToggleLoading]="_twoFactorAuthToggleLoading$ | async"
-				[verificationCodeForm]="_verificationCodeForm"
-				[authenticatorSetup]="_authenticatorSetup$ | async"
-				[authenticatorSetupResult]="_authenticatorSetupResult$ | async"
 				[problemDetails]="_problemDetails$ | async"
 				[internalServerErrorDetails]="_internalServerErrorDetails$ | async"
-				(verifyAuthenticatorClicked)="_onVerifyAuthenticatorClicked($event)"
-				(cancelSetupWizardClicked)="_onCancelSetupWizardClicked()"
-				(finish2faSetupClicked)="_onFinish2faSetupClicked($event)"
 				(generateNew2faRecoveryCodesClicked)="_onGenerateNew2faRecoveryCodesClicked()"
 				(twoFactorAuthToggleChanged)="_onTwoFactorAuthToggle($event)"
 			></odm-two-factor-authentication>
 		</div>
 		<mat-divider></mat-divider>
 		<div [ngClass]="_routeAnimationsElements">
-			<odm-change-password-container
-				(changePasswordSubmitted)="_onChangeUserPasswordSubmitted()"
-				(changePasswordClosed)="_onChangePasswordClosed()"
-				[passwordChangeCompleted]="_passwordChangeCompleted$ | async"
-				[problemDetails]="_problemDetails$ | async"
-				[internalServerErrorDetails]="_internalServerErrorDetails$ | async"
-				[confirmPasswordMatchReqMet]="_confirmPasswordMatchReqMet"
-				[changePasswordForm]="_changePasswordForm"
-				[passwordChangeInProgress]="_passwordChangeInProgress$ | async"
-			></odm-change-password-container>
+			<odm-password-settings></odm-password-settings>
 		</div>
 		<mat-divider></mat-divider>
 	</div>

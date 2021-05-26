@@ -1,6 +1,7 @@
 import { Directive, HostListener } from '@angular/core';
 import { CdkStepper } from '@angular/cdk/stepper';
 
+// TODO remove no longer in use
 /**
  * Material vertical stepper scroller directive used to bring the stepper to the top of view port.
  */

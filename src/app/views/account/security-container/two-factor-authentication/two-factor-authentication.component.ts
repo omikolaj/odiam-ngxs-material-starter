@@ -1,17 +1,13 @@
 import { Component, ChangeDetectionStrategy, Input, ViewChild, Output, EventEmitter } from '@angular/core';
 import { MatSlideToggleChange, MatSlideToggle } from '@angular/material/slide-toggle';
-import { FormGroup } from '@angular/forms';
 import { ROUTE_ANIMATIONS_ELEMENTS, downUpFadeInAnimation } from 'app/core/core.module';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
-
 import { ODM_SMALL_SPINNER_DIAMETER, ODM_SMALL_SPINNER_STROKE_WIDTH } from 'app/shared/global-settings/mat-spinner-settings';
-import { TwoFactorAuthenticationSetup } from 'app/core/models/account/security/two-factor-authentication-setup.model';
-import { TwoFactorAuthenticationSetupResult } from 'app/core/models/account/security/two-factor-authentication-setup-result.model';
-import { TwoFactorAuthenticationVerificationCode } from 'app/core/models/account/security/two-factor-authentication-verification-code.model';
-
 import { LogService } from 'app/core/logger/log.service';
 import { ODM_GLOBAL_SECURITY_SHORT_DESCRIPTION } from 'app/shared/global-settings/global-settings';
+import { ActivatedRoute, Router } from '@angular/router';
+import { TwoFactorAuthenticationSetup } from 'app/core/models/account/security/two-factor-authentication-setup.model';
 
 /**
  * Two factor authentication component responsible for handling user's 2fa settings.
@@ -80,47 +76,16 @@ export class TwoFactorAuthenticationComponent {
 		this._log.debug('authenticatorSetup emitted.', this);
 		this._authenticatorSetup = value;
 		if (value.authenticatorUri !== '' && value.sharedKey !== '') {
-			// Notifies parent that two fa setup wizard is displayed.
-			this._showTwoFactorAuthSetupWizard = true;
+			void this._router.navigate(['two-factor-authentication-setup'], { relativeTo: this._route.parent });
 		}
 	}
 
 	_authenticatorSetup: TwoFactorAuthenticationSetup;
 
 	/**
-	 * Verification code form for two factor authentication setup.
-	 */
-	@Input() verificationCodeForm: FormGroup;
-
-	/**
-	 * Authenticator setup result model.
-	 */
-	@Input() authenticatorSetupResult: TwoFactorAuthenticationSetupResult;
-
-	/**
-	 * Whether we are in the middle of a request to verify two factor authentication setup verification code.
-	 */
-	@Input() codeVerificationInProgress: boolean;
-
-	/**
 	 * Whether there is an outgoing request to generate new recovery codes.
 	 */
 	@Input() generatingNewRecoveryCodes: boolean;
-
-	/**
-	 * Event emitter when user submits verification code.
-	 */
-	@Output() verifyAuthenticatorClicked = new EventEmitter<TwoFactorAuthenticationVerificationCode>();
-
-	/**
-	 * Event emitter when user cancels out of the setup wizard.
-	 */
-	@Output() cancelSetupWizardClicked = new EventEmitter<void>();
-
-	/**
-	 * Event emitter when user finishes two factor authentication setup.
-	 */
-	@Output() finish2faSetupClicked = new EventEmitter<TwoFactorAuthenticationSetupResult>();
 
 	/**
 	 * Event emitter when user requests to generate new recovery codes.
@@ -166,7 +131,7 @@ export class TwoFactorAuthenticationComponent {
 	 * Creates an instance of two factor authentication component.
 	 * @param _log
 	 */
-	constructor(private _log: LogService) {}
+	constructor(private _log: LogService, private _router: Router, private _route: ActivatedRoute) {}
 
 	/**
 	 * Event handler when user requests to enable/disable two factor authentication.
@@ -179,41 +144,12 @@ export class TwoFactorAuthenticationComponent {
 	}
 
 	/**
-	 * Event handler when user cancels the two factor authentication setup wizard.
-	 */
-	_onCancelSetupWizardClicked(): void {
-		this._log.trace('_onCancelSetupWizard fired.', this);
-		this._showTwoFactorAuthSetupWizard = false;
-		this._clearServerErrors();
-		this.cancelSetupWizardClicked.emit();
-	}
-
-	/**
-	 * Event handler when user finishes two factor authentication setup.
-	 */
-	_onFinish2faSetupClicked(event: TwoFactorAuthenticationSetupResult): void {
-		this._log.trace('_onFinish2faSetup fired.', this);
-		this._showTwoFactorAuthSetupWizard = false;
-		this._clearServerErrors();
-		this.finish2faSetupClicked.emit(event);
-	}
-
-	/**
 	 * Event handler when user requests to generate new recovery codes.
 	 */
 	_onGenerateNew2FaRecoveryCodesClicked(): void {
 		this._log.trace('_onGenerateNew2FaRecoveryCodes fired.', this);
 		this._clearServerErrors();
 		this.generateNew2faRecoveryCodesClicked.emit();
-	}
-
-	/**
-	 * Event handler when user requests to verify authenticator code.
-	 * @param event
-	 */
-	_onVerifyAuthenticatorSubmitted(event: unknown): void {
-		this._log.trace('_onVerifyAuthenticator fired.', this);
-		this.verifyAuthenticatorClicked.emit(event as TwoFactorAuthenticationVerificationCode);
 	}
 
 	/**

@@ -51,6 +51,7 @@ export class PasswordHelpComponent implements OnInit, OnDestroy {
 	 * Toggles password help control.
 	 */
 	@Input() set togglePosition(value: PasswordResetMatTreeState) {
+		// TODO does not work in change password view. When its expanded it does not collapse
 		if (this.matTree) {
 			this._setMatTreeStateAndNotifyParent(value);
 		}

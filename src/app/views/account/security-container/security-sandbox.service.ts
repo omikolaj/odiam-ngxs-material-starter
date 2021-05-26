@@ -143,8 +143,7 @@ export class SecuritySandboxService {
 				hasAuthenticator: true,
 				recoveryCodes: model.recoveryCodes,
 				recoveryCodesLeft: model.recoveryCodes.items.length,
-				twoFactorEnabled: model.status === 'Succeeded',
-				passwordChangeCompleted: false
+				twoFactorEnabled: model.status === 'Succeeded'
 			})
 		]);
 	}

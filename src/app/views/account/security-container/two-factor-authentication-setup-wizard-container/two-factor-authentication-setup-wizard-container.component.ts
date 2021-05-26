@@ -6,9 +6,11 @@ import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { OdmValidators, VerificationCodeLength } from 'app/core/form-validators/odm-validators';
 import { SecuritySandboxService } from '../security-sandbox.service';
-import { Observable } from 'rxjs';
+import { Observable, Subscription, merge } from 'rxjs';
 import { TwoFactorAuthenticationVerificationCode } from 'app/core/models/account/security/two-factor-authentication-verification-code.model';
 import { ActivatedRoute } from '@angular/router';
+import { tap, skip } from 'rxjs/operators';
+import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
 
 /**
  * Two factor authentication setup wizard container component.
@@ -20,6 +22,11 @@ import { ActivatedRoute } from '@angular/router';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TwoFactorAuthenticationSetupWizardContainerComponent implements OnInit {
+	/**
+	 * Route animations.
+	 */
+	readonly _routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
+
 	/**
 	 * Verification code form for two factor authentication setup.
 	 */
@@ -51,6 +58,16 @@ export class TwoFactorAuthenticationSetupWizardContainerComponent implements OnI
 	_internalServerErrorDetails$: Observable<InternalServerErrorDetails>;
 
 	/**
+	 * Authenticator setup result model.
+	 */
+	authenticatorSetupResult$: Observable<TwoFactorAuthenticationSetupResult>;
+
+	/**
+	 * Rxjs subscriptions for this component.
+	 */
+	private readonly _subscription = new Subscription();
+
+	/**
 	 * Creates an instance of two factor authentication setup wizard container component.
 	 * @param _sb
 	 */
@@ -67,6 +84,7 @@ export class TwoFactorAuthenticationSetupWizardContainerComponent implements OnI
 	ngOnInit(): void {
 		this._sb.log.trace('Initialized.', this);
 		this._verificationCodeForm = this._initVerificationCodeForm();
+		this._subscription.add(this._listenForServerErrors$().subscribe());
 	}
 
 	/**
@@ -95,8 +113,21 @@ export class TwoFactorAuthenticationSetupWizardContainerComponent implements OnI
 	 */
 	_onFinish2faSetupClicked(event: TwoFactorAuthenticationSetupResult): void {
 		this._sb.log.trace('_onFinish2faSetup fired.', this);
-		this._verificationCodeForm.reset();
+		void this._sb.router.navigate(['./'], { relativeTo: this._route.parent });
 		this._sb.finish2faSetup(event);
+	}
+
+	/**
+	 * Subscribes to server errors and sets problem details and internal server error details.
+	 */
+	private _listenForServerErrors$(): Observable<ProblemDetails | InternalServerErrorDetails | TwoFactorAuthenticationSetupResult> {
+		this._sb.log.trace('_listenForServerErrors$ fired.', this);
+		return merge(
+			this._sb.problemDetails$,
+			this._sb.internalServerErrorDetails$,
+			// skip first value that emits, which is the default value.
+			this._authenticatorSetupResult$.pipe(skip(1))
+		).pipe(tap(() => (this._codeVerificationInProgress = false)));
 	}
 
 	/**

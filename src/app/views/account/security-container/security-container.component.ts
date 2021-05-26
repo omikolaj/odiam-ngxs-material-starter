@@ -1,21 +1,16 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
-import { Observable, Subscription, merge, BehaviorSubject, EMPTY } from 'rxjs';
+import { Observable, Subscription, merge, BehaviorSubject } from 'rxjs';
 import { AccountSecurityDetails } from 'app/core/models/account/security/account-security-details.model';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { skip, filter, tap } from 'rxjs/operators';
-import { FormGroup } from '@angular/forms';
-import { OdmValidators, MinPasswordLength } from 'app/core/form-validators/odm-validators';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
-import { upDownFadeInAnimation, ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
+import { ROUTE_ANIMATIONS_ELEMENTS, routeAnimations } from 'app/core/core.module';
 import { ActionCompletion } from '@ngxs/store';
-import { TwoFactorAuthenticationSetupResult } from 'app/core/models/account/security/two-factor-authentication-setup-result.model';
-import { TwoFactorAuthenticationSetup } from 'app/core/models/account/security/two-factor-authentication-setup.model';
-import { TwoFactorAuthenticationVerificationCode } from 'app/core/models/account/security/two-factor-authentication-verification-code.model';
-import { PasswordChange } from 'app/core/models/auth/password-change.model';
-import { ActivatedRoute, Router } from '@angular/router';
+
 import { SecuritySandboxService } from './security-sandbox.service';
+import { TwoFactorAuthenticationSetup } from 'app/core/models/account/security/two-factor-authentication-setup.model';
 
 /**
  * Security component container that houses user security functionality.
@@ -24,7 +19,7 @@ import { SecuritySandboxService } from './security-sandbox.service';
 	selector: 'odm-security-container',
 	templateUrl: './security-container.component.html',
 	styleUrls: ['./security-container.component.scss'],
-	animations: [upDownFadeInAnimation],
+	animations: [routeAnimations],
 	changeDetection: ChangeDetectionStrategy.Default
 })
 export class SecurityContainerComponent implements OnInit {
@@ -49,59 +44,14 @@ export class SecurityContainerComponent implements OnInit {
 	_internalServerErrorDetails$: Observable<InternalServerErrorDetails>;
 
 	/**
-	 * Authenticator setup result model.
-	 */
-	_authenticatorSetupResult$: Observable<TwoFactorAuthenticationSetupResult>;
-
-	/**
 	 * Two factor authenticator setup.
 	 */
 	_authenticatorSetup$: Observable<TwoFactorAuthenticationSetup>;
 
 	/**
-	 * Change password form.
-	 */
-	_changePasswordForm: FormGroup;
-
-	/**
-	 * Verification code form for two factor authentication setup.
-	 */
-	_verificationCodeForm: FormGroup;
-
-	/**
-	 * Whether we are in the middle of a request to verify two factor authentication setup verification code.
-	 */
-	_codeVerificationInProgress: boolean;
-
-	/**
 	 * Whether there is an outgoing request to generate new recovery codes.
 	 */
 	_generatingNewRecoveryCodes: boolean;
-
-	/**
-	 * Whether there is an outgoing request to enable/disable two factor authentication.
-	 */
-	_twoFactorAuthToggleLoading: boolean;
-
-	/**
-	 * Whether password change has completed without errors.
-	 */
-	_passwordChangeCompleted$: Observable<boolean>;
-
-	/**
-	 * Requires user to enter the same password for confirm password field.
-	 */
-	_confirmPasswordMatchReqMet = false;
-
-	/**
-	 * Password change in progress loading subject.
-	 */
-	private readonly _passwordChangeInProgressSub = new BehaviorSubject<boolean>(false);
-
-	/**
-	 * Whether user is in process of updating their password.
-	 */
-	_passwordChangeInProgress$ = this._passwordChangeInProgressSub.asObservable();
 
 	/**
 	 * Loading subject. Required for angular OnPush change detection to be triggered.
@@ -132,13 +82,12 @@ export class SecurityContainerComponent implements OnInit {
 	 * Creates an instance of security container component.
 	 * @param _sb
 	 */
-	constructor(private _sb: SecuritySandboxService, private _router: Router, private _route: ActivatedRoute) {
+	constructor(private _sb: SecuritySandboxService) {
 		this._accountSecurityDetails$ = _sb.accountSecurityDetails$;
+		// required to listen for TwoFactorAuthenticationSetup when it emits
 		this._authenticatorSetup$ = _sb.twoFactorAuthenticationSetup$;
-		this._authenticatorSetupResult$ = _sb.twoFactorAuthenticationSetupResult$;
 		this._problemDetails$ = _sb.problemDetails$;
 		this._internalServerErrorDetails$ = _sb.internalServerErrorDetails$;
-		this._passwordChangeCompleted$ = _sb.passwordChangeCompleted$;
 	}
 
 	/**
@@ -150,11 +99,8 @@ export class SecurityContainerComponent implements OnInit {
 		this._loadingSub.next(true);
 		// fetches account security info.
 		this._sb.getAccountSecurityInfo();
-		this._authenticatorSetup$.pipe();
 		// subscribes to security container component. Used to handle loading flags.
 		this._subscription.add(this._listenToSecurityEvents$().subscribe());
-		// initializes forms for Security container component.
-		this._initForms();
 	}
 
 	/**
@@ -168,40 +114,10 @@ export class SecurityContainerComponent implements OnInit {
 		if (event.checked) {
 			this._sb.log.debug('_onTwoFactorAuthToggle: enter 2fa setup.', this);
 			this._sb.setupAuthenticator();
-			void this._router.navigate(['two-factor-authentication-setup'], { relativeTo: this._route.parent });
 		} else {
 			this._sb.log.debug('_onTwoFactorAuthToggle: disable 2fa.', this);
 			this._sb.disable2Fa();
 		}
-	}
-
-	/**
-	 * Event handler when user requests to verify authenticator code.
-	 * @param event
-	 */
-	_onVerifyAuthenticatorClicked(event: TwoFactorAuthenticationVerificationCode): void {
-		this._sb.log.trace('_onVerifyAuthenticator fired.', this);
-		this._codeVerificationInProgress = true;
-		this._sb.verifyAuthenticator(event);
-	}
-
-	/**
-	 * Event handler when user cancels the two factor authentication setup wizard.
-	 * This is also emitted when two factor authentication setup wizard's ngOnDestroy life cycle is called.
-	 */
-	_onCancelSetupWizardClicked(): void {
-		this._sb.log.trace('_onCancelSetupWizard fired.', this);
-		this._verificationCodeForm.reset();
-		this._sb.cancel2faSetupWizard();
-	}
-
-	/**
-	 * Event handler when user finishes two factor authentication setup.
-	 */
-	_onFinish2faSetupClicked(event: TwoFactorAuthenticationSetupResult): void {
-		this._sb.log.trace('_onFinish2faSetup fired.', this);
-		this._verificationCodeForm.reset();
-		this._sb.finish2faSetup(event);
 	}
 
 	/**
@@ -214,82 +130,16 @@ export class SecurityContainerComponent implements OnInit {
 	}
 
 	/**
-	 * Fired when user submits form to change password.
-	 * @param model
-	 */
-	_onChangeUserPasswordSubmitted(): void {
-		this._sb.log.trace('_onChangeUserPasswordSubmitted fired.', this);
-		this._passwordChangeInProgressSub.next(true);
-		const model = this._changePasswordForm.value as PasswordChange;
-		this._sb.changePassword(model);
-	}
-
-	/**
-	 * Fired when user change password view is closed.
-	 */
-	_onChangePasswordClosed(): void {
-		this._sb.log.trace('_onChangePasswordClosed fired.', this);
-		this._changePasswordForm.reset();
-		this._clearServerErrors();
-	}
-
-	/**
-	 * Clears server errors.
-	 */
-	private _clearServerErrors(): void {
-		this._problemDetails$ = EMPTY;
-		this._internalServerErrorDetails$ = EMPTY;
-		setTimeout(() => {
-			this._problemDetails$ = this._sb.problemDetails$;
-		});
-	}
-
-	/**
-	 * Initializes forms for Security component container.
-	 */
-	private _initForms(): void {
-		// this._verificationCodeForm = this._initVerificationCodeForm();
-		this._changePasswordForm = this._initChangePasswordForm();
-		// subscribe to confirm password control to check if passwords match.
-		this._subscription.add(this._validateFormConfirmPasswordField$().subscribe());
-	}
-
-	/**
-	 * Validates form confirm password field.
-	 * @param form
-	 * @returns form confirm password field
-	 */
-	private _validateFormConfirmPasswordField$(): Observable<any> {
-		return this._changePasswordForm.valueChanges.pipe(
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			tap((_) => {
-				if (this._changePasswordForm.hasError('notSame')) {
-					this._confirmPasswordMatchReqMet = false;
-				} else {
-					this._confirmPasswordMatchReqMet = true;
-				}
-			})
-		);
-	}
-
-	/**
 	 * Listens to security events.
 	 * @returns to security events
 	 */
 	private _listenToSecurityEvents$(): Observable<
-		| AccountSecurityDetails
-		| TwoFactorAuthenticationSetupResult
-		| ActionCompletion<any, Error>
-		| TwoFactorAuthenticationSetup
-		| ProblemDetails
-		| InternalServerErrorDetails
+		AccountSecurityDetails | ActionCompletion<any, Error> | ProblemDetails | InternalServerErrorDetails | TwoFactorAuthenticationSetup
 	> {
 		this._sb.log.trace('_listenToSecurityEvents executed.', this);
 		return merge(
 			// skip first value that emits, which is the default value.
 			this._accountSecurityDetails$.pipe(skip(1)),
-			// skip first value that emits, which is the default value.
-			this._authenticatorSetupResult$.pipe(skip(1)),
 			this._sb.onCompletedUpdateRecoveryCodesAction$,
 			// skip first value that emits, which is the default value.
 			this._authenticatorSetup$.pipe(skip(1)),
@@ -301,64 +151,13 @@ export class SecurityContainerComponent implements OnInit {
 			filter((value) => value !== undefined),
 			// set the _verfyingCode property to false if any of the above observables emit
 			tap(() => {
-				// manual subject is NOT necessary because when codeVerificationInProgress changes to false, twoFactorAuthenticationSetupResult$ emits.
-				this._codeVerificationInProgress = false;
 				// manual subject is NOT necessary because when _generatingNewRecoveryCodes changes to false, onCompletedUpdateRecoveryCodesAction$ emits.
 				this._generatingNewRecoveryCodes = false;
 				// manual subject is necessary because when twoFactoAuthToggle changes nothing else emits so OnPush change detection is not triggered.
 				this._twoFactorAuthToggleLoadingSub.next(false);
 				// manual subject is necessary because when loading changes nothing else emits so OnPush change detection is not triggered.
 				this._loadingSub.next(false);
-				// manual subject is necessary because OnPush change detection is not triggered when simple value changes.
-				this._passwordChangeInProgressSub.next(false);
 			})
-		);
-	}
-
-	// /**
-	//  * Initializes verification code form.
-	//  */
-	// private _initVerificationCodeForm(): FormGroup {
-	// 	return this._sb.fb.group({
-	// 		code: this._sb.fb.control(
-	// 			{ value: '', disabled: true },
-	// 			{
-	// 				validators: [OdmValidators.required, OdmValidators.minLength(VerificationCodeLength), OdmValidators.maxLength(VerificationCodeLength)],
-	// 				updateOn: 'change'
-	// 			}
-	// 		)
-	// 	});
-	// }
-
-	/**
-	 * Creates FormGroup for change password form.
-	 * @returns change password form
-	 */
-	private _initChangePasswordForm(): FormGroup {
-		return this._sb.fb.group(
-			{
-				currentPassword: this._sb.fb.control('', {
-					validators: [OdmValidators.required],
-					updateOn: 'change'
-				}),
-				password: this._sb.fb.control('', {
-					validators: [
-						OdmValidators.required,
-						OdmValidators.minLength(MinPasswordLength),
-						OdmValidators.requireDigit,
-						OdmValidators.requireLowercase,
-						OdmValidators.requireUppercase,
-						OdmValidators.requireNonAlphanumeric,
-						OdmValidators.requireThreeUniqueCharacters
-					],
-					updateOn: 'change'
-				}),
-				confirmPassword: this._sb.fb.control('', OdmValidators.required)
-			},
-			{
-				validators: OdmValidators.requireConfirmPassword,
-				updateOn: 'change'
-			}
 		);
 	}
 }

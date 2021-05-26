@@ -2,13 +2,13 @@ import { Component, ChangeDetectionStrategy, Output, EventEmitter, Input, Change
 import { FormGroup, AbstractControl } from '@angular/forms';
 import { LogService } from 'app/core/logger/log.service';
 import { AuthBase } from 'app/views/auth/auth-base';
-
 import { TranslateValidationErrorsService } from 'app/shared/services/translate-validation-errors.service';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { PasswordRequirement } from 'app/core/models/auth/password-requirement.model';
 import { PasswordHelpToggleClass } from 'app/core/models/auth/password-help-toggle-class.model';
 import { ODM_SMALL_SPINNER_DIAMETER, ODM_SMALL_SPINNER_STROKE_WIDTH } from 'app/shared/global-settings/mat-spinner-settings';
+import { PasswordResetMatTreeState } from 'app/core/models/password-reset-mat-tree-state.model';
 
 /**
  * Change user password component.
@@ -66,6 +66,11 @@ export class ChangePasswordComponent extends AuthBase {
 	 * Whether there currently is a request to change user's password.
 	 */
 	@Input() passwordChangeInProgress: boolean;
+
+	/**
+	 * Password help toggle position.
+	 */
+	@Input() passwordHelpTogglePosition: PasswordResetMatTreeState;
 
 	/**
 	 * Emitted when user tries to change their password.

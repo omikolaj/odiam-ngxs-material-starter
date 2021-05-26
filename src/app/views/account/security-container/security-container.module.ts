@@ -14,6 +14,7 @@ import { AccountSecurityState } from './security-container.store.state';
 import { TwoFactorAuthenticationState } from './two-factor-authentication/two-factor-authentication.store.state';
 import { SecuritySandboxService } from './security-sandbox.service';
 import { TwoFactorAuthenticationSetupWizardContainerComponent } from './two-factor-authentication-setup-wizard-container/two-factor-authentication-setup-wizard-container.component';
+import { PasswordSettingsComponent } from './password-settings/password-settings.component';
 
 @NgModule({
 	declarations: [
@@ -23,7 +24,8 @@ import { TwoFactorAuthenticationSetupWizardContainerComponent } from './two-fact
 		TwoFactorAuthenticationComponent,
 		TwoFactorAuthenticationCodesComponent,
 		TwoFactorAuthenticationSetupWizardComponent,
-		TwoFactorAuthenticationSetupWizardContainerComponent
+		TwoFactorAuthenticationSetupWizardContainerComponent,
+		PasswordSettingsComponent
 	],
 	imports: [
 		CommonModule,

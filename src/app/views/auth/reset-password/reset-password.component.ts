@@ -106,7 +106,7 @@ export class ResetPasswordComponent extends AuthBase implements OnInit, OnDestro
 	/**
 	 * Whether password help dialog is expanded or collapsed.
 	 */
-	private _togglePositionSub = new Subject<PasswordResetMatTreeState>();
+	private readonly _togglePositionSub = new Subject<PasswordResetMatTreeState>();
 
 	/**
 	 * Whether password help dialog is expanded or collapsed.
@@ -138,7 +138,7 @@ export class ResetPasswordComponent extends AuthBase implements OnInit, OnDestro
 		this._passwordRequirements = this._initPasswordRequirements();
 		this._passwordControl = this._resetPasswordForm.get('password');
 		this._subscription.add(this._validateFormConfirmPasswordField(this._resetPasswordForm).subscribe());
-		this._listenForServerErrors();
+		this._subscription.add(this._listenForServerErrors$().subscribe());
 	}
 
 	/**
@@ -185,23 +185,19 @@ export class ResetPasswordComponent extends AuthBase implements OnInit, OnDestro
 	/**
 	 * Subscribes to server errors and sets problem details and internal server error details.
 	 */
-	private _listenForServerErrors(): void {
-		this._subscription.add(
-			merge(this._sb.problemDetails$, this._sb.internalServerErrorDetails$)
-				.pipe(
-					tap((value) => {
-						if ('message' in value) {
-							this.internalServerErrorDetails = value;
-						} else {
-							this.problemDetails = value;
-						}
-						this._sb.log.debug(`Changing _togglePosition to 'collapsed'`);
-						this._togglePositionSub.next('collapsed');
-						this._passwordResetInProgress = false;
-						this.cd.detectChanges();
-					})
-				)
-				.subscribe()
+	private _listenForServerErrors$(): Observable<ProblemDetails | InternalServerErrorDetails> {
+		return merge(this._sb.problemDetails$, this._sb.internalServerErrorDetails$).pipe(
+			tap((value) => {
+				if ('message' in value) {
+					this.internalServerErrorDetails = value;
+				} else {
+					this.problemDetails = value;
+				}
+				this._sb.log.debug(`Changing _togglePosition to 'collapsed'`);
+				this._togglePositionSub.next('collapsed');
+				this._passwordResetInProgress = false;
+				this.cd.detectChanges();
+			})
 		);
 	}
 

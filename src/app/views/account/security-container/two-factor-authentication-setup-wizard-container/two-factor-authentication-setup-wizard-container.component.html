@@ -1,4 +1,4 @@
-<div>
+<div [ngClass]="_routeAnimationsElements">
 	<odm-two-factor-authentication-setup-wizard
 		[verificationCodeForm]="_verificationCodeForm"
 		[twoFactorAuthenticationSetupResult]="_authenticatorSetupResult$ | async"

@@ -1,10 +1,8 @@
 import { NgModule } from '@angular/core';
 import { SecurityContainerComponent } from './security-container.component';
-
 import { Routes, RouterModule } from '@angular/router';
-
-import { ChangePasswordComponent } from './change-password/change-password.component';
 import { TwoFactorAuthenticationSetupWizardContainerComponent } from './two-factor-authentication-setup-wizard-container/two-factor-authentication-setup-wizard-container.component';
+import { ChangePasswordContainerComponent } from './change-password-container/change-password-container.component';
 
 const routes: Routes = [
 	{
@@ -17,7 +15,7 @@ const routes: Routes = [
 			},
 			{
 				path: 'change-password',
-				component: ChangePasswordComponent
+				component: ChangePasswordContainerComponent
 			}
 		]
 	}

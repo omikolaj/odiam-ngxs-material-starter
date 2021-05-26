@@ -87,9 +87,9 @@ export class GeneralContainerComponent implements OnInit, OnDestroy {
 	 */
 	ngOnInit(): void {
 		this._log.trace('Initialized.', this);
-		this._accountGeneralDetails$.subscribe((v) => {
-			console.log('details', v);
-		});
+		// this._accountGeneralDetails$.subscribe((v) => {
+		// 	console.log('details', v);
+		// });
 
 		this._loadingSub.next(true);
 		this._sb.getAccountGeneralInfo();
