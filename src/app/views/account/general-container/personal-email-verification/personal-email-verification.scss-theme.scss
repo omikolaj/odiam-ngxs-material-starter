@@ -1,6 +1,6 @@
 @import '~@angular/material/theming';
 
-@mixin odm-personal-email-component-theme($theme) {
+@mixin odm-personal-email-verification-component-theme($theme) {
 	$warn: map-get($theme, warn);
 	$foreground: map-get($theme, foreground);
 	$is-dark-theme: map-get($theme, is-dark);

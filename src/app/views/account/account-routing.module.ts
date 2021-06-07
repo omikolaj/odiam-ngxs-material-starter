@@ -6,6 +6,7 @@ import { SecurityContainerComponent } from './security-container/security-contai
 import { ChangePasswordContainerComponent } from './security-container/change-password-container/change-password-container.component';
 import { GeneralContainerComponent } from './general-container/general-container.component';
 import { TwoFactorAuthenticationSetupWizardContainerComponent } from './security-container/two-factor-authentication-setup-wizard-container/two-factor-authentication-setup-wizard-container.component';
+import { ChangeEmailContainerComponent } from './general-container/change-email-container/change-email-container.component';
 
 const routes: Routes = [
 	{
@@ -22,6 +23,10 @@ const routes: Routes = [
 			{
 				path: 'general',
 				component: GeneralContainerComponent
+			},
+			{
+				path: 'general/change-email',
+				component: ChangeEmailContainerComponent
 			},
 			{
 				path: 'security',

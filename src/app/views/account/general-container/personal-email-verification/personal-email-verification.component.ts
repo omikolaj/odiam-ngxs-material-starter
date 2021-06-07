@@ -6,13 +6,13 @@ import { ROUTE_ANIMATIONS_ELEMENTS, downUpFadeInAnimation } from 'app/core/core.
  * User's personal email component.
  */
 @Component({
-	selector: 'odm-personal-email',
-	templateUrl: './personal-email.component.html',
-	styleUrls: ['./personal-email.component.scss'],
+	selector: 'odm-personal-email-verification',
+	templateUrl: './personal-email-verification.component.html',
+	styleUrls: ['./personal-email-verification.component.scss'],
 	animations: [downUpFadeInAnimation],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PersonalEmailComponent {
+export class PersonalEmailVerificationComponent {
 	/**
 	 * Route animations.
 	 */

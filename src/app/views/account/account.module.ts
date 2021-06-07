@@ -12,13 +12,16 @@ import { TwoFactorAuthenticationComponent } from './security-container/two-facto
 import { TwoFactorAuthenticationCodesComponent } from './security-container/two-factor-authentication-codes/two-factor-authentication-codes.component';
 import { TwoFactorAuthenticationSetupWizardComponent } from './security-container/two-factor-authentication-setup-wizard/two-factor-authentication-setup-wizard.component';
 import { QRCodeModule } from 'angularx-qrcode';
-import { PersonalEmailComponent } from './general-container/personal-email/personal-email.component';
+import { PersonalEmailVerificationComponent } from './general-container/personal-email-verification/personal-email-verification.component';
 import { AccountGeneralState } from './general-container/general-container.store.state';
 import { TwoFactorAuthenticationState } from './security-container/two-factor-authentication/two-factor-authentication.store.state';
 import { PasswordSettingsComponent } from './security-container/password-settings/password-settings.component';
 import { GeneralContainerComponent } from './general-container/general-container.component';
 import { TwoFactorAuthenticationSetupWizardContainerComponent } from './security-container/two-factor-authentication-setup-wizard-container/two-factor-authentication-setup-wizard-container.component';
 import { AccountSandboxService } from './account-sandbox.service';
+import { EmailSettingsComponent } from './general-container/email-settings/email-settings.component';
+import { ChangeEmailContainerComponent } from './general-container/change-email-container/change-email-container.component';
+import { ChangeEmailComponent } from './general-container/change-email/change-email.component';
 
 /**
  * User account module.
@@ -27,7 +30,7 @@ import { AccountSandboxService } from './account-sandbox.service';
 	declarations: [
 		AccountComponent,
 		GeneralContainerComponent,
-		PersonalEmailComponent,
+		PersonalEmailVerificationComponent,
 		SecurityContainerComponent,
 		TwoFactorAuthenticationComponent,
 		TwoFactorAuthenticationCodesComponent,
@@ -35,7 +38,10 @@ import { AccountSandboxService } from './account-sandbox.service';
 		TwoFactorAuthenticationSetupWizardComponent,
 		PasswordSettingsComponent,
 		ChangePasswordContainerComponent,
-		ChangePasswordComponent
+		ChangePasswordComponent,
+		EmailSettingsComponent,
+		ChangeEmailContainerComponent,
+		ChangeEmailComponent
 	],
 	imports: [
 		CommonModule,

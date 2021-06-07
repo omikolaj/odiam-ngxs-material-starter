@@ -1,0 +1,44 @@
+:host {
+	width: 100%;
+}
+
+.email-settings__spacer {
+	width: 400px;
+	height: 58px;
+}
+
+.email-settings {
+	width: 100%;
+	overflow: hidden;
+
+	.email-settings__short-description {
+		display: flex;
+		font-size: var(--short-description);
+	}
+
+	.email-settings__ghost-loading-state {
+		height: 56px;
+		padding: 8px 0;
+	}
+
+	.email-settings__email-verification {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin: 8px;
+	}
+
+	.email-settings__change-email {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin: 8px;
+	}
+
+	// .email-settings__state {
+	// 	display: flex;
+	// 	align-items: center;
+	// 	justify-content: space-between;
+	// 	margin: 8px;
+	// }
+}

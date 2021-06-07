@@ -1,0 +1,11 @@
+<div class="change-email-overlay"></div>
+<div>
+	<odm-change-email
+		[changeEmailForm]="_changeEmailForm"
+		[emailChangeInProgress]="_emailChangeInProgress"
+		[problemDetails]="_problemDetails$ | async"
+		[internalServerErrorDetails]="_internalServerErrorDetails$ | async"
+		(changeEmailSubmitted)="_onChangeEmailSubmitted()"
+		(cancelClicked)="_onCancelClicked()"
+	></odm-change-email>
+</div>

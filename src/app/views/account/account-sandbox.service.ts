@@ -27,6 +27,7 @@ import { NotificationService } from 'app/core/core.module';
 import { TranslateService } from '@ngx-translate/core';
 import { PasswordChange } from 'app/core/models/auth/password-change.model';
 import { Router } from '@angular/router';
+import { EmailChange } from 'app/core/models/account/general/email-change.model';
 
 /**
  * Account sandbox service.
@@ -59,6 +60,11 @@ export class AccountSandboxService {
 	 * Select users general details.
 	 */
 	@Select(AccountGeneralState.selectAccountGeneralDetails) accountGeneralDetails$: Observable<AccountGeneralDetails>;
+
+	/**
+	 * Whether user's email change request completed successfully.
+	 */
+	@Select(AccountGeneralState.selectEmailChangeCompleted) emailChangeCompleted$: Observable<boolean>;
 
 	/**
 	 * Selects account security details.
@@ -229,4 +235,10 @@ export class AccountSandboxService {
 	passwordChangeCompleted(value: { passwordChangeCompleted: boolean }): void {
 		this._store.dispatch(new SecurityContainer.PasswordChangeCompleted(value));
 	}
+
+	/**
+	 * Changes user's email.
+	 * @param model
+	 */
+	changeEmail(model: EmailChange): void {}
 }

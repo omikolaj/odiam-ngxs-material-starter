@@ -65,11 +65,6 @@ export class ChangePasswordContainerComponent implements OnInit, OnDestroy {
 	_passwordHelpToggleClass: PasswordHelpToggleClass = 'auth__password-field-help-off';
 
 	/**
-	 * Short description font size.
-	 */
-	readonly _shortDescription = ODM_GLOBAL_SECURITY_SHORT_DESCRIPTION;
-
-	/**
 	 * Whether password help dialog is expanded or collapsed.
 	 */
 	private _passwordHelpTogglePositionSub = new Subject<PasswordResetMatTreeState>();
@@ -126,7 +121,7 @@ export class ChangePasswordContainerComponent implements OnInit, OnDestroy {
 	}
 
 	/**
-	 * Event handler for when user cancels out of the password Change view.
+	 * Event handler for when user cancels out of the password change view.
 	 */
 	_onCancelClicked(): void {
 		this._sb.log.trace('_onCancelClicked fired.', this);

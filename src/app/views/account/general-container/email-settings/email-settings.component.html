@@ -1,0 +1,18 @@
+<div>
+	<div class="email-settings">
+		<h3 @downUpFadeIn>{{ 'odm.account.general.email.title' | translate }}</h3>
+		<div @downUpFadeIn>
+			<div class="email-settings__email-verification">
+				<odm-personal-email-verification [email]="email" [verified]="verified"> </odm-personal-email-verification>
+			</div>
+			<div class="email-settings__change-email">
+				<div [style.--short-description]="_shortDescription" class="email-settings__short-description">
+					<span>{{ 'odm.account.general.email.description' | translate }}</span>
+				</div>
+				<div class="email-settings__change">
+					<button mat-button (click)="_onChangeEmailClicked()">{{ 'odm.buttons.change' | translate }}</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

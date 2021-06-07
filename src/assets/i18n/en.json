@@ -13,7 +13,14 @@
 				"pending-verification-tooltip": "Verification pending",
 				"resend-verification": "Resend verification",
 				"resend-verification-toast": "Verification email has been resent",
-				"resend-verification-disabled-tooltip": "Please allow few mintues to receive email verification."
+				"resend-verification-disabled-tooltip": "Please allow few mintues to receive email verification.",
+				"email": {
+					"title": "E-mail",
+					"description": "Change email associated with your account",
+					"change": {
+						"title": "Change email"
+					}
+				}
 			},
 			"security": {
 				"title": "Security",
@@ -101,6 +108,7 @@
 					"password": "Password",
 					"current-password": "Current Password",
 					"new-password": "New Password",
+					"new-email": "New E-mail",
 					"confirm-password": "Confirm Password"
 				},
 				"placeholders": {
@@ -198,7 +206,7 @@
 		},
 		"buttons": {
 			"reset-password": "Reset Password",
-			"change-password": "Change",
+			"change": "Change",
 			"go-to-sign-in": "Go to Sign in",
 			"submit": "Submit",
 			"sign-up": "Sign up",

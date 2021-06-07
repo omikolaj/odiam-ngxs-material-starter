@@ -1,16 +1,20 @@
 <ng-container *ngIf="_accountGeneralDetails$ | async as accountGeneralDetails">
 	<div class="account-general">
-		<div class="account-general__personal-email" [ngClass]="_routeAnimationsElements">
-			<div [style.--general-padding-list-item]="_paddingValue" class="account-general__spacer-top"></div>
-			<odm-personal-email
+		<!-- <div class="account-general__personal-email" [ngClass]="_routeAnimationsElements"> -->
+		<!-- <div [style.--general-padding-list-item]="_paddingValue" class="account-general__spacer-top"></div> -->
+		<!-- <odm-personal-email
 				[email]="accountGeneralDetails?.email"
 				[verified]="accountGeneralDetails?.verified"
 				[disableResendVerification]="_disableResendVerification$ | async"
 				[loading]="_loading$ | async"
 				(resendEmailVerificationClicked)="_onResendEmailVerificationClicked()"
 			>
-			</odm-personal-email>
-			<div [style.--general-padding-list-item]="_paddingValue" class="account-general__spacer-bottom"></div>
+			</odm-personal-email> -->
+		<!-- <mat-divider></mat-divider> -->
+		<!-- <div [style.--general-padding-list-item]="_paddingValue" class="account-general__spacer-bottom"></div> -->
+		<!-- </div> -->
+		<div class="account-general__email-settings" [ngClass]="_routeAnimationsElements">
+			<odm-email-settings [email]="accountGeneralDetails?.email" [verified]="accountGeneralDetails?.verified"></odm-email-settings>
 		</div>
 		<mat-divider></mat-divider>
 		<div class="account-general__error">

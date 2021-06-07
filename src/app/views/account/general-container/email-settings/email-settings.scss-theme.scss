@@ -1,0 +1,12 @@
+@import '~@angular/material/theming';
+
+@mixin odm-email-settings-component-theme($theme) {
+	$foreground: map-get($theme, foreground);
+	$is-dark-theme: map-get($theme, is-dark);
+
+	.email-settings__short-description {
+		span {
+			color: mat-color($foreground, secondary-text, if($is-dark-theme, 0.7, 0.6));
+		}
+	}
+}

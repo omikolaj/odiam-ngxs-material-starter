@@ -11,4 +11,9 @@ export interface AccountGeneralDetails {
 	 * Whether user's email is verified or not.
 	 */
 	verified: boolean;
+
+	/**
+	 * Whether user's email change request completed without errors.
+	 */
+	emailChangeCompleted: boolean;
 }
