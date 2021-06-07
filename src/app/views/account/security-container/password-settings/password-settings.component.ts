@@ -1,8 +1,8 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { SecuritySandboxService } from '../security-sandbox.service';
 import { ActivatedRoute } from '@angular/router';
 import { ODM_GLOBAL_SECURITY_SHORT_DESCRIPTION } from 'app/shared/global-settings/global-settings';
 import { downUpFadeInAnimation } from 'app/core/core.module';
+import { AccountSandboxService } from '../../account-sandbox.service';
 
 /**
  * Password settings security container component.
@@ -26,13 +26,13 @@ export class PasswordSettingsComponent {
 	 * @param _route
 	 * @param _log
 	 */
-	constructor(private _sb: SecuritySandboxService, private _route: ActivatedRoute) {}
+	constructor(private _sb: AccountSandboxService, private _route: ActivatedRoute) {}
 
 	/**
 	 * Event handler when user clicks to launch the change password view.
 	 */
 	_onChangePasswordClicked(): void {
 		this._sb.log.trace('_onChangePasswordClicked fired.', this);
-		void this._sb.router.navigate(['change-password'], { relativeTo: this._route.parent });
+		void this._sb.router.navigate(['security/change-password'], { relativeTo: this._route.parent });
 	}
 }

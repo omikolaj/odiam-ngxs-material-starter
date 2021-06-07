@@ -1,4 +1,5 @@
-<div [ngClass]="_routeAnimationsElements">
+<div class="setup-wizard-overlay"></div>
+<div>
 	<odm-two-factor-authentication-setup-wizard
 		[verificationCodeForm]="_verificationCodeForm"
 		[twoFactorAuthenticationSetupResult]="_authenticatorSetupResult$ | async"

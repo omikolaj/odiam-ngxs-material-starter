@@ -76,7 +76,7 @@ export class TwoFactorAuthenticationComponent {
 		this._log.debug('authenticatorSetup emitted.', this);
 		this._authenticatorSetup = value;
 		if (value.authenticatorUri !== '' && value.sharedKey !== '') {
-			void this._router.navigate(['two-factor-authentication-setup'], { relativeTo: this._route.parent });
+			void this._router.navigate(['security/two-factor-authentication-setup'], { relativeTo: this._route.parent });
 		}
 	}
 

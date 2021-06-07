@@ -7,13 +7,12 @@ import { getPasswordRequirements } from 'app/core/utilities/password-requirement
 import { FormGroup } from '@angular/forms';
 import { ODM_GLOBAL_SECURITY_SHORT_DESCRIPTION } from 'app/shared/global-settings/global-settings';
 import { ActivatedRoute } from '@angular/router';
-import { SecuritySandboxService } from '../security-sandbox.service';
 import { Observable, Subscription, merge, Subject } from 'rxjs';
 import { OdmValidators, MinPasswordLength } from 'app/core/form-validators/odm-validators';
 import { tap, skip } from 'rxjs/operators';
 import { PasswordChange } from 'app/core/models/auth/password-change.model';
 import { PasswordResetMatTreeState } from 'app/core/models/password-reset-mat-tree-state.model';
-import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
+import { AccountSandboxService } from '../../account-sandbox.service';
 
 /**
  * Change user password container component.
@@ -25,11 +24,6 @@ import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ChangePasswordContainerComponent implements OnInit, OnDestroy {
-	/**
-	 * Route animations.
-	 */
-	readonly _routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
-
 	/**
 	 * Emitted when server responds with 40X error.
 	 */
@@ -94,7 +88,7 @@ export class ChangePasswordContainerComponent implements OnInit, OnDestroy {
 	 * Creates an instance of change password container component.
 	 * @param _log
 	 */
-	constructor(private _sb: SecuritySandboxService, private _route: ActivatedRoute) {
+	constructor(private _sb: AccountSandboxService, private _route: ActivatedRoute) {
 		this._problemDetails$ = _sb.problemDetails$;
 		this._internalServerErrorDetails$ = _sb.internalServerErrorDetails$;
 		this._passwordChangeCompleted$ = _sb.passwordChangeCompleted$;
@@ -136,7 +130,7 @@ export class ChangePasswordContainerComponent implements OnInit, OnDestroy {
 	 */
 	_onCancelClicked(): void {
 		this._sb.log.trace('_onCancelClicked fired.', this);
-		void this._sb.router.navigate(['./'], { relativeTo: this._route.parent });
+		void this._sb.router.navigate(['security'], { relativeTo: this._route.parent });
 	}
 
 	/**
@@ -158,10 +152,12 @@ export class ChangePasswordContainerComponent implements OnInit, OnDestroy {
 	private _onPasswordChangeCompleted$(): Observable<boolean> {
 		this._sb.log.trace('_onPasswordChangeCompleted$ fired.', this);
 		return this._passwordChangeCompleted$.pipe(
+			tap((value) => console.log('emitting from password change completed', value)),
 			// skip the first emission. Default is false. Once user successfully updates password, closes the dialog and attempts to
 			// reopen it, they will be re-directed to account/security because passwordChangeCompleted already emitted true.
 			skip(1),
-			tap((result) => (result ? void this._sb.router.navigate(['./'], { relativeTo: this._route.parent }) : null))
+			tap((result) => (result ? void this._sb.router.navigate(['security'], { relativeTo: this._route.parent }) : null)),
+			tap(() => this._sb.passwordChangeCompleted({ passwordChangeCompleted: false }))
 		);
 	}
 
@@ -213,6 +209,7 @@ export class ChangePasswordContainerComponent implements OnInit, OnDestroy {
 		this._sb.log.trace('_initChangePasswordForm fired.', this);
 		return this._sb.fb.group(
 			{
+				email: this._sb.fb.control(''),
 				currentPassword: this._sb.fb.control('', {
 					validators: [OdmValidators.required],
 					updateOn: 'change'

@@ -25,7 +25,6 @@ export class ChangePasswordComponent extends AuthBase {
 	 */
 	@Input() set problemDetails(value: ProblemDetails) {
 		this.log.debug('Problem details emitted.', this);
-		// this._changingPassword = false;
 		this.problemDetailsError = value;
 	}
 
@@ -34,7 +33,6 @@ export class ChangePasswordComponent extends AuthBase {
 	 */
 	@Input() set internalServerErrorDetails(value: InternalServerErrorDetails) {
 		this.log.debug('Internal server error emitted.', this);
-		// this._changingPassword = false;
 		this.internalServerError = value;
 	}
 
@@ -141,7 +139,6 @@ export class ChangePasswordComponent extends AuthBase {
 	 */
 	_onChangePassword(): void {
 		this.log.trace('_onChangePassword fired.', this);
-		// this._changingPassword = true;
 		this.changePasswordSubmitted.emit();
 	}
 

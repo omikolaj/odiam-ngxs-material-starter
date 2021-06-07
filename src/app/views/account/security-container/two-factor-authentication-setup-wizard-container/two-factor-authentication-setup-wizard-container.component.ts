@@ -5,12 +5,11 @@ import { TwoFactorAuthenticationSetup } from 'app/core/models/account/security/t
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { OdmValidators, VerificationCodeLength } from 'app/core/form-validators/odm-validators';
-import { SecuritySandboxService } from '../security-sandbox.service';
 import { Observable, Subscription, merge } from 'rxjs';
 import { TwoFactorAuthenticationVerificationCode } from 'app/core/models/account/security/two-factor-authentication-verification-code.model';
 import { ActivatedRoute } from '@angular/router';
 import { tap, skip } from 'rxjs/operators';
-import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
+import { AccountSandboxService } from '../../account-sandbox.service';
 
 /**
  * Two factor authentication setup wizard container component.
@@ -22,11 +21,6 @@ import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TwoFactorAuthenticationSetupWizardContainerComponent implements OnInit {
-	/**
-	 * Route animations.
-	 */
-	readonly _routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
-
 	/**
 	 * Verification code form for two factor authentication setup.
 	 */
@@ -71,7 +65,7 @@ export class TwoFactorAuthenticationSetupWizardContainerComponent implements OnI
 	 * Creates an instance of two factor authentication setup wizard container component.
 	 * @param _sb
 	 */
-	constructor(private _sb: SecuritySandboxService, private _route: ActivatedRoute) {
+	constructor(private _sb: AccountSandboxService, private _route: ActivatedRoute) {
 		this._authenticatorSetup$ = _sb.twoFactorAuthenticationSetup$;
 		this._authenticatorSetupResult$ = _sb.twoFactorAuthenticationSetupResult$;
 		this._problemDetails$ = _sb.problemDetails$;
@@ -104,7 +98,7 @@ export class TwoFactorAuthenticationSetupWizardContainerComponent implements OnI
 	_onCancelSetupWizardClicked(): void {
 		this._sb.log.trace('_onCancelSetupWizard fired.', this);
 		this._verificationCodeForm.reset();
-		void this._sb.router.navigate(['./'], { relativeTo: this._route.parent });
+		void this._sb.router.navigate(['security'], { relativeTo: this._route.parent });
 		this._sb.cancel2faSetupWizard();
 	}
 
@@ -113,7 +107,7 @@ export class TwoFactorAuthenticationSetupWizardContainerComponent implements OnI
 	 */
 	_onFinish2faSetupClicked(event: TwoFactorAuthenticationSetupResult): void {
 		this._sb.log.trace('_onFinish2faSetup fired.', this);
-		void this._sb.router.navigate(['./'], { relativeTo: this._route.parent });
+		void this._sb.router.navigate(['security'], { relativeTo: this._route.parent });
 		this._sb.finish2faSetup(event);
 	}
 

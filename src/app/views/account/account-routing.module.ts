@@ -2,6 +2,10 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { AccountComponent } from './account/account.component';
 import { AuthGuardService } from 'app/core/core.module';
+import { SecurityContainerComponent } from './security-container/security-container.component';
+import { ChangePasswordContainerComponent } from './security-container/change-password-container/change-password-container.component';
+import { GeneralContainerComponent } from './general-container/general-container.component';
+import { TwoFactorAuthenticationSetupWizardContainerComponent } from './security-container/two-factor-authentication-setup-wizard-container/two-factor-authentication-setup-wizard-container.component';
 
 const routes: Routes = [
 	{
@@ -17,11 +21,19 @@ const routes: Routes = [
 			},
 			{
 				path: 'general',
-				loadChildren: () => import('./general-container/general-container.module').then((m) => m.GeneralContainerModule)
+				component: GeneralContainerComponent
 			},
 			{
 				path: 'security',
-				loadChildren: () => import('./security-container/security-container.module').then((m) => m.SecurityContainerModule)
+				component: SecurityContainerComponent
+			},
+			{
+				path: 'security/change-password',
+				component: ChangePasswordContainerComponent
+			},
+			{
+				path: 'security/two-factor-authentication-setup',
+				component: TwoFactorAuthenticationSetupWizardContainerComponent
 			}
 		]
 	}

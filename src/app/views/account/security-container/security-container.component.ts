@@ -1,5 +1,4 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-
 import { Observable, Subscription, merge, BehaviorSubject } from 'rxjs';
 import { AccountSecurityDetails } from 'app/core/models/account/security/account-security-details.model';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
@@ -8,9 +7,8 @@ import { skip, filter, tap } from 'rxjs/operators';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { ROUTE_ANIMATIONS_ELEMENTS, routeAnimations } from 'app/core/core.module';
 import { ActionCompletion } from '@ngxs/store';
-
-import { SecuritySandboxService } from './security-sandbox.service';
 import { TwoFactorAuthenticationSetup } from 'app/core/models/account/security/two-factor-authentication-setup.model';
+import { AccountSandboxService } from '../account-sandbox.service';
 
 /**
  * Security component container that houses user security functionality.
@@ -82,7 +80,7 @@ export class SecurityContainerComponent implements OnInit {
 	 * Creates an instance of security container component.
 	 * @param _sb
 	 */
-	constructor(private _sb: SecuritySandboxService) {
+	constructor(private _sb: AccountSandboxService) {
 		this._accountSecurityDetails$ = _sb.accountSecurityDetails$;
 		// required to listen for TwoFactorAuthenticationSetup when it emits
 		this._authenticatorSetup$ = _sb.twoFactorAuthenticationSetup$;

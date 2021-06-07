@@ -26,6 +26,7 @@ import { TwoFactorAuthenticationVerificationCode } from 'app/core/models/account
 import { NotificationService } from 'app/core/core.module';
 import { TranslateService } from '@ngx-translate/core';
 import { PasswordChange } from 'app/core/models/auth/password-change.model';
+import { Router } from '@angular/router';
 
 /**
  * Account sandbox service.
@@ -82,6 +83,7 @@ export class AccountSandboxService {
 	 * @param _actions$
 	 * @param log
 	 * @param fb
+	 * @param router
 	 * @param translateValidationErrorService
 	 */
 	constructor(
@@ -92,6 +94,7 @@ export class AccountSandboxService {
 		private _translationService: TranslateService,
 		private _actions$: Actions,
 		public log: LogService,
+		public router: Router,
 		public fb: FormBuilder,
 		public translateValidationErrorService: TranslateValidationErrorsService
 	) {}
@@ -157,7 +160,8 @@ export class AccountSandboxService {
 				hasAuthenticator: true,
 				recoveryCodes: model.recoveryCodes,
 				recoveryCodesLeft: model.recoveryCodes.items.length,
-				twoFactorEnabled: model.status === 'Succeeded'
+				twoFactorEnabled: model.status === 'Succeeded',
+				passwordChangeCompleted: false
 			})
 		]);
 	}
@@ -211,10 +215,18 @@ export class AccountSandboxService {
 			.pipe(
 				switchMap(() => this._translationService.get('odm.account.security.change-password.success')),
 				tap((message: string) => {
-					this._store.dispatch(new SecurityContainer.PasswordChangeCompleted({ passwordChangeCompleted: true }));
+					this.passwordChangeCompleted({ passwordChangeCompleted: true });
 					this._notificationService.success(message);
 				})
 			)
 			.subscribe();
+	}
+
+	/**
+	 * Whether passwords change completed successfully.
+	 * @param value
+	 */
+	passwordChangeCompleted(value: { passwordChangeCompleted: boolean }): void {
+		this._store.dispatch(new SecurityContainer.PasswordChangeCompleted(value));
 	}
 }

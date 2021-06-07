@@ -1,5 +1,4 @@
 import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
-
 import { BehaviorSubject, Subscription, Observable, merge } from 'rxjs';
 import { AccountGeneralDetails } from 'app/core/models/account/general/account-general-details.model';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
@@ -8,8 +7,8 @@ import { skip, filter, tap } from 'rxjs/operators';
 import { implementsOdmWebApiException } from 'app/core/utilities/implements-odm-web-api-exception';
 import { downUpFadeInAnimation, ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
 import { ODM_GLOBAL_GENERAL_SECTION_PADDING } from 'app/shared/global-settings/global-settings';
-import { GeneralSandboxService } from './general-sandbox.service';
 import { LogService } from 'app/core/logger/log.service';
+import { AccountSandboxService } from '../account-sandbox.service';
 
 /**
  * General component container that houses user's general settings functionality.
@@ -76,7 +75,7 @@ export class GeneralContainerComponent implements OnInit, OnDestroy {
 	 * Creates an instance of general container component.
 	 * @param _sb
 	 */
-	constructor(private _sb: GeneralSandboxService, private _log: LogService) {
+	constructor(private _sb: AccountSandboxService, private _log: LogService) {
 		this._accountGeneralDetails$ = _sb.accountGeneralDetails$;
 		this._internalServerErrorDetails$ = _sb.internalServerErrorDetails$;
 		this._problemDetails$ = _sb.problemDetails$;
@@ -87,9 +86,6 @@ export class GeneralContainerComponent implements OnInit, OnDestroy {
 	 */
 	ngOnInit(): void {
 		this._log.trace('Initialized.', this);
-		// this._accountGeneralDetails$.subscribe((v) => {
-		// 	console.log('details', v);
-		// });
 
 		this._loadingSub.next(true);
 		this._sb.getAccountGeneralInfo();

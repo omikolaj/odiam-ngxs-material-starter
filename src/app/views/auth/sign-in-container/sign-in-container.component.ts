@@ -120,6 +120,11 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 	 */
 	_onSigninSubmitted(model: SigninUser): void {
 		this._sb.log.trace('_onSigninSubmitted event handler fired.', this);
+		if (this._signinForm.get('email').hasError('serverError')) {
+			// clear old errors
+			this._signinForm.get('email').setErrors(null);
+		}
+
 		if (model.email !== '' && model.password !== '') {
 			this._sb.signinUser(model);
 		}

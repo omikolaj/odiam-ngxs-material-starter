@@ -1,8 +1,5 @@
 <ng-container *ngIf="_accountSecurityDetails$ | async as accountSecurityDetails">
 	<div class="account-security">
-		<div [@routeAnimations]="o.isActivated && o.activatedRoute.routeConfig.path">
-			<router-outlet #o="outlet"></router-outlet>
-		</div>
 		<div [ngClass]="_routeAnimationsElements">
 			<odm-two-factor-authentication
 				[userRecoveryCodes]="accountSecurityDetails?.recoveryCodes?.items"
