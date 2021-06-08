@@ -60,6 +60,21 @@ mat-card-actions {
 			max-width: 400px;
 			margin: 0 auto;
 
+			.auth__new-email-field {
+				width: 80%;
+				margin: 0 auto;
+			}
+
+			.auth__current-email-field {
+				width: 80%;
+				margin: 0 auto;
+			}
+
+			.auth__password-field {
+				width: 80%;
+				margin: 0 auto;
+			}
+
 			mat-form-field {
 				width: 100%;
 			}

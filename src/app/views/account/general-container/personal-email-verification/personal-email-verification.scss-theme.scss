@@ -1,25 +1,22 @@
 @import '~@angular/material/theming';
 
 @mixin odm-personal-email-verification-component-theme($theme) {
+	$accent: map-get($theme, accent);
 	$warn: map-get($theme, warn);
 	$foreground: map-get($theme, foreground);
 	$is-dark-theme: map-get($theme, is-dark);
 
-	.personal-email {
-		.personal-email__pending-verification {
-			color: mat-color($warn);
-		}
-
-		.personal-email__info {
-			.personal-email__data {
-				color: mat-color($foreground, secondary-text, if($is-dark-theme, 0.7, 0.6));
-			}
-		}
-	}
-
-	.personal-email__pending-verification-link-container {
-		.personal-email--link {
+	.email-verification__short-description {
+		.email-verification__email {
 			color: mat-color($foreground, secondary-text, if($is-dark-theme, 0.7, 0.6));
+		}
+
+		.email-verification__verified-icon {
+			color: mat-color($accent);
+		}
+
+		.email-verification__not-verified-icon {
+			color: mat-color($warn);
 		}
 	}
 }

@@ -1,8 +1,9 @@
-import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import { ROUTE_ANIMATIONS_ELEMENTS, downUpFadeInAnimation } from 'app/core/core.module';
 import { ODM_GLOBAL_SECURITY_SHORT_DESCRIPTION } from 'app/shared/global-settings/global-settings';
 import { AccountSandboxService } from '../../account-sandbox.service';
 import { ActivatedRoute } from '@angular/router';
+import { BehaviorSubject } from 'rxjs';
 
 /**
  * Email settings component displayed in the general view.
@@ -31,9 +32,50 @@ export class EmailSettingsComponent {
 	@Input() email: string;
 
 	/**
+	 * Whether the general data is being fetched.
+	 */
+	@Input() set loading(value: boolean) {
+		this._sb.log.debug('loading property set.', this, value);
+		this._loadingSub.next(value);
+	}
+
+	/**
+	 * Loading subject required to manually emit property value when its being set.
+	 */
+	private readonly _loadingSub = new BehaviorSubject<boolean>(false);
+
+	/**
+	 * Whether the user's email is being fetched or not.
+	 */
+	_loading$ = this._loadingSub.asObservable();
+
+	/**
+	 * Whether 'Resend verification email' option is enabled/disabled.
+	 */
+	@Input() set disableResendVerification(value: boolean) {
+		this._sb.log.debug('disableResendVerification property set.', this, value);
+		this._disableResendVerificationSub.next(value);
+	}
+
+	/**
+	 * Disable resend verification subject.
+	 */
+	private readonly _disableResendVerificationSub = new BehaviorSubject<boolean>(false);
+
+	/**
+	 * Whether user can click resend verification or if they are in current time out.
+	 */
+	_disableResendVerification$ = this._disableResendVerificationSub.asObservable();
+
+	/**
 	 * Whether user's email has been verified or not.
 	 */
 	@Input() verified: boolean;
+
+	/**
+	 * Event emitter when user requests to re-send email verification.
+	 */
+	@Output() resendEmailVerificationClicked = new EventEmitter<void>();
 
 	/**
 	 * Creates an instance of email settings component.
@@ -48,5 +90,13 @@ export class EmailSettingsComponent {
 	_onChangeEmailClicked(): void {
 		this._sb.log.trace('_onChangePasswordClicked fired.', this);
 		void this._sb.router.navigate(['general/change-email'], { relativeTo: this._route.parent });
+	}
+
+	/**
+	 * Event handler that resends user's email verification link.
+	 */
+	_onResendEmailVerificationClicked(): void {
+		this._sb.log.trace('_onResendEmailVerificationClicked fired.', this);
+		this.resendEmailVerificationClicked.emit();
 	}
 }

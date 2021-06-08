@@ -3,7 +3,14 @@
 		<h3 @downUpFadeIn>{{ 'odm.account.general.email.title' | translate }}</h3>
 		<div @downUpFadeIn>
 			<div class="email-settings__email-verification">
-				<odm-personal-email-verification [email]="email" [verified]="verified"> </odm-personal-email-verification>
+				<odm-personal-email-verification
+					(resendEmailVerificationClicked)="_onResendEmailVerificationClicked()"
+					[disableResendVerification]="_disableResendVerification$ | async"
+					[loading]="_loading$ | async"
+					[email]="email"
+					[verified]="verified"
+				>
+				</odm-personal-email-verification>
 			</div>
 			<div class="email-settings__change-email">
 				<div [style.--short-description]="_shortDescription" class="email-settings__short-description">

@@ -1,80 +1,43 @@
 @import '../../../../../styles-variables.scss';
 
-.personal-email {
-	.personal-email__info {
+mat-icon {
+	height: 15px;
+	width: 15px;
+	font-size: 15px;
+	margin-right: 8px;
+	margin-left: 8px;
+}
+
+fa-icon {
+	font-size: 15px;
+}
+
+.email-verification {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin: 8px;
+
+	.email-verification__short-description {
+		font-size: var(--short-description);
+		width: 100%;
+	}
+
+	.email-verification__verified {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-
-		.personal-email__title {
-			width: 100%;
-		}
-
-		.personal-email__verified {
-			color: green;
-		}
-
-		mat-icon {
-			height: 15px;
-			width: 15px;
-			font-size: 15px;
-			margin-right: 8px;
-			margin-left: 8px;
-		}
-
-		fa-icon {
-			font-size: 15px;
-		}
 	}
 
-	.personal-email__data-container {
+	.email-verification__not-verified {
 		display: flex;
-		justify-content: flex-start;
-		flex-flow: column;
-		align-items: flex-end;
-		width: 100%;
-
-		.personal-email__data-container-child-one {
-			padding-right: 16px;
-		}
-
-		.personal-email__data {
-			padding-left: 12px;
-			font-size: 15px;
-			word-break: break-word;
-		}
-	}
-
-	.personal-email__pending-verification {
-		cursor: pointer;
-	}
-
-	.personal-email__pending-verification-link-container {
-		display: flex;
-
-		.personal-email__resend-verification-btn {
-			font-size: 13px;
-		}
-
-		.personal-email--link-size {
-			font-size: small;
-		}
+		align-items: center;
+		justify-content: space-between;
 	}
 }
 
-.personal-email__ghost-loading-state {
+.email-verification__ghost-loading-state {
 	height: 56px;
 	padding: 8px 0;
 	width: 100%;
-}
-
-@media (min-width: map-get($grid-breakpoints, sm)) {
-	.personal-email {
-		.personal-email__info {
-			display: flex;
-			flex-flow: row;
-			justify-content: space-between;
-			align-items: center;
-		}
-	}
 }

@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import { LogService } from 'app/core/logger/log.service';
 import { ROUTE_ANIMATIONS_ELEMENTS, downUpFadeInAnimation } from 'app/core/core.module';
+import { ODM_GLOBAL_SECURITY_SHORT_DESCRIPTION } from 'app/shared/global-settings/global-settings';
 
 /**
  * User's personal email component.
@@ -13,11 +14,6 @@ import { ROUTE_ANIMATIONS_ELEMENTS, downUpFadeInAnimation } from 'app/core/core.
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PersonalEmailVerificationComponent {
-	/**
-	 * Route animations.
-	 */
-	readonly _routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
-
 	/**
 	 * Personal email registered with user's account.
 	 */
@@ -47,6 +43,16 @@ export class PersonalEmailVerificationComponent {
 	 * Event emitter when user requests to re-send email verification.
 	 */
 	@Output() resendEmailVerificationClicked = new EventEmitter<void>();
+
+	/**
+	 * Route animations.
+	 */
+	readonly _routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
+
+	/**
+	 * Short description font size.
+	 */
+	readonly _shortDescription = ODM_GLOBAL_SECURITY_SHORT_DESCRIPTION;
 
 	/**
 	 * Creates an instance of personal email component.

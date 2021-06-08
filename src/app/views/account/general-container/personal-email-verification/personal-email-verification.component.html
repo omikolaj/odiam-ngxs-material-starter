@@ -1,43 +1,42 @@
-<div class="personal-email">
-	<div [ngClass]="_routeAnimationsElements" class="personal-email__info">
-		<ng-container *ngIf="!loading; else loadingState">
-			<!-- <span @downUpFadeIn class="personal-email__title">{{ 'odm.account.general.personal-email' | translate }}</span> -->
-			<div @downUpFadeIn class="personal-email__data-container">
-				<div class="personal-email__data-container-child-one">
-					<span class="personal-email__data">{{ email }} </span>
-					<ng-container *ngIf="verified; else pendingVerification">
-						<mat-icon class="personal-email__verified" [matTooltip]="'odm.account.general.verified-tooltip' | translate">
-							<fa-icon icon="check"></fa-icon>
+<div class="email-verification">
+	<ng-container *ngIf="!loading; else loadingState">
+		<div @downUpFadeIn [style.--short-description]="_shortDescription" class="email-verification__short-description">
+			<ng-container *ngIf="verified === false">
+				<div class="email-verification__not-verified">
+					<div>
+						<span class="email-verification__email">{{ email }}</span>
+						<mat-icon class="email-verification__not-verified-icon" [matTooltip]="'odm.account.general.pending-verification-tooltip' | translate">
+							<fa-icon icon="exclamation-triangle"></fa-icon>
 						</mat-icon>
-					</ng-container>
-				</div>
-				<ng-container *ngIf="verified === false">
-					<div class="personal-email__pending-verification-link-container personal-email__pending-verification">
+					</div>
+					<div>
 						<button
 							[matTooltip]="_disabled ? ('odm.account.general.resend-verification-disabled-tooltip' | translate) : ''"
 							mat-button
 							type="button"
-							class="personal-email__resend-verification-btn personal-email--link"
 							(click)="_onResendEmailVerificationClicked()"
 							[disabled]="_disabled"
 						>
 							{{ 'odm.account.general.resend-verification' | translate }}
 						</button>
 					</div>
-				</ng-container>
-			</div>
-		</ng-container>
-	</div>
+				</div>
+			</ng-container>
+
+			<ng-container *ngIf="verified">
+				<div class="email-verification__verified">
+					<span>{{ email }}</span>
+					<mat-icon class="email-verification__verified-icon" [matTooltip]="'odm.account.general.verified-tooltip' | translate">
+						<fa-icon icon="check"></fa-icon>
+					</mat-icon>
+				</div>
+			</ng-container>
+		</div>
+	</ng-container>
 </div>
 
-<ng-template #pendingVerification>
-	<mat-icon class="personal-email__pending-verification" [matTooltip]="'odm.account.general.pending-verification-tooltip' | translate">
-		<fa-icon icon="exclamation-triangle"></fa-icon>
-	</mat-icon>
-</ng-template>
-
 <ng-template #loadingState>
-	<div class="personal-email__ghost-loading-state">
+	<div class="email-verification__ghost-loading-state">
 		<odm-ghost-block></odm-ghost-block>
 	</div>
 </ng-template>
