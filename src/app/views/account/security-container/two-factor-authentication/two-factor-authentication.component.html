@@ -1,6 +1,7 @@
-<!-- <ng-container *ngIf="_showTwoFactorAuthSetupWizard === false; else twoFactorAuthenticationSetupWizard"> -->
 <div class="two-factor-settings">
-	<h3 @downUpFadeIn>{{ 'odm.account.security.two-step.title' | translate }}</h3>
+	<h3 [style.--account-header]="_accountHeader" class="two-factor-settings--header" @downUpFadeIn>
+		{{ 'odm.account.security.two-step.title' | translate }}
+	</h3>
 	<ng-container *ngIf="!loading; else loadingState">
 		<div [ngClass]="twoFactorEnabled ? 'two-factor-settings__extra-margin' : null" class="two-factor-settings__state" @downUpFadeIn>
 			<div class="two-factor-settings__short-description">
@@ -47,21 +48,6 @@
 	</ng-container>
 </div>
 <odm-server-side-error [internalServerErrorDetails]="_internalServerErrorDetails" [problemDetails]="_problemDetails"></odm-server-side-error>
-<!-- </ng-container> -->
-
-<ng-template #twoFactorAuthenticationSetupWizard>
-	<!-- <odm-two-factor-authentication-setup-wizard
-		[verificationCodeForm]="verificationCodeForm"
-		[twoFactorAuthenticationSetupResult]="authenticatorSetupResult"
-		[twoFactorAuthenticationSetup]="_authenticatorSetup"
-		[codeVerificationInProgress]="codeVerificationInProgress"
-		[problemDetails]="_problemDetails"
-		[internalServerErrorDetails]="_internalServerErrorDetails"
-		(verificationCodeSubmitted)="_onVerifyAuthenticatorSubmitted($event)"
-		(cancelSetupWizardClicked)="_onCancelSetupWizardClicked()"
-		(finish2faSetupClicked)="_onFinish2faSetupClicked($event)"
-	></odm-two-factor-authentication-setup-wizard> -->
-</ng-template>
 
 <ng-template #loadingState>
 	<div class="two-factor-settings__ghost-loading-state">

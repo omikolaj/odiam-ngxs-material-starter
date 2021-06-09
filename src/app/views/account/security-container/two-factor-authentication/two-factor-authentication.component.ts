@@ -5,7 +5,7 @@ import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { ODM_SMALL_SPINNER_DIAMETER, ODM_SMALL_SPINNER_STROKE_WIDTH } from 'app/shared/global-settings/mat-spinner-settings';
 import { LogService } from 'app/core/logger/log.service';
-import { ODM_GLOBAL_SECURITY_SHORT_DESCRIPTION } from 'app/shared/global-settings/global-settings';
+import { ODM_GLOBAL_ACCOUNT_SHORT_DESCRIPTION_SIZE, ODM_GLOBAL_ACCOUNT_HEADER_SIZE } from 'app/shared/global-settings/global-settings';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TwoFactorAuthenticationSetup } from 'app/core/models/account/security/two-factor-authentication-setup.model';
 
@@ -115,7 +115,12 @@ export class TwoFactorAuthenticationComponent {
 	/**
 	 * Short description font size.
 	 */
-	readonly _shortDescriptionFontSize = ODM_GLOBAL_SECURITY_SHORT_DESCRIPTION;
+	readonly _shortDescriptionFontSize = ODM_GLOBAL_ACCOUNT_SHORT_DESCRIPTION_SIZE;
+
+	/**
+	 * Account header font size.
+	 */
+	readonly _accountHeader = ODM_GLOBAL_ACCOUNT_HEADER_SIZE;
 
 	/**
 	 * Two factor auth toggle spinner diameter.

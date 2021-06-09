@@ -1,5 +1,4 @@
 import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
-import { AsyncValidatorsService } from 'app/core/form-validators/validators-async.service';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { Observable, Subscription } from 'rxjs';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
@@ -79,7 +78,7 @@ export class SignUpContainerComponent implements OnInit, OnDestroy {
 	 * @param _asyncValidators
 	 * @param breakpointObserver
 	 */
-	constructor(private _sb: AuthSandboxService, private _asyncValidators: AsyncValidatorsService, breakpointObserver: BreakpointObserver) {
+	constructor(private _sb: AuthSandboxService, breakpointObserver: BreakpointObserver) {
 		this._problemDetails$ = _sb.problemDetails$;
 		this._internalServerErrorDetails$ = _sb.internalServerErrorDetails$;
 		this._breakpointStateScreenMatcher$ = breakpointObserver.observe([MinScreenSizeQuery.md]);
@@ -194,7 +193,7 @@ export class SignUpContainerComponent implements OnInit, OnDestroy {
 			{
 				email: this._sb.fb.control('', {
 					validators: [OdmValidators.required, OdmValidators.email],
-					asyncValidators: [this._asyncValidators.checkIfEmailIsUnique()],
+					asyncValidators: [this._sb.asyncValidators.checkIfEmailIsUnique()],
 					updateOn: 'blur'
 				}),
 				password: this._sb.fb.control('', {

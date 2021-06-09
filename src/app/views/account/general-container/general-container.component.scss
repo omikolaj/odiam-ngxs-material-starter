@@ -10,7 +10,7 @@
 	.account-general__error {
 		padding-top: 8px;
 		display: block;
-		font-size: 15px;
+		font-size: var(--error);
 
 		.account-general__error-format-position {
 			width: 15px;

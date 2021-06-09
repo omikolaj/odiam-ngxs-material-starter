@@ -28,6 +28,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { PasswordChange } from 'app/core/models/auth/password-change.model';
 import { Router } from '@angular/router';
 import { EmailChange } from 'app/core/models/account/general/email-change.model';
+import { AsyncValidatorsService } from 'app/core/form-validators/validators-async.service';
+import { AuthService } from 'app/core/auth/auth.service';
 
 /**
  * Account sandbox service.
@@ -87,22 +89,26 @@ export class AccountSandboxService {
 	 * @param _store
 	 * @param _userAsyncService
 	 * @param _actions$
+	 * @param _authService$
 	 * @param log
 	 * @param fb
 	 * @param router
 	 * @param translateValidationErrorService
+	 * @param asyncValidators
 	 */
 	constructor(
 		private _twoFactorAuthenticationAsync: TwoFactorAuthenticationAsyncService,
 		private _store: Store,
 		private _userAsyncService: UsersAsyncService,
+		private _authService: AuthService,
 		private _notificationService: NotificationService,
 		private _translationService: TranslateService,
 		private _actions$: Actions,
 		public log: LogService,
 		public router: Router,
 		public fb: FormBuilder,
-		public translateValidationErrorService: TranslateValidationErrorsService
+		public translateValidationErrorService: TranslateValidationErrorsService,
+		public asyncValidators: AsyncValidatorsService
 	) {}
 
 	/**
@@ -240,5 +246,28 @@ export class AccountSandboxService {
 	 * Changes user's email.
 	 * @param model
 	 */
-	changeEmail(model: EmailChange): void {}
+	changeEmail(model: EmailChange): void {
+		const id = this._store.selectSnapshot(AuthState.selectCurrentUserId);
+		const rememberMe = this._store.selectSnapshot(AuthState.selectRememberMe);
+
+		this._userAsyncService
+			.changeEmail$(id, model)
+			.pipe(
+				switchMap(() => this._translationService.get('odm.account.general.change-email.success')),
+				tap((message: string) => {
+					this.emailChangeCompleted({ emailChangeCompleted: true });
+					this._notificationService.success(message);
+					this._authService.updateRememberMeUserName(rememberMe, model.newEmail);
+				})
+			)
+			.subscribe();
+	}
+
+	/**
+	 * Whether email change completed successfully.
+	 * @param value
+	 */
+	emailChangeCompleted(value: { emailChangeCompleted: boolean }): void {
+		this._store.dispatch(new GeneralContainer.EmailChangeCompleted(value));
+	}
 }

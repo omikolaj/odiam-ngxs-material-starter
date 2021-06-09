@@ -13,14 +13,13 @@ fa-icon {
 }
 
 .email-verification {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	margin: 8px;
-
 	.email-verification__short-description {
 		font-size: var(--short-description);
 		width: 100%;
+	}
+
+	.email-verification__email {
+		word-break: break-all;
 	}
 
 	.email-verification__verified {

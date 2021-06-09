@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ODM_GLOBAL_SECURITY_SHORT_DESCRIPTION } from 'app/shared/global-settings/global-settings';
+import { ODM_GLOBAL_ACCOUNT_SHORT_DESCRIPTION_SIZE, ODM_GLOBAL_ACCOUNT_HEADER_SIZE } from 'app/shared/global-settings/global-settings';
 import { downUpFadeInAnimation } from 'app/core/core.module';
 import { AccountSandboxService } from '../../account-sandbox.service';
 
@@ -18,7 +18,12 @@ export class PasswordSettingsComponent {
 	/**
 	 * Short description font size.
 	 */
-	readonly _shortDescription = ODM_GLOBAL_SECURITY_SHORT_DESCRIPTION;
+	readonly _shortDescription = ODM_GLOBAL_ACCOUNT_SHORT_DESCRIPTION_SIZE;
+
+	/**
+	 * Account header font size.
+	 */
+	readonly _accountHeader = ODM_GLOBAL_ACCOUNT_HEADER_SIZE;
 
 	/**
 	 * Creates an instance of password settings component.

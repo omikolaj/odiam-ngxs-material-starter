@@ -5,7 +5,7 @@ import { PasswordRequirement } from 'app/core/models/auth/password-requirement.m
 import { PasswordHelpToggleClass } from 'app/core/models/auth/password-help-toggle-class.model';
 import { getPasswordRequirements } from 'app/core/utilities/password-requirements.utility';
 import { FormGroup } from '@angular/forms';
-import { ODM_GLOBAL_SECURITY_SHORT_DESCRIPTION } from 'app/shared/global-settings/global-settings';
+
 import { ActivatedRoute } from '@angular/router';
 import { Observable, Subscription, merge, Subject } from 'rxjs';
 import { OdmValidators, MinPasswordLength } from 'app/core/form-validators/odm-validators';
@@ -141,7 +141,7 @@ export class ChangePasswordContainerComponent implements OnInit, OnDestroy {
 	}
 
 	/**
-	 * Event handler for when password change has completed. On successful change we change route.
+	 * Event handler for when password change has completed. On success, change route.
 	 * @returns result of password change request
 	 */
 	private _onPasswordChangeCompleted$(): Observable<boolean> {

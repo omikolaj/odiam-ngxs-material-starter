@@ -1,6 +1,8 @@
 <div>
 	<div class="email-settings">
-		<h3 @downUpFadeIn>{{ 'odm.account.general.email.title' | translate }}</h3>
+		<h3 [style.--account-header]="_accountHeader" class="email-settings--header" @downUpFadeIn>
+			{{ 'odm.account.general.email.title' | translate }}
+		</h3>
 		<div @downUpFadeIn>
 			<div class="email-settings__email-verification">
 				<odm-personal-email-verification

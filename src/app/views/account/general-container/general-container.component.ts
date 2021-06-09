@@ -6,9 +6,9 @@ import { InternalServerErrorDetails } from 'app/core/models/internal-server-erro
 import { skip, filter, tap } from 'rxjs/operators';
 import { implementsOdmWebApiException } from 'app/core/utilities/implements-odm-web-api-exception';
 import { downUpFadeInAnimation, ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
-import { ODM_GLOBAL_GENERAL_SECTION_PADDING } from 'app/shared/global-settings/global-settings';
 import { LogService } from 'app/core/logger/log.service';
 import { AccountSandboxService } from '../account-sandbox.service';
+import { ODM_GLOBAL_ERROR_FONT_SIZE } from 'app/shared/global-settings/global-settings';
 
 /**
  * General component container that houses user's general settings functionality.
@@ -25,6 +25,11 @@ export class GeneralContainerComponent implements OnInit, OnDestroy {
 	 * Route animations.
 	 */
 	readonly _routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
+
+	/**
+	 * Error font size for server errors.
+	 */
+	readonly _errorFontSize = ODM_GLOBAL_ERROR_FONT_SIZE;
 
 	/**
 	 * Account general details for the given user.
@@ -45,11 +50,6 @@ export class GeneralContainerComponent implements OnInit, OnDestroy {
 	 * Controls whether 'resend notification' button is disabled/enabled.
 	 */
 	_disableResendVerificationSub = new BehaviorSubject(false);
-
-	/**
-	 * Padding top value for all items listed under 'General' section.
-	 */
-	readonly _paddingValue = ODM_GLOBAL_GENERAL_SECTION_PADDING;
 
 	/**
 	 * Whether 'resend notification' button is disabled/enabled.

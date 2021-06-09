@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import { ROUTE_ANIMATIONS_ELEMENTS, downUpFadeInAnimation } from 'app/core/core.module';
-import { ODM_GLOBAL_SECURITY_SHORT_DESCRIPTION } from 'app/shared/global-settings/global-settings';
+import { ODM_GLOBAL_ACCOUNT_SHORT_DESCRIPTION_SIZE, ODM_GLOBAL_ACCOUNT_HEADER_SIZE } from 'app/shared/global-settings/global-settings';
 import { AccountSandboxService } from '../../account-sandbox.service';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
@@ -24,7 +24,12 @@ export class EmailSettingsComponent {
 	/**
 	 * Short description font size.
 	 */
-	readonly _shortDescription = ODM_GLOBAL_SECURITY_SHORT_DESCRIPTION;
+	readonly _shortDescription = ODM_GLOBAL_ACCOUNT_SHORT_DESCRIPTION_SIZE;
+
+	/**
+	 * Account header font size.
+	 */
+	readonly _accountHeader = ODM_GLOBAL_ACCOUNT_HEADER_SIZE;
 
 	/**
 	 * User's email.

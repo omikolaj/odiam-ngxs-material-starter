@@ -4,6 +4,10 @@
 	overflow: hidden;
 	width: 100%;
 
+	.two-factor-settings--header {
+		font-size: var(--account-header);
+	}
+
 	.two-factor-settings__user-recovery-codes {
 		border: solid 1px rgba(0, 0, 0, 0.15);
 	}

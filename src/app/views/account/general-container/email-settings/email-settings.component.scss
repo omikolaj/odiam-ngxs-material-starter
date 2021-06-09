@@ -2,14 +2,17 @@
 	width: 100%;
 }
 
-.email-settings__spacer {
-	width: 400px;
-	height: 58px;
-}
-
 .email-settings {
 	width: 100%;
 	overflow: hidden;
+
+	.email-settings--header {
+		font-size: var(--account-header);
+	}
+
+	.email-settings__email-verification {
+		margin: 8px;
+	}
 
 	.email-settings__short-description {
 		display: flex;

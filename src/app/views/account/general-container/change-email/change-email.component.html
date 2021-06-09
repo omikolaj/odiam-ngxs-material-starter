@@ -11,20 +11,35 @@
 						<mat-form-field appearance="standard">
 							<mat-label>{{ 'odm.auth.form.label.new-email' | translate }}</mat-label>
 							<input matInput formControlName="newEmail" type="text" autocomplete="new-email" required />
+							<mat-hint>
+								<ng-container *ngIf="changeEmailForm.get('newEmail').statusChanges | async as status">
+									<span *ngIf="status === 'PENDING'" class="loading-dots-animation"
+										>{{ 'odm.auth.checking-availability' | translate }}<span>.</span><span>.</span><span>.</span>
+									</span>
+									<span *ngIf="status === 'VALID'">
+										<mat-icon class="auth--req-met" matPrefix>{{ 'task_alt' }}</mat-icon>
+										{{ 'odm.auth.form.validations.valid-email' | translate }}
+									</span>
+									<!--
+              https://stackoverflow.com/a/63537759/7952244
+              <mat-error> content is only displayed when control is touched or when form is submitted.
+              The logic flow goes as follow:
+              1. onBlur perform async validation and check if entered email already exists.
+              2. Check if any server side errors occured:
+                OnTrue: mark the control as pristine and display the error. Marking email control
+                        as pristine will circumvent angular's logic of displaying mat-error.
+                        Marking control as pristine ensure's that error message is displayed
+                        until user starts changing values inside the email control field.
+              -->
+									<span *ngIf="_ifControlFieldIsInvalid(changeEmailForm?.get('newEmail'))">
+										<mat-icon class="auth--req-not-met" matPrefix>{{ 'clear' }}</mat-icon>
+										{{ _getErrorMessage$(changeEmailForm?.get('newEmail')) | async }}
+									</span>
+								</ng-container>
+							</mat-hint>
 							<mat-icon matSuffix>email</mat-icon>
 							<mat-error *ngIf="_ifControlFieldIsInvalid(changeEmailForm?.get('newEmail'))">{{
 								_getErrorMessage$(changeEmailForm?.get('newEmail')) | async
-							}}</mat-error>
-						</mat-form-field>
-					</div>
-
-					<div class="auth__current-email-field">
-						<mat-form-field appearance="standard">
-							<mat-label>{{ 'odm.auth.form.label.email' | translate }}</mat-label>
-							<input matInput formControlName="email" autocomplete="email" required />
-							<mat-icon matSuffix>email</mat-icon>
-							<mat-error *ngIf="_ifControlFieldIsInvalid(changeEmailForm?.get('email'))">{{
-								_getErrorMessage$(changeEmailForm?.get('email')) | async
 							}}</mat-error>
 						</mat-form-field>
 					</div>

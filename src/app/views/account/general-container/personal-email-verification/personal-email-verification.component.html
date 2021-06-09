@@ -17,7 +17,7 @@
 							(click)="_onResendEmailVerificationClicked()"
 							[disabled]="_disabled"
 						>
-							{{ 'odm.account.general.resend-verification' | translate }}
+							{{ 'odm.buttons.resend-verification' | translate }}
 						</button>
 					</div>
 				</div>
@@ -25,7 +25,7 @@
 
 			<ng-container *ngIf="verified">
 				<div class="email-verification__verified">
-					<span>{{ email }}</span>
+					<span class="email-verification__email">{{ email }}</span>
 					<mat-icon class="email-verification__verified-icon" [matTooltip]="'odm.account.general.verified-tooltip' | translate">
 						<fa-icon icon="check"></fa-icon>
 					</mat-icon>

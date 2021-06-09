@@ -6,7 +6,7 @@ import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { FormGroup } from '@angular/forms';
 import { OdmValidators } from 'app/core/form-validators/odm-validators';
-import { tap } from 'rxjs/operators';
+import { tap, skip } from 'rxjs/operators';
 import { EmailChange } from 'app/core/models/account/general/email-change.model';
 
 /**
@@ -66,6 +66,7 @@ export class ChangeEmailContainerComponent implements OnInit {
 	ngOnInit(): void {
 		this._sb.log.trace('Initialized.', this);
 		this._changeEmailForm = this._initChangeEmailForm();
+		this._subscription.add(this._onEmailChangeCompleted$().subscribe());
 		this._subscription.add(this._listenForServerErrors$().subscribe());
 	}
 
@@ -89,6 +90,21 @@ export class ChangeEmailContainerComponent implements OnInit {
 	}
 
 	/**
+	 * Event handler for when email change has completed. On success, change route.
+	 * @returns result of email change request
+	 */
+	private _onEmailChangeCompleted$(): Observable<boolean> {
+		this._sb.log.trace('_onEmailChangeCompleted$ fired.', this);
+		return this._emailChangeCompleted$.pipe(
+			// skip the first emission. Default is false. Once user successfully updates email, closes the dialog and attempts to
+			// reopen it, they will be re-directed to account/general because emailChangeCompleted already emitted true.
+			skip(1),
+			tap((result) => (result ? void this._sb.router.navigate(['general'], { relativeTo: this._route.parent }) : null)),
+			tap(() => this._sb.emailChangeCompleted({ emailChangeCompleted: false }))
+		);
+	}
+
+	/**
 	 * Subscribes to server errors and sets problem details and internal server error details.
 	 */
 	private _listenForServerErrors$(): Observable<ProblemDetails | InternalServerErrorDetails> {
@@ -107,13 +123,10 @@ export class ChangeEmailContainerComponent implements OnInit {
 	private _initChangeEmailForm(): FormGroup {
 		this._sb.log.trace('_initChangeEmailForm fired.', this);
 		return this._sb.fb.group({
-			email: this._sb.fb.control('', {
-				validators: [OdmValidators.required, OdmValidators.email],
-				updateOn: 'change'
-			}),
 			newEmail: this._sb.fb.control('', {
 				validators: [OdmValidators.required, OdmValidators.email],
-				updateOn: 'change'
+				asyncValidators: [this._sb.asyncValidators.checkIfEmailIsUnique()],
+				updateOn: 'blur'
 			}),
 			password: this._sb.fb.control('', OdmValidators.required)
 		});

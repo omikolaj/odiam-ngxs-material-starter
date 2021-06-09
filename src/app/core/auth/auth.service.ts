@@ -76,12 +76,21 @@ export class AuthService {
 	): Observable<any> {
 		this._log.trace('processUserAuthentication$ executed.', this);
 
-		if (rememberMe) {
-			this._log.debug('[processUserAuthentication$]: rememberMe option is selected.', email);
-			this._store.dispatch(new Auth.UpdateRememberMeUsername({ username: email }));
-		}
+		this.updateRememberMeUserName(rememberMe, email);
 
 		return this._processAuthentication$(accessToken, email, is2StepVerificationRequired, provider);
+	}
+
+	/**
+	 * Updates saved user's email.
+	 * @param rememberMe
+	 * @param email
+	 */
+	updateRememberMeUserName(rememberMe: boolean, email: string): void {
+		if (rememberMe) {
+			this._log.debug('[_updateRememberMeUserName$]: rememberMe option is selected.', email);
+			this._store.dispatch(new Auth.UpdateRememberMeUsername({ username: email }));
+		}
 	}
 
 	/**

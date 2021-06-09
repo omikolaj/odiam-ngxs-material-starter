@@ -6,6 +6,7 @@ import { AccountSecurityDetails } from '../../core/models/account/security/accou
 import { AccountGeneralDetails } from '../../core/models/account/general/account-general-details.model';
 import { PasswordReset } from '../../core/models/auth/password-reset.model';
 import { PasswordChange } from 'app/core/models/auth/password-change.model';
+import { EmailChange } from 'app/core/models/account/general/email-change.model';
 
 /**
  * User async service.
@@ -97,5 +98,13 @@ export class UsersAsyncService {
 	 */
 	changePassword$(id: string, model: PasswordChange): Observable<void> {
 		return this._http.put<void>(`${this._apiUrl}/users/${id}/password`, JSON.stringify(model), { headers: this._headers });
+	}
+
+	/**
+	 * Changes user's e-mail.
+	 * @param id
+	 */
+	changeEmail$(id: string, model: EmailChange): Observable<void> {
+		return this._http.put<void>(`${this._apiUrl}/users/${id}/email`, JSON.stringify(model), { headers: this._headers });
 	}
 }
