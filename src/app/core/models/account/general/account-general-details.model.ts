@@ -13,7 +13,7 @@ export interface AccountGeneralDetails {
 	verified: boolean;
 
 	/**
-	 * Whether user's email change request completed without errors.
+	 * Whether user's request to change email has been sent without errors.
 	 */
-	emailChangeCompleted: boolean;
+	changeEmailRequestSent: boolean;
 }

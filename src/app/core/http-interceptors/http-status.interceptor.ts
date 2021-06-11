@@ -30,7 +30,7 @@ export class HttpStatusInterceptor implements HttpInterceptor {
 	intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<unknown>> {
 		return next.handle(req.clone()).pipe(
 			catchError((e: HttpErrorResponse) => {
-				if (e.status === 400 || e.status === 401) {
+				if (e.status === 400 || e.status === 401 || e.status === 403) {
 					// check if we have validation problem details
 					this._serverErrorService.problemDetails = e.error as ProblemDetails;
 					return NEVER;

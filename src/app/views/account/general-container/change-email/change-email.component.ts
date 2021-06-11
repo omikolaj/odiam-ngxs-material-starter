@@ -46,7 +46,7 @@ export class ChangeEmailComponent extends AuthBase {
 	/**
 	 * Emitted when user tries to change their email.
 	 */
-	@Output() changeEmailSubmitted = new EventEmitter<void>();
+	@Output() changeEmailRequestSubmitted = new EventEmitter<void>();
 
 	/**
 	 * Emitted when user cancels out of change password view.
@@ -87,7 +87,7 @@ export class ChangeEmailComponent extends AuthBase {
 	 */
 	_onChangeEmail(): void {
 		this.log.trace('_onChangePassword fired.', this);
-		this.changeEmailSubmitted.emit();
+		this.changeEmailRequestSubmitted.emit();
 	}
 
 	/**

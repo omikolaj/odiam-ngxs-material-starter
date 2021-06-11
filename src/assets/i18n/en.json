@@ -21,7 +21,8 @@
 					}
 				},
 				"change-email": {
-					"success": "Successfully updated e-mail"
+					"success": "Successfully updated e-mail",
+					"request-sent": "Confirm e-mail to complete the request"
 				}
 			},
 			"security": {
@@ -67,6 +68,12 @@
 			}
 		},
 		"auth": {
+			"verification": {
+				"email": "You're email has been successfully updated",
+				"error": "Something went wrong during confirmation process...",
+				"success": "Your email has been confirmed, you may sign in now...",
+				"required": "Please go to your email and verify your account"
+			},
 			"checking-availability": "Checking availability",
 			"password-help": "Verifies your password meets requirements.",
 			"forgot-password": {

@@ -13,7 +13,7 @@ export interface GeneralContainerStateModel {
 	verified: boolean;
 
 	/**
-	 * Whether user's email change requested completed without errors.
+	 * Whether user's request to change email has been sent succesfully.
 	 */
-	emailChangeCompleted: boolean;
+	changeEmailRequestSent: boolean;
 }

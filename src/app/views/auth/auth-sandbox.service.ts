@@ -6,7 +6,7 @@ import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerError } from 'app/core/error-handler/internal-server-error.decorator';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { switchMap, tap } from 'rxjs/operators';
-import { Store, Select } from '@ngxs/store';
+import { Store, Select, Actions, ofActionCompleted } from '@ngxs/store';
 import * as Auth from '../../core/auth/auth.store.actions';
 import { Router } from '@angular/router';
 import { AuthState } from 'app/core/auth/auth.store.state';
@@ -25,6 +25,8 @@ import { AccessToken } from 'app/core/models/auth/access-token.model';
 import { SignupUser } from 'app/core/models/auth/signup-user.model';
 import { SigninUser } from 'app/core/models/auth/signin-user.model';
 import { AsyncValidatorsService } from 'app/core/form-validators/validators-async.service';
+import { ChangeEmail } from 'app/core/models/auth/change-email.model';
+import { ConfirmEmail } from 'app/core/models/auth/confirm-email.model';
 
 /**
  * Auth sandbox service.
@@ -72,6 +74,26 @@ export class AuthSandboxService {
 	@Select(AuthState.selectPasswordResetCompleted) passwordResetCompleted$: Observable<boolean>;
 
 	/**
+	 * Whether user's registration completed successfully.
+	 */
+	@Select(AuthState.selectRegistrationCompleted) registrationCompleted$: Observable<boolean>;
+
+	/**
+	 * Whether there is an outgoing request to validate user's change email token and update it.
+	 */
+	@Select(AuthState.selectChangeEmailConfirmationInProgress) changeEmailConfirmationInProgress$: Observable<boolean>;
+
+	/**
+	 * Whether there is an outgoing request to confirm user's email address.
+	 */
+	@Select(AuthState.selectEmailConfirmationInProgress) emailConfirmationInProgress$: Observable<boolean>;
+
+	/**
+	 * Whether Auth.Signin action has been dispatched and completed.
+	 */
+	signInActionCompleted$ = this._actions$.pipe(ofActionCompleted(Auth.Signin));
+
+	/**
 	 * Creates an instance of auth sandbox service.
 	 * @param translateValidationErrorService
 	 * @param log
@@ -81,7 +103,8 @@ export class AuthSandboxService {
 	 * @param _usersAsyncService
 	 * @param _store
 	 * @param _socialAuthService
-	 * @param _authService
+	 * @param _authService,
+	 * @param _actions$
 	 */
 	constructor(
 		private _authAsyncService: AuthAsyncService,
@@ -89,6 +112,7 @@ export class AuthSandboxService {
 		private _store: Store,
 		private _socialAuthService: SocialAuthService,
 		private _authService: AuthService,
+		private _actions$: Actions,
 		public translateValidationErrorService: TranslateValidationErrorsService,
 		public log: LogService,
 		public fb: FormBuilder,
@@ -157,7 +181,7 @@ export class AuthSandboxService {
 	signupUser(model: SignupUser): void {
 		this._authAsyncService
 			.signup$(model)
-			.pipe(switchMap((token) => this._authenticate$(token)))
+			.pipe(tap(() => this.userRegistrationCompleted({ registrationCompleted: true })))
 			.subscribe();
 	}
 
@@ -189,11 +213,10 @@ export class AuthSandboxService {
 	}
 
 	/**
-	 * Verifys two step verification code
+	 * Cancels two step verification process.
 	 * @param model
 	 */
 	cancelTwoStepVerificationCodeProcess(): void {
-		// TODO remove void this.router.navigate(['auth/two-step-verification']);
 		void this.router.navigate(['auth/sign-in']);
 	}
 
@@ -236,6 +259,55 @@ export class AuthSandboxService {
 	}
 
 	/**
+	 * Dispatches action to the store whether user's registration completed without errors.
+	 * @param value
+	 */
+	userRegistrationCompleted(value: { registrationCompleted: boolean }): void {
+		this._store.dispatch(new Auth.RegistrationCompleted(value));
+	}
+
+	/**
+	 * Confirms user's change email token and updates the email.
+	 * @param id
+	 * @param model
+	 */
+	confirmEmailChangeRequest(id: string, model: ChangeEmail): void {
+		this.changeEmailConfirmationInProgress({ changeEmailConfirmationInProgress: true });
+		this._usersAsyncService
+			.changeEmail$(id, model)
+			.pipe(tap(() => this._store.dispatch(new Auth.ChangeEmailConfirmationInProgress({ changeEmailConfirmationInProgress: false }))))
+			.subscribe();
+	}
+
+	/**
+	 * Dispatches whether change email confirmation is in progress.
+	 * @param value
+	 */
+	changeEmailConfirmationInProgress(value: { changeEmailConfirmationInProgress: boolean }): void {
+		this._store.dispatch(new Auth.ChangeEmailConfirmationInProgress(value));
+	}
+
+	/**
+	 * Confirms user's email address.
+	 * @param model
+	 */
+	confirmEmail(model: ConfirmEmail): void {
+		this.emailConfirmationInProgress({ emailConfirmationInProgress: true });
+		this._usersAsyncService
+			.confirmEmail$(model)
+			.pipe(tap(() => this.emailConfirmationInProgress({ emailConfirmationInProgress: false })))
+			.subscribe();
+	}
+
+	/**
+	 * Dispatches an action to the store whether email confirmation is in progress.
+	 * @param value
+	 */
+	emailConfirmationInProgress(value: { emailConfirmationInProgress: boolean }): void {
+		this._store.dispatch(new Auth.EmailConfirmationInProgress(value));
+	}
+
+	/**
 	 * Authenticates user and takes them to the account page.
 	 * @param [accessToken]
 	 * @param [rememberMe]
@@ -253,13 +325,4 @@ export class AuthSandboxService {
 	): Observable<any> {
 		return this._authService.processUserAuthentication$(accessToken, rememberMe, email, is2StepVerificationRequired, provider);
 	}
-
-	// TODO remove
-	// /**
-	//  * Monitors user session and keeps track if they are active.
-	//  * @returns Observable<any>
-	//  */
-	// private _monitorUserSession$(): Observable<any> {
-	// 	return this._authService.monitorSessionActivity$();
-	// }
 }

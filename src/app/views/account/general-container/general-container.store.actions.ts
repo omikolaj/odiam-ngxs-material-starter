@@ -17,17 +17,17 @@ export class SetAccountGeneralDetails {
 }
 
 /**
- * Whether user's email change request completed without errors.
+ * Change email request.
  */
-export class EmailChangeCompleted {
+export class ChangeEmailRequest {
 	/**
 	 * Type of action.
 	 */
-	static readonly type = '[General] Email Change Completed';
+	static readonly type = '[General] Change Email Request';
 
 	/**
-	 * Creates an instance of email change completed.
+	 * Creates an instance of change email request.
 	 * @param payload
 	 */
-	constructor(public payload: { emailChangeCompleted: boolean }) {}
+	constructor(public payload: { changeEmailRequestSent: boolean }) {}
 }

@@ -15,6 +15,12 @@ import { AuthDialogComponent } from './auth-dialog/auth-dialog.component';
 import { TwoStepVerificationComponent } from './two-step-verification/two-step-verification.component';
 import { RedeemRecoveryCodeComponent } from './redeem-recovery-code/redeem-recovery-code.component';
 import { AuthSandboxService } from './auth-sandbox.service';
+import { ConfirmationErrorComponent } from './confirmation-error/confirmation-error.component';
+import { EmailConfirmationComponent } from './email-confirmation/email-confirmation.component';
+import { SuccessfulRegistrationComponent } from './successful-registration/successful-registration.component';
+import { ChangeEmailTokenContainerComponent } from './change-email-token-container/change-email-token-container.component';
+import { ChangeEmailTokenComponent } from './change-email-token/change-email-token.component';
+import { EmailConfirmationContainerComponent } from './email-confirmation-container/email-confirmation-container.component';
 
 /**
  * Auth module.
@@ -31,7 +37,13 @@ import { AuthSandboxService } from './auth-sandbox.service';
 		ForgotPasswordContainerComponent,
 		AuthDialogComponent,
 		TwoStepVerificationComponent,
-		RedeemRecoveryCodeComponent
+		RedeemRecoveryCodeComponent,
+		ConfirmationErrorComponent,
+		EmailConfirmationComponent,
+		SuccessfulRegistrationComponent,
+		EmailConfirmationContainerComponent,
+		ChangeEmailTokenContainerComponent,
+		ChangeEmailTokenComponent
 	],
 	imports: [CommonModule, AuthRoutingModule, SharedModule, SocialLoginModule],
 	providers: [

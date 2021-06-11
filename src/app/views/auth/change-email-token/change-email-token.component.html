@@ -1,0 +1,11 @@
+<div>
+	<ng-container *ngIf="inProgress; else emailChanged">
+		<odm-spinner color="accent" [diameter]="_changeEmailRequestSpinnerDiameter" [strokeWidth]="_changeEmailRequestSpinnerStrokeWidth"></odm-spinner>
+	</ng-container>
+</div>
+
+<ng-template #emailChanged>
+	<div>
+		<p>{{ 'odm.auth.verification.email' | translate }}</p>
+	</div>
+</ng-template>

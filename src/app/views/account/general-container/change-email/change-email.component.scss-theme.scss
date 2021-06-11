@@ -1,0 +1,9 @@
+@import '~@angular/material/theming';
+
+@mixin odm-change-email-component-theme($theme) {
+	$accent: map-get($theme, accent);
+
+	.auth--req-met {
+		color: mat-color($accent);
+	}
+}

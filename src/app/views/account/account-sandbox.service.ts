@@ -27,9 +27,9 @@ import { NotificationService } from 'app/core/core.module';
 import { TranslateService } from '@ngx-translate/core';
 import { PasswordChange } from 'app/core/models/auth/password-change.model';
 import { Router } from '@angular/router';
-import { EmailChange } from 'app/core/models/account/general/email-change.model';
 import { AsyncValidatorsService } from 'app/core/form-validators/validators-async.service';
-import { AuthService } from 'app/core/auth/auth.service';
+
+import { ChangeEmailRequest } from 'app/core/models/auth/change-email-request.model';
 
 /**
  * Account sandbox service.
@@ -64,9 +64,9 @@ export class AccountSandboxService {
 	@Select(AccountGeneralState.selectAccountGeneralDetails) accountGeneralDetails$: Observable<AccountGeneralDetails>;
 
 	/**
-	 * Whether user's email change request completed successfully.
+	 * Selects whether user's request to change email has been successfully sent to the server.
 	 */
-	@Select(AccountGeneralState.selectEmailChangeCompleted) emailChangeCompleted$: Observable<boolean>;
+	@Select(AccountGeneralState.selectChangeEmailRequestSent) changeEmailRequestSent$: Observable<boolean>;
 
 	/**
 	 * Selects account security details.
@@ -100,7 +100,6 @@ export class AccountSandboxService {
 		private _twoFactorAuthenticationAsync: TwoFactorAuthenticationAsyncService,
 		private _store: Store,
 		private _userAsyncService: UsersAsyncService,
-		private _authService: AuthService,
 		private _notificationService: NotificationService,
 		private _translationService: TranslateService,
 		private _actions$: Actions,
@@ -243,31 +242,28 @@ export class AccountSandboxService {
 	}
 
 	/**
-	 * Changes user's email.
+	 * Request to change user's email.
 	 * @param model
 	 */
-	changeEmail(model: EmailChange): void {
+	requestToChangeEmail(model: ChangeEmailRequest): void {
 		const id = this._store.selectSnapshot(AuthState.selectCurrentUserId);
-		const rememberMe = this._store.selectSnapshot(AuthState.selectRememberMe);
-
 		this._userAsyncService
-			.changeEmail$(id, model)
+			.requestToChangeEmail$(id, model)
 			.pipe(
-				switchMap(() => this._translationService.get('odm.account.general.change-email.success')),
+				switchMap(() => this._translationService.get('odm.account.general.change-email.request-sent')),
 				tap((message: string) => {
-					this.emailChangeCompleted({ emailChangeCompleted: true });
-					this._notificationService.success(message);
-					this._authService.updateRememberMeUserName(rememberMe, model.newEmail);
+					this.changeEmailRequestSent({ changeEmailRequestSent: true });
+					this._notificationService.infoWithBtn(message);
 				})
 			)
 			.subscribe();
 	}
 
 	/**
-	 * Whether email change completed successfully.
+	 * Dispatches ChangeEmailRequest to General store.
 	 * @param value
 	 */
-	emailChangeCompleted(value: { emailChangeCompleted: boolean }): void {
-		this._store.dispatch(new GeneralContainer.EmailChangeCompleted(value));
+	changeEmailRequestSent(value: { changeEmailRequestSent: boolean }): void {
+		this._store.dispatch(new GeneralContainer.ChangeEmailRequest(value));
 	}
 }

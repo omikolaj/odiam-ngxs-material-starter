@@ -165,6 +165,22 @@ export class PasswordResetCompleted {
 }
 
 /**
+ * Whether user's registration request completed without errors.
+ */
+export class RegistrationCompleted {
+	/**
+	 * Type of action.
+	 */
+	static readonly type = '[Auth] Registration Completed';
+
+	/**
+	 * Creates an instance of registration completed.
+	 * @param payload
+	 */
+	constructor(public payload: { registrationCompleted: boolean }) {}
+}
+
+/**
  * Persist settings action.
  */
 export class PersistSettings {
@@ -178,4 +194,30 @@ export class PersistSettings {
 	 * @param payload
 	 */
 	constructor(public payload: AuthStateModel) {}
+}
+
+export class ChangeEmailConfirmationInProgress {
+	/**
+	 * Type of action.
+	 */
+	static readonly type = '[Auth] Change Email Confirmation In Progress';
+
+	/**
+	 * Creates an instance of email change completed.
+	 * @param payload
+	 */
+	constructor(public payload: { changeEmailConfirmationInProgress: boolean }) {}
+}
+
+export class EmailConfirmationInProgress {
+	/**
+	 * Type of action.
+	 */
+	static readonly type = '[Auth] Email Confirmation In Progress';
+
+	/**
+	 * Creates an instance of email change completed.
+	 * @param payload
+	 */
+	constructor(public payload: { emailConfirmationInProgress: boolean }) {}
 }

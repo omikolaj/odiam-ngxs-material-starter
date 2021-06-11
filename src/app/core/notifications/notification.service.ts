@@ -27,13 +27,23 @@ export class NotificationService {
 	}
 
 	/**
-	 * Infos notification.
+	 * Info notification.
 	 * @param message
 	 */
 	info(message: string): void {
 		this._show(message, {
 			duration: 2000,
 			panelClass: 'info-notification-overlay'
+		});
+	}
+
+	/**
+	 * Info notification with 'Dismiss' button.
+	 * @param message
+	 */
+	infoWithBtn(message: string): void {
+		this._showWithBtn(message, {
+			panelClass: 'info-notification-overlay-with-btn'
 		});
 	}
 
@@ -79,5 +89,16 @@ export class NotificationService {
 		// Need to open snackBar from Angular zone to prevent issues with its position per
 		// https://stackoverflow.com/questions/50101912/snackbar-position-wrong-when-use-errorhandler-in-angular-5-and-material
 		this._zone.run(() => this._snackBar.open(message, null, configuration));
+	}
+
+	/**
+	 * Displays the notification with 'Dismiss' button.
+	 * @param message
+	 * @param configuration
+	 */
+	private _showWithBtn(message: string, configuration: MatSnackBarConfig): void {
+		// Need to open snackBar from Angular zone to prevent issues with its position per
+		// https://stackoverflow.com/questions/50101912/snackbar-position-wrong-when-use-errorhandler-in-angular-5-and-material
+		this._zone.run(() => this._snackBar.open(message, 'Dismiss', configuration));
 	}
 }

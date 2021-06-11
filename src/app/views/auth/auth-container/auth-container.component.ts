@@ -69,6 +69,34 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	}
 
 	/**
+	 * Whether user is on the successful-registration route.
+	 */
+	get _successfulRegistration(): boolean {
+		return this._sb.router.url.includes('/auth/successful-registration');
+	}
+
+	/**
+	 * Whether user is on the email-confirmation route.
+	 */
+	get _emailConfirmation(): boolean {
+		return this._sb.router.url.includes('/email-confirmation');
+	}
+
+	/**
+	 * Whether user is on the email-change-confirmation route.
+	 */
+	get _emailChangeConfirmation(): boolean {
+		return this._sb.router.url.includes('/email-change-confirmation');
+	}
+
+	/**
+	 * Whether user is on the confirmation-error route.
+	 */
+	get _confirmationError(): boolean {
+		return this._sb.router.url.includes('/confirmation-error');
+	}
+
+	/**
 	 * Whether user is on two step verification route.
 	 */
 	get _signInIsDisplayed(): boolean {
@@ -135,8 +163,16 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 			this._sb.updateActiveAuthType({ activeAuthType: 'two-step-verification-active' });
 		} else if (url.includes('/auth/reset-password')) {
 			this._sb.updateActiveAuthType({ activeAuthType: 'reset-password-active' });
+		} else if (url.includes('/auth/successful-registration')) {
+			this._sb.updateActiveAuthType({ activeAuthType: 'successful-registration-active' });
+		} else if (url.includes('/email-confirmation')) {
+			this._sb.updateActiveAuthType({ activeAuthType: 'email-confirmation-active' });
+		} else if (url.includes('/email-change-confirmation')) {
+			this._sb.updateActiveAuthType({ activeAuthType: 'email-change-confirmation-active' });
+		} else if (url.includes('/confirmation-error')) {
+			this._sb.updateActiveAuthType({ activeAuthType: 'confirmation-error-active' });
 		} else {
-			this._sb.log.error('the auth url does not match any configured paths.', this);
+			this._sb.log.error('the auth url does not match any configured paths.', this, url);
 		}
 	}
 

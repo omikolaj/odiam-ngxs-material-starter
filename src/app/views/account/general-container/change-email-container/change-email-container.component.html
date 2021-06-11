@@ -5,7 +5,7 @@
 		[emailChangeInProgress]="_emailChangeInProgress"
 		[problemDetails]="_problemDetails$ | async"
 		[internalServerErrorDetails]="_internalServerErrorDetails$ | async"
-		(changeEmailSubmitted)="_onChangeEmailSubmitted()"
+		(changeEmailRequestSubmitted)="_onRequestToChangeEmailClicked()"
 		(cancelClicked)="_onCancelClicked()"
 	></odm-change-email>
 </div>

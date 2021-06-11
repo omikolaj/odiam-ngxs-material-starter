@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { FormGroup } from '@angular/forms';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
@@ -12,6 +12,8 @@ import { AuthSandboxService } from '../auth-sandbox.service';
 import { SigninUser } from 'app/core/models/auth/signin-user.model';
 import { ActiveAuthType } from 'app/core/models/auth/active-auth-type.model';
 import { AuthTypeRouteUrl } from 'app/core/models/auth/auth-type-route-url.model';
+import { ActionCompletion } from '@ngxs/store';
+import { tap } from 'rxjs/operators';
 
 /**
  * Sign in container component.
@@ -60,18 +62,29 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 	_username$: Observable<string>;
 
 	/**
+	 * Emits whether Auth.SignIn action has been dispatched and completed.
+	 */
+	_signInActionCompleted$: Observable<ActionCompletion<any, Error>>;
+
+	/**
+	 * Rxjs subscriptions for this component.
+	 */
+	private readonly _subscription = new Subscription();
+
+	/**
 	 * Creates an instance of sign in container component.
 	 * @param _sb
 	 * @param _route
 	 * @param breakpointObserver
 	 */
-	constructor(private _sb: AuthSandboxService, private _route: ActivatedRoute, breakpointObserver: BreakpointObserver) {
+	constructor(breakpointObserver: BreakpointObserver, private _sb: AuthSandboxService, private _route: ActivatedRoute) {
 		this._problemDetails$ = _sb.problemDetails$;
 		this._internalServerErrorDetails$ = _sb.internalServerErrorDetails$;
 		this._rememberMe$ = _sb.rememberMe$;
 		this._username$ = _sb.username$;
 		this._breakpointStateScreenMatcher$ = breakpointObserver.observe([MinScreenSizeQuery.md]);
 		this._activeAuthType$ = _sb.activeAuthType$;
+		this._signInActionCompleted$ = _sb.signInActionCompleted$;
 	}
 
 	/**
@@ -80,6 +93,7 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 	ngOnInit(): void {
 		this._sb.log.trace('Initialized.', this);
 		this._initForm();
+		this._subscription.add(this._onSignInActionCompleted$().subscribe());
 	}
 
 	/**
@@ -87,6 +101,7 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 	 */
 	ngOnDestroy(): void {
 		this._sb.log.trace('Destroyed.', this);
+		this._subscription.unsubscribe();
 	}
 
 	/**
@@ -144,10 +159,19 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 	 * @param event
 	 */
 	_onSwitchToSignupClicked(event: ActiveAuthType): void {
-		this._sb.log.trace('__onSwitchToSignupClicked event handler fired', this, event);
+		this._sb.log.trace('_onSwitchToSignupClicked event handler fired', this, event);
 		const activeAuthType = { activeAuthType: event };
 		const routeUrl: AuthTypeRouteUrl = event === 'sign-in-active' ? 'sign-in' : 'sign-up';
 		this._sb.switchActiveAuthType(activeAuthType, routeUrl);
+	}
+
+	/**
+	 * Determines whether sign in action has been dispatched and completed.
+	 * @returns sign in action completed$
+	 */
+	private _onSignInActionCompleted$(): Observable<ActionCompletion<any, Error>> {
+		this._sb.log.trace('_onSignInActionCompleted$ event handler fired', this, event);
+		return this._signInActionCompleted$.pipe(tap(() => void this._sb.router.navigate(['account'])));
 	}
 
 	/**

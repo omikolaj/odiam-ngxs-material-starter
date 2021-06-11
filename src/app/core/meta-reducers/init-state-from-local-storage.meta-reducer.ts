@@ -9,6 +9,7 @@ const INIT = '@@INIT';
 
 /**
  * Dispatched by NGXS when a new lazy-loaded state being added to the store.
+ * NOTE: when UPDATE was used in the if([INIT, <UPDATE>].includes(...) it was causing issues where it would override valid state, with state from local storage.
  */
 const UPDATE = '@@UPDATE_STATE';
 
@@ -20,7 +21,7 @@ const UPDATE = '@@UPDATE_STATE';
  * @returns updated state.
  */
 export function initStateFromLocalStorage(state: any, action: any, next: any): any {
-	if ([INIT, UPDATE].includes(getActionTypeFromInstance(action))) {
+	if ([INIT].includes(getActionTypeFromInstance(action))) {
 		state = { ...state, ...LocalStorageService.loadInitialState() };
 	}
 	return next(state, action);

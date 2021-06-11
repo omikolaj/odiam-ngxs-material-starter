@@ -63,4 +63,19 @@ export interface AuthStateModel {
 	 * Whether user's password reset requested completed without errors.
 	 */
 	passwordResetCompleted: boolean;
+
+	/**
+	 * Whether user's registration completed without errors.
+	 */
+	registrationCompleted: boolean;
+
+	/**
+	 * Whether there is an outgoing request to verify user's change email token and update to new email.
+	 */
+	changeEmailConfirmationInProgress: boolean;
+
+	/**
+	 * Whether there is an outgoing request to confirm user's email.
+	 */
+	emailConfirmationInProgress: boolean;
 }

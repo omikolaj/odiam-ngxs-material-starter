@@ -7,7 +7,7 @@ import { InternalServerErrorDetails } from 'app/core/models/internal-server-erro
 import { FormGroup } from '@angular/forms';
 import { OdmValidators } from 'app/core/form-validators/odm-validators';
 import { tap, skip } from 'rxjs/operators';
-import { EmailChange } from 'app/core/models/account/general/email-change.model';
+import { ChangeEmailRequest } from 'app/core/models/auth/change-email-request.model';
 
 /**
  * Change e-mail container component.
@@ -30,9 +30,9 @@ export class ChangeEmailContainerComponent implements OnInit {
 	_internalServerErrorDetails$: Observable<InternalServerErrorDetails>;
 
 	/**
-	 * Whether user's password change request completed without errors.
+	 * Whether user's request to change email completed without errors.
 	 */
-	_emailChangeCompleted$: Observable<boolean>;
+	_changeEmailRequestSent$: Observable<boolean>;
 
 	/**
 	 * Change email form.
@@ -57,7 +57,7 @@ export class ChangeEmailContainerComponent implements OnInit {
 	constructor(private _sb: AccountSandboxService, private _route: ActivatedRoute) {
 		this._problemDetails$ = _sb.problemDetails$;
 		this._internalServerErrorDetails$ = _sb.internalServerErrorDetails$;
-		this._emailChangeCompleted$ = _sb.emailChangeCompleted$;
+		this._changeEmailRequestSent$ = _sb.changeEmailRequestSent$;
 	}
 
 	/**
@@ -66,19 +66,19 @@ export class ChangeEmailContainerComponent implements OnInit {
 	ngOnInit(): void {
 		this._sb.log.trace('Initialized.', this);
 		this._changeEmailForm = this._initChangeEmailForm();
-		this._subscription.add(this._onEmailChangeCompleted$().subscribe());
+		this._subscription.add(this._onChangeEmailRequestSent$().subscribe());
 		this._subscription.add(this._listenForServerErrors$().subscribe());
 	}
 
 	/**
-	 * Event handler for when user clicks to change their email.
+	 * Event handler for when users request to change their email was successful or not.
 	 * @param event
 	 */
-	_onChangeEmailSubmitted(): void {
-		this._sb.log.trace('_onChangeEmailSubmitted fired.', this);
+	_onRequestToChangeEmailClicked(): void {
+		this._sb.log.trace('_onRequestToChangeEmailClicked fired.', this);
 		this._emailChangeInProgress = true;
-		const model = this._changeEmailForm.value as EmailChange;
-		this._sb.changeEmail(model);
+		const model = this._changeEmailForm.value as ChangeEmailRequest;
+		this._sb.requestToChangeEmail(model);
 	}
 
 	/**
@@ -90,17 +90,17 @@ export class ChangeEmailContainerComponent implements OnInit {
 	}
 
 	/**
-	 * Event handler for when email change has completed. On success, change route.
+	 * Event handler for when email change request has completed. On success, change route.
 	 * @returns result of email change request
 	 */
-	private _onEmailChangeCompleted$(): Observable<boolean> {
-		this._sb.log.trace('_onEmailChangeCompleted$ fired.', this);
-		return this._emailChangeCompleted$.pipe(
+	private _onChangeEmailRequestSent$(): Observable<boolean> {
+		this._sb.log.trace('_onChangeEmailRequestSent$ fired.', this);
+		return this._changeEmailRequestSent$.pipe(
 			// skip the first emission. Default is false. Once user successfully updates email, closes the dialog and attempts to
 			// reopen it, they will be re-directed to account/general because emailChangeCompleted already emitted true.
 			skip(1),
 			tap((result) => (result ? void this._sb.router.navigate(['general'], { relativeTo: this._route.parent }) : null)),
-			tap(() => this._sb.emailChangeCompleted({ emailChangeCompleted: false }))
+			tap(() => this._sb.changeEmailRequestSent({ changeEmailRequestSent: false }))
 		);
 	}
 

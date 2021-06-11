@@ -25,7 +25,10 @@ const AUTH_STATE_TOKEN = new StateToken<AuthStateModel>('auth');
 		isRedeemRecoveryCodeSuccessful: false,
 		userId: '',
 		activeAuthType: 'sign-in-active',
-		passwordResetCompleted: false
+		passwordResetCompleted: false,
+		registrationCompleted: false,
+		changeEmailConfirmationInProgress: false,
+		emailConfirmationInProgress: false
 	}
 })
 @Injectable()
@@ -169,6 +172,36 @@ export class AuthState implements NgxsAfterBootstrap {
 	}
 
 	/**
+	 * Selects whether new user's registration completed without errors.
+	 * @param state
+	 * @returns true if registration completed without errors
+	 */
+	@Selector([AUTH_STATE_TOKEN])
+	static selectRegistrationCompleted(state: AuthStateModel): boolean {
+		return state.registrationCompleted;
+	}
+
+	/**
+	 * Selects whether there is an outgoing request to confirm user's change email token and update user's email.
+	 * @param state
+	 * @returns true if request is being processed by the server.
+	 */
+	@Selector([AUTH_STATE_TOKEN])
+	static selectChangeEmailConfirmationInProgress(state: AuthStateModel): boolean {
+		return state.changeEmailConfirmationInProgress;
+	}
+
+	/**
+	 * Selects whether there is an outgoing request to confirm user's email address.
+	 * @param state
+	 * @returns true if request is being processed by the server.
+	 */
+	@Selector([AUTH_STATE_TOKEN])
+	static selectEmailConfirmationInProgress(state: AuthStateModel): boolean {
+		return state.emailConfirmationInProgress;
+	}
+
+	/**
 	 * Selects expires_at value from local storage and converts it to Date.
 	 * @param state
 	 * @returns date of expires at
@@ -209,7 +242,10 @@ export class AuthState implements NgxsAfterBootstrap {
 					passwordResetCompleted: false,
 					is2StepVerificationRequired: false,
 					is2StepVerificationSuccessful: false,
-					isRedeemRecoveryCodeSuccessful: false
+					isRedeemRecoveryCodeSuccessful: false,
+					changeEmailConfirmationInProgress: false,
+					emailConfirmationInProgress: false,
+					registrationCompleted: false
 				};
 				return draft;
 			})
@@ -400,6 +436,54 @@ export class AuthState implements NgxsAfterBootstrap {
 	@Action(Auth.PasswordResetCompleted)
 	passwordResetCompleted(ctx: StateContext<AuthStateModel>, action: Auth.PasswordResetCompleted): void {
 		this._log.info('passwordResetCompleted action handler fired.', this);
+		ctx.setState(
+			produce((draft: AuthStateModel) => {
+				draft = { ...draft, ...action.payload };
+				return draft;
+			})
+		);
+	}
+
+	/**
+	 * Action handler that updates state whether user's registration request completed without errors.
+	 * @param ctx
+	 * @param action
+	 */
+	@Action(Auth.RegistrationCompleted)
+	registrationCompleted(ctx: StateContext<AuthStateModel>, action: Auth.RegistrationCompleted): void {
+		this._log.info('registrationCompleted action handler fired.', this);
+		ctx.setState(
+			produce((draft: AuthStateModel) => {
+				draft = { ...draft, ...action.payload };
+				return draft;
+			})
+		);
+	}
+
+	/**
+	 * Actions handler that updates state whether there is a request to update user's email address.
+	 * @param ctx
+	 * @param action
+	 */
+	@Action(Auth.ChangeEmailConfirmationInProgress)
+	changeEmailConfirmationInProgress(ctx: StateContext<AuthStateModel>, action: Auth.ChangeEmailConfirmationInProgress): void {
+		this._log.info('changeEmailConfirmationInProgress action handler fired.', this);
+		ctx.setState(
+			produce((draft: AuthStateModel) => {
+				draft = { ...draft, ...action.payload };
+				return draft;
+			})
+		);
+	}
+
+	/**
+	 * Action handler that updates state whether there is a request to confirm user's email address.
+	 * @param ctx
+	 * @param action
+	 */
+	@Action(Auth.EmailConfirmationInProgress)
+	emailConfirmationInProgress(ctx: StateContext<AuthStateModel>, action: Auth.EmailConfirmationInProgress): void {
+		this._log.info('emailConfirmationInProgress action handler fired.', this);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft = { ...draft, ...action.payload };

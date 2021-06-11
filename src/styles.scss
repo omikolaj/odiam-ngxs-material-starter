@@ -21,6 +21,7 @@
 @import './app/views/examples/examples/examples.component.scss-theme';
 @import './app/views/auth/auth-container/auth-container.component.scss-theme.scss';
 @import './app/views/account/general-container/email-settings/email-settings.scss-theme.scss';
+@import './app/views/account/general-container/change-email/change-email.component.scss-theme.scss';
 @import './app/views/account/security-container/security-container.scss-theme.scss';
 @import './app/views/account/security-container/password-settings/password-settings.scss-theme.scss';
 @import './app/views/account/security-container/change-password/change-password.component.scss-theme.scss';
@@ -38,6 +39,7 @@
 	@include odm-password-help-component-theme($theme);
 	@include odm-password-settings-component-theme($theme);
 	@include odm-change-password-component-theme($theme);
+	@include odm-change-email-component-theme($theme);
 	@include odm-two-factor-authentication-component-theme($theme);
 	@include odm-personal-email-verification-component-theme($theme);
 	@include odm-general-container-component-theme($theme);

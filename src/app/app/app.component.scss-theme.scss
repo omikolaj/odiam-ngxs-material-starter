@@ -58,6 +58,15 @@
 		background-color: mat-color($accent);
 	}
 
+	.info-notification-overlay-with-btn {
+		color: mat-color($accent, default-contrast);
+		background-color: mat-color($accent);
+
+		button {
+			color: mat-color($accent, default-contrast);
+		}
+	}
+
 	.success-notification-overlay {
 		color: mat-color($success-colors, default-contrast);
 		background-color: mat-color($success-colors);

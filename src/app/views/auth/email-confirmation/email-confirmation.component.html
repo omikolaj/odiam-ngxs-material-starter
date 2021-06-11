@@ -1,0 +1,13 @@
+<div>
+	<ng-container *ngIf="inProgress; else emailConfirmed">
+		<odm-spinner
+			color="accent"
+			[diameter]="_emailConfirmationInProgresSpinnerDiameter"
+			[strokeWidth]="_emailConfirmationInProgresStrokeWidth"
+		></odm-spinner>
+	</ng-container>
+</div>
+
+<ng-template #emailConfirmed>
+	<p>{{ 'odm.auth.verification.success' | translate }}</p>
+</ng-template>

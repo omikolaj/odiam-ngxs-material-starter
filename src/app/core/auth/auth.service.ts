@@ -140,7 +140,6 @@ export class AuthService {
 	 */
 	authenticate$(accessToken: AccessToken): Observable<any> {
 		this._log.trace('_authenticate$ executed.', this);
-		void this._router.navigate(['account']);
 
 		const userId = this._jwtService.getSubClaim(accessToken.access_token);
 		return this._store.dispatch(new Auth.Signin({ accessToken, userId }));

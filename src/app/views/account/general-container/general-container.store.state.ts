@@ -13,7 +13,7 @@ const ACCOUNT_GENERAL_STATE_TOKEN = new StateToken<GeneralContainerStateModel>('
 	defaults: {
 		email: '',
 		verified: false,
-		emailChangeCompleted: false
+		changeEmailRequestSent: false
 	}
 })
 @Injectable()
@@ -32,13 +32,13 @@ export class AccountGeneralState {
 	}
 
 	/**
-	 * Selects whether email change had completed without errors.
+	 * Selects whether user's request to change email has been successfully sent.
 	 * @param state
-	 * @returns email change completed
+	 * @returns true if change email request sent was sent successfully
 	 */
 	@Selector([ACCOUNT_GENERAL_STATE_TOKEN])
-	static selectEmailChangeCompleted(state: GeneralContainerStateModel): boolean {
-		return state.emailChangeCompleted;
+	static selectChangeEmailRequestSent(state: GeneralContainerStateModel): boolean {
+		return state.changeEmailRequestSent;
 	}
 
 	/**
@@ -64,13 +64,13 @@ export class AccountGeneralState {
 	}
 
 	/**
-	 * Actions handler that updates state whether user's email change request completed without errors.
+	 * Action handler for whether user's request to change email was sent successfully.
 	 * @param ctx
 	 * @param action
 	 */
-	@Action(GeneralContainer.EmailChangeCompleted)
-	emailChangeCompleted(ctx: StateContext<GeneralContainerStateModel>, action: GeneralContainer.EmailChangeCompleted): void {
-		this._log.info('emailChangeCompleted action handler fired.', this);
+	@Action(GeneralContainer.ChangeEmailRequest)
+	changeEmailRequestSent(ctx: StateContext<GeneralContainerStateModel>, action: GeneralContainer.ChangeEmailRequest): void {
+		this._log.info('changeEmailRequestSent action handler fired.', this);
 		ctx.setState(
 			produce((draft: GeneralContainerStateModel) => {
 				draft = { ...draft, ...action.payload };

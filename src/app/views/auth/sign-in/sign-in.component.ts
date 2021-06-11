@@ -8,7 +8,6 @@ import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
 import { AuthBase } from '../auth-base';
 import { ActiveAuthType } from 'app/core/models/auth/active-auth-type.model';
 import { SigninUser } from 'app/core/models/auth/signin-user.model';
-
 import { ODM_SMALL_SPINNER_DIAMETER, ODM_SMALL_SPINNER_STROKE_WIDTH } from 'app/shared/global-settings/mat-spinner-settings';
 import { TranslateValidationErrorsService } from 'app/shared/services/translate-validation-errors.service';
 import { LogService } from 'app/core/logger/log.service';
