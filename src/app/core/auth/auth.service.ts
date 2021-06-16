@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AuthAsyncService } from 'app/core/auth/auth-async.service';
 import { tap, map, finalize, switchMap, takeUntil, take, catchError } from 'rxjs/operators';
 import * as Auth from './auth.store.actions';
-import { Router } from '@angular/router';
+
 import { LogService } from 'app/core/logger/log.service';
 import { Store, Actions, ofActionCompleted } from '@ngxs/store';
 import { JsonWebTokenService } from 'app/core/auth/json-web-token.service';
@@ -48,7 +48,6 @@ export class AuthService {
 		private _userActivityService: UserSessionActivityService,
 		private _store: Store,
 		private _actions$: Actions,
-		private _router: Router,
 		private _jwtService: JsonWebTokenService,
 		private _dialog: MatDialog,
 		private _log: LogService
@@ -63,18 +62,22 @@ export class AuthService {
 	}
 
 	/**
-	 * Attempts to sign user in if two step authentication is not required, else proceeds with two step verification process.
+	 * Proceeds with standard sign in flow.
 	 * @param accessToken
-	 * @returns authenticate
+	 * @param rememberMe
+	 * @param email
+	 * @param is2StepVerificationRequired
+	 * @param provider
+	 * @returns app signin authentication$
 	 */
-	processUserAuthentication$(
-		accessToken?: AccessToken,
-		rememberMe?: boolean,
-		email?: string,
-		is2StepVerificationRequired?: boolean,
-		provider?: string
+	processAppSigninAuthentication$(
+		accessToken: AccessToken,
+		rememberMe: boolean,
+		email: string,
+		is2StepVerificationRequired: boolean,
+		provider: string
 	): Observable<any> {
-		this._log.trace('processUserAuthentication$ executed.', this);
+		this._log.trace('processAppSigninAuthentication$ executed.', this);
 
 		this.updateRememberMeUserName(rememberMe, email);
 
@@ -95,39 +98,58 @@ export class AuthService {
 
 	/**
 	 * Processes user authentication.
-	 * @param [accessToken]
-	 * @param [email]
-	 * @param [is2StepVerificationRequired]
-	 * @param [provider]
+	 * @param accessToken
+	 * @param email
+	 * @param is2StepVerificationRequired
+	 * @param provider
 	 * @returns authentication$
 	 */
-	private _processAuthentication$(
-		accessToken?: AccessToken,
-		email?: string,
-		is2StepVerificationRequired?: boolean,
-		provider?: string
-	): Observable<any> {
+	private _processAuthentication$(accessToken: AccessToken, email: string, is2StepVerificationRequired: boolean, provider: string): Observable<any> {
 		this._log.trace('_processAuthentication$ executed.', this);
 		if (is2StepVerificationRequired) {
 			return this._requires2StepVerification$(provider, email);
+		} else {
+			return this._doesNotRequire2StepVerification$(accessToken);
 		}
-
-		return this.authenticate$(accessToken).pipe(switchMap(() => this.monitorSessionActivity$()));
 	}
 
 	/**
-	 * Navigates user to two step verification component for two step verification process.
+	 * Dispatches action to indicate two step verification process is not required and that
+	 * the user is signed in.
+	 * @param accessToken
+	 * @returns not require2 step verification$
+	 */
+	private _doesNotRequire2StepVerification$(accessToken: AccessToken): Observable<any> {
+		this._log.trace('_doesNotRequire2StepVerification$ executed.', this);
+		if (accessToken) {
+			const userId = this._jwtService.getSubClaim(accessToken.access_token);
+			return this._store
+				.dispatch([
+					// if no other errors occured, sign user in
+					new Auth.Is2StepVerificationRequired({ is2StepVerificationRequired: false }),
+					new Auth.Signin({ accessToken, userId })
+				])
+				.pipe(switchMap(() => this.monitorSessionActivity$()));
+		} else {
+			this._log.error('[_doesNotRequire2StepVerification$]: AccessToken was not defined. User authentication failed.', this);
+		}
+	}
+
+	/**
+	 * Dispatches actions to indicate two step verification process is required.
 	 * @param provider
+	 * @param email
 	 * @returns step verification$
 	 */
 	private _requires2StepVerification$(provider: string, email: string): Observable<any> {
 		this._log.trace('_requires2StepVerification$ executed.', this);
 		if (provider) {
-			void this._router.navigate(['auth/two-step-verification'], { queryParams: { provider, email } });
-
-			return this._store.dispatch(new Auth.Is2StepVerificationRequired({ is2StepVerificationRequired: true }));
+			return this._store.dispatch([
+				new Auth.Is2StepVerificationRequired({ is2StepVerificationRequired: true }),
+				new Auth.TwoStepVerificationData({ twoStepVerificationEmail: email, twoStepVerificationProvider: provider })
+			]);
 		} else {
-			this._log.error('[_requires2StepVerification$]: Provider was not defined. Two step logging will fail.');
+			this._log.error('[_requires2StepVerification$]: Provider was not defined. Two step logging will fail.', this);
 		}
 	}
 
@@ -189,7 +211,7 @@ export class AuthService {
 	}
 
 	/**
-	 * Signs user out.
+	 * Dispatches actions to Signs user out.
 	 * @returns any
 	 */
 	signUserOut$(): Observable<any> {
@@ -199,7 +221,6 @@ export class AuthService {
 				return throwError(err);
 			}),
 			finalize(() => {
-				void this._router.navigate(['auth/sign-in']);
 				this._store.dispatch([new Auth.Signout(), new Auth.KeepOrRemoveRememberMeUsername()]);
 				this._userActivityService.cleanUp();
 			})

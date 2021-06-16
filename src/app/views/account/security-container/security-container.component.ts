@@ -9,6 +9,7 @@ import { ROUTE_ANIMATIONS_ELEMENTS, routeAnimations } from 'app/core/core.module
 import { ActionCompletion } from '@ngxs/store';
 import { TwoFactorAuthenticationSetup } from 'app/core/models/account/security/two-factor-authentication-setup.model';
 import { AccountSandboxService } from '../account-sandbox.service';
+import { ActivatedRoute } from '@angular/router';
 
 /**
  * Security component container that houses user security functionality.
@@ -80,7 +81,7 @@ export class SecurityContainerComponent implements OnInit {
 	 * Creates an instance of security container component.
 	 * @param _sb
 	 */
-	constructor(private _sb: AccountSandboxService) {
+	constructor(private _sb: AccountSandboxService, private _route: ActivatedRoute) {
 		this._accountSecurityDetails$ = _sb.accountSecurityDetails$;
 		// required to listen for TwoFactorAuthenticationSetup when it emits
 		this._authenticatorSetup$ = _sb.twoFactorAuthenticationSetup$;
@@ -125,6 +126,13 @@ export class SecurityContainerComponent implements OnInit {
 		this._sb.log.trace('_onGenerateNew2FaRecoveryCodes fired.', this);
 		this._generatingNewRecoveryCodes = true;
 		this._sb.generateRecoveryCodes();
+	}
+
+	/**
+	 * Event handler when user is sent to two factor authentication setup.
+	 */
+	_onNavigateToSetup(): void {
+		void this._sb.router.navigate(['security/two-factor-authentication-setup'], { relativeTo: this._route.parent });
 	}
 
 	/**

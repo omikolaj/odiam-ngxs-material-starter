@@ -63,7 +63,7 @@ export class ChangeEmailTokenContainerComponent implements OnInit {
 	}
 
 	/**
-	 * Subscribes to server errors and sets problem details and internal server error details.
+	 * Listens to server errors and sets problem details and internal server error details.
 	 * @returns emits ProblemDetails | InternalServerErrorDetails observable
 	 */
 	private _listenForServerErrors$(): Observable<ProblemDetails | InternalServerErrorDetails> {

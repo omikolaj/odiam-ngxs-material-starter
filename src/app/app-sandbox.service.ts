@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Store, Select } from '@ngxs/store';
+import { Store, Select, Actions, ofActionCompleted } from '@ngxs/store';
 import * as Settings from 'app/core/settings/settings.store.actions';
 import { AuthState } from './core/auth/auth.store.state';
 import { SettingsState } from 'app/core/settings/settings.store.state';
@@ -8,6 +8,8 @@ import { Language } from './core/settings/settings-state.model';
 import { AuthService } from './core/auth/auth.service';
 import { LogService } from './core/logger/log.service';
 import { LocalStorageService } from './core/core.module';
+import * as Auth from './core/auth/auth.store.actions';
+import { Router } from '@angular/router';
 
 /**
  * App sandbox service.
@@ -35,13 +37,26 @@ export class AppSandboxService {
 	@Select(SettingsState.selectEffectiveTheme) theme$: Observable<string>;
 
 	/**
+	 * Emits when Auth.Signout action has been dispatched and completed.
+	 */
+	signedOut$ = this._actions$.pipe(ofActionCompleted(Auth.Signout));
+
+	/**
 	 * Creates an instance of app sandbox service.
 	 * @param _authService
+	 * @param _actions$
 	 * @param _store
 	 * @param _storageService
 	 * @param log
 	 */
-	constructor(private _authService: AuthService, private _store: Store, private _storageService: LocalStorageService, public log: LogService) {}
+	constructor(
+		private _authService: AuthService,
+		private _actions$: Actions,
+		private _store: Store,
+		private _storageService: LocalStorageService,
+		public log: LogService,
+		public router: Router
+	) {}
 
 	/**
 	 * Signs user out of the application.

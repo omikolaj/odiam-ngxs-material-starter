@@ -30,9 +30,9 @@
 			</div>
 
 			<div>
-				<button mat-raised-button type="submit" class="auth__form-btn auth--btn" [disabled]="_disableSignin() || _signingIn">
+				<button mat-raised-button type="submit" class="auth__form-btn auth--btn" [disabled]="_disableSignin() || signingIn">
 					{{ 'odm.buttons.sign-in' | translate }}
-					<ng-container *ngIf="_signingIn">
+					<ng-container *ngIf="signingIn">
 						<odm-spinner [type]="'button'" [diameter]="_signingInSpinnerDiameter" [strokeWidth]="_signingInSpinnerStrokeWidth"></odm-spinner>
 					</ng-container>
 				</button>

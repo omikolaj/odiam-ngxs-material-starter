@@ -176,7 +176,7 @@ export class ChangePasswordContainerComponent implements OnInit, OnDestroy {
 	}
 
 	/**
-	 * Subscribes to server errors and sets problem details and internal server error details.
+	 * Listens to server errors and sets problem details and internal server error details.
 	 */
 	private _listenForServerErrors$(): Observable<ProblemDetails | InternalServerErrorDetails> {
 		this._sb.log.trace('_listenForServerErrors$ fired.', this);

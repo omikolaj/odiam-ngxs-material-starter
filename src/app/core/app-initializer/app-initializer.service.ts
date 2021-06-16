@@ -4,6 +4,7 @@ import { AuthService } from '../auth/auth.service';
 import { LogService } from '../logger/log.service';
 import { AuthState } from '../auth/auth.store.state';
 import { InitSessionResult } from '../models/auth/init-session-result.model';
+import { Router } from '@angular/router';
 
 /**
  * App initializer service.
@@ -18,7 +19,7 @@ export class AppInitializerService {
 	 * @param _authService
 	 * @param _log
 	 */
-	constructor(private _store: Store, private _authService: AuthService, private _log: LogService) {}
+	constructor(private _store: Store, private _router: Router, private _authService: AuthService, private _log: LogService) {}
 
 	/**
 	 * Initializes user's session.
@@ -48,7 +49,10 @@ export class AppInitializerService {
 				}
 				if (result.error) {
 					this._log.debug('[initUserSession] Signing user out.', this);
-					return this._authService.signUserOut$().toPromise();
+					return this._authService
+						.signUserOut$()
+						.toPromise()
+						.then(() => void this._router.navigate(['auth/sign-in']));
 				}
 			});
 

@@ -1,7 +1,7 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { downUpFadeInAnimation, ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
 import { FormGroup } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
@@ -10,6 +10,7 @@ import { AuthSandboxService } from '../auth-sandbox.service';
 import { TwoFactorAuthenticationVerificationCode } from 'app/core/models/account/security/two-factor-authentication-verification-code.model';
 import { TooltipTouchGestures } from '@angular/material/tooltip';
 import { ODM_TOOLTIP_SHOW_DELAY_IN_MS } from 'app/shared/global-settings/mat-tooltip-settings';
+import { ActionCompletion } from '@ngxs/store';
 
 /**
  * When two step verification is required to sign user in, this component will be displayed.
@@ -21,7 +22,7 @@ import { ODM_TOOLTIP_SHOW_DELAY_IN_MS } from 'app/shared/global-settings/mat-too
 	animations: [downUpFadeInAnimation],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TwoStepVerificationComponent implements OnInit {
+export class TwoStepVerificationComponent implements OnInit, OnDestroy {
 	/**
 	 * Verification code form.
 	 */
@@ -73,6 +74,15 @@ export class TwoStepVerificationComponent implements OnInit {
 	private _email: string;
 
 	/**
+	 * Whether two step verification action dispatched and completed
+	 */
+	twoStepVerificationCancelled$: Observable<ActionCompletion<any, Error>>;
+
+	/**
+	 * Rxjs subscriptions for this component.
+	 */
+	private readonly _subscription = new Subscription();
+	/**
 	 * Creates an instance of two step verification container component.
 	 * @param _sb
 	 * @param _route
@@ -83,6 +93,7 @@ export class TwoStepVerificationComponent implements OnInit {
 		this._problemDetails$ = _sb.problemDetails$.pipe(tap(() => (this._codeVerificationInProgress = false)));
 		// reset code verification value to false when server error occurs.
 		this._internalServerErrorDetails$ = _sb.internalServerErrorDetails$.pipe(tap(() => (this._codeVerificationInProgress = false)));
+		this.twoStepVerificationCancelled$ = _sb.twoStepVerificationCancelled$;
 	}
 
 	/**
@@ -91,6 +102,27 @@ export class TwoStepVerificationComponent implements OnInit {
 	ngOnInit(): void {
 		this._sb.log.trace('Initialized.', this);
 		this._setPropertiesFromQueryParams();
+		this._subscription.add(this._listenIfTwoStepVerificationCancelled$().subscribe());
+	}
+
+	/**
+	 * NgOnDestroy life cycle.
+	 */
+	ngOnDestroy(): void {
+		this._sb.log.trace('Destroyed.', this);
+		this._subscription.unsubscribe();
+	}
+
+	/**
+	 * Listens if two step verification cancelled action dispatched and completed.
+	 * @returns if two step verification cancelled$
+	 */
+	private _listenIfTwoStepVerificationCancelled$(): Observable<ActionCompletion<any, Error>> {
+		return this.twoStepVerificationCancelled$.pipe(
+			tap(() => {
+				void this._sb.router.navigate(['sign-in'], { relativeTo: this._route.parent });
+			})
+		);
 	}
 
 	/**

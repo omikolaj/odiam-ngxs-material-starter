@@ -78,4 +78,19 @@ export interface AuthStateModel {
 	 * Whether there is an outgoing request to confirm user's email.
 	 */
 	emailConfirmationInProgress: boolean;
+
+	/**
+	 * Two step verification provider. Currently only supporting authenticator. (authenticator, email, sms etc.)
+	 */
+	twoStepVerificationProvider: string;
+
+	/**
+	 * User's email.
+	 */
+	twoStepVerificationEmail: string;
+
+	/**
+	 * Whether user is currently in the process of signing in.
+	 */
+	signingInUserInProgress: boolean;
 }

@@ -1,7 +1,7 @@
-import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
-import { Observable, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import { FormGroup } from '@angular/forms';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
@@ -12,8 +12,6 @@ import { AuthSandboxService } from '../auth-sandbox.service';
 import { SigninUser } from 'app/core/models/auth/signin-user.model';
 import { ActiveAuthType } from 'app/core/models/auth/active-auth-type.model';
 import { AuthTypeRouteUrl } from 'app/core/models/auth/auth-type-route-url.model';
-import { ActionCompletion } from '@ngxs/store';
-import { tap } from 'rxjs/operators';
 
 /**
  * Sign in container component.
@@ -25,7 +23,7 @@ import { tap } from 'rxjs/operators';
 	animations: [leftRightFadeInAnimation],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SignInContainerComponent implements OnInit, OnDestroy {
+export class SignInContainerComponent implements OnInit {
 	/**
 	 * Emitted when server responds with 40X error.
 	 */
@@ -62,14 +60,9 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 	_username$: Observable<string>;
 
 	/**
-	 * Emits whether Auth.SignIn action has been dispatched and completed.
+	 * Whether user is in the process of signing in.
 	 */
-	_signInActionCompleted$: Observable<ActionCompletion<any, Error>>;
-
-	/**
-	 * Rxjs subscriptions for this component.
-	 */
-	private readonly _subscription = new Subscription();
+	_isSigningInUserInProgress$: Observable<boolean>;
 
 	/**
 	 * Creates an instance of sign in container component.
@@ -84,7 +77,7 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 		this._username$ = _sb.username$;
 		this._breakpointStateScreenMatcher$ = breakpointObserver.observe([MinScreenSizeQuery.md]);
 		this._activeAuthType$ = _sb.activeAuthType$;
-		this._signInActionCompleted$ = _sb.signInActionCompleted$;
+		this._isSigningInUserInProgress$ = _sb.isSigningInUserInProgress$;
 	}
 
 	/**
@@ -93,15 +86,6 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 	ngOnInit(): void {
 		this._sb.log.trace('Initialized.', this);
 		this._initForm();
-		this._subscription.add(this._onSignInActionCompleted$().subscribe());
-	}
-
-	/**
-	 * NgOnDestroy life cycle.
-	 */
-	ngOnDestroy(): void {
-		this._sb.log.trace('Destroyed.', this);
-		this._subscription.unsubscribe();
 	}
 
 	/**
@@ -162,16 +146,10 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 		this._sb.log.trace('_onSwitchToSignupClicked event handler fired', this, event);
 		const activeAuthType = { activeAuthType: event };
 		const routeUrl: AuthTypeRouteUrl = event === 'sign-in-active' ? 'sign-in' : 'sign-up';
-		this._sb.switchActiveAuthType(activeAuthType, routeUrl);
-	}
-
-	/**
-	 * Determines whether sign in action has been dispatched and completed.
-	 * @returns sign in action completed$
-	 */
-	private _onSignInActionCompleted$(): Observable<ActionCompletion<any, Error>> {
-		this._sb.log.trace('_onSignInActionCompleted$ event handler fired', this, event);
-		return this._signInActionCompleted$.pipe(tap(() => void this._sb.router.navigate(['account'])));
+		this._sb.updateActiveAuthType(activeAuthType);
+		setTimeout(() => {
+			void this._sb.router.navigate([routeUrl], { relativeTo: this._route.parent });
+		}, 300);
 	}
 
 	/**

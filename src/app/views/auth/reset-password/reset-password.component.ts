@@ -183,7 +183,7 @@ export class ResetPasswordComponent extends AuthBase implements OnInit, OnDestro
 	}
 
 	/**
-	 * Subscribes to server errors and sets problem details and internal server error details.
+	 * Listens to server errors and sets problem details and internal server error details.
 	 */
 	private _listenForServerErrors$(): Observable<ProblemDetails | InternalServerErrorDetails> {
 		return merge(this._sb.problemDetails$, this._sb.internalServerErrorDetails$).pipe(

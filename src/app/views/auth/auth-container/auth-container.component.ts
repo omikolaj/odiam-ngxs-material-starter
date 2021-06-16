@@ -1,12 +1,15 @@
 import { Component, ChangeDetectionStrategy, OnInit, OnDestroy } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, combineLatest, merge } from 'rxjs';
 import { BreakpointState, BreakpointObserver } from '@angular/cdk/layout';
 import { MinScreenSizeQuery } from 'app/shared/screen-size-queries';
 import { ROUTE_ANIMATIONS_ELEMENTS, routeAnimations } from 'app/core/core.module';
 import { tap, startWith } from 'rxjs/operators';
-import { NavigationEnd, UrlSegment } from '@angular/router';
+import { NavigationEnd, UrlSegment, ActivatedRoute } from '@angular/router';
 import { ActiveAuthType } from 'app/core/models/auth/active-auth-type.model';
 import { AuthSandboxService } from '../auth-sandbox.service';
+import { ProblemDetails } from 'app/core/models/problem-details.model';
+import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
+import { ActionCompletion } from '@ngxs/store';
 
 /**
  * Auth container component that houses all functionality responsible for displaying sign-in/sign-up/forgot-password.
@@ -104,6 +107,47 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	}
 
 	/**
+	 * Determines whether two step verification is required.
+	 */
+	private _isTwoStepVerificationRequired$: Observable<boolean>;
+
+	/**
+	 * Two step verification provider.
+	 * (Authenticator, email, sms etc.)
+	 */
+	private _twoStepVerificationProvider$: Observable<string>;
+
+	/**
+	 * Two step verification email.
+	 */
+	private _twoStepVerificationEmail$: Observable<string>;
+
+	/**
+	 * Whether user is authenticated.
+	 */
+	private _isAuthenticated$: Observable<boolean>;
+
+	/**
+	 * Whether two step verification cancelled action has dispatched and completed.
+	 */
+	private _twoStepVerificationCancelled$: Observable<ActionCompletion<any, Error>>;
+
+	/**
+	 * Whether Auth.Signin action dispatched and completed.
+	 */
+	private _userSignedIn$: Observable<ActionCompletion<any, Error>>;
+
+	/**
+	 * Emitted when server responds with 40X error.
+	 */
+	private _problemDetails$: Observable<ProblemDetails>;
+
+	/**
+	 * Emitted when server responds with 50X error.
+	 */
+	private _internalServerErrorDetails$: Observable<InternalServerErrorDetails>;
+
+	/**
 	 * Rxjs subscriptions for this component.
 	 */
 	private readonly _subscription = new Subscription();
@@ -113,9 +157,17 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 * @param breakpointObserver
 	 * @param _sb
 	 */
-	constructor(breakpointObserver: BreakpointObserver, private _sb: AuthSandboxService) {
+	constructor(breakpointObserver: BreakpointObserver, private _sb: AuthSandboxService, private _route: ActivatedRoute) {
+		this._problemDetails$ = _sb.problemDetails$;
+		this._internalServerErrorDetails$ = _sb.internalServerErrorDetails$;
 		this._breakpointStateScreenMatcher$ = breakpointObserver.observe([MinScreenSizeQuery.md]);
 		this._activeAuthType$ = _sb.activeAuthType$;
+		this._isTwoStepVerificationRequired$ = _sb.isTwoStepVerificationRequired$;
+		this._twoStepVerificationProvider$ = _sb.twoStepVerificationProvider$;
+		this._twoStepVerificationEmail$ = _sb.twoStepVerificationEmail$;
+		this._isAuthenticated$ = _sb.isAuthenticated$;
+		this._twoStepVerificationCancelled$ = _sb.twoStepVerificationCancelled$;
+		this._userSignedIn$ = _sb.signInActionCompleted$;
 	}
 
 	/**
@@ -123,21 +175,11 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 */
 	ngOnInit(): void {
 		this._sb.log.trace('Initialized.', this);
-
-		this._subscription.add(
-			this._sb.router.events
-				.pipe(
-					startWith(this._setActiveAuthTypeBasedOnUrl(this._sb.router.url)),
-					// we need to always respond to route events when this component is loaded.
-					// That's what loads sign-in/sign-up/forgot-password components based on the current url.
-					tap((event) => {
-						if (event instanceof NavigationEnd) {
-							this._setActiveAuthTypeBasedOnUrl(event.url);
-						}
-					})
-				)
-				.subscribe()
-		);
+		this._subscription.add(this._navigationEndEvent$().subscribe());
+		this._subscription.add(this._listenIfTwoStepVerificationRequired$().subscribe());
+		this._subscription.add(this._listensIfUserIsAuthenticated$().subscribe());
+		this._subscription.add(this._listenForServerErrors$().subscribe());
+		this._subscription.add(this._stopSigningUserIn$().subscribe());
 	}
 
 	/**
@@ -146,34 +188,6 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	ngOnDestroy(): void {
 		this._sb.log.trace('Destroyed.', this);
 		this._subscription.unsubscribe();
-	}
-
-	/**
-	 * Sets active auth type based on url.
-	 * @param url
-	 */
-	private _setActiveAuthTypeBasedOnUrl(url: string): void {
-		if (url === '/auth/sign-in' || url === '/auth') {
-			this._sb.switchActiveAuthType({ activeAuthType: 'sign-in-active' }, 'sign-in');
-		} else if (url === '/auth/sign-up') {
-			this._sb.switchActiveAuthType({ activeAuthType: 'sign-up-active' }, 'sign-up');
-		} else if (url === '/auth/forgot-password') {
-			this._sb.updateActiveAuthType({ activeAuthType: 'forgot-password-active' });
-		} else if (url.includes('/auth/two-step-verification')) {
-			this._sb.updateActiveAuthType({ activeAuthType: 'two-step-verification-active' });
-		} else if (url.includes('/auth/reset-password')) {
-			this._sb.updateActiveAuthType({ activeAuthType: 'reset-password-active' });
-		} else if (url.includes('/auth/successful-registration')) {
-			this._sb.updateActiveAuthType({ activeAuthType: 'successful-registration-active' });
-		} else if (url.includes('/email-confirmation')) {
-			this._sb.updateActiveAuthType({ activeAuthType: 'email-confirmation-active' });
-		} else if (url.includes('/email-change-confirmation')) {
-			this._sb.updateActiveAuthType({ activeAuthType: 'email-change-confirmation-active' });
-		} else if (url.includes('/confirmation-error')) {
-			this._sb.updateActiveAuthType({ activeAuthType: 'confirmation-error-active' });
-		} else {
-			this._sb.log.error('the auth url does not match any configured paths.', this, url);
-		}
 	}
 
 	/**
@@ -195,14 +209,20 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 * Switchs to signin.
 	 */
 	_switchToSignin(): void {
-		this._sb.switchActiveAuthType({ activeAuthType: 'sign-in-active' }, 'sign-in');
+		this._sb.updateActiveAuthType({ activeAuthType: 'sign-in-active' });
+		setTimeout(() => {
+			void this._sb.router.navigate(['sign-in'], { relativeTo: this._route.parent });
+		}, 300);
 	}
 
 	/**
 	 * Switchs to signup.
 	 */
 	_switchToSignup(): void {
-		this._sb.switchActiveAuthType({ activeAuthType: 'sign-up-active' }, 'sign-up');
+		this._sb.updateActiveAuthType({ activeAuthType: 'sign-up-active' });
+		setTimeout(() => {
+			void this._sb.router.navigate(['sign-up'], { relativeTo: this._route.parent });
+		}, 300);
 	}
 
 	/**
@@ -219,5 +239,109 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 			cssClasses += authType === 'sign-in-active' ? ' ' + 'auth-container__sign-in' : '';
 		}
 		return cssClasses;
+	}
+
+	/**
+	 * Sets active auth type based on url.
+	 * @param url
+	 */
+	private _setActiveAuthTypeBasedOnUrl(url: string): void {
+		if (url === '/auth/sign-in' || url === '/auth') {
+			this._sb.updateActiveAuthType({ activeAuthType: 'sign-in-active' });
+			setTimeout(() => {
+				void this._sb.router.navigate(['sign-in'], { relativeTo: this._route.parent });
+			}, 300);
+		} else if (url === '/auth/sign-up') {
+			this._sb.updateActiveAuthType({ activeAuthType: 'sign-up-active' });
+			setTimeout(() => {
+				void this._sb.router.navigate(['sign-up'], { relativeTo: this._route.parent });
+			}, 300);
+		} else if (url === '/auth/forgot-password') {
+			this._sb.updateActiveAuthType({ activeAuthType: 'forgot-password-active' });
+		} else if (url.includes('/auth/two-step-verification')) {
+			this._sb.updateActiveAuthType({ activeAuthType: 'two-step-verification-active' });
+		} else if (url.includes('/auth/reset-password')) {
+			this._sb.updateActiveAuthType({ activeAuthType: 'reset-password-active' });
+		} else if (url.includes('/auth/successful-registration')) {
+			this._sb.updateActiveAuthType({ activeAuthType: 'successful-registration-active' });
+		} else if (url.includes('/email-confirmation')) {
+			this._sb.updateActiveAuthType({ activeAuthType: 'email-confirmation-active' });
+		} else if (url.includes('/email-change-confirmation')) {
+			this._sb.updateActiveAuthType({ activeAuthType: 'email-change-confirmation-active' });
+		} else if (url.includes('/confirmation-error')) {
+			this._sb.updateActiveAuthType({ activeAuthType: 'confirmation-error-active' });
+		} else {
+			this._sb.log.error('the auth url does not match any configured paths.', this, url);
+		}
+	}
+
+	/**
+	 * Set active auth based based on navigation url.
+	 * @returns navigation end event
+	 */
+	private _navigationEndEvent$(): Observable<any> {
+		this._sb.log.trace('_onNavigationEndEvent$ fired.', this);
+		return this._sb.router.events.pipe(
+			startWith(this._setActiveAuthTypeBasedOnUrl(this._sb.router.url)),
+			// we need to always respond to route events when this component is loaded.
+			// That's what loads sign-in/sign-up/forgot-password etc components based on the current url.
+			tap((event) => {
+				if (event instanceof NavigationEnd) {
+					this._setActiveAuthTypeBasedOnUrl(event.url);
+				}
+			})
+		);
+	}
+
+	/**
+	 * Listens to server errors and sets problem details and internal server error details.
+	 */
+	private _listenForServerErrors$(): Observable<ProblemDetails | InternalServerErrorDetails> {
+		this._sb.log.trace('_listenForServerErrors$ fired.', this);
+		return merge(this._problemDetails$, this._internalServerErrorDetails$).pipe(
+			tap(() => {
+				this._sb.signingInUserInProgress({ signingInUserInProgress: false });
+			})
+		);
+	}
+
+	/**
+	 * Notifies the store that user is no longer in the process of signing in.
+	 * @returns signing user in$
+	 */
+	private _stopSigningUserIn$(): Observable<any> {
+		return merge(this._twoStepVerificationCancelled$, this._userSignedIn$).pipe(
+			tap(() => {
+				this._sb.signingInUserInProgress({ signingInUserInProgress: false });
+			})
+		);
+	}
+
+	/**
+	 * Listens if two step verification is required.
+	 * @returns is two step verification required$
+	 */
+	private _listenIfTwoStepVerificationRequired$(): Observable<any> {
+		return combineLatest(this._isTwoStepVerificationRequired$, this._twoStepVerificationEmail$, this._twoStepVerificationProvider$).pipe(
+			tap(([isRequired, email, provider]: [boolean, string, string]) => {
+				if (isRequired && email && provider) {
+					void this._sb.router.navigate(['two-step-verification'], { relativeTo: this._route.parent, queryParams: { provider, email } });
+				}
+			})
+		);
+	}
+
+	/**
+	 * Listens if user is authenticated.
+	 * @returns is authenticated$
+	 */
+	private _listensIfUserIsAuthenticated$(): Observable<boolean> {
+		return this._isAuthenticated$.pipe(
+			tap((isAuthenticated) => {
+				if (isAuthenticated) {
+					void this._sb.router.navigate(['account']);
+				}
+			})
+		);
 	}
 }

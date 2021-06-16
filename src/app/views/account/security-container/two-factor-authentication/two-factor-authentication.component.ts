@@ -76,7 +76,7 @@ export class TwoFactorAuthenticationComponent {
 		this._log.debug('authenticatorSetup emitted.', this);
 		this._authenticatorSetup = value;
 		if (value.authenticatorUri !== '' && value.sharedKey !== '') {
-			void this._router.navigate(['security/two-factor-authentication-setup'], { relativeTo: this._route.parent });
+			this.navigateToSetup.emit();
 		}
 	}
 
@@ -86,6 +86,11 @@ export class TwoFactorAuthenticationComponent {
 	 * Whether there is an outgoing request to generate new recovery codes.
 	 */
 	@Input() generatingNewRecoveryCodes: boolean;
+
+	/**
+	 * Event emitter when user is sent to two step verification setup.
+	 */
+	@Output() navigateToSetup = new EventEmitter<void>();
 
 	/**
 	 * Event emitter when user requests to generate new recovery codes.

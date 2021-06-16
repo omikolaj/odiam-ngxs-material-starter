@@ -17,16 +17,18 @@ import { LogService } from 'app/core/logger/log.service';
 import { FormBuilder } from '@angular/forms';
 import { AuthService } from '../../core/auth/auth.service';
 import { ActiveAuthType } from 'app/core/models/auth/active-auth-type.model';
-import { AuthTypeRouteUrl } from 'app/core/models/auth/auth-type-route-url.model';
+
 import { PasswordReset } from 'app/core/models/auth/password-reset.model';
 import { TwoFactorAuthenticationVerificationCode } from 'app/core/models/account/security/two-factor-authentication-verification-code.model';
 import { TwoFactorRecoveryCode } from 'app/core/models/auth/two-factor-recovery-code.model';
-import { AccessToken } from 'app/core/models/auth/access-token.model';
+
 import { SignupUser } from 'app/core/models/auth/signup-user.model';
 import { SigninUser } from 'app/core/models/auth/signin-user.model';
 import { AsyncValidatorsService } from 'app/core/form-validators/validators-async.service';
 import { ChangeEmail } from 'app/core/models/auth/change-email.model';
 import { ConfirmEmail } from 'app/core/models/auth/confirm-email.model';
+import { JsonWebTokenService } from 'app/core/auth/json-web-token.service';
+import { AccessToken } from 'app/core/models/auth/access-token.model';
 
 /**
  * Auth sandbox service.
@@ -89,9 +91,39 @@ export class AuthSandboxService {
 	@Select(AuthState.selectEmailConfirmationInProgress) emailConfirmationInProgress$: Observable<boolean>;
 
 	/**
+	 * Whether two step verification process is required.
+	 */
+	@Select(AuthState.selectIsTwoStepVerificationRequired) isTwoStepVerificationRequired$: Observable<boolean>;
+
+	/**
+	 * Two step verification process provider.
+	 */
+	@Select(AuthState.selectTwoStepVerificationProvider) twoStepVerificationProvider$: Observable<string>;
+
+	/**
+	 * Twp step verification process email. This the user's email.
+	 */
+	@Select(AuthState.selectTwoStepVerificationEmail) twoStepVerificationEmail$: Observable<string>;
+
+	/**
+	 * Whether user is authenticated.
+	 */
+	@Select(AuthState.selectIsAuthenticated) isAuthenticated$: Observable<boolean>;
+
+	/**
+	 * Whether user is in the process of signing in.
+	 */
+	@Select(AuthState.selectIsSigningInUserInProgress) isSigningInUserInProgress$: Observable<boolean>;
+
+	/**
 	 * Whether Auth.Signin action has been dispatched and completed.
 	 */
 	signInActionCompleted$ = this._actions$.pipe(ofActionCompleted(Auth.Signin));
+
+	/**
+	 * Whether user has cancelled out of the two step verification process.
+	 */
+	twoStepVerificationCancelled$ = this._actions$.pipe(ofActionCompleted(Auth.TwoStepVerificationProcessCancelled));
 
 	/**
 	 * Creates an instance of auth sandbox service.
@@ -113,23 +145,13 @@ export class AuthSandboxService {
 		private _socialAuthService: SocialAuthService,
 		private _authService: AuthService,
 		private _actions$: Actions,
+		private _jwtService: JsonWebTokenService,
 		public translateValidationErrorService: TranslateValidationErrorsService,
 		public log: LogService,
 		public fb: FormBuilder,
 		public router: Router,
 		public asyncValidators: AsyncValidatorsService
 	) {}
-
-	/**
-	 * Whether user wants is navigating to sign-in or sign-up.
-	 * @param activePanel
-	 */
-	switchActiveAuthType(activePanel: { activeAuthType: ActiveAuthType }, routeUrl: AuthTypeRouteUrl): void {
-		this.updateActiveAuthType(activePanel);
-		setTimeout(() => {
-			void this.router.navigate(['/auth', routeUrl]);
-		}, 300);
-	}
 
 	/**
 	 * Updates active auth type for sign-in/sign-up/forgot-password.
@@ -190,10 +212,14 @@ export class AuthSandboxService {
 	 * @param model
 	 */
 	signinUser(model: SigninUser): void {
+		this.signingInUserInProgress({ signingInUserInProgress: true });
+
 		this._authAsyncService
 			.signin$(model)
 			.pipe(
-				switchMap((resp) => this._authenticate$(resp.accessToken, model.rememberMe, model.email, resp.is2StepVerificationRequired, resp.provider))
+				switchMap((resp) =>
+					this._authenticateUsingAppSignin$(resp.accessToken, model.rememberMe, model.email, resp.is2StepVerificationRequired, resp.provider)
+				)
 			)
 			.subscribe();
 	}
@@ -206,8 +232,11 @@ export class AuthSandboxService {
 		this._authAsyncService
 			.verifyTwoStepVerificationCode$(model)
 			.pipe(
-				tap(() => this._store.dispatch(new Auth.Is2StepVerificationSuccessful({ is2StepVerificationSuccessful: true }))),
-				switchMap((accessToken) => this._authenticate$(accessToken))
+				tap((accessToken) => {
+					this._signUserIn(accessToken);
+					this._store.dispatch(new Auth.Is2StepVerificationSuccessful({ is2StepVerificationSuccessful: true }));
+				}),
+				switchMap(() => this._monitorSession$())
 			)
 			.subscribe();
 	}
@@ -217,7 +246,7 @@ export class AuthSandboxService {
 	 * @param model
 	 */
 	cancelTwoStepVerificationCodeProcess(): void {
-		void this.router.navigate(['auth/sign-in']);
+		this._store.dispatch(new Auth.TwoStepVerificationProcessCancelled());
 	}
 
 	/**
@@ -228,8 +257,11 @@ export class AuthSandboxService {
 		this._authAsyncService
 			.redeemRecoveryCode$(model)
 			.pipe(
-				tap(() => this._store.dispatch(new Auth.IsRedeemRecoveryCodeSuccessful({ isRedeemRecoveryCodeSuccessful: true }))),
-				switchMap((accessToken) => this._authenticate$(accessToken))
+				tap((accessToken) => {
+					this._signUserIn(accessToken);
+					this._store.dispatch(new Auth.IsRedeemRecoveryCodeSuccessful({ isRedeemRecoveryCodeSuccessful: true }));
+				}),
+				switchMap(() => this._monitorSession$())
 			)
 			.subscribe();
 	}
@@ -241,7 +273,10 @@ export class AuthSandboxService {
 		void this._socialAuthService.signIn(GoogleLoginProvider.PROVIDER_ID).then((model: SocialUser) => {
 			this._authAsyncService
 				.signinWithGoogle$(model)
-				.pipe(switchMap((token) => this._authenticate$(token)))
+				.pipe(
+					tap((accessToken) => this._signUserIn(accessToken)),
+					switchMap(() => this._monitorSession$())
+				)
 				.subscribe();
 		});
 	}
@@ -253,7 +288,10 @@ export class AuthSandboxService {
 		void this._socialAuthService.signIn(FacebookLoginProvider.PROVIDER_ID).then((model: SocialUser) => {
 			this._authAsyncService
 				.signinWithFacebook$(model)
-				.pipe(switchMap((token) => this._authenticate$(token)))
+				.pipe(
+					tap((accessToken) => this._signUserIn(accessToken)),
+					switchMap(() => this._monitorSession$())
+				)
 				.subscribe();
 		});
 	}
@@ -308,21 +346,46 @@ export class AuthSandboxService {
 	}
 
 	/**
-	 * Authenticates user and takes them to the account page.
-	 * @param [accessToken]
-	 * @param [rememberMe]
-	 * @param [email]
-	 * @param [is2StepVerificationRequired]
-	 * @param [provider]
-	 * @returns Observable<any>
+	 * Dispatches an action to the store whether user is in process of signing in.
+	 * @param value
 	 */
-	private _authenticate$(
-		accessToken?: AccessToken,
-		rememberMe?: boolean,
-		email?: string,
-		is2StepVerificationRequired?: boolean,
-		provider?: string
+	signingInUserInProgress(value: { signingInUserInProgress: boolean }): void {
+		this._store.dispatch(new Auth.SigningInUserInProgress(value));
+	}
+
+	/**
+	 * Monitors user's session for inactivity.
+	 * @returns session$
+	 */
+	private _monitorSession$(): Observable<any> {
+		return this._authService.monitorSessionActivity$();
+	}
+
+	/**
+	 * Dispatches an action to the store to sign user in.
+	 * @param accessToken
+	 */
+	private _signUserIn(accessToken: AccessToken): void {
+		const userId = this._jwtService.getSubClaim(accessToken.access_token);
+		this._store.dispatch(new Auth.Signin({ accessToken, userId }));
+	}
+
+	/**
+	 * Attempts to authenticate user via standard app's signin flow
+	 * @param accessToken
+	 * @param rememberMe
+	 * @param email
+	 * @param is2StepVerificationRequired
+	 * @param provider
+	 * @returns using app signin$
+	 */
+	private _authenticateUsingAppSignin$(
+		accessToken: AccessToken,
+		rememberMe: boolean,
+		email: string,
+		is2StepVerificationRequired: boolean,
+		provider: string
 	): Observable<any> {
-		return this._authService.processUserAuthentication$(accessToken, rememberMe, email, is2StepVerificationRequired, provider);
+		return this._authService.processAppSigninAuthentication$(accessToken, rememberMe, email, is2StepVerificationRequired, provider);
 	}
 }

@@ -108,6 +108,46 @@ export class Is2StepVerificationRequired {
 }
 
 /**
+ * Two step verification data, email and provider, for user that requires two step verification.
+ */
+export class TwoStepVerificationData {
+	/**
+	 * Type of action.
+	 */
+	static readonly type = '[Auth] TwpStepVerificationData';
+	/**
+	 * Creates an instance of TwpStepVerificationData action.
+	 * @param payload
+	 */
+	constructor(public payload: { twoStepVerificationProvider: string; twoStepVerificationEmail: string }) {}
+}
+
+/**
+ * Signing in user in progress.
+ */
+export class SigningInUserInProgress {
+	/**
+	 * Type of action.
+	 */
+	static readonly type = '[Auth] SigningInUserInProgress';
+	/**
+	 * Creates an instance of SigningInUserInProgress action.
+	 * @param payload
+	 */
+	constructor(public payload: { signingInUserInProgress: boolean }) {}
+}
+
+/**
+ * Two step verification process cancelled.
+ */
+export class TwoStepVerificationProcessCancelled {
+	/**
+	 * Type of action.
+	 */
+	static readonly type = '[Auth] TwoStepVerificationProcessCancelled';
+}
+
+/**
  * Was recovery code redemption successful.
  */
 export class IsRedeemRecoveryCodeSuccessful {

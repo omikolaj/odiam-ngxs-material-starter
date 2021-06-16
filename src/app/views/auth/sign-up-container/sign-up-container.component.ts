@@ -148,7 +148,10 @@ export class SignUpContainerComponent implements OnInit, OnDestroy {
 		this._sb.log.trace('_switchToSignup fired.', this);
 		const activeAuthType = { activeAuthType: event };
 		const routeUrl: AuthTypeRouteUrl = event === 'sign-in-active' ? 'sign-in' : 'sign-up';
-		this._sb.switchActiveAuthType(activeAuthType, routeUrl);
+		this._sb.updateActiveAuthType(activeAuthType);
+		setTimeout(() => {
+			void this._sb.router.navigate([routeUrl], { relativeTo: this._route.parent });
+		}, 300);
 	}
 
 	/**
@@ -164,7 +167,7 @@ export class SignUpContainerComponent implements OnInit, OnDestroy {
 	}
 
 	/**
-	 * Subscribes to server errors and sets problem details and internal server error details.
+	 * Listens to server errors and sets problem details and internal server error details.
 	 * @returns emits ProblemDetails | InternalServerErrorDetails observable
 	 */
 	private _listenForServerErrors$(): Observable<ProblemDetails | InternalServerErrorDetails> {

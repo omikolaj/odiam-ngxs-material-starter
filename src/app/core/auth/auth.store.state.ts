@@ -21,6 +21,8 @@ const AUTH_STATE_TOKEN = new StateToken<AuthStateModel>('auth');
 		rememberMe: false,
 		username: '',
 		is2StepVerificationRequired: false,
+		twoStepVerificationProvider: '',
+		twoStepVerificationEmail: '',
 		is2StepVerificationSuccessful: false,
 		isRedeemRecoveryCodeSuccessful: false,
 		userId: '',
@@ -28,7 +30,8 @@ const AUTH_STATE_TOKEN = new StateToken<AuthStateModel>('auth');
 		passwordResetCompleted: false,
 		registrationCompleted: false,
 		changeEmailConfirmationInProgress: false,
-		emailConfirmationInProgress: false
+		emailConfirmationInProgress: false,
+		signingInUserInProgress: false
 	}
 })
 @Injectable()
@@ -96,6 +99,16 @@ export class AuthState implements NgxsAfterBootstrap {
 	@Selector([AUTH_STATE_TOKEN])
 	static selectActiveAuthType(state: AuthStateModel): ActiveAuthType {
 		return state.activeAuthType;
+	}
+
+	/**
+	 * Selects whether user is in the process of signing in.
+	 * @param state
+	 * @returns true if user is in the process of signing in
+	 */
+	@Selector([AUTH_STATE_TOKEN])
+	static selectIsSigningInUserInProgress(state: AuthStateModel): boolean {
+		return state.signingInUserInProgress;
 	}
 
 	/**
@@ -202,6 +215,36 @@ export class AuthState implements NgxsAfterBootstrap {
 	}
 
 	/**
+	 * Selects whether two step verification is required.
+	 * @param state
+	 * @returns true if two step verification is required
+	 */
+	@Selector([AUTH_STATE_TOKEN])
+	static selectIsTwoStepVerificationRequired(state: AuthStateModel): boolean {
+		return state.is2StepVerificationRequired;
+	}
+
+	/**
+	 * Selects two step verification provider.
+	 * @param state
+	 * @returns two step verification provider
+	 */
+	@Selector([AUTH_STATE_TOKEN])
+	static selectTwoStepVerificationProvider(state: AuthStateModel): string {
+		return state.twoStepVerificationProvider;
+	}
+
+	/**
+	 * Selects user's two step verification email.
+	 * @param state
+	 * @returns two step verification email
+	 */
+	@Selector([AUTH_STATE_TOKEN])
+	static selectTwoStepVerificationEmail(state: AuthStateModel): string {
+		return state.twoStepVerificationEmail;
+	}
+
+	/**
 	 * Selects expires_at value from local storage and converts it to Date.
 	 * @param state
 	 * @returns date of expires at
@@ -241,11 +284,14 @@ export class AuthState implements NgxsAfterBootstrap {
 					...draft,
 					passwordResetCompleted: false,
 					is2StepVerificationRequired: false,
+					twoStepVerificationEmail: '',
+					twoStepVerificationProvider: '',
 					is2StepVerificationSuccessful: false,
 					isRedeemRecoveryCodeSuccessful: false,
 					changeEmailConfirmationInProgress: false,
 					emailConfirmationInProgress: false,
-					registrationCompleted: false
+					registrationCompleted: false,
+					signingInUserInProgress: false
 				};
 				return draft;
 			})
@@ -397,13 +443,58 @@ export class AuthState implements NgxsAfterBootstrap {
 	}
 
 	/**
+	 * Actions handler when user clicks to cancell out of two step verification process.
+	 * @param ctx
+	 */
+	@Action(Auth.TwoStepVerificationProcessCancelled)
+	twoStepVerificationProcessCancelled(ctx: StateContext<AuthStateModel>): void {
+		this._log.info('twoStepVerificationProcessCancelled action handler fired.', this);
+		// on cancelled event, set two step verification process to false.
+		ctx.dispatch(new Auth.Is2StepVerificationRequired({ is2StepVerificationRequired: false }));
+		// clear out any two step verification data we might have had.
+		ctx.dispatch(new Auth.TwoStepVerificationData({ twoStepVerificationEmail: '', twoStepVerificationProvider: '' }));
+	}
+
+	/**
 	 * Action handler whether two step verification is required to sign user in.
 	 * @param ctx
 	 * @param action
 	 */
-	@Action(Auth.Is2StepVerificationSuccessful)
+	@Action(Auth.Is2StepVerificationRequired)
 	is2StepVerificationRequired(ctx: StateContext<AuthStateModel>, action: Auth.Is2StepVerificationRequired): void {
 		this._log.info('is2StepVerificationRequired action handler fired.', this);
+		ctx.setState(
+			produce((draft: AuthStateModel) => {
+				draft = { ...draft, ...action.payload };
+				return draft;
+			})
+		);
+	}
+
+	/**
+	 * Actions handler whether user is in the process of signing in.
+	 * @param ctx
+	 * @param action
+	 */
+	@Action(Auth.SigningInUserInProgress)
+	signingInUserInProgress(ctx: StateContext<AuthStateModel>, action: Auth.SigningInUserInProgress): void {
+		this._log.info('signingInUserInProgress action handler fired.', this);
+		ctx.setState(
+			produce((draft: AuthStateModel) => {
+				draft = { ...draft, ...action.payload };
+				return draft;
+			})
+		);
+	}
+
+	/**
+	 * Action handler for saving two step verification data.
+	 * @param ctx
+	 * @param action
+	 */
+	@Action(Auth.TwoStepVerificationData)
+	twoStepVerificationData(ctx: StateContext<AuthStateModel>, action: Auth.TwoStepVerificationData): void {
+		this._log.info('twoStepVerificationData action handler fired.', this);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft = { ...draft, ...action.payload };

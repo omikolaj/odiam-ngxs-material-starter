@@ -1,13 +1,14 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { FormGroup } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { tap } from 'rxjs/operators';
 import { downUpFadeInAnimation } from 'app/core/core.module';
 import { AuthSandboxService } from '../auth-sandbox.service';
 import { TwoFactorRecoveryCode } from 'app/core/models/auth/two-factor-recovery-code.model';
+import { ActionCompletion } from '@ngxs/store';
 
 /**
  * When user chooses to redeem two factor authentication Recovery code, this compnent will be displayed.
@@ -19,7 +20,7 @@ import { TwoFactorRecoveryCode } from 'app/core/models/auth/two-factor-recovery-
 	animations: [downUpFadeInAnimation],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RedeemRecoveryCodeComponent implements OnInit {
+export class RedeemRecoveryCodeComponent implements OnInit, OnDestroy {
 	/**
 	 * Recovery code form.
 	 */
@@ -51,6 +52,16 @@ export class RedeemRecoveryCodeComponent implements OnInit {
 	_recoveryCodeInputLength = 8;
 
 	/**
+	 * Whether two step verification cancelled action has dispatched and completed.
+	 */
+	private _twoStepVerificationCancelled$: Observable<ActionCompletion<any, Error>>;
+
+	/**
+	 * Rxjs subscriptions for this component.
+	 */
+	private readonly _subscription = new Subscription();
+
+	/**
 	 * User's email;
 	 */
 	private _email: string;
@@ -60,12 +71,13 @@ export class RedeemRecoveryCodeComponent implements OnInit {
 	 * @param _sb
 	 * @param _route
 	 */
-	constructor(private _sb: AuthSandboxService, private _route: ActivatedRoute, private _router: Router) {
+	constructor(private _sb: AuthSandboxService, private _route: ActivatedRoute) {
 		this._recoveryCodeVerificationSucceeded$ = _sb.isRecoveryCodeRedemptionSuccessful$;
 		// reset code verification value to false when server error occurs.
 		this._problemDetails$ = _sb.problemDetails$.pipe(tap(() => (this._recoveryCodeVerificationInProgress = false)));
 		// reset code verification value to false when server error occurs.
 		this._internalServerErrorDetails$ = _sb.internalServerErrorDetails$.pipe(tap(() => (this._recoveryCodeVerificationInProgress = false)));
+		this._twoStepVerificationCancelled$ = _sb.twoStepVerificationCancelled$;
 	}
 
 	/**
@@ -74,6 +86,26 @@ export class RedeemRecoveryCodeComponent implements OnInit {
 	ngOnInit(): void {
 		this._sb.log.trace('Initialized.', this);
 		this._setPropertiesFromQueryParams();
+		this._subscription.add(this._listenIfTwoStepVerificationCancelled$().subscribe());
+	}
+
+	/**
+	 * ngOnDestroy life cycle.
+	 */
+	ngOnDestroy(): void {
+		this._subscription.unsubscribe();
+	}
+
+	/**
+	 * Listens if two step verification action dispatched and completed.
+	 * @returns step verification cancelled$
+	 */
+	private _listenIfTwoStepVerificationCancelled$(): Observable<ActionCompletion<any, Error>> {
+		return this._twoStepVerificationCancelled$.pipe(
+			tap(() => {
+				void this._sb.router.navigate(['sign-in'], { relativeTo: this._route.parent });
+			})
+		);
 	}
 
 	/**

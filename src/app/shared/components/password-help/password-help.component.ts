@@ -131,7 +131,7 @@ export class PasswordHelpComponent implements OnInit, OnDestroy {
 	/**
 	 * Rxjs subscriptions for this component.
 	 */
-	private readonly _subscription: Subscription = new Subscription();
+	private readonly _subscription = new Subscription();
 
 	/**
 	 * Transformer for password requirement.

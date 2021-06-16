@@ -3,14 +3,12 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { environment as env } from '../../environments/environment';
 import { routeAnimations } from '../core/core.module';
-
 import { Language } from 'app/core/settings/settings-state.model';
 import { MatSelectChange } from '@angular/material/select';
-
-import { Router, NavigationEnd } from '@angular/router';
+import { NavigationEnd } from '@angular/router';
 import { filter, tap } from 'rxjs/operators';
-
 import { AppSandboxService } from '../app-sandbox.service';
+import { ActionCompletion } from '@ngxs/store';
 
 /**
  * AppComponent displays navbar, footer and named router-outlet '#o=outlet'.
@@ -87,6 +85,11 @@ export class AppComponent implements OnInit, OnDestroy {
 	_theme$: Observable<string>;
 
 	/**
+	 * Whether Auth.Signout action has been dispatched and completed.
+	 */
+	signedOut$: Observable<ActionCompletion<any, Error>>;
+
+	/**
 	 * Rxjs subscriptions for this component.
 	 */
 	private readonly _subscription = new Subscription();
@@ -96,10 +99,12 @@ export class AppComponent implements OnInit, OnDestroy {
 	 * @param _router
 	 * @param _sb
 	 */
-	constructor(private _router: Router, private _sb: AppSandboxService) {
+	constructor(private _sb: AppSandboxService) {
+		this.signedOut$ = _sb.signedOut$;
+
 		// Set up google analytics
 		this._subscription.add(
-			_router.events
+			_sb.router.events
 				.pipe(
 					filter((event) => event instanceof NavigationEnd),
 					tap((event: NavigationEnd) => {
@@ -116,7 +121,7 @@ export class AppComponent implements OnInit, OnDestroy {
 	 * Determines whether browser is IE, Edge or Safari.
 	 * @returns true if browser is IE, Edge or Safari.
 	 */
-	private static isIEorEdgeOrSafari() {
+	private static _isIEorEdgeOrSafari() {
 		return ['ie', 'edge', 'safari'].includes(browser().name);
 	}
 
@@ -127,7 +132,9 @@ export class AppComponent implements OnInit, OnDestroy {
 		this._sb.log.trace('Initialized.', this);
 		this._sb.testLocalStorage();
 
-		if (AppComponent.isIEorEdgeOrSafari()) {
+		this._subscription.add(this._onSignedOut$().subscribe());
+
+		if (AppComponent._isIEorEdgeOrSafari()) {
 			this._sb.disablePageAnimations();
 		}
 
@@ -142,36 +149,26 @@ export class AppComponent implements OnInit, OnDestroy {
 	}
 
 	/**
-	 * Initializes settings options from the store.
-	 */
-	private _onInitSetSettingOptions(): void {
-		this._isAuthenticated$ = this._sb.isAuthenticated$;
-		this._stickyHeader$ = this._sb.stickyHeader$;
-		this._language$ = this._sb.language$;
-		this._theme$ = this._sb.theme$;
-	}
-
-	/**
 	 * Event handler for logging user in.
 	 */
 	_onSigninClicked(): void {
-		this._sb.log.debug('onSigninClick handler fired.', this);
-		void this._router.navigate(['auth/sign-in']);
+		this._sb.log.debug('_onSigninClicked handler fired.', this);
+		void this._sb.router.navigate(['auth/sign-in']);
 	}
 
 	/**
 	 * Event handler for when user clicks the account button.
 	 */
 	_onDashboardClicked(): void {
-		this._sb.log.debug('onDashboardClick event handler fired.', this);
-		void this._router.navigate(['account']);
+		this._sb.log.debug('_onDashboardClicked event handler fired.', this);
+		void this._sb.router.navigate(['account']);
 	}
 
 	/**
 	 * Event handler for signing user out.
 	 */
 	_onSignoutClicked(): void {
-		this._sb.log.debug('onSignoutClick handler fired.', this);
+		this._sb.log.debug('_onSignoutClicked handler fired.', this);
 		this._sb.signOut();
 	}
 
@@ -180,7 +177,27 @@ export class AppComponent implements OnInit, OnDestroy {
 	 * @param MatSelectChange
 	 */
 	_onLanguageSelectChanged(event: MatSelectChange): void {
-		this._sb.log.debug(`onLanguageSelect handler fired with: ${event.value as Language}.`, this);
+		this._sb.log.debug(`_onLanguageSelectChanged handler fired with: ${event.value as Language}.`, this);
 		this._sb.changeLanguage(event.value as string);
+	}
+
+	/**
+	 * Emits when Auth.Signout action has been dispatched and completed.
+	 * @returns signedOut$
+	 */
+	private _onSignedOut$(): Observable<any> {
+		this._sb.log.debug('_onSignedOut$ executing.', this);
+		return this.signedOut$.pipe(tap(() => void this._sb.router.navigate(['auth/sign-in'])));
+	}
+
+	/**
+	 * Initializes settings options from the store.
+	 */
+	private _onInitSetSettingOptions(): void {
+		this._sb.log.debug('_onInitSetSettingOptions executing.', this);
+		this._isAuthenticated$ = this._sb.isAuthenticated$;
+		this._stickyHeader$ = this._sb.stickyHeader$;
+		this._language$ = this._sb.language$;
+		this._theme$ = this._sb.theme$;
 	}
 }

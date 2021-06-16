@@ -27,7 +27,6 @@ export class SignInComponent extends AuthBase implements OnInit {
 	 */
 	@Input() set problemDetails(value: ProblemDetails) {
 		this.log.debug('Problem details emitted.', this);
-		this._signingIn = false;
 		this.problemDetailsError = value;
 	}
 
@@ -36,7 +35,6 @@ export class SignInComponent extends AuthBase implements OnInit {
 	 */
 	@Input() set internalServerErrorDetails(value: InternalServerErrorDetails) {
 		this.log.debug('Internal server error emitted.', this);
-		this._signingIn = false;
 		this.internalServerError = value;
 	}
 
@@ -108,7 +106,7 @@ export class SignInComponent extends AuthBase implements OnInit {
 	/**
 	 * Whether user is currently in the middle if signing in.
 	 */
-	_signingIn: boolean;
+	@Input() signingIn: boolean;
 
 	/**
 	 * Hide/show password.
@@ -175,7 +173,6 @@ export class SignInComponent extends AuthBase implements OnInit {
 	_onSignin(): void {
 		this.log.trace('_onSignin event handler fired.', this);
 		const signinUserModel = this.signinForm.value as SigninUser;
-		this._signingIn = true;
 		this.signinFormSubmitted.emit(signinUserModel);
 	}
 
