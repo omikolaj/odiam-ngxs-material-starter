@@ -147,7 +147,6 @@ export class ChangePasswordContainerComponent implements OnInit, OnDestroy {
 	private _onPasswordChangeCompleted$(): Observable<boolean> {
 		this._sb.log.trace('_onPasswordChangeCompleted$ fired.', this);
 		return this._passwordChangeCompleted$.pipe(
-			tap((value) => console.log('emitting from password change completed', value)),
 			// skip the first emission. Default is false. Once user successfully updates password, closes the dialog and attempts to
 			// reopen it, they will be re-directed to account/security because passwordChangeCompleted already emitted true.
 			skip(1),
