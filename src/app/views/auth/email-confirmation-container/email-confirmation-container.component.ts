@@ -49,7 +49,7 @@ export class EmailConfirmationContainerComponent implements OnInit, OnDestroy {
 	}
 
 	/**
-	 * ngOnInit life cycle.
+	 * NgOnInit life cycle.
 	 */
 	ngOnInit(): void {
 		this._sb.log.trace('Initialized.', this);
@@ -63,7 +63,7 @@ export class EmailConfirmationContainerComponent implements OnInit, OnDestroy {
 	}
 
 	/**
-	 * ngOnDestroy life cycle.
+	 * NgOnDestroy life cycle.
 	 */
 	ngOnDestroy(): void {
 		this._sb.log.trace('Destroyed.', this);

@@ -121,7 +121,7 @@ export class AppComponent implements OnInit, OnDestroy {
 	 * Determines whether browser is IE, Edge or Safari.
 	 * @returns true if browser is IE, Edge or Safari.
 	 */
-	private static _isIEorEdgeOrSafari() {
+	private static _isIEorEdgeOrSafari(): boolean {
 		return ['ie', 'edge', 'safari'].includes(browser().name);
 	}
 

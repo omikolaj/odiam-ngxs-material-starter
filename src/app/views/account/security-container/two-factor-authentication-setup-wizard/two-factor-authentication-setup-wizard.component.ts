@@ -138,7 +138,7 @@ export class TwoFactorAuthenticationSetupWizardComponent implements OnDestroy {
 	constructor(private _log: LogService) {}
 
 	/**
-	 * ngOnDestroy life cycle.
+	 * NgOnDestroy life cycle.
 	 */
 	ngOnDestroy(): void {
 		this._log.trace('Destroyed.', this);

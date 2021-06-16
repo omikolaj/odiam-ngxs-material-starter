@@ -73,7 +73,7 @@ export class TwoFactorAuthenticationSetupWizardContainerComponent implements OnI
 	}
 
 	/**
-	 * ngOnInit life cycle.
+	 * NgOnInit life cycle.
 	 */
 	ngOnInit(): void {
 		this._sb.log.trace('Initialized.', this);

@@ -184,14 +184,14 @@ export class PasswordHelpComponent implements OnInit, OnDestroy {
 	constructor(private _log: LogService) {}
 
 	/**
-	 * ngOnInit life cycle.
+	 * NgOnInit life cycle.
 	 */
 	ngOnInit(): void {
 		this._log.trace('Initialized.', this);
 	}
 
 	/**
-	 * ngOnDestroy life cycle.
+	 * NgOnDestroy life cycle.
 	 */
 	ngOnDestroy(): void {
 		this._log.trace('Destroyed', this);

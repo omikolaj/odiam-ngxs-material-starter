@@ -49,7 +49,7 @@ export class ChangeEmailTokenContainerComponent implements OnInit {
 	}
 
 	/**
-	 * ngOnInit life cycle.
+	 * NgOnInit life cycle.
 	 */
 	ngOnInit(): void {
 		this._subscription.add(this._listenForServerErrors$().subscribe());
