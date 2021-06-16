@@ -17,11 +17,9 @@ import { LogService } from 'app/core/logger/log.service';
 import { FormBuilder } from '@angular/forms';
 import { AuthService } from '../../core/auth/auth.service';
 import { ActiveAuthType } from 'app/core/models/auth/active-auth-type.model';
-
 import { PasswordReset } from 'app/core/models/auth/password-reset.model';
 import { TwoFactorAuthenticationVerificationCode } from 'app/core/models/account/security/two-factor-authentication-verification-code.model';
 import { TwoFactorRecoveryCode } from 'app/core/models/auth/two-factor-recovery-code.model';
-
 import { SignupUser } from 'app/core/models/auth/signup-user.model';
 import { SigninUser } from 'app/core/models/auth/signin-user.model';
 import { AsyncValidatorsService } from 'app/core/form-validators/validators-async.service';
@@ -127,16 +125,18 @@ export class AuthSandboxService {
 
 	/**
 	 * Creates an instance of auth sandbox service.
-	 * @param translateValidationErrorService
-	 * @param log
-	 * @param fb
-	 * @param router
 	 * @param _authAsyncService
 	 * @param _usersAsyncService
 	 * @param _store
 	 * @param _socialAuthService
 	 * @param _authService,
 	 * @param _actions$
+	 * @param _jwtService
+	 * @param translateValidationErrorService
+	 * @param log
+	 * @param fb
+	 * @param router
+	 * @param asyncValidators
 	 */
 	constructor(
 		private _authAsyncService: AuthAsyncService,
