@@ -5,11 +5,15 @@
 				<div class="email-verification__not-verified">
 					<div>
 						<span class="email-verification__email">{{ email }}</span>
-						<mat-icon class="email-verification__not-verified-icon" [matTooltip]="'odm.account.general.pending-verification-tooltip' | translate">
+						<mat-icon
+							*ngIf="email !== _fallbackEmail"
+							class="email-verification__not-verified-icon"
+							[matTooltip]="'odm.account.general.pending-verification-tooltip' | translate"
+						>
 							<fa-icon icon="exclamation-triangle"></fa-icon>
 						</mat-icon>
 					</div>
-					<div>
+					<div *ngIf="email !== _fallbackEmail">
 						<button
 							[matTooltip]="_disabled ? ('odm.account.general.resend-verification-disabled-tooltip' | translate) : ''"
 							mat-button

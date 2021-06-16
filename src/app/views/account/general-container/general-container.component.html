@@ -4,7 +4,7 @@
 			<odm-email-settings
 				[loading]="_loading$ | async"
 				[disableResendVerification]="_disableResendVerification$ | async"
-				[email]="accountGeneralDetails?.email"
+				[email]="accountGeneralDetails?.email || _fallbackEmail"
 				[verified]="accountGeneralDetails?.verified"
 				(resendEmailVerificationClicked)="_onResendEmailVerificationClicked()"
 			></odm-email-settings>

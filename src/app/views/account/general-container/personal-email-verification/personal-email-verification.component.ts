@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from 
 import { LogService } from 'app/core/logger/log.service';
 import { ROUTE_ANIMATIONS_ELEMENTS, downUpFadeInAnimation } from 'app/core/core.module';
 import { ODM_GLOBAL_ACCOUNT_SHORT_DESCRIPTION_SIZE } from 'app/shared/global-settings/global-settings';
+import { ODM_FALLBACK_EMAIL_ADDRESS } from 'app/shared/global-settings/fallback-email-address';
 
 /**
  * User's personal email component.
@@ -43,6 +44,11 @@ export class PersonalEmailVerificationComponent {
 	 * Event emitter when user requests to re-send email verification.
 	 */
 	@Output() resendEmailVerificationClicked = new EventEmitter<void>();
+
+	/**
+	 * Fallback email address if one cannot be fetched from the server.
+	 */
+	readonly _fallbackEmail = ODM_FALLBACK_EMAIL_ADDRESS;
 
 	/**
 	 * Route animations.

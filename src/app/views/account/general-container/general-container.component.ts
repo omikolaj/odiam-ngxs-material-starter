@@ -9,6 +9,7 @@ import { downUpFadeInAnimation, ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.
 import { LogService } from 'app/core/logger/log.service';
 import { AccountSandboxService } from '../account-sandbox.service';
 import { ODM_GLOBAL_ERROR_FONT_SIZE } from 'app/shared/global-settings/global-settings';
+import { ODM_FALLBACK_EMAIL_ADDRESS } from 'app/shared/global-settings/fallback-email-address';
 
 /**
  * General component container that houses user's general settings functionality.
@@ -55,6 +56,11 @@ export class GeneralContainerComponent implements OnInit, OnDestroy {
 	 * Whether 'resend notification' button is disabled/enabled.
 	 */
 	_disableResendVerification$ = this._disableResendVerificationSub.asObservable();
+
+	/**
+	 * Fallback email address if one cannot be fetched from the server.
+	 */
+	_fallbackEmail = ODM_FALLBACK_EMAIL_ADDRESS;
 
 	/**
 	 * Loading subject. Required for angular OnPush change detection to be triggered.
