@@ -145,6 +145,7 @@ export class AppComponent implements OnInit, OnDestroy {
 	 * NgOnDestroy life cycle.
 	 */
 	ngOnDestroy(): void {
+		this._sb.log.trace('Destroyed.', this);
 		this._subscription.unsubscribe();
 	}
 

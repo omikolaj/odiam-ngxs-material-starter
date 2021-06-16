@@ -84,7 +84,7 @@ export class Is2StepVerificationSuccessful {
 	/**
 	 * Type of action.
 	 */
-	static readonly type = '[Auth] Is2StepVerificationSuccessful';
+	static readonly type = '[Auth] Is 2Step Verification Successful';
 	/**
 	 * Creates an instance of Is2StepVerificationSuccessful action.
 	 * @param payload
@@ -99,7 +99,7 @@ export class Is2StepVerificationRequired {
 	/**
 	 * Type of action.
 	 */
-	static readonly type = '[Auth] Is2StepVerificationRequired';
+	static readonly type = '[Auth] Is 2Step Verification Required';
 	/**
 	 * Creates an instance of Is2StepVerificationRequired action.
 	 * @param payload
@@ -114,7 +114,7 @@ export class TwoStepVerificationData {
 	/**
 	 * Type of action.
 	 */
-	static readonly type = '[Auth] TwpStepVerificationData';
+	static readonly type = '[Auth] Two Step Verification Data';
 	/**
 	 * Creates an instance of TwpStepVerificationData action.
 	 * @param payload
@@ -129,12 +129,42 @@ export class SigningInUserInProgress {
 	/**
 	 * Type of action.
 	 */
-	static readonly type = '[Auth] SigningInUserInProgress';
+	static readonly type = '[Auth] Signing In User In Progress';
 	/**
 	 * Creates an instance of SigningInUserInProgress action.
 	 * @param payload
 	 */
 	constructor(public payload: { signingInUserInProgress: boolean }) {}
+}
+
+/**
+ * Forgot password request submitted without errors.
+ */
+export class ForgotPasswordRequestSubmittedSuccessfully {
+	/**
+	 * Type of action.
+	 */
+	static readonly type = '[Auth] Forgot Password Request Submitted Successfully';
+	/**
+	 * Creates an instance of ForgotPasswordSubmitted action.
+	 * @param payload
+	 */
+	constructor(public payload: { forgotPasswordRequestSubmittedSuccessfully: boolean }) {}
+}
+
+/**
+ * Whether there is an outgoing request to send user forgot password instructions.
+ */
+export class ForgotPasswordRequestSubmitting {
+	/**
+	 * Type of action.
+	 */
+	static readonly type = '[Auth] Forgot Password Request Submitting';
+	/**
+	 * Creates an instance of ForgotPasswordSubmitting action.
+	 * @param payload
+	 */
+	constructor(public payload: { forgotPasswordRequestSubmitting: boolean }) {}
 }
 
 /**
@@ -144,7 +174,7 @@ export class TwoStepVerificationProcessCancelled {
 	/**
 	 * Type of action.
 	 */
-	static readonly type = '[Auth] TwoStepVerificationProcessCancelled';
+	static readonly type = '[Auth] Two Step Verification Process Cancelled';
 }
 
 /**
@@ -154,7 +184,7 @@ export class IsRedeemRecoveryCodeSuccessful {
 	/**
 	 * Type of action.
 	 */
-	static readonly type = '[Auth] IsRedeemRecoveryCodeSuccessful';
+	static readonly type = '[Auth] Is RedeemRecovery Code Successful';
 	/**
 	 * Creates an instance of IsRedeemRecoveryCodeSuccessful action.
 	 * @param payload
@@ -236,6 +266,9 @@ export class PersistSettings {
 	constructor(public payload: AuthStateModel) {}
 }
 
+/**
+ * Whether change email confirmation is in progress.
+ */
 export class ChangeEmailConfirmationInProgress {
 	/**
 	 * Type of action.
@@ -249,6 +282,9 @@ export class ChangeEmailConfirmationInProgress {
 	constructor(public payload: { changeEmailConfirmationInProgress: boolean }) {}
 }
 
+/**
+ * Whether email confirmation is in progress.
+ */
 export class EmailConfirmationInProgress {
 	/**
 	 * Type of action.

@@ -1,9 +1,11 @@
-import { Component, ChangeDetectionStrategy, Input, EventEmitter, Output } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, EventEmitter, Output, ChangeDetectorRef } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { Observable } from 'rxjs';
 import { LogService } from 'app/core/logger/log.service';
-import { TranslateValidationErrorsService } from 'app/shared/services/translate-validation-errors.service';
 import { ROUTE_ANIMATIONS_ELEMENTS, downUpFadeInAnimation } from 'app/core/core.module';
+import { AuthBase } from '../auth-base';
+import { TranslateValidationErrorsService } from 'app/shared/services/translate-validation-errors.service';
+import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
+import { ODM_SMALL_SPINNER_DIAMETER, ODM_SMALL_SPINNER_STROKE_WIDTH } from 'app/shared/global-settings/mat-spinner-settings';
 
 /**
  * Forgot password component.
@@ -15,11 +17,19 @@ import { ROUTE_ANIMATIONS_ELEMENTS, downUpFadeInAnimation } from 'app/core/core.
 	animations: [downUpFadeInAnimation],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ForgotPasswordComponent {
+export class ForgotPasswordComponent extends AuthBase {
 	/**
 	 * Route animations.
 	 */
 	readonly _routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
+
+	/**
+	 * Emitted when server responds with 50X error.
+	 */
+	@Input() set internalServerErrorDetails(value: InternalServerErrorDetails) {
+		this.log.debug('Internal server error emitted.', this);
+		this.internalServerError = value;
+	}
 
 	/**
 	 * Forgot password form collects user entered email.
@@ -27,9 +37,14 @@ export class ForgotPasswordComponent {
 	@Input() forgotPasswordForm: FormGroup;
 
 	/**
-	 * Whether user has submitted forgot-password form.
+	 * Whether there is an outgoing request to send forgot password instructions.
 	 */
-	@Input() formSubmitted = false;
+	@Input() forgotPasswordRequestSubmitting = false;
+
+	/**
+	 * Whether forgot password request was handled by the server without errors.
+	 */
+	@Input() forgotPasswordRequestSubmittedSuccessfully = false;
 
 	/**
 	 * Event emitter when user clicks forgot-password button.
@@ -47,17 +62,29 @@ export class ForgotPasswordComponent {
 	@Output() finishClicked = new EventEmitter<void>();
 
 	/**
+	 * Forgot password spinner diameter.
+	 */
+	readonly _forgotPasswordSpinnerDiameter = ODM_SMALL_SPINNER_DIAMETER;
+
+	/**
+	 * Forgot password spinner stroke width.
+	 */
+	readonly _forgotPasswordSpinnerStrokeWidth = ODM_SMALL_SPINNER_STROKE_WIDTH;
+
+	/**
 	 * Creates an instance of forgot password component.
 	 * @param _log
 	 * @param _translateError
 	 */
-	constructor(private _log: LogService, private _translateError: TranslateValidationErrorsService) {}
+	constructor(protected log: LogService, translateErrorValidationService: TranslateValidationErrorsService, cd: ChangeDetectorRef) {
+		super(translateErrorValidationService, log, cd);
+	}
 
 	/**
 	 * Event handler for when the form is submitted.
 	 */
 	_onFormSubmitted(): void {
-		this._log.trace('_onFormSubmitted fired.', this);
+		this.log.trace('_onFormSubmitted fired.', this);
 		const model = this.forgotPasswordForm.value as { email: string };
 		this.submitFormClicked.emit(model);
 	}
@@ -66,7 +93,7 @@ export class ForgotPasswordComponent {
 	 * Event handler for when user clicks finish on forgot password component.
 	 */
 	_onFinishClicked(): void {
-		this._log.trace('_onFinishClicked fired.', this);
+		this.log.trace('_onFinishClicked fired.', this);
 		this.finishClicked.emit();
 	}
 
@@ -74,17 +101,7 @@ export class ForgotPasswordComponent {
 	 * Event handler for when forgot-password form is cancelled.
 	 */
 	_onCancelClicked(): void {
-		this._log.trace('_onCancelClicked fired.', this);
+		this.log.trace('_onCancelClicked fired.', this);
 		this.cancelClicked.emit();
-	}
-
-	/**
-	 * Gets translated error message.
-	 * @param errors
-	 * @returns translated error message
-	 */
-	_getTranslatedErrorMessage$(): Observable<string> {
-		const control = this.forgotPasswordForm.get('email');
-		return this._translateError.translateErrorMessage$(control.errors);
 	}
 }

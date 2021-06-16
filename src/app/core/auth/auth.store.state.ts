@@ -31,7 +31,9 @@ const AUTH_STATE_TOKEN = new StateToken<AuthStateModel>('auth');
 		registrationCompleted: false,
 		changeEmailConfirmationInProgress: false,
 		emailConfirmationInProgress: false,
-		signingInUserInProgress: false
+		signingInUserInProgress: false,
+		forgotPasswordRequestSubmittedSuccessfully: false,
+		forgotPasswordRequestSubmitting: false
 	}
 })
 @Injectable()
@@ -185,6 +187,16 @@ export class AuthState implements NgxsAfterBootstrap {
 	}
 
 	/**
+	 * Selects whether there is an outgoing request to send forgot password instructions.
+	 * @param state
+	 * @returns true if password reset completed
+	 */
+	@Selector([AUTH_STATE_TOKEN])
+	static selectForgotPasswordRequestSubmitting(state: AuthStateModel): boolean {
+		return state.forgotPasswordRequestSubmitting;
+	}
+
+	/**
 	 * Selects whether new user's registration completed without errors.
 	 * @param state
 	 * @returns true if registration completed without errors
@@ -245,6 +257,16 @@ export class AuthState implements NgxsAfterBootstrap {
 	}
 
 	/**
+	 * Selects whether forgot password submitted without errors.
+	 * @param state
+	 * @returns true if forgot password submitted
+	 */
+	@Selector([AUTH_STATE_TOKEN])
+	static selectForgotPasswordRequestSubmittedSuccessfully(state: AuthStateModel): boolean {
+		return state.forgotPasswordRequestSubmittedSuccessfully;
+	}
+
+	/**
 	 * Selects expires_at value from local storage and converts it to Date.
 	 * @param state
 	 * @returns date of expires at
@@ -291,7 +313,9 @@ export class AuthState implements NgxsAfterBootstrap {
 					changeEmailConfirmationInProgress: false,
 					emailConfirmationInProgress: false,
 					registrationCompleted: false,
-					signingInUserInProgress: false
+					signingInUserInProgress: false,
+					forgotPasswordRequestSubmittedSuccessfully: false,
+					forgotPasswordRequestSubmitting: false
 				};
 				return draft;
 			})
@@ -479,6 +503,38 @@ export class AuthState implements NgxsAfterBootstrap {
 	@Action(Auth.SigningInUserInProgress)
 	signingInUserInProgress(ctx: StateContext<AuthStateModel>, action: Auth.SigningInUserInProgress): void {
 		this._log.info('signingInUserInProgress action handler fired.', this);
+		ctx.setState(
+			produce((draft: AuthStateModel) => {
+				draft = { ...draft, ...action.payload };
+				return draft;
+			})
+		);
+	}
+
+	/**
+	 * Actions handler whether forgot password submitted without errors.
+	 * @param ctx
+	 * @param action
+	 */
+	@Action(Auth.ForgotPasswordRequestSubmittedSuccessfully)
+	forgotPasswordRequestSubmittedSuccessfully(ctx: StateContext<AuthStateModel>, action: Auth.ForgotPasswordRequestSubmittedSuccessfully): void {
+		this._log.info('forgotPasswordRequestSubmittedSuccessfully action handler fired.', this);
+		ctx.setState(
+			produce((draft: AuthStateModel) => {
+				draft = { ...draft, ...action.payload };
+				return draft;
+			})
+		);
+	}
+
+	/**
+	 * Actions handler whether there is an outgoing request to send user forgot password instructions.
+	 * @param ctx
+	 * @param action
+	 */
+	@Action(Auth.ForgotPasswordRequestSubmitting)
+	forgotPasswordRequestSubmitting(ctx: StateContext<AuthStateModel>, action: Auth.ForgotPasswordRequestSubmitting): void {
+		this._log.info('forgotPasswordRequestSubmitting action handler fired.', this);
 		ctx.setState(
 			produce((draft: AuthStateModel) => {
 				draft = { ...draft, ...action.payload };

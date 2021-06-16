@@ -114,6 +114,16 @@ export class AuthSandboxService {
 	@Select(AuthState.selectIsSigningInUserInProgress) isSigningInUserInProgress$: Observable<boolean>;
 
 	/**
+	 * Whether user's forgot password request was successfully handled by the server.
+	 */
+	@Select(AuthState.selectForgotPasswordRequestSubmittedSuccessfully) forgotPasswordRequestSubmittedSuccessfully$: Observable<boolean>;
+
+	/**
+	 * Whether there is an outgoing request to send forgot password instructions
+	 */
+	@Select(AuthState.selectForgotPasswordRequestSubmitting) forgotPasswordRequestSubmitting$: Observable<boolean>;
+
+	/**
 	 * Whether Auth.Signin action has been dispatched and completed.
 	 */
 	signInActionCompleted$ = this._actions$.pipe(ofActionCompleted(Auth.Signin));
@@ -174,7 +184,33 @@ export class AuthSandboxService {
 	 * @param email
 	 */
 	forgotPassword(email: string): void {
-		this._usersAsyncService.forgotPassword$(email).subscribe();
+		this.forgotPasswordRequestSubmitting({ forgotPasswordRequestSubmitting: true });
+
+		this._usersAsyncService
+			.forgotPassword$(email)
+			.pipe(
+				tap(() => {
+					this.forgotPasswordRequestSubmitting({ forgotPasswordRequestSubmitting: false });
+					this.forgotPasswordRequestSubmittedSuccessfully({ forgotPasswordRequestSubmittedSuccessfully: true });
+				})
+			)
+			.subscribe();
+	}
+
+	/**
+	 * Dispatches action to the store whether forgot password request submitted successfully.
+	 * @param value
+	 */
+	forgotPasswordRequestSubmittedSuccessfully(value: { forgotPasswordRequestSubmittedSuccessfully: boolean }): void {
+		this._store.dispatch(new Auth.ForgotPasswordRequestSubmittedSuccessfully(value));
+	}
+
+	/**
+	 * Dispatches action to the store whether there is an outgoing request to send forgot password instructions.
+	 * @param value
+	 */
+	forgotPasswordRequestSubmitting(value: { forgotPasswordRequestSubmitting: boolean }): void {
+		this._store.dispatch(new Auth.ForgotPasswordRequestSubmitting(value));
 	}
 
 	/**

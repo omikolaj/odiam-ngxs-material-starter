@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
@@ -25,7 +24,6 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { LayoutModule } from '@angular/cdk/layout';
 import { MatTreeModule } from '@angular/material/tree';
-
 import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import {
 	faPlus,
@@ -51,7 +49,6 @@ import { faMediumM, faGithub } from '@fortawesome/free-brands-svg-icons';
 import { OdmGhostBlockComponent } from './components/odm-ghost-block/odm-ghost-block.component';
 import { OdmGhostAnimationService } from './services/odm-ghost-animation.service';
 import { OdmSpinnerComponent } from './components/odm-spinner/odm-spinner.component';
-import { MatVerticalStepperScrollerDirective } from './directives/mat-vertical-stepper-scroller.directive';
 import { ServerSideErrorComponent } from './components/server-side-error/server-side-error.component';
 import { VerificationCodeComponent } from './components/verification-code/verification-code.component';
 import { PasswordHelpComponent } from './components/password-help/password-help.component';
@@ -60,14 +57,7 @@ import { PasswordHelpComponent } from './components/password-help/password-help.
  * Shared module.
  */
 @NgModule({
-	declarations: [
-		OdmGhostBlockComponent,
-		OdmSpinnerComponent,
-		MatVerticalStepperScrollerDirective,
-		ServerSideErrorComponent,
-		VerificationCodeComponent,
-		PasswordHelpComponent
-	],
+	declarations: [OdmGhostBlockComponent, OdmSpinnerComponent, ServerSideErrorComponent, VerificationCodeComponent, PasswordHelpComponent],
 	providers: [OdmGhostAnimationService, { provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher }],
 	imports: [
 		CommonModule,
@@ -137,10 +127,7 @@ import { PasswordHelpComponent } from './components/password-help/password-help.
 		OdmSpinnerComponent,
 		ServerSideErrorComponent,
 		VerificationCodeComponent,
-		PasswordHelpComponent,
-
-		// Directives
-		MatVerticalStepperScrollerDirective
+		PasswordHelpComponent
 	]
 })
 export class SharedModule {

@@ -47,7 +47,7 @@ const routes: Routes = [
 			useHash: false,
 			scrollPositionRestoration: 'enabled',
 			preloadingStrategy: PreloadAllModules,
-			enableTracing: true
+			enableTracing: false
 		})
 	],
 	exports: [RouterModule]

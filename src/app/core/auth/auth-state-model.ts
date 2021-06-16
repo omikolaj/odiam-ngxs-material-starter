@@ -93,4 +93,14 @@ export interface AuthStateModel {
 	 * Whether user is currently in the process of signing in.
 	 */
 	signingInUserInProgress: boolean;
+
+	/**
+	 * Whether forgot password form was successfully submitted.
+	 */
+	forgotPasswordRequestSubmittedSuccessfully: boolean;
+
+	/**
+	 * Whether there is an outgoing request to send forgot password instructions.
+	 */
+	forgotPasswordRequestSubmitting: boolean;
 }
