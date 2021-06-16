@@ -1,8 +1,9 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ODM_GLOBAL_ACCOUNT_SHORT_DESCRIPTION_SIZE, ODM_GLOBAL_ACCOUNT_HEADER_SIZE } from 'app/shared/global-settings/global-settings';
 import { downUpFadeInAnimation } from 'app/core/core.module';
-import { AccountSandboxService } from '../../account-sandbox.service';
+
+import { LogService } from 'app/core/logger/log.service';
 
 /**
  * Password settings security container component.
@@ -31,13 +32,13 @@ export class PasswordSettingsComponent {
 	 * @param _route
 	 * @param _log
 	 */
-	constructor(private _sb: AccountSandboxService, private _route: ActivatedRoute) {}
+	constructor(private _log: LogService, private _router: Router, private _route: ActivatedRoute) {}
 
 	/**
 	 * Event handler when user clicks to launch the change password view.
 	 */
 	_onChangePasswordClicked(): void {
-		this._sb.log.trace('_onChangePasswordClicked fired.', this);
-		void this._sb.router.navigate(['security/change-password'], { relativeTo: this._route.parent });
+		this._log.trace('_onChangePasswordClicked fired.', this);
+		void this._router.navigate(['security/change-password'], { relativeTo: this._route.parent });
 	}
 }
