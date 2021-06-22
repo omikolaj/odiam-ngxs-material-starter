@@ -57,7 +57,7 @@ export class TwoFactorAuthenticationCodesComponent {
 	@Output() generateNewRecoveryCodesClicked = new EventEmitter<void>();
 
 	/**
-	 * Touch gestrues of two factor authentication codes component.
+	 * Touch gestrues for mat tooltip.
 	 */
 	readonly _touchGestrues: TooltipTouchGestures = 'on';
 

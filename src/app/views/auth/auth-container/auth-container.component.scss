@@ -74,19 +74,16 @@ button {
 	height: auto;
 }
 
-.auth-container__routes.successful-registration-active {
-	height: 270px;
-}
+// [CONFIRMATION-WALL]: Keep code if confirmation wall is required.
+// .auth-container__routes.successful-registration-active {
+// 	height: 270px;
+// }
 
 .auth-container__routes.email-confirmation-active {
 	height: 270px;
 }
 
 .auth-container__routes.email-change-confirmation-active {
-	height: 270px;
-}
-
-.auth-container__routes.confirmation-error-active {
 	height: 270px;
 }
 
@@ -101,10 +98,10 @@ button {
 // disables over lay container when viewing forgot-password, or two factor authentication component
 .auth-container__routes.forgot-password-active .auth__overlay-container,
 .auth-container__routes.two-step-verification-active .auth__overlay-container,
-.auth-container__routes.successful-registration-active .auth__overlay-container,
+// [CONFIRMATION-WALL]: Keep code if confirmation wall is required.
+// .auth-container__routes.successful-registration-active .auth__overlay-container,
 .auth-container__routes.email-confirmation-active .auth__overlay-container,
 .auth-container__routes.email-change-confirmation-active .auth__overlay-container,
-.auth-container__routes.confirmation-error-active .auth__overlay-container,
 .auth-container__routes.reset-password-active .auth__overlay-container {
 	display: none;
 }

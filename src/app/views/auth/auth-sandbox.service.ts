@@ -27,6 +27,8 @@ import { ChangeEmail } from 'app/core/models/auth/change-email.model';
 import { ConfirmEmail } from 'app/core/models/auth/confirm-email.model';
 import { JsonWebTokenService } from 'app/core/auth/json-web-token.service';
 import { AccessToken } from 'app/core/models/auth/access-token.model';
+import { NotificationService } from 'app/core/core.module';
+import { TranslateService } from '@ngx-translate/core';
 
 /**
  * Auth sandbox service.
@@ -142,6 +144,8 @@ export class AuthSandboxService {
 	 * @param _authService,
 	 * @param _actions$
 	 * @param _jwtService
+	 * @param _notificationService
+	 * @param _translationService
 	 * @param translateValidationErrorService
 	 * @param log
 	 * @param fb
@@ -156,6 +160,8 @@ export class AuthSandboxService {
 		private _authService: AuthService,
 		private _actions$: Actions,
 		private _jwtService: JsonWebTokenService,
+		private _notificationService: NotificationService,
+		private _translationService: TranslateService,
 		public translateValidationErrorService: TranslateValidationErrorsService,
 		public log: LogService,
 		public fb: FormBuilder,
@@ -239,7 +245,12 @@ export class AuthSandboxService {
 	signupUser(model: SignupUser): void {
 		this._authAsyncService
 			.signup$(model)
-			.pipe(tap(() => this.userRegistrationCompleted({ registrationCompleted: true })))
+			.pipe(
+				tap((resp) => {
+					this.userRegistrationCompleted({ registrationCompleted: true });
+					this._signUserIn(resp);
+				})
+			)
 			.subscribe();
 	}
 
@@ -366,10 +377,13 @@ export class AuthSandboxService {
 	 * @param model
 	 */
 	confirmEmail(model: ConfirmEmail): void {
-		this.emailConfirmationInProgress({ emailConfirmationInProgress: true });
 		this._usersAsyncService
 			.confirmEmail$(model)
-			.pipe(tap(() => this.emailConfirmationInProgress({ emailConfirmationInProgress: false })))
+			.pipe(
+				tap(() => this.emailConfirmationInProgress({ emailConfirmationInProgress: false })),
+				switchMap(() => this._translationService.get('odm.auth.verification.toast-message')),
+				tap((message: string) => this._notificationService.success(message))
+			)
 			.subscribe();
 	}
 

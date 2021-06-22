@@ -1,13 +1,24 @@
 <div>
-	<ng-container *ngIf="inProgress; else emailConfirmed">
+	<div *ngIf="_inProgress" class="email-confirmation" [style.--spinner-width]="_spinnerWidthCss" @downUpFadeIn>
 		<odm-spinner
 			color="accent"
 			[diameter]="_emailConfirmationInProgresSpinnerDiameter"
 			[strokeWidth]="_emailConfirmationInProgresStrokeWidth"
 		></odm-spinner>
-	</ng-container>
-</div>
+		<p>{{ 'odm.auth.verification.confirming' | translate }}</p>
+	</div>
 
-<ng-template #emailConfirmed>
-	<p>{{ 'odm.auth.verification.success' | translate }}</p>
-</ng-template>
+	<div *ngIf="!inProgress && !_isAuthenticated && !internalServerErrorDetails && !problemDetails" @downUpFadeIn>
+		<h3><mat-icon>check</mat-icon> {{ 'odm.auth.verification.success-title' | translate }}</h3>
+		<mat-divider></mat-divider>
+		<p>{{ 'odm.auth.verification.success-description' | translate }}</p>
+	</div>
+
+	<div *ngIf="internalServerErrorDetails || problemDetails" @downUpFadeIn>
+		<h3><mat-icon>close</mat-icon> {{ 'odm.auth.verification.error-title' | translate }}</h3>
+		<mat-divider></mat-divider>
+		<p>{{ 'odm.auth.verification.error-description' | translate }}</p>
+	</div>
+
+	<odm-server-side-error [internalServerErrorDetails]="internalServerErrorDetails" [problemDetails]="problemDetails"></odm-server-side-error>
+</div>

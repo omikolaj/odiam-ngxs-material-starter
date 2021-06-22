@@ -73,10 +73,11 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 
 	/**
 	 * Whether user is on the successful-registration route.
+	 * [CONFIRMATION-WALL]: Keep code if confirmation wall is required.
 	 */
-	get _successfulRegistration(): boolean {
-		return this._sb.router.url.includes('/auth/successful-registration');
-	}
+	// get _successfulRegistration(): boolean {
+	// 	return this._sb.router.url.includes('/auth/successful-registration');
+	// }
 
 	/**
 	 * Whether user is on the email-confirmation route.
@@ -90,13 +91,6 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 */
 	get _emailChangeConfirmation(): boolean {
 		return this._sb.router.url.includes('/email-change-confirmation');
-	}
-
-	/**
-	 * Whether user is on the confirmation-error route.
-	 */
-	get _confirmationError(): boolean {
-		return this._sb.router.url.includes('/confirmation-error');
 	}
 
 	/**
@@ -177,7 +171,6 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 		this._sb.log.trace('Initialized.', this);
 		this._subscription.add(this._navigationEndEvent$().subscribe());
 		this._subscription.add(this._listenIfTwoStepVerificationRequired$().subscribe());
-		this._subscription.add(this._listensIfUserIsAuthenticated$().subscribe());
 		this._subscription.add(this._listenForServerErrors$().subscribe());
 		this._subscription.add(this._stopSigningUserIn$().subscribe());
 	}
@@ -249,27 +242,31 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 		if (url === '/auth/sign-in' || url === '/auth') {
 			this._sb.updateActiveAuthType({ activeAuthType: 'sign-in-active' });
 			setTimeout(() => {
+				this._subscription.add(this._listensIfUserIsAuthenticated$().subscribe());
 				void this._sb.router.navigate(['sign-in'], { relativeTo: this._route.parent });
 			}, 300);
 		} else if (url === '/auth/sign-up') {
 			this._sb.updateActiveAuthType({ activeAuthType: 'sign-up-active' });
 			setTimeout(() => {
+				this._subscription.add(this._listensIfUserIsAuthenticated$().subscribe());
 				void this._sb.router.navigate(['sign-up'], { relativeTo: this._route.parent });
 			}, 300);
 		} else if (url === '/auth/forgot-password') {
 			this._sb.updateActiveAuthType({ activeAuthType: 'forgot-password-active' });
 		} else if (url.includes('/auth/two-step-verification')) {
+			this._subscription.add(this._listensIfUserIsAuthenticated$().subscribe());
 			this._sb.updateActiveAuthType({ activeAuthType: 'two-step-verification-active' });
 		} else if (url.includes('/auth/reset-password')) {
 			this._sb.updateActiveAuthType({ activeAuthType: 'reset-password-active' });
-		} else if (url.includes('/auth/successful-registration')) {
-			this._sb.updateActiveAuthType({ activeAuthType: 'successful-registration-active' });
-		} else if (url.includes('/email-confirmation')) {
+		}
+		// [CONFIRMATION-WALL]: Keep code if confirmation wall is required.
+		//   else if (url.includes('/auth/successful-registration')) {
+		// 	this._sb.updateActiveAuthType({ activeAuthType: 'successful-registration-active' });
+		// }
+		else if (url.includes('/email-confirmation')) {
 			this._sb.updateActiveAuthType({ activeAuthType: 'email-confirmation-active' });
 		} else if (url.includes('/email-change-confirmation')) {
 			this._sb.updateActiveAuthType({ activeAuthType: 'email-change-confirmation-active' });
-		} else if (url.includes('/confirmation-error')) {
-			this._sb.updateActiveAuthType({ activeAuthType: 'confirmation-error-active' });
 		} else {
 			this._sb.log.error('the auth url does not match any configured paths.', this, url);
 		}
@@ -310,6 +307,7 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 * @returns signing user in$
 	 */
 	private _stopSigningUserIn$(): Observable<any> {
+		this._sb.log.trace('_stopSigningUserIn$ fired.', this);
 		return merge(this._twoStepVerificationCancelled$, this._userSignedIn$).pipe(
 			tap(() => {
 				this._sb.signingInUserInProgress({ signingInUserInProgress: false });
@@ -322,6 +320,7 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 * @returns is two step verification required$
 	 */
 	private _listenIfTwoStepVerificationRequired$(): Observable<any> {
+		this._sb.log.trace('_listenIfTwoStepVerificationRequired$ fired.', this);
 		return combineLatest(this._isTwoStepVerificationRequired$, this._twoStepVerificationEmail$, this._twoStepVerificationProvider$).pipe(
 			tap(([isRequired, email, provider]: [boolean, string, string]) => {
 				if (isRequired && email && provider) {
@@ -336,9 +335,11 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 * @returns is authenticated$
 	 */
 	private _listensIfUserIsAuthenticated$(): Observable<boolean> {
+		this._sb.log.trace('_listensIfUserIsAuthenticated$ fired.', this);
 		return this._isAuthenticated$.pipe(
 			tap((isAuthenticated) => {
 				if (isAuthenticated) {
+					this._sb.log.trace('[_listensIfUserIsAuthenticated$]: User is authenticated, navigating to account.', this);
 					void this._sb.router.navigate(['account']);
 				}
 			})

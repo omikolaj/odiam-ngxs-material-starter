@@ -102,8 +102,9 @@ export class SignUpContainerComponent implements OnInit, OnDestroy {
 		this._passwordRequirements = this._initPasswordRequirements();
 		// subscribe to confirm password control to check if passwords match.
 		this._subscription.add(this._validateFormConfirmPasswordField$().subscribe());
+		// [CONFIRMATION-WALL]: Keep code if confirmation wall is required.
 		// subscribe to user registration completed events.
-		this._subscription.add(this._onRegistrationCompleted$().subscribe());
+		// this._subscription.add(this._onRegistrationCompleted$().subscribe());
 		// subscribe to server errors.
 		this._subscription.add(this._listenForServerErrors$().subscribe());
 	}
@@ -180,18 +181,19 @@ export class SignUpContainerComponent implements OnInit, OnDestroy {
 	/**
 	 * Subscribes to user registration completed event.
 	 * @returns whether user registration completed$ without errors.
+	 * [CONFIRMATION-WALL]: Keep code if confirmation wall is required.
 	 */
-	private _onRegistrationCompleted$(): Observable<any> {
-		this._sb.log.trace('_onRegistrationCompleted$ fired.', this);
-		return this._registrationCompleted$.pipe(
-			tap((completed: boolean) => {
-				if (completed) {
-					void this._sb.router.navigate(['successful-registration'], { relativeTo: this._route.parent });
-					this._userRegistrationSuccess({ registrationCompleted: false });
-				}
-			})
-		);
-	}
+	// private _onRegistrationCompleted$(): Observable<any> {
+	// 	this._sb.log.trace('_onRegistrationCompleted$ fired.', this);
+	// 	return this._registrationCompleted$.pipe(
+	// 		tap((completed: boolean) => {
+	// 			if (completed) {
+	// 				void this._sb.router.navigate(['successful-registration'], { relativeTo: this._route.parent });
+	// 				this._userRegistrationSuccess({ registrationCompleted: false });
+	// 			}
+	// 		})
+	// 	);
+	// }
 
 	/**
 	 * Whether user registration completed without errors.

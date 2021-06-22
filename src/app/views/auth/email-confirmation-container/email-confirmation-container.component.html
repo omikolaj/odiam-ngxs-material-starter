@@ -1,3 +1,9 @@
 <div>
-	<odm-email-confirmation [inProgress]="_emailConfirmationInProgress$ | async"></odm-email-confirmation>
+	<odm-email-confirmation
+		(confirmationFinished)="_onEmailConfirmationFinished($event)"
+		[isAuthenticated]="_isAuthenticated$ | async"
+		[inProgress]="_emailConfirmationInProgress$ | async"
+		[problemDetails]="_problemDetails$ | async"
+		[internalServerErrorDetails]="_internalServerErrorDetails$ | async"
+	></odm-email-confirmation>
 </div>

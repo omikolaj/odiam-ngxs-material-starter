@@ -1,15 +1,20 @@
 <div class="auth-container" [ngClass]="_routeAnimationsElements">
 	<div *ngIf="_breakpointStateScreenMatcher$ | async as matcher" class="auth-container__content">
+		<!-- [CONFIRMATION-WALL]: Modify *ngIf if confirmation wall is required.
+      *ngIf="
+				...
+				!_successfulRegistration &&
+				...
+			"
+    -->
 		<div
 			*ngIf="
 				!_forgotPasswordIsDisplayed &&
 				!_twoStepVerificationIsDisplayed &&
 				!_redeemRecoveryCodeIsDisplayed &&
 				!_resetPasswordIsDisplayed &&
-				!_successfulRegistration &&
 				!_emailConfirmation &&
-				!_emailChangeConfirmation &&
-				!_confirmationError
+				!_emailChangeConfirmation
 			"
 		>
 			<div *ngIf="!matcher?.matches" class="auth-container__header">

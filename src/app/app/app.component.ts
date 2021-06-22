@@ -132,7 +132,7 @@ export class AppComponent implements OnInit, OnDestroy {
 		this._sb.log.trace('Initialized.', this);
 		this._sb.testLocalStorage();
 
-		this._subscription.add(this._onSignedOut$().subscribe());
+		this._subscription.add(this._onListenForSignedOut$().subscribe());
 
 		if (AppComponent._isIEorEdgeOrSafari()) {
 			this._sb.disablePageAnimations();
@@ -186,8 +186,8 @@ export class AppComponent implements OnInit, OnDestroy {
 	 * Emits when Auth.Signout action has been dispatched and completed.
 	 * @returns signedOut$
 	 */
-	private _onSignedOut$(): Observable<any> {
-		this._sb.log.debug('_onSignedOut$ executing.', this);
+	private _onListenForSignedOut$(): Observable<any> {
+		this._sb.log.debug('_onListenForSignedOut$ executing.', this);
 		return this.signedOut$.pipe(tap(() => void this._sb.router.navigate(['auth/sign-in'])));
 	}
 

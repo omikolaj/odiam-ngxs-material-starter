@@ -33,6 +33,11 @@ export class EmailConfirmationContainerComponent implements OnInit, OnDestroy {
 	_internalServerErrorDetails$: Observable<InternalServerErrorDetails>;
 
 	/**
+	 * Determines whether user is authenticated or not.
+	 */
+	_isAuthenticated$: Observable<boolean>;
+
+	/**
 	 * Rxjs subscriptions for this component.
 	 */
 	private readonly _subscription = new Subscription();
@@ -46,6 +51,7 @@ export class EmailConfirmationContainerComponent implements OnInit, OnDestroy {
 		this._problemDetails$ = _sb.problemDetails$;
 		this._internalServerErrorDetails$ = _sb.internalServerErrorDetails$;
 		this._emailConfirmationInProgress$ = _sb.emailConfirmationInProgress$;
+		this._isAuthenticated$ = _sb.isAuthenticated$;
 	}
 
 	/**
@@ -53,6 +59,8 @@ export class EmailConfirmationContainerComponent implements OnInit, OnDestroy {
 	 */
 	ngOnInit(): void {
 		this._sb.log.trace('Initialized.', this);
+		this._sb.emailConfirmationInProgress({ emailConfirmationInProgress: true });
+
 		this._subscription.add(this._listenForServerErrors$().subscribe());
 
 		const model: ConfirmEmail = {
@@ -71,20 +79,24 @@ export class EmailConfirmationContainerComponent implements OnInit, OnDestroy {
 	}
 
 	/**
+	 * Determines whether email confirmation finished without errors.
+	 * @param event
+	 */
+	_onEmailConfirmationFinished(event: { isAuthenticated: boolean }): void {
+		if (event.isAuthenticated) {
+			// if user is authenticated route them to account page
+			void this._sb.router.navigate(['account']);
+		}
+	}
+
+	/**
 	 * Listens for server errors.
 	 * @returns emits ProblemDetails | InternalServerErrorDetails
 	 */
 	private _listenForServerErrors$(): Observable<ProblemDetails | InternalServerErrorDetails> {
 		this._sb.log.trace('_listenForServerErrors$ fired.', this);
 		return merge(this._problemDetails$, this._internalServerErrorDetails$).pipe(
-			tap(() => {
-				this._sb.emailConfirmationInProgress({ emailConfirmationInProgress: false });
-				void this._sb.router.navigate(['confirmation-error'], {
-					relativeTo: this._route.parent,
-					queryParamsHandling: 'merge',
-					queryParams: { email: null, token: null }
-				});
-			})
+			tap(() => this._sb.emailConfirmationInProgress({ emailConfirmationInProgress: false }))
 		);
 	}
 }

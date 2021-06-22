@@ -49,7 +49,7 @@ export class TwoStepVerificationComponent implements OnInit, OnDestroy {
 	_internalServerErrorDetails$: Observable<InternalServerErrorDetails>;
 
 	/**
-	 * Touch gestrues of two factor authentication codes component.
+	 * Touch gestrues for mat tooltip.
 	 */
 	readonly _touchGestrues: TooltipTouchGestures = 'on';
 
