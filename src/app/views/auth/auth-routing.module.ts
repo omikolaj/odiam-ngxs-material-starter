@@ -8,7 +8,6 @@ import { ForgotPasswordContainerComponent } from './forgot-password-container/fo
 import { TwoStepVerificationComponent } from './two-step-verification/two-step-verification.component';
 import { RedeemRecoveryCodeComponent } from './redeem-recovery-code/redeem-recovery-code.component';
 
-import { SuccessfulRegistrationComponent } from './successful-registration/successful-registration.component';
 import { ChangeEmailTokenContainerComponent } from './change-email-token-container/change-email-token-container.component';
 import { EmailConfirmationContainerComponent } from './email-confirmation-container/email-confirmation-container.component';
 
@@ -45,10 +44,11 @@ const routes: Routes = [
 				path: 'redeem-recovery-code',
 				component: RedeemRecoveryCodeComponent
 			},
-			{
-				path: 'successful-registration',
-				component: SuccessfulRegistrationComponent
-			},
+			// [CONFIRMATION-WALL]: Keep code if confirmation wall is required.
+			// {
+			// 	path: 'successful-registration',
+			// 	component: SuccessfulRegistrationComponent
+			// },
 			{
 				path: 'email-confirmation',
 				component: EmailConfirmationContainerComponent

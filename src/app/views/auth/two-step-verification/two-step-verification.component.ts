@@ -79,6 +79,11 @@ export class TwoStepVerificationComponent implements OnInit, OnDestroy {
 	twoStepVerificationCancelled$: Observable<ActionCompletion<any, Error>>;
 
 	/**
+	 * Whether Auth.Signin action has been dispatched and completed.
+	 */
+	private _signInActionCompleted$: Observable<ActionCompletion<any, Error>>;
+
+	/**
 	 * Rxjs subscriptions for this component.
 	 */
 	private readonly _subscription = new Subscription();
@@ -94,6 +99,7 @@ export class TwoStepVerificationComponent implements OnInit, OnDestroy {
 		// reset code verification value to false when server error occurs.
 		this._internalServerErrorDetails$ = _sb.internalServerErrorDetails$.pipe(tap(() => (this._codeVerificationInProgress = false)));
 		this.twoStepVerificationCancelled$ = _sb.twoStepVerificationCancelled$;
+		this._signInActionCompleted$ = _sb.signInActionCompleted$;
 	}
 
 	/**
@@ -102,6 +108,9 @@ export class TwoStepVerificationComponent implements OnInit, OnDestroy {
 	ngOnInit(): void {
 		this._sb.log.trace('Initialized.', this);
 		this._setPropertiesFromQueryParams();
+
+		this._subscription.add(this._listenIfUserSignedIn$().subscribe());
+
 		this._subscription.add(this._listenIfTwoStepVerificationCancelled$().subscribe());
 	}
 
@@ -111,6 +120,14 @@ export class TwoStepVerificationComponent implements OnInit, OnDestroy {
 	ngOnDestroy(): void {
 		this._sb.log.trace('Destroyed.', this);
 		this._subscription.unsubscribe();
+	}
+
+	/**
+	 * Listens if user has signed in.
+	 * @returns if user signed in$
+	 */
+	private _listenIfUserSignedIn$(): Observable<ActionCompletion<any, Error>> {
+		return this._signInActionCompleted$.pipe(tap(() => void this._sb.router.navigate(['account'])));
 	}
 
 	/**

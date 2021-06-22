@@ -16,6 +16,7 @@ import { getPasswordRequirements } from 'app/core/utilities/password-requirement
 import { tap } from 'rxjs/operators';
 import { PasswordHelpToggleClass } from 'app/core/models/auth/password-help-toggle-class.model';
 import { ActivatedRoute } from '@angular/router';
+import { ActionCompletion } from '@ngxs/store';
 
 /**
  * Sign up container component.
@@ -74,6 +75,11 @@ export class SignUpContainerComponent implements OnInit, OnDestroy {
 	_passwordHelpToggleClass: PasswordHelpToggleClass = 'auth__password-field-help-off';
 
 	/**
+	 * Whether Auth.Signin action has been dispatched and completed.
+	 */
+	signinActionCompleted$: Observable<ActionCompletion<any, Error>>;
+
+	/**
 	 * Rxjs subscriptions for this component.
 	 */
 	private readonly _subscription = new Subscription();
@@ -90,6 +96,7 @@ export class SignUpContainerComponent implements OnInit, OnDestroy {
 		this._breakpointStateScreenMatcher$ = breakpointObserver.observe([MinScreenSizeQuery.md]);
 		this._activeAuthType$ = _sb.activeAuthType$;
 		this._registrationCompleted$ = _sb.registrationCompleted$;
+		this.signinActionCompleted$ = _sb.signInActionCompleted$;
 	}
 
 	/**
@@ -102,9 +109,14 @@ export class SignUpContainerComponent implements OnInit, OnDestroy {
 		this._passwordRequirements = this._initPasswordRequirements();
 		// subscribe to confirm password control to check if passwords match.
 		this._subscription.add(this._validateFormConfirmPasswordField$().subscribe());
+
+		// [CONFIRMATION-WALL]: Remove code if confirmation wall is required.
+		this._subscription.add(this._listenIfUserSignedIn$().subscribe());
+
 		// [CONFIRMATION-WALL]: Keep code if confirmation wall is required.
 		// subscribe to user registration completed events.
 		// this._subscription.add(this._onRegistrationCompleted$().subscribe());
+
 		// subscribe to server errors.
 		this._subscription.add(this._listenForServerErrors$().subscribe());
 	}
@@ -194,6 +206,15 @@ export class SignUpContainerComponent implements OnInit, OnDestroy {
 	// 		})
 	// 	);
 	// }
+
+	/**
+	 * Listens if user has signed in.
+	 * @returns if user signed in$
+	 * [CONFIRMATION-WALL]: Remove code if confirmation wall is required.
+	 */
+	private _listenIfUserSignedIn$(): Observable<ActionCompletion<any, Error>> {
+		return this.signinActionCompleted$.pipe(tap(() => void this._sb.router.navigate(['account'])));
+	}
 
 	/**
 	 * Whether user registration completed without errors.

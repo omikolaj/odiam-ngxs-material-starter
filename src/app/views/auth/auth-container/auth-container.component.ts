@@ -129,7 +129,7 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	/**
 	 * Whether Auth.Signin action dispatched and completed.
 	 */
-	private _userSignedIn$: Observable<ActionCompletion<any, Error>>;
+	private _signInActionCompleted$: Observable<ActionCompletion<any, Error>>;
 
 	/**
 	 * Emitted when server responds with 40X error.
@@ -161,7 +161,7 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 		this._twoStepVerificationEmail$ = _sb.twoStepVerificationEmail$;
 		this._isAuthenticated$ = _sb.isAuthenticated$;
 		this._twoStepVerificationCancelled$ = _sb.twoStepVerificationCancelled$;
-		this._userSignedIn$ = _sb.signInActionCompleted$;
+		this._signInActionCompleted$ = _sb.signInActionCompleted$;
 	}
 
 	/**
@@ -242,19 +242,16 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 		if (url === '/auth/sign-in' || url === '/auth') {
 			this._sb.updateActiveAuthType({ activeAuthType: 'sign-in-active' });
 			setTimeout(() => {
-				this._subscription.add(this._listensIfUserIsAuthenticated$().subscribe());
 				void this._sb.router.navigate(['sign-in'], { relativeTo: this._route.parent });
 			}, 300);
 		} else if (url === '/auth/sign-up') {
 			this._sb.updateActiveAuthType({ activeAuthType: 'sign-up-active' });
 			setTimeout(() => {
-				this._subscription.add(this._listensIfUserIsAuthenticated$().subscribe());
 				void this._sb.router.navigate(['sign-up'], { relativeTo: this._route.parent });
 			}, 300);
 		} else if (url === '/auth/forgot-password') {
 			this._sb.updateActiveAuthType({ activeAuthType: 'forgot-password-active' });
 		} else if (url.includes('/auth/two-step-verification')) {
-			this._subscription.add(this._listensIfUserIsAuthenticated$().subscribe());
 			this._sb.updateActiveAuthType({ activeAuthType: 'two-step-verification-active' });
 		} else if (url.includes('/auth/reset-password')) {
 			this._sb.updateActiveAuthType({ activeAuthType: 'reset-password-active' });
@@ -308,7 +305,7 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 */
 	private _stopSigningUserIn$(): Observable<any> {
 		this._sb.log.trace('_stopSigningUserIn$ fired.', this);
-		return merge(this._twoStepVerificationCancelled$, this._userSignedIn$).pipe(
+		return merge(this._twoStepVerificationCancelled$, this._signInActionCompleted$).pipe(
 			tap(() => {
 				this._sb.signingInUserInProgress({ signingInUserInProgress: false });
 			})
@@ -325,22 +322,6 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 			tap(([isRequired, email, provider]: [boolean, string, string]) => {
 				if (isRequired && email && provider) {
 					void this._sb.router.navigate(['two-step-verification'], { relativeTo: this._route.parent, queryParams: { provider, email } });
-				}
-			})
-		);
-	}
-
-	/**
-	 * Listens if user is authenticated.
-	 * @returns is authenticated$
-	 */
-	private _listensIfUserIsAuthenticated$(): Observable<boolean> {
-		this._sb.log.trace('_listensIfUserIsAuthenticated$ fired.', this);
-		return this._isAuthenticated$.pipe(
-			tap((isAuthenticated) => {
-				if (isAuthenticated) {
-					this._sb.log.trace('[_listensIfUserIsAuthenticated$]: User is authenticated, navigating to account.', this);
-					void this._sb.router.navigate(['account']);
 				}
 			})
 		);
