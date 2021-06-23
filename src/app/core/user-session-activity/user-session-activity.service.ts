@@ -5,6 +5,8 @@ import { map, startWith, repeatWhen, takeUntil } from 'rxjs/operators';
 import { LocalStorageService } from '../core.module';
 import { LogService } from '../logger/log.service';
 import { ACTIVE_UNTIL } from './user-session-activity-key';
+import AppConfiguration from '../../../assets/app.config.json';
+import { AppConfig } from '../models/app-config.model';
 
 /**
  * User session activity service.
@@ -26,12 +28,12 @@ export class UserSessionActivityService {
 	/**
 	 * Time in seconds, that determines how long user must be inactive for, before they are deemed inactive.
 	 */
-	private readonly _userInactivityTimeoutInSeconds = 320;
+	private readonly _sessionIdleTimeout: number;
 
 	/**
 	 * Time in seconds, that determines how often to check if user is inactive.
 	 */
-	private readonly _checkActivityIntervalInSeconds = 5;
+	private readonly _checkIfSessionIdleInterval: number;
 
 	/**
 	 * Renderer of user session activity service.
@@ -42,6 +44,11 @@ export class UserSessionActivityService {
 	 * Unlistens to mousemove event.
 	 */
 	private _unlistenMouseMove: () => void;
+
+	/**
+	 * Unlistens to mouse click event.
+	 */
+	private _unListenMouseClick: () => void;
 
 	/**
 	 * Unlistens to scroll event.
@@ -75,6 +82,12 @@ export class UserSessionActivityService {
 		this._renderer = rendererFactory.createRenderer(null, null);
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		this._eventHandler = this._updateActiveUntilTime.bind(this);
+
+		// assign timeout settings
+		const appConfig = AppConfiguration as AppConfig;
+		const userSessionConfig = appConfig.session;
+		this._sessionIdleTimeout = userSessionConfig.sessionIdleTimeout;
+		this._checkIfSessionIdleInterval = userSessionConfig.checkIfSessionIdleInterval;
 	}
 
 	/**
@@ -111,6 +124,7 @@ export class UserSessionActivityService {
 		this._unlistenFromMouseMove();
 		this._unlistenFromKeyDown();
 		this._unlistenFromScroll();
+		this._unlistenFromMouseClick();
 	}
 
 	/**
@@ -150,13 +164,25 @@ export class UserSessionActivityService {
 	}
 
 	/**
+	 * Unlistens from mouse click event.
+	 */
+	private _unlistenFromMouseClick(): void {
+		try {
+			this._log.debug("Unlistening 'click' event.", this);
+			this._unListenMouseClick();
+		} catch (error) {
+			this._log.error("Error occured when unlistening 'click'.", this, error);
+		}
+	}
+
+	/**
 	 * Whether user is active on the page.
 	 * @returns if user is active
 	 */
 	private _isUserActive$(): Observable<boolean> {
 		// set the initial ACTIVE_UNTIL time in local storage.
 		this._updateActiveUntilTime();
-		return timer(this._checkActivityIntervalInSeconds * 1000).pipe(
+		return timer(this._checkIfSessionIdleInterval * 1000).pipe(
 			takeUntil(this._stop),
 			map(() => {
 				const expiredTime = parseInt(this._localStorageService.getItem(ACTIVE_UNTIL), 10);
@@ -175,7 +201,7 @@ export class UserSessionActivityService {
 		}
 		this._timeoutTracker = setTimeout(() => {
 			this._log.trace('Updating ACTIVE_UNTIL value.', this);
-			this._localStorageService.setItem(ACTIVE_UNTIL, add(new Date(), { seconds: this._userInactivityTimeoutInSeconds }).getTime());
+			this._localStorageService.setItem(ACTIVE_UNTIL, add(new Date(), { seconds: this._sessionIdleTimeout }).getTime());
 		}, 300);
 	}
 
@@ -190,5 +216,7 @@ export class UserSessionActivityService {
 		this._unlistenKeydown = this._renderer.listen('window', 'keydown', this._eventHandler);
 		this._log.debug("Listening for 'scroll' event.", this);
 		this._unlistenScroll = this._renderer.listen('window', 'scroll', this._eventHandler);
+		this._log.debug("Listening for mouse 'click' event.", this);
+		this._unListenMouseClick = this._renderer.listen('window', 'click', this._eventHandler);
 	}
 }

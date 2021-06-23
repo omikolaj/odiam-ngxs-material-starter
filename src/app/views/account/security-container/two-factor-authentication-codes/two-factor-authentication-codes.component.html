@@ -19,11 +19,13 @@
 			<h3>{{ 'odm.account.security.two-step.recovery-codes.backup-codes.title' | translate }}</h3>
 			<p>{{ 'odm.account.security.two-step.recovery-codes.backup-codes.description' | translate }}</p>
 			<ng-container *ngIf="!generatingCodes; else generating">
-				<ol class="recovery-codes__format-codes blink">
-					<li *ngFor="let code of _codes">
-						{{ code }}
-					</li>
-				</ol>
+				<ng-container *ngIf="_codes?.length > 0; else noRecoveryCodes">
+					<ol class="recovery-codes__format-codes blink">
+						<li *ngFor="let code of _codes">
+							{{ code }}
+						</li>
+					</ol>
+				</ng-container>
 			</ng-container>
 			<div>
 				<button mat-raised-button color="accent" (click)="_onGenerateNewRecoveryCodes()" [disabled]="generatingCodes">
@@ -43,6 +45,12 @@
 		</div>
 	</mat-expansion-panel>
 </mat-accordion>
+
+<ng-template #noRecoveryCodes>
+	<p>
+		<i>{{ 'odm.account.security.two-step.recovery-codes.backup-codes.no-codes' | translate }}</i>
+	</p>
+</ng-template>
 
 <ng-template #generating>
 	<ol class="recovery-codes__format-codes">

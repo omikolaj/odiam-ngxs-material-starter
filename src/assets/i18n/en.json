@@ -17,12 +17,10 @@
 					"title": "E-mail",
 					"description": "Change email associated with your account",
 					"change": {
-						"title": "Change email"
+						"title": "Change Email Request",
+						"request-sent": "Confirm e-mail to complete the request",
+						"success": "Successfully updated e-mail"
 					}
-				},
-				"change-email": {
-					"success": "Successfully updated e-mail",
-					"request-sent": "Confirm e-mail to complete the request"
 				}
 			},
 			"security": {
@@ -38,7 +36,8 @@
 						"description": "Get security codes to use when you can't access your phone",
 						"backup-codes": {
 							"title": "Backup codes",
-							"description": "You can redeem these one time codes to access your account"
+							"description": "You can redeem these one time codes to access your account",
+							"no-codes": "No back up codes left. Please generate new ones."
 						}
 					},
 					"setup-wizard": {
@@ -68,6 +67,11 @@
 			}
 		},
 		"auth": {
+			"session": {
+				"expired": "Your session is expired and you are about to be signed out.",
+				"inactive": "You are about to be signed out due to inactivity.",
+				"inactive-toast-message": "Session expired due to inactivity"
+			},
 			"verification": {
 				"email": "You're email has been successfully updated",
 				"error-title": "E-mail confirmation error",
@@ -232,6 +236,8 @@
 			"finish": "Finish",
 			"generate": "Generate new codes",
 			"cancel": "Cancel",
+			"yes": "Yes",
+			"no": "No",
 			"change-theme": "Change Theme"
 		}
 	}

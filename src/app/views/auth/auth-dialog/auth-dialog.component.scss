@@ -1,0 +1,19 @@
+.auth-dialog__container {
+	text-align: center;
+	.auth-dialog__header {
+		display: flex;
+		justify-content: flex-start;
+		div {
+			align-self: center;
+			padding-right: 10px;
+			img {
+				width: 40px;
+			}
+		}
+	}
+
+	.auth-dialog__action-btns {
+		display: flex;
+		justify-content: space-evenly;
+	}
+}

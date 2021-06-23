@@ -42,12 +42,19 @@ export class AuthDialogComponent implements OnInit {
 	_displayMessage: string;
 
 	/**
+	 * Gets left hand side logo url.
+	 */
+	readonly _logo = (require('../../../../assets/logo.png') as { default: string }).default;
+
+	/**
 	 * Creates an instance of auth dialog component.
 	 * @param _data
 	 * @param _log
 	 */
 	constructor(@Inject(MAT_DIALOG_DATA) private _data: AuthDialogData, private _log: LogService) {
-		this._count = _data.timeUntilTimeoutSeconds;
+		_log.debug('Auth dialog dialogTimeout set to:', this, _data.dialogTimeout);
+		this._count = _data.dialogTimeout;
+		_log.debug('Auth dialog message set to:', this, _data.message);
 		this._displayMessage = _data.message;
 	}
 

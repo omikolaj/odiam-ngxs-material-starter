@@ -2,14 +2,13 @@ import { Injectable } from '@angular/core';
 import { AuthAsyncService } from 'app/core/auth/auth-async.service';
 import { tap, map, finalize, switchMap, takeUntil, take, catchError } from 'rxjs/operators';
 import * as Auth from './auth.store.actions';
-
 import { LogService } from 'app/core/logger/log.service';
 import { Store, Actions, ofActionCompleted } from '@ngxs/store';
 import { JsonWebTokenService } from 'app/core/auth/json-web-token.service';
 import { MatDialog, MatDialogRef, MatDialogConfig } from '@angular/material/dialog';
 import { AuthDialogComponent } from '../../views/auth/auth-dialog/auth-dialog.component';
 import { AuthState } from 'app/core/auth/auth.store.state';
-import { Observable, of, timer, race, throwError } from 'rxjs';
+import { Observable, of, timer, race, throwError, merge, interval } from 'rxjs';
 import { AuthDialogUserDecision } from '../models/auth/auth-dialog-user-decision.enum';
 import { fromUnixTime } from 'date-fns';
 import { UserSessionActivityService } from '../user-session-activity/user-session-activity.service';
@@ -17,6 +16,14 @@ import { AuthDialogData } from '../models/auth/auth-dialog-data.model';
 import { InitSessionResult } from '../models/auth/init-session-result.model';
 import { RenewAccessTokenResult } from '../models/auth/renew-access-token-result.model';
 import { AccessToken } from '../models/auth/access-token.model';
+import { TranslateService } from '@ngx-translate/core';
+import AppConfiguration from '../../../assets/app.config.json';
+import { ProblemDetails } from '../models/problem-details.model';
+import { InternalServerErrorDetails } from '../models/internal-server-error-details.model';
+import { ServerErrorService } from '../error-handler/server-error.service';
+import { NotificationService } from '../core.module';
+import { ODM_SNACKBAR_DURATION_WARN } from 'app/shared/global-settings/mat-snackbar-settings';
+import { AppConfig } from '../models/app-config.model';
 
 /**
  * Authentication service, responsible for handling user session.
@@ -26,9 +33,19 @@ import { AccessToken } from '../models/auth/access-token.model';
 })
 export class AuthService {
 	/**
+	 * Emitted when server responds with 40X error.
+	 */
+	private _problemDetails$: Observable<ProblemDetails> = this._serverErrorService.getProblemDetails$;
+
+	/**
+	 * Emitted when server responds with 50X error.
+	 */
+	private _internalServerErrorDetails$: Observable<InternalServerErrorDetails> = this._serverErrorService.getInternalServerError$;
+
+	/**
 	 * Timeout in miliseconds.
 	 */
-	private readonly _authDialogTimeoutInMs = 10000;
+	private readonly _authDialogTimeout: number;
 
 	/**
 	 * Auth dialog configuration. Initialized in the constructor.
@@ -36,12 +53,22 @@ export class AuthService {
 	private _authDialogConfig: MatDialogConfig;
 
 	/**
+	 * Auth dialog reference.
+	 */
+	private _dialogRef: MatDialogRef<AuthDialogComponent, any>;
+
+	/**
 	 * Creates an instance of auth service.
 	 * @param _authAsyncService
-	 * @param _router
-	 * @param _log
+	 * @param _userActivityService
 	 * @param _store
+	 * @param _actions$
 	 * @param _jwtService
+	 * @param _dialog
+	 * @param _log
+	 * @param _translationService
+	 * @param _serverErrorService
+	 * @param _notificationService
 	 */
 	constructor(
 		private _authAsyncService: AuthAsyncService,
@@ -50,15 +77,25 @@ export class AuthService {
 		private _actions$: Actions,
 		private _jwtService: JsonWebTokenService,
 		private _dialog: MatDialog,
-		private _log: LogService
+		private _log: LogService,
+		private _translationService: TranslateService,
+		private _serverErrorService: ServerErrorService,
+		private _notificationService: NotificationService
 	) {
+		const appConfig = AppConfiguration as AppConfig;
+		const sessionConfig = appConfig.session;
+		this._authDialogTimeout = sessionConfig.sessionExpiredDialogTimeout;
+
 		this._authDialogConfig = {
 			data: {
-				timeUntilTimeoutSeconds: this._authDialogTimeoutInMs / 1000
+				dialogTimeout: this._authDialogTimeout
 			} as AuthDialogData,
 			closeOnNavigation: true,
 			disableClose: true
 		};
+
+		// this service is provided in root, no need to unsubscribe
+		this._listenForErrors$().subscribe();
 	}
 
 	/**
@@ -82,6 +119,51 @@ export class AuthService {
 		this.updateRememberMeUserName(rememberMe, email);
 
 		return this._processAuthentication$(accessToken, email, is2StepVerificationRequired, provider);
+	}
+
+	/**
+	 * Listens for any errors that may occur and
+	 * @returns for errors$
+	 */
+	private _listenForErrors$(): Observable<any> {
+		this._log.trace('_listenForErrors$ executed.', this);
+		return merge(this._problemDetails$, this._internalServerErrorDetails$).pipe(
+			switchMap(() => {
+				if (this._dialogRef) {
+					this._log.debug('Auth dialog is open and an error occured.', this);
+					return this._closeAuthDialogOnError$();
+				}
+			})
+		);
+	}
+
+	/**
+	 * Closes auth dialog on error$.
+	 * @returns auth dialog on error$
+	 */
+	private _closeAuthDialogOnError$(): Observable<any> {
+		this._log.trace('_closeAuthDialogOnError$ fired.', this);
+		this._log.debug('[_closeAuthDialogOnError$]: Closing auth dialog.', this);
+		this._dialogRef.close();
+		// wait for the default error handling toast message
+		return interval(ODM_SNACKBAR_DURATION_WARN).pipe(
+			take(1),
+			switchMap(() => this._notifyAboutExpiredSession$())
+		);
+	}
+
+	/**
+	 * Translates user's inactive session message and displays toast notification.
+	 * @returns about expired session$
+	 */
+	private _notifyAboutExpiredSession$(): Observable<any> {
+		this._log.trace('_notifyAboutExpiredSession$ fired.', this);
+		return this._translationService.get('odm.auth.session.inactive-toast-message').pipe(
+			tap((message: string) => {
+				this._log.trace('[_notifyAboutExpiredSession$]: Message translated. Displaying info toast message.', this);
+				this._notificationService.infoWithBtn(message);
+			})
+		);
 	}
 
 	/**
@@ -228,6 +310,20 @@ export class AuthService {
 	}
 
 	/**
+	 * DO NOT USE. Only for apps initializer user sign out.
+	 * @returns initializer user sign out$
+	 */
+	appInitializerUserSignOut$(): Observable<any> {
+		this._log.trace('appInitializerUserSignOut$ executed.', this);
+		return this._authAsyncService.signout$().pipe(
+			tap(() => {
+				this._store.dispatch([new Auth.Signout(), new Auth.KeepOrRemoveRememberMeUsername()]);
+				this._userActivityService.cleanUp();
+			})
+		);
+	}
+
+	/**
 	 * Manages user session.
 	 * @param isAuthenticatedFunc
 	 * @param expires_at
@@ -235,7 +331,6 @@ export class AuthService {
 	 * @returns any
 	 */
 	private _manageUserSession$(isAuthenticatedFunc: (date: Date, expires_at: Date) => boolean, isActive: boolean): Observable<any> {
-		this._log.trace('_manageUserSession$ executed.', this);
 		const expires_at_raw = this._store.selectSnapshot(AuthState.selectExpiresAtRaw);
 		const expires_at_date = fromUnixTime(expires_at_raw);
 
@@ -288,8 +383,13 @@ export class AuthService {
 	 */
 	private _handleSessionInactivity$(): Observable<any> {
 		this._log.trace('_handleSessionInactivity$ executed.', this);
-		(this._authDialogConfig.data as AuthDialogData).message = 'You are about to be signed out due to inactivity.';
-		return this._promptDialog$('inactive');
+		return this._translationService.get('odm.auth.session.inactive').pipe(
+			switchMap((message: string) => {
+				this._log.trace('[_handleSessionInactivity$]: Auth dialog message translated. Proceeding to display dialog prompt.', this);
+				(this._authDialogConfig.data as AuthDialogData).message = message;
+				return this._promptDialog$('inactive');
+			})
+		);
 	}
 
 	/**
@@ -298,8 +398,13 @@ export class AuthService {
 	 */
 	private _handleSessionHasEnded$(): Observable<any> {
 		this._log.trace('_handleSessionHasEnded$ executed.', this);
-		(this._authDialogConfig.data as AuthDialogData).message = 'Your session is expired and you are about to be signed out.';
-		return this._promptDialog$('expired');
+		return this._translationService.get('odm.auth.session.expired').pipe(
+			switchMap((message: string) => {
+				this._log.trace('[_handleSessionHasEnded$]: Auth dialog message translated. Proceeding to display dialog prompt.', this);
+				(this._authDialogConfig.data as AuthDialogData).message = message;
+				return this._promptDialog$('expired');
+			})
+		);
 	}
 
 	/**
@@ -338,12 +443,21 @@ export class AuthService {
 	 */
 	private _promptDialog$(type: 'inactive' | 'expired'): Observable<any> {
 		this._log.trace('_promptDialog$ executed.', this);
-		const dialogRef = this._dialog.open(AuthDialogComponent, this._authDialogConfig);
-		const userActions$ = this._listenForDialogEvents$(dialogRef, type);
-		const userTookNoActions$ = timer(this._authDialogTimeoutInMs).pipe(
+		this._dialogRef = this._dialog.open(AuthDialogComponent, this._authDialogConfig);
+		const userActions$ = this._listenForDialogEvents$(this._dialogRef, type);
+		const userTookNoActions$ = timer(this._authDialogTimeout * 1000).pipe(
 			take(1),
-			switchMap(() => this.signUserOut$()),
-			tap(() => this._dialog.closeAll())
+			switchMap(() => {
+				const allottedTime = (this._authDialogConfig.data as AuthDialogData).dialogTimeout;
+				this._log.debug(
+					'[_promptDialog$]: User took no action in allotted time. Closing dialog and signing user out. Allotted time:',
+					this,
+					allottedTime
+				);
+				return this.signUserOut$();
+			}),
+			tap(() => this._dialog.closeAll()),
+			switchMap(() => this._notifyAboutExpiredSession$())
 		);
 
 		return race(userActions$, userTookNoActions$);
@@ -376,10 +490,10 @@ export class AuthService {
 	private _handleUserDialogAction$(decision: AuthDialogUserDecision, type: 'inactive' | 'expired'): Observable<any> {
 		this._log.trace('_handleUserDialogAction$ executed.', this);
 		if (decision === AuthDialogUserDecision.staySignedIn) {
-			this._log.debug('[_handleUserDialogAction$] User chose to stay signed in.', this);
+			this._log.debug('[_handleUserDialogAction$]: User chose to stay signed in.', this);
 			return this._keepUserSignedIn$(type);
 		} else {
-			this._log.debug('[_handleUserDialogAction$] User chose to sign out.', this);
+			this._log.debug('[_handleUserDialogAction$]: User chose to sign out.', this);
 			return this.signUserOut$();
 		}
 	}

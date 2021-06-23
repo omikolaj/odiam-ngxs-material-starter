@@ -1,5 +1,10 @@
 import { Injectable, NgZone } from '@angular/core';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+import {
+	ODM_SNACKBAR_DURATION_DEFAULT,
+	ODM_SNACKBAR_DURATION_WARN,
+	ODM_SNACKBAR_DURATION_ERROR
+} from 'app/shared/global-settings/mat-snackbar-settings';
 
 /**
  * Notification service that displays toast notification.
@@ -8,6 +13,21 @@ import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 	providedIn: 'root'
 })
 export class NotificationService {
+	/**
+	 * Default duration of notification service.
+	 */
+	private readonly _defaultDuration = ODM_SNACKBAR_DURATION_DEFAULT;
+
+	/**
+	 * Warn duration of notification service.
+	 */
+	private readonly _warnDuration = ODM_SNACKBAR_DURATION_WARN;
+
+	/**
+	 * Error duration of notification service.
+	 */
+	private readonly _errorDuration = ODM_SNACKBAR_DURATION_ERROR;
+
 	/**
 	 * Creates an instance of notification service.
 	 * @param snackBar
@@ -21,7 +41,7 @@ export class NotificationService {
 	 */
 	default(message: string): void {
 		this._show(message, {
-			duration: 2000,
+			duration: this._defaultDuration,
 			panelClass: 'default-notification-overlay'
 		});
 	}
@@ -32,7 +52,7 @@ export class NotificationService {
 	 */
 	info(message: string): void {
 		this._show(message, {
-			duration: 2000,
+			duration: this._defaultDuration,
 			panelClass: 'info-notification-overlay'
 		});
 	}
@@ -53,7 +73,7 @@ export class NotificationService {
 	 */
 	success(message: string): void {
 		this._show(message, {
-			duration: 2000,
+			duration: this._defaultDuration,
 			panelClass: 'success-notification-overlay'
 		});
 	}
@@ -64,7 +84,7 @@ export class NotificationService {
 	 */
 	warn(message: string): void {
 		this._show(message, {
-			duration: 2500,
+			duration: this._warnDuration,
 			panelClass: 'warning-notification-overlay'
 		});
 	}
@@ -75,7 +95,7 @@ export class NotificationService {
 	 */
 	error(message: string): void {
 		this._show(message, {
-			duration: 3000,
+			duration: this._errorDuration,
 			panelClass: 'error-notification-overlay'
 		});
 	}

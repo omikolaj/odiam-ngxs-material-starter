@@ -50,7 +50,7 @@ export class AppInitializerService {
 				if (result.error) {
 					this._log.debug('[initUserSession] Signing user out.', this);
 					return this._authService
-						.signUserOut$()
+						.appInitializerUserSignOut$()
 						.toPromise()
 						.then(() => void this._router.navigate(['auth/sign-in']));
 				}

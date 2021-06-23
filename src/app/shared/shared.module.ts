@@ -52,12 +52,13 @@ import { OdmSpinnerComponent } from './components/odm-spinner/odm-spinner.compon
 import { ServerSideErrorComponent } from './components/server-side-error/server-side-error.component';
 import { VerificationCodeComponent } from './components/verification-code/verification-code.component';
 import { PasswordHelpComponent } from './components/password-help/password-help.component';
+import { ToMMSSPipe } from './pipes/to-mmss.pipe';
 
 /**
  * Shared module.
  */
 @NgModule({
-	declarations: [OdmGhostBlockComponent, OdmSpinnerComponent, ServerSideErrorComponent, VerificationCodeComponent, PasswordHelpComponent],
+	declarations: [OdmGhostBlockComponent, OdmSpinnerComponent, ServerSideErrorComponent, VerificationCodeComponent, PasswordHelpComponent, ToMMSSPipe],
 	providers: [OdmGhostAnimationService, { provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher }],
 	imports: [
 		CommonModule,
@@ -127,7 +128,10 @@ import { PasswordHelpComponent } from './components/password-help/password-help.
 		OdmSpinnerComponent,
 		ServerSideErrorComponent,
 		VerificationCodeComponent,
-		PasswordHelpComponent
+		PasswordHelpComponent,
+
+		// Pipes
+		ToMMSSPipe
 	]
 })
 export class SharedModule {

@@ -3,9 +3,9 @@
  */
 export interface AuthDialogData {
 	/**
-	 * Time until user session ends.
+	 * Time (in seconds) until the auth dialog closes and signs user out if no action is taken by the user.
 	 */
-	timeUntilTimeoutSeconds: number;
+	dialogTimeout: number;
 
 	/**
 	 * Message displayed in the auth dialog.

@@ -108,9 +108,7 @@ export class TwoStepVerificationComponent implements OnInit, OnDestroy {
 	ngOnInit(): void {
 		this._sb.log.trace('Initialized.', this);
 		this._setPropertiesFromQueryParams();
-
 		this._subscription.add(this._listenIfUserSignedIn$().subscribe());
-
 		this._subscription.add(this._listenIfTwoStepVerificationCancelled$().subscribe());
 	}
 
@@ -120,26 +118,6 @@ export class TwoStepVerificationComponent implements OnInit, OnDestroy {
 	ngOnDestroy(): void {
 		this._sb.log.trace('Destroyed.', this);
 		this._subscription.unsubscribe();
-	}
-
-	/**
-	 * Listens if user has signed in.
-	 * @returns if user signed in$
-	 */
-	private _listenIfUserSignedIn$(): Observable<ActionCompletion<any, Error>> {
-		return this._signInActionCompleted$.pipe(tap(() => void this._sb.router.navigate(['account'])));
-	}
-
-	/**
-	 * Listens if two step verification cancelled action dispatched and completed.
-	 * @returns if two step verification cancelled$
-	 */
-	private _listenIfTwoStepVerificationCancelled$(): Observable<ActionCompletion<any, Error>> {
-		return this.twoStepVerificationCancelled$.pipe(
-			tap(() => {
-				void this._sb.router.navigate(['sign-in'], { relativeTo: this._route.parent });
-			})
-		);
 	}
 
 	/**
@@ -170,6 +148,27 @@ export class TwoStepVerificationComponent implements OnInit, OnDestroy {
 	_onUseRecoveryCode(): void {
 		this._sb.log.trace('_onUseRecoveryCode fired.', this);
 		void this._sb.router.navigate(['auth/redeem-recovery-code'], { queryParams: { email: this._email } });
+	}
+
+	/**
+	 * Listens if user has signed in.
+	 * @returns if user signed in$
+	 */
+	private _listenIfUserSignedIn$(): Observable<ActionCompletion<any, Error>> {
+		this._sb.log.trace('_listenIfUserSignedIn$ fired.', this);
+		return this._signInActionCompleted$.pipe(tap(() => void this._sb.router.navigate(['account'])));
+	}
+
+	/**
+	 * Listens if two step verification cancelled action dispatched and completed.
+	 * @returns if two step verification cancelled$
+	 */
+	private _listenIfTwoStepVerificationCancelled$(): Observable<ActionCompletion<any, Error>> {
+		return this.twoStepVerificationCancelled$.pipe(
+			tap(() => {
+				void this._sb.router.navigate(['sign-in'], { relativeTo: this._route.parent });
+			})
+		);
 	}
 
 	/**

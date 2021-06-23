@@ -1,7 +1,26 @@
-<p>{{ _displayMessage }}</p>
-<p>{{ _counter$ | async }}</p>
-<div>
-	<p>Stay logged in</p>
-	<button mat-raised-button (click)="_onStaySignedIn()">Yes</button>
-	<button mat-raised-button (click)="_onSignOut()">No</button>
+<div class="auth-dialog__container">
+	<div class="auth-dialog__header">
+		<div>
+			<img [src]="_logo" [alt]="_logo" />
+		</div>
+		<h3>
+			{{ 'odm.title.long' | translate }}
+		</h3>
+	</div>
+	<mat-divider></mat-divider>
+	<div>
+		<p>
+			{{ _displayMessage }}
+		</p>
+	</div>
+	<div>
+		<span>{{ _counter$ | async | toMMSS }}</span>
+	</div>
+	<div>
+		<p>{{ 'odm.auth.sign-in.stay-signed-in' | translate }}</p>
+	</div>
+	<div class="auth-dialog__action-btns">
+		<button mat-raised-button (click)="_onStaySignedIn()">{{ 'odm.buttons.yes' | translate }}</button>
+		<button mat-raised-button (click)="_onSignOut()">{{ 'odm.buttons.no' | translate }}</button>
+	</div>
 </div>

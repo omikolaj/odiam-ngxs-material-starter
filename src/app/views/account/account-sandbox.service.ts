@@ -250,7 +250,7 @@ export class AccountSandboxService {
 		this._userAsyncService
 			.requestToChangeEmail$(id, model)
 			.pipe(
-				switchMap(() => this._translationService.get('odm.account.general.change-email.request-sent')),
+				switchMap(() => this._translationService.get('odm.account.general.email.change.request-sent')),
 				tap((message: string) => {
 					this.changeEmailRequestSent({ changeEmailRequestSent: true });
 					this._notificationService.infoWithBtn(message);
