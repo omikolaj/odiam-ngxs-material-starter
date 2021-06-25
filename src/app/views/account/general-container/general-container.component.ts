@@ -105,7 +105,10 @@ export class GeneralContainerComponent implements OnInit, OnDestroy {
 			)
 				.pipe(
 					filter((value) => value !== undefined),
-					tap(() => this._loadingSub.next(false))
+					tap(() => {
+						this._sb.log.debug('Emitting `false` for loading.', this);
+						this._loadingSub.next(false);
+					})
 				)
 				.subscribe()
 		);

@@ -70,7 +70,8 @@
 			"session": {
 				"expired": "Your session is expired and you are about to be signed out.",
 				"inactive": "You are about to be signed out due to inactivity.",
-				"inactive-toast-message": "Session expired due to inactivity"
+				"inactive-toast-message": "Session expired due to inactivity",
+				"failed-to-renew": "Renewing session failed."
 			},
 			"verification": {
 				"email": "You're email has been successfully updated",

@@ -2,7 +2,8 @@
  * Log level enum.
  */
 export enum LogLevel {
-	Trace = 0,
+	Verbose = 0,
+	Trace,
 	Debug,
 	Info,
 	Warn,

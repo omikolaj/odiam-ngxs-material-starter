@@ -53,6 +53,15 @@
 		background-color: mat-color($warn);
 	}
 
+	.error-notification-overlay-with-btn {
+		color: mat-color($warn, default-contrast);
+		background-color: mat-color($warn);
+
+		button {
+			color: mat-color($warn, default-contrast);
+		}
+	}
+
 	.info-notification-overlay {
 		color: mat-color($accent, default-contrast);
 		background-color: mat-color($accent);

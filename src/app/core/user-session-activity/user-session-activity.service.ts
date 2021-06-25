@@ -104,7 +104,7 @@ export class UserSessionActivityService {
 	 * Starts activity timer.
 	 */
 	startActivityTimer(): void {
-		this._log.trace('startActivityTimer executed.', this);
+		this._log.verbose('startActivityTimer executed.', this);
 		this._start.next();
 	}
 
@@ -112,7 +112,7 @@ export class UserSessionActivityService {
 	 * Stops activity timer.
 	 */
 	stopActivityTimer(): void {
-		this._log.trace('stopActivityTimer executed.', this);
+		this._log.verbose('stopActivityTimer executed.', this);
 		this._stop.next();
 	}
 
@@ -200,7 +200,7 @@ export class UserSessionActivityService {
 			clearTimeout(this._timeoutTracker);
 		}
 		this._timeoutTracker = setTimeout(() => {
-			this._log.trace('Updating ACTIVE_UNTIL value.', this);
+			this._log.verbose('Updating ACTIVE_UNTIL value.', this);
 			this._localStorageService.setItem(ACTIVE_UNTIL, add(new Date(), { seconds: this._sessionIdleTimeout }).getTime());
 		}, 300);
 	}

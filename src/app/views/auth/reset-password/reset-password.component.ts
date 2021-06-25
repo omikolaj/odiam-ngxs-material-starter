@@ -151,7 +151,7 @@ export class ResetPasswordComponent extends AuthBase implements OnInit, OnDestro
 	}
 
 	/**
-	 * navigates back to auth/sign-in
+	 * Navigates back to auth/sign-in
 	 */
 	_onReturnToSignIn(): void {
 		this._sb.log.trace('_onReturnToSignIn fired.', this);

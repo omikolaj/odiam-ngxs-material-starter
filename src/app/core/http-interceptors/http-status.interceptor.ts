@@ -39,6 +39,11 @@ export class HttpStatusInterceptor implements HttpInterceptor {
 					// if this is OdmApiException it implements same interface as problem details
 					if (implementsOdmWebApiException(internalServerError)) {
 						this._serverErrorService.internalServerErrorDetails = e.error as InternalServerErrorDetails;
+
+						// internal server error cannot return NEVER because of issues getting reference to
+						// @InternalServerDetailError very early on in the bootstraping of the application.
+						// NOT returning NEVER allows parts of the app to use .catchError() and handle possible server down scenarios.
+						// @ProblemDetails is not a problem because when server responds with 40X it indicates the server is running and some internal process failed.
 						return throwError(internalServerError);
 					}
 
@@ -55,6 +60,10 @@ export class HttpStatusInterceptor implements HttpInterceptor {
 
 					this._serverErrorService.internalServerErrorDetails = error;
 
+					// internal server error cannot return NEVER because of issues getting reference to
+					// @InternalServerDetailError very early on in the bootstraping of the application.
+					// NOT returning NEVER allows parts of the app to use .catchError() and handle possible server down scenarios.
+					// @ProblemDetails is not a problem because when server responds with 40X it indicates the server is running and some internal process failed.
 					return throwError(error);
 				}
 			})

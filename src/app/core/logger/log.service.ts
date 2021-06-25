@@ -94,6 +94,24 @@ export class LogService {
 	}
 
 	/**
+	 * Creates logs for LogLevel.Verbose = 0.
+	 * @param msg
+	 * @param optionalParams
+	 */
+	verbose<T>(msg: string, from?: string | unknown | ComponentType<T>, ...optionalParams: any[]): void {
+		this._writeToLog<T>(msg, from, LogLevel.Verbose, optionalParams);
+	}
+
+	/**
+	 * Creates logs for LogLevel.Trace = 1.
+	 * @param msg
+	 * @param optionalParams
+	 */
+	trace<T>(msg: string, from?: string | unknown | ComponentType<T>, ...optionalParams: any[]): void {
+		this._writeToLog<T>(msg, from, LogLevel.Trace, optionalParams);
+	}
+
+	/**
 	 * Creates logs for LogLevel.Debug = 1.
 	 * @param msg
 	 * @param optionalParams
@@ -139,15 +157,6 @@ export class LogService {
 	}
 
 	/**
-	 * Creates logs for LogLevel.Trace = 6.
-	 * @param msg
-	 * @param optionalParams
-	 */
-	trace<T>(msg: string, from?: string | unknown | ComponentType<T>, ...optionalParams: any[]): void {
-		this._writeToLog<T>(msg, from, LogLevel.Trace, optionalParams);
-	}
-
-	/**
 	 * Writes logs to all active publishers.
 	 * @param msg
 	 * @param level
@@ -174,7 +183,7 @@ export class LogService {
 	 */
 	private shouldLog(level: LogLevel): boolean {
 		let ret = false;
-		if ((level >= this.level && level !== LogLevel.Off) || this.level === LogLevel.Trace) {
+		if ((level >= this.level && level !== LogLevel.Off) || this.level === LogLevel.Verbose) {
 			ret = true;
 		}
 		return ret;

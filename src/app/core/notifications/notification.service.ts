@@ -101,6 +101,16 @@ export class NotificationService {
 	}
 
 	/**
+	 * Error notification with 'Dismiss' button.
+	 * @param message
+	 */
+	errorWithBtn(message: string): void {
+		this._showWithBtn(message, {
+			panelClass: 'error-notification-overlay-with-btn'
+		});
+	}
+
+	/**
 	 * Displays the notification.
 	 * @param message
 	 * @param configuration

@@ -40,7 +40,7 @@ export class EmailSettingsComponent {
 	 * Whether the general data is being fetched.
 	 */
 	@Input() set loading(value: boolean) {
-		this._sb.log.debug('loading property set.', this, value);
+		this._sb.log.debug('loading property set to:', this, value);
 		this._loadingSub.next(value);
 	}
 
