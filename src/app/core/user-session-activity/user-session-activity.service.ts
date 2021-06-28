@@ -61,6 +61,11 @@ export class UserSessionActivityService {
 	private _unlistenKeydown: () => void;
 
 	/**
+	 * Unlisten 'touchmove' event.
+	 */
+	private _unlistenTouchMove: () => void;
+
+	/**
 	 * Start the user session activity timer.
 	 */
 	private readonly _start = new Subject<void>();
@@ -125,17 +130,34 @@ export class UserSessionActivityService {
 		this._unlistenFromKeyDown();
 		this._unlistenFromScroll();
 		this._unlistenFromMouseClick();
+		this._unlistenFromTouchMove();
 	}
 
 	/**
-	 * Unlistens from mouse move event.
+	 * Unlistens from 'mousemove' event.
 	 */
 	private _unlistenFromMouseMove(): void {
 		try {
 			this._log.debug("Unlistening 'mousemove' event.", this);
-			this._unlistenMouseMove();
+			if (this._unlistenMouseMove) {
+				this._unlistenMouseMove();
+			}
 		} catch (error) {
 			this._log.error("Error occured when unlistening 'mousemove'.", this, error);
+		}
+	}
+
+	/**
+	 * Unlistens from 'touchmove' event.
+	 */
+	private _unlistenFromTouchMove(): void {
+		try {
+			this._log.debug("Unlistening 'touchmove' event.", this);
+			if (this._unlistenMouseMove) {
+				this._unlistenTouchMove();
+			}
+		} catch (error) {
+			this._log.error("Error occured when unlistening 'touchmove'.", this, error);
 		}
 	}
 
@@ -145,7 +167,9 @@ export class UserSessionActivityService {
 	private _unlistenFromKeyDown(): void {
 		try {
 			this._log.debug("Unlistening 'keydown' event.", this);
-			this._unlistenKeydown();
+			if (this._unlistenKeydown) {
+				this._unlistenKeydown();
+			}
 		} catch (error) {
 			this._log.error("Error occured when unlistening 'keydown'.", this, error);
 		}
@@ -157,7 +181,9 @@ export class UserSessionActivityService {
 	private _unlistenFromScroll(): void {
 		try {
 			this._log.debug("Unlistening 'scroll' event.", this);
-			this._unlistenScroll();
+			if (this._unlistenScroll) {
+				this._unlistenScroll();
+			}
 		} catch (error) {
 			this._log.error("Error occured when unlistening 'scroll'.", this, error);
 		}
@@ -169,7 +195,9 @@ export class UserSessionActivityService {
 	private _unlistenFromMouseClick(): void {
 		try {
 			this._log.debug("Unlistening 'click' event.", this);
-			this._unListenMouseClick();
+			if (this._unListenMouseClick) {
+				this._unListenMouseClick();
+			}
 		} catch (error) {
 			this._log.error("Error occured when unlistening 'click'.", this, error);
 		}
@@ -218,5 +246,7 @@ export class UserSessionActivityService {
 		this._unlistenScroll = this._renderer.listen('window', 'scroll', this._eventHandler);
 		this._log.debug("Listening for mouse 'click' event.", this);
 		this._unListenMouseClick = this._renderer.listen('window', 'click', this._eventHandler);
+		this._log.debug("Listening for 'touchmove' event.", this);
+		this._unlistenFromTouchMove = this._renderer.listen('window', 'touchmove', this._eventHandler);
 	}
 }

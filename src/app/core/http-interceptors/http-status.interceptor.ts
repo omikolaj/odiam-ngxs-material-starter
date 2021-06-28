@@ -30,43 +30,61 @@ export class HttpStatusInterceptor implements HttpInterceptor {
 	intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<unknown>> {
 		return next.handle(req.clone()).pipe(
 			catchError((e: HttpErrorResponse) => {
-				if (e.status === 400 || e.status === 401 || e.status === 403) {
-					// check if we have validation problem details
-					this._serverErrorService.problemDetails = e.error as ProblemDetails;
-					return NEVER;
-				} else if (e.status === 500 || e.status === 504) {
-					const internalServerError = e.error as InternalServerErrorDetails;
-					// if this is OdmApiException it implements same interface as problem details
-					if (implementsOdmWebApiException(internalServerError)) {
-						this._serverErrorService.internalServerErrorDetails = e.error as InternalServerErrorDetails;
+				return this._handleError$(e);
+			})
+		);
+	}
 
-						// internal server error cannot return NEVER because of issues getting reference to
-						// @InternalServerDetailError very early on in the bootstraping of the application.
-						// NOT returning NEVER allows parts of the app to use .catchError() and handle possible server down scenarios.
-						// @ProblemDetails is not a problem because when server responds with 40X it indicates the server is running and some internal process failed.
-						return throwError(internalServerError);
-					}
-
-					// eslint-disable-next-line prefer-const
-					let error = {
-						status: e.status,
-						message: e.error
-					} as InternalServerErrorDetails;
-
-					// server is most likely down
-					if (e.status === 504) {
-						error.message = `Server is down.`;
-					}
-
-					this._serverErrorService.internalServerErrorDetails = error;
+	/**
+	 * Handles http errors.
+	 * @param e
+	 * @returns error$
+	 */
+	private _handleError$(e: HttpErrorResponse): Observable<HttpEvent<unknown>> {
+		switch (e.status) {
+			case 400:
+				this._serverErrorService.problemDetails = e.error as ProblemDetails;
+				return NEVER;
+			case 401:
+			case 403:
+				this._serverErrorService.problemDetails = e.error as ProblemDetails;
+				return throwError(e);
+			case 500: {
+				const internalServerError = e.error as InternalServerErrorDetails;
+				// if this is OdmApiException it implements same interface as problem details
+				if (implementsOdmWebApiException(internalServerError)) {
+					this._serverErrorService.internalServerErrorDetails = e.error as InternalServerErrorDetails;
 
 					// internal server error cannot return NEVER because of issues getting reference to
 					// @InternalServerDetailError very early on in the bootstraping of the application.
 					// NOT returning NEVER allows parts of the app to use .catchError() and handle possible server down scenarios.
 					// @ProblemDetails is not a problem because when server responds with 40X it indicates the server is running and some internal process failed.
-					return throwError(error);
+					return throwError(internalServerError);
 				}
-			})
-		);
+
+				const error = {
+					status: e.status,
+					message: e.error
+				} as InternalServerErrorDetails;
+
+				this._serverErrorService.internalServerErrorDetails = error;
+
+				return throwError(error);
+			}
+			case 504: {
+				const error = {
+					status: e.status,
+					message: 'Server is down.'
+				} as InternalServerErrorDetails;
+
+				this._serverErrorService.internalServerErrorDetails = error;
+
+				// internal server error cannot return NEVER because of issues getting reference to
+				// @InternalServerDetailError very early on in the bootstraping of the application.
+				// NOT returning NEVER allows parts of the app to use .catchError() and handle possible server down scenarios.
+				// @ProblemDetails is not a problem because when server responds with 40X it indicates the server is running and some internal process failed.
+				return throwError(error);
+			}
+		}
 	}
 }

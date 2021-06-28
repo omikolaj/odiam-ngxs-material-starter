@@ -5,6 +5,9 @@ import {
 	ODM_SNACKBAR_DURATION_WARN,
 	ODM_SNACKBAR_DURATION_ERROR
 } from 'app/shared/global-settings/mat-snackbar-settings';
+import { TranslateService } from '@ngx-translate/core';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 /**
  * Notification service that displays toast notification.
@@ -33,7 +36,7 @@ export class NotificationService {
 	 * @param snackBar
 	 * @param zone
 	 */
-	constructor(private readonly _snackBar: MatSnackBar, private readonly _zone: NgZone) {}
+	constructor(private readonly _snackBar: MatSnackBar, private readonly _zone: NgZone, private _translationService: TranslateService) {}
 
 	/**
 	 * Defaults notification.
@@ -65,6 +68,18 @@ export class NotificationService {
 		this._showWithBtn(message, {
 			panelClass: 'info-notification-overlay-with-btn'
 		});
+	}
+
+	/**
+	 * Info notification with 'Dismiss' button and translated message.
+	 * @param message
+	 */
+	infoWithBtn$(message: string): Observable<any> {
+		return this._translationService.get(message).pipe(
+			tap((message: string) => {
+				this.infoWithBtn(message);
+			})
+		);
 	}
 
 	/**
@@ -108,6 +123,19 @@ export class NotificationService {
 		this._showWithBtn(message, {
 			panelClass: 'error-notification-overlay-with-btn'
 		});
+	}
+
+	/**
+	 * Errors notification with 'Dismiss' button and translated message.
+	 * @param message
+	 * @returns with btn$
+	 */
+	errorWithBtn$(message: string): Observable<any> {
+		return this._translationService.get(message).pipe(
+			tap((message: string) => {
+				this.errorWithBtn(message);
+			})
+		);
 	}
 
 	/**

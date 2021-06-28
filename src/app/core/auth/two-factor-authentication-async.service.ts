@@ -6,6 +6,8 @@ import { UserRecoveryCodes } from '../models/account/security/user-recovery-code
 import { TwoFactorAuthenticationSetup } from '../models/account/security/two-factor-authentication-setup.model';
 import { TwoFactorAuthenticationVerificationCode } from '../models/account/security/two-factor-authentication-verification-code.model';
 import { TwoFactorAuthenticationSetupResult } from '../models/account/security/two-factor-authentication-setup-result.model';
+import { AccessToken } from '../models/auth/access-token.model';
+import { TwoFactorRecoveryCode } from '../models/auth/two-factor-recovery-code.model';
 
 /**
  * Two factor authentication async service.
@@ -45,6 +47,24 @@ export class TwoFactorAuthenticationAsyncService {
 		return this._http.post<TwoFactorAuthenticationSetupResult>(`${this._apiUrl}/2fa/verify-authenticator`, JSON.stringify(model), {
 			headers: this._headers
 		});
+	}
+
+	/**
+	 * Verifys two step verification code. This is used once user has already set-up two factor authentication.
+	 * @param model
+	 * @returns AccessToken
+	 */
+	verifyTwoStepVerificationCode$(model: TwoFactorAuthenticationVerificationCode): Observable<AccessToken> {
+		return this._http.post<AccessToken>(`${this._apiUrl}/2fa/verify-two-step-verification-code`, JSON.stringify(model), { headers: this._headers });
+	}
+
+	/**
+	 * Redeems user's recovery code.
+	 * @param model
+	 * @returns AccessToken
+	 */
+	redeemRecoveryCode$(model: TwoFactorRecoveryCode): Observable<AccessToken> {
+		return this._http.post<AccessToken>(`${this._apiUrl}/2fa/redeem-recovery-code`, JSON.stringify(model), { headers: this._headers });
 	}
 
 	/**

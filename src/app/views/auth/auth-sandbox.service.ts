@@ -29,6 +29,7 @@ import { JsonWebTokenService } from 'app/core/auth/json-web-token.service';
 import { AccessToken } from 'app/core/models/auth/access-token.model';
 import { NotificationService } from 'app/core/core.module';
 import { TranslateService } from '@ngx-translate/core';
+import { TwoFactorAuthenticationAsyncService } from 'app/core/auth/two-factor-authentication-async.service';
 
 /**
  * Auth sandbox service.
@@ -154,6 +155,7 @@ export class AuthSandboxService {
 	 */
 	constructor(
 		private _authAsyncService: AuthAsyncService,
+		private _twoFactorAuthenticationAsync: TwoFactorAuthenticationAsyncService,
 		private _usersAsyncService: UsersAsyncService,
 		private _store: Store,
 		private _socialAuthService: SocialAuthService,
@@ -276,7 +278,7 @@ export class AuthSandboxService {
 	 * @param model
 	 */
 	verifyTwoStepVerificationCode(model: TwoFactorAuthenticationVerificationCode): void {
-		this._authAsyncService
+		this._twoFactorAuthenticationAsync
 			.verifyTwoStepVerificationCode$(model)
 			.pipe(
 				tap((accessToken) => {
@@ -301,7 +303,7 @@ export class AuthSandboxService {
 	 * @param model
 	 */
 	redeemRecoveryCode(model: TwoFactorRecoveryCode): void {
-		this._authAsyncService
+		this._twoFactorAuthenticationAsync
 			.redeemRecoveryCode$(model)
 			.pipe(
 				tap((accessToken) => {

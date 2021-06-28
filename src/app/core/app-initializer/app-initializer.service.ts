@@ -3,8 +3,9 @@ import { Store } from '@ngxs/store';
 import { AuthService } from '../auth/auth.service';
 import { LogService } from '../logger/log.service';
 import { AuthState } from '../auth/auth.store.state';
-import { InitSessionResult } from '../models/auth/init-session-result.model';
 import { Router } from '@angular/router';
+import { InitSessionResult } from '../models/auth/init-session-result.model';
+import * as Auth from '../auth/auth.store.actions';
 
 /**
  * App initializer service.
@@ -43,17 +44,47 @@ export class AppInitializerService {
 						.authenticate$(result.accessToken)
 						.toPromise()
 						.then(() => {
+							this._log.debug('[initUserSession] User is authenticated. Starting monitoring session activity.', this);
 							void this._authService.monitorSessionActivity$().toPromise();
 							this._log.debug('[initUserSession] monitorSessionActivity$ executed.', this);
 						});
 				}
 				if (result.error) {
-					this._log.debug('[initUserSession] Signing user out.', this);
+					this._log.debug('[initUserSession] Signing user out. Did user explicitly sign out:', this, explicitlySignedOut);
 					return this._authService
-						.appInitializerUserSignOut$()
+						.appInitializerUserSignOut$(explicitlySignedOut)
 						.toPromise()
-						.then(() => void this._router.navigate(['auth/sign-in']));
+						.then(() => {
+							this._log.debug('[initUserSession] Navigating to auth/sign-in.', this);
+							void this._router.navigate(['auth/sign-in']);
+						})
+						.catch(() => {
+							this._log.error('[initUserSession] Server error occured signing user out. Signing them out of the app.', this);
+							this._store.dispatch([new Auth.Signout()]);
+							this._log.error('[initUserSession] Navigating to auth/sign-in.', this);
+							void this._router.navigate(['auth/sign-in']);
+						});
 				}
+			})
+			.catch(() => {
+				this._log.error(
+					'[initUserSession$] Error occured initializing user`s session. Signing user out. Did user explicitly sign out:',
+					this,
+					explicitlySignedOut
+				);
+				return this._authService
+					.appInitializerUserSignOut$(explicitlySignedOut)
+					.toPromise()
+					.then(() => {
+						this._log.debug('[initUserSession$] Navigating to auth/sign-in.', this);
+						void this._router.navigate(['auth/sign-in']);
+					})
+					.catch(() => {
+						this._log.error('[initUserSession] Server error occured signing user out. Signing them out of the app.', this);
+						this._store.dispatch([new Auth.Signout()]);
+						this._log.error('[initUserSession] Navigating to auth/sign-in.', this);
+						void this._router.navigate(['auth/sign-in']);
+					});
 			});
 
 		return promise;
