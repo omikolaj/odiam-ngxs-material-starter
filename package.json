@@ -29,8 +29,6 @@
   },
   "private": true,
   "dependencies": {
-    "@angular-extensions/elements": "~10.0.1",
-    "@angular-extensions/model": "^8.1.0",
     "@angular/animations": "~10.0.5",
     "@angular/cdk": "~10.1.1",
     "@angular/common": "~10.0.5",
@@ -49,7 +47,7 @@
     "@ngx-translate/core": "^13.0.0",
     "@ngx-translate/http-loader": "^6.0.0",
     "@ngxs/logger-plugin": "^3.7.0",
-    "@ngxs/router-plugin": "^3.7.0",
+    "@ngxs/router-plugin": "^3.7.2",
     "@ngxs/store": "^3.7.0",
     "angularx-qrcode": "^10.0.11",
     "angularx-social-login": "^3.5.4",

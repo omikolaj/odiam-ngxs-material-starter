@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { LazyElementsModule } from '@angular-extensions/elements';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { SharedModule } from '../../shared/shared.module';
@@ -23,7 +22,6 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
  */
 @NgModule({
 	imports: [
-		LazyElementsModule,
 		SharedModule,
 		ExamplesRoutingModule,
 		TranslateModule.forChild({
