@@ -5,7 +5,6 @@ import { PasswordRequirement } from 'app/core/models/auth/password-requirement.m
 import { PasswordHelpToggleClass } from 'app/core/models/auth/password-help-toggle-class.model';
 import { getPasswordRequirements } from 'app/core/utilities/password-requirements.utility';
 import { FormGroup } from '@angular/forms';
-
 import { ActivatedRoute } from '@angular/router';
 import { Observable, Subscription, merge, Subject } from 'rxjs';
 import { OdmValidators, MinPasswordLength } from 'app/core/form-validators/odm-validators';
