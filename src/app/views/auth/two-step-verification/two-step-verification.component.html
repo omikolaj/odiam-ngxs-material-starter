@@ -1,10 +1,10 @@
-<div class="two-step-verification auth__container" [ngClass]="_routeAnimationsElements">
+<div class="two-step-verification auth__container">
 	<div>
-		<div class="two-step-verification__header">
-			<h2>{{ 'odm.auth.two-step-verification.header' | translate }}</h2>
-			<p>{{ 'odm.auth.two-step-verification.subheader' | translate }}</p>
+		<div [ngClass]="_routeAnimationsElements" class="two-step-verification__header">
+			<h2 [ngClass]="_routeAnimationsElements">{{ 'odm.auth.two-step-verification.header' | translate }}</h2>
+			<p [ngClass]="_routeAnimationsElements">{{ 'odm.auth.two-step-verification.subheader' | translate }}</p>
 		</div>
-		<div class="two-step-verification__verification-code">
+		<div [ngClass]="_routeAnimationsElements" class="two-step-verification__verification-code">
 			<odm-verification-code
 				[codeVerificationInProgress]="_codeVerificationInProgress"
 				[codeVerificationSucceeded]="_codeVerificationSucceeded$ | async"
@@ -15,7 +15,7 @@
 			>
 			</odm-verification-code>
 		</div>
-		<div class="auth__form-container">
+		<div [ngClass]="_routeAnimationsElements" class="auth__form-container">
 			<span
 				class="auth__text--link auth__text-link--size auth__text"
 				[matTooltipShowDelay]="_showDelayInMs"

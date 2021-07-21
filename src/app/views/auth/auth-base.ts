@@ -94,7 +94,7 @@ export class AuthBase {
 	 * Creates an instance of auth base.
 	 * @param _translateErrorValidationService
 	 * @param log
-	 * @param _cd
+	 * @param cd
 	 */
 	constructor(
 		private _translateErrorValidationService: TranslateValidationErrorsService,
