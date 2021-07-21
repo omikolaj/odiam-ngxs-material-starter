@@ -85,6 +85,9 @@ export class HttpStatusInterceptor implements HttpInterceptor {
 				// @ProblemDetails is not a problem because when server responds with 40X it indicates the server is running and some internal process failed.
 				return throwError(error);
 			}
+			default: {
+				return throwError(e);
+			}
 		}
 	}
 }

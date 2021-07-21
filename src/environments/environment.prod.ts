@@ -8,7 +8,7 @@ export const environment = {
 		apiUrl: '/api'
 	},
 	test: false,
-	i18nPrefix: '/odiam-ngxs-material-starter',
+	i18nPrefix: '',
 	versions: {
 		app: packageJson.version,
 		angular: packageJson.dependencies['@angular/core'],
