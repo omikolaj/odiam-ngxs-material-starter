@@ -1,5 +1,5 @@
 {
-	"level": "Trace",
+	"level": "Error",
 	"loggers": [
 		{
 			"loggerName": "console",
