@@ -7,6 +7,7 @@ import { catchError } from 'rxjs/operators';
 import { ProblemDetails } from '../models/problem-details.model';
 import { InternalServerErrorDetails } from '../models/internal-server-error-details.model';
 import { implementsOdmWebApiException } from '../utilities/implements-odm-web-api-exception';
+import { LogService } from '../logger/log.service';
 
 /**
  * Http status interceptor. Controls if ProblemDetails or InternalServerErrorDetails emit errors.
@@ -17,9 +18,10 @@ import { implementsOdmWebApiException } from '../utilities/implements-odm-web-ap
 export class HttpStatusInterceptor implements HttpInterceptor {
 	/**
 	 * Creates an instance of http status interceptor.
+	 * @param _log
 	 * @param _serverErrorService
 	 */
-	constructor(private _serverErrorService: ServerErrorService) {}
+	constructor(private _log: LogService, private _serverErrorService: ServerErrorService) {}
 
 	/**
 	 * Intercepts requests checking for specific http status codes.
@@ -30,6 +32,7 @@ export class HttpStatusInterceptor implements HttpInterceptor {
 	intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<unknown>> {
 		return next.handle(req.clone()).pipe(
 			catchError((e: HttpErrorResponse) => {
+				this._log.error('Error occured in HttpStatusInterceptor. Executing _handleError$ method.', this, e);
 				return this._handleError$(e);
 			})
 		);
@@ -43,13 +46,16 @@ export class HttpStatusInterceptor implements HttpInterceptor {
 	private _handleError$(e: HttpErrorResponse): Observable<HttpEvent<unknown>> {
 		switch (e.status) {
 			case 400:
+				this._log.debug('[_handleError$]: `400` case executed.', this);
 				this._serverErrorService.problemDetails = e.error as ProblemDetails;
 				return NEVER;
 			case 401:
 			case 403:
+				this._log.debug('[_handleError$]: `401` or `403` case executed.', this);
 				this._serverErrorService.problemDetails = e.error as ProblemDetails;
 				return throwError(e);
 			case 500: {
+				this._log.debug('[_handleError$]: `500` case executed.', this);
 				const internalServerError = e.error as InternalServerErrorDetails;
 				// if this is OdmApiException it implements same interface as problem details
 				if (implementsOdmWebApiException(internalServerError)) {
@@ -72,6 +78,7 @@ export class HttpStatusInterceptor implements HttpInterceptor {
 				return throwError(error);
 			}
 			case 504: {
+				this._log.debug('[_handleError$]: `504` case executed.', this);
 				const error = {
 					status: e.status,
 					message: 'Server is down.'
@@ -86,6 +93,7 @@ export class HttpStatusInterceptor implements HttpInterceptor {
 				return throwError(error);
 			}
 			default: {
+				this._log.debug('[_handleError$]: `default` case executed.', this);
 				return throwError(e);
 			}
 		}

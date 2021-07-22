@@ -3,12 +3,18 @@ import { Validators, AbstractControl, ValidationErrors, FormGroup } from '@angul
 /**
  * Minimum password length requirement for the application user.
  */
-export const MinPasswordLength = 0;
+export const MinPasswordLength = 8;
 
 /**
  * Verification code length.
  */
 export const VerificationCodeLength = 6;
+
+/**
+ * Require minimum number of unique characters in a password. Example if 3 chars are required:
+ * 'pppaaasss' will pass validation, however 'pppaaa' will fail.
+ */
+const RequiredUniqueChars = 3;
 
 /**
  * Odm validators class extends angulars native Validators class
@@ -34,11 +40,12 @@ export class OdmValidators extends Validators {
 	 * @returns validation result
 	 */
 	static requireThreeUniqueCharacters(control: AbstractControl): ValidationErrors | null {
-		const hasUniqueChars = /(?:(.)(?<=^(?:(?!\1).)*\1)(?=(?:(?!\1).)*$).*?){3,}/.test(control.value);
-		if (hasUniqueChars) {
-			return null;
+		const password = control.value as string;
+		const uniqueChars = new Set(password);
+		if (RequiredUniqueChars >= 1 && uniqueChars.size < RequiredUniqueChars) {
+			return { uniqueChars: true };
 		}
-		return { uniqueChars: true };
+		return null;
 	}
 
 	/**

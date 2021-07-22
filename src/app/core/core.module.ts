@@ -61,6 +61,7 @@ import {
 	fadeInAnimation,
 	downUpFadeInAnimation
 } from 'app/core/animations/element.animations';
+import { LogService } from './logger/log.service';
 
 export {
 	TitleService,
@@ -138,7 +139,7 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
 	],
 	providers: [
 		{ provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
-		{ provide: HTTP_INTERCEPTORS, useClass: HttpStatusInterceptor, multi: true, deps: [ServerErrorService] },
+		{ provide: HTTP_INTERCEPTORS, useClass: HttpStatusInterceptor, multi: true, deps: [LogService, ServerErrorService] },
 		{ provide: HTTP_INTERCEPTORS, useClass: HttpAccessTokenInterceptor, multi: true },
 		{ provide: ErrorHandler, useClass: AppErrorHandler },
 		{ provide: RouterStateSerializer, useClass: CustomSerializer },
