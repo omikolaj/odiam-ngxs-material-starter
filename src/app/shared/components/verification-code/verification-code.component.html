@@ -14,7 +14,7 @@
 			<!-- If code verification is not in progress and code verification succeeded display green check mark and display spinner inside the button -->
 			<ng-container *ngIf="!codeVerificationInProgress && codeVerificationSucceeded">
 				{{ 'odm.buttons.verified' | translate }}
-				<mat-icon color="accent" matSuffix>{{ 'task_alt' }}</mat-icon>
+				<mat-icon color="accent" matSuffix>{{ 'check' }}</mat-icon>
 				<odm-spinner
 					[type]="'button'"
 					color="accent"

@@ -21,7 +21,7 @@
 								>{{ 'odm.auth.checking-availability' | translate }}<span>.</span><span>.</span><span>.</span>
 							</span>
 							<span *ngIf="status === 'VALID'">
-								<mat-icon class="auth--req-met" matPrefix>{{ 'task_alt' }}</mat-icon>
+								<mat-icon class="auth--req-met" matPrefix>{{ 'check' }}</mat-icon>
 								{{ 'odm.auth.form.validations.valid-email' | translate }}
 							</span>
 							<!--
@@ -80,7 +80,7 @@
 						<span>
 							<ng-container *ngIf="!_signupForm?.get('confirmPassword').pristine && _signupForm?.get('password').valid">
 								<mat-icon [ngClass]="confirmPasswordMatchReqMet ? 'auth--req-met' : 'auth--req-not-met'" matPrefix>{{
-									confirmPasswordMatchReqMet ? 'task_alt' : 'clear'
+									confirmPasswordMatchReqMet ? 'check' : 'clear'
 								}}</mat-icon>
 							</ng-container>
 							{{ 'odm.auth.form.requirements.pass-must-match' | translate }}
