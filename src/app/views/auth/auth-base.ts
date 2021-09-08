@@ -1,12 +1,11 @@
 import { ChangeDetectorRef } from '@angular/core';
-import { ProblemDetails } from 'app/core/models/problem-details.model';
-import { implementsOdmWebApiException } from 'app/core/utilities/implements-odm-web-api-exception';
 import { AbstractControl, ValidationErrors } from '@angular/forms';
-
 import { Observable, of } from 'rxjs';
-import { LogService } from 'app/core/logger/log.service';
+import { LogService } from '../../core/logger/log.service';
+import { InternalServerErrorDetails } from '../../core/models/internal-server-error-details.model';
+import { ProblemDetails } from '../../core/models/problem-details.model';
+import { implementsOdmWebApiException } from '../../core/utilities/implements-odm-web-api-exception';
 import { TranslateValidationErrorsService } from '../../shared/services/translate-validation-errors.service';
-import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 
 /**
  * Auth base class which contains error handling logic.

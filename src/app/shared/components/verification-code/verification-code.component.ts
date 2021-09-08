@@ -1,15 +1,15 @@
-import { Component, OnInit, ChangeDetectionStrategy, Output, EventEmitter, Input, ChangeDetectorRef } from '@angular/core';
-import { LogService } from 'app/core/logger/log.service';
-import { FormGroup, FormBuilder } from '@angular/forms';
-import { AuthBase } from 'app/views/auth/auth-base';
-import { ODM_SMALL_SPINNER_DIAMETER, ODM_SMALL_SPINNER_STROKE_WIDTH } from 'app/shared/global-settings/mat-spinner-settings';
-import { TranslateValidationErrorsService } from 'app/shared/services/translate-validation-errors.service';
-import { ProblemDetails } from 'app/core/models/problem-details.model';
-import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
-import { OdmValidators } from 'app/core/form-validators/odm-validators';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { OdmValidators } from '../../../core/form-validators/odm-validators';
+import { LogService } from '../../../core/logger/log.service';
+import { InternalServerErrorDetails } from '../../../core/models/internal-server-error-details.model';
+import { ProblemDetails } from '../../../core/models/problem-details.model';
+import { ODM_SMALL_SPINNER_DIAMETER, ODM_SMALL_SPINNER_STROKE_WIDTH } from '../../../shared/global-settings/mat-spinner-settings';
+import { TranslateValidationErrorsService } from '../../../shared/services/translate-validation-errors.service';
+import { AuthBase } from '../../../views/auth/auth-base';
 
 /**
  * Verification code component. Takes verification code form and captures input. Handles displaying validation and server side errors.

@@ -8,7 +8,8 @@
 			"schematics": {
 				"@schematics/angular:component": {
 					"changeDetection": "OnPush",
-					"style": "scss"
+					"style": "scss",
+					"skipTests": true
 				}
 			},
 			"root": "",
@@ -19,7 +20,7 @@
 					"builder": "@angular-devkit/build-angular:browser",
 					"options": {
 						"outputPath": "dist/odiam-ngxs-material-starter",
-						"index": "src/index.html",
+						"index": "src/index-dev.html",
 						"main": "src/main.ts",
 						"polyfills": "src/polyfills.ts",
 						"tsConfig": "src/tsconfig.app.json",
@@ -70,6 +71,14 @@
 									"maximumWarning": "6kb"
 								}
 							]
+						},
+						"hmr": {
+							"fileReplacements": [
+								{
+									"replace": "src/environments/environment.ts",
+									"with": "src/environments/environment.hmr.ts"
+								}
+							]
 						}
 					}
 				},
@@ -82,6 +91,10 @@
 					"configurations": {
 						"production": {
 							"browserTarget": "odiam-ngxs-material-starter:build:production"
+						},
+						"hmr": {
+							"hmr": true,
+							"browserTarget": "odiam-ngxs-material-starter:build:hmr"
 						}
 					}
 				},
