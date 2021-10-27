@@ -1,10 +1,11 @@
+@use '~@angular/material' as mat;
 @import '~@angular/material/theming';
 
 @mixin odm-ghost-theme {
-	$first-light: map-get($mat-grey, 200);
-	$second-light: map-get($mat-grey, 300);
+	$first-light: map-get(mat.$grey-palette, 200);
+	$second-light: map-get(mat.$grey-palette, 300);
 	$first-dark: #303030;
-	$second-dark: map-get($mat-grey, 600);
+	$second-dark: map-get(mat.$grey-palette, 600);
 
 	.odm-ghost-block-container {
 		background-color: $first-light;

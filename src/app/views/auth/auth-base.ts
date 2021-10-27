@@ -14,12 +14,12 @@ export class AuthBase {
 	/**
 	 * Facebook login icon.
 	 */
-	_facebookLoginIcon = (require('../../../assets/facebook_icon_color.svg') as { default: string }).default;
+	_facebookLoginIcon = new URL('../../../assets/facebook_icon_color.svg', import.meta.url);
 
 	/**
 	 * Google login icon.
 	 */
-	_googleLoginIcon = (require('../../../assets/google_icon_color.svg') as { default: string }).default;
+	_googleLoginIcon = new URL('../../../assets/google_icon_color.svg', import.meta.url);
 
 	/**
 	 * Sets internal server error.

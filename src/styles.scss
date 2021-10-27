@@ -1,10 +1,11 @@
+@use '~@angular/material' as mat;
 @import 'styles-variables';
 
 @import 'styles-reset';
 
 @import '~@angular/material/theming';
 
-@include mat-core();
+@include mat.core();
 
 @import './themes/default-theme';
 @import './themes/light-theme';
@@ -46,22 +47,22 @@
 }
 
 .default-theme {
-	@include angular-material-theme($odm-theme);
+	@include mat.all-component-themes($odm-theme);
 	@include custom-components-theme($odm-theme);
 }
 
 .light-theme {
-	@include angular-material-theme($odm-light-theme);
+	@include mat.all-component-themes($odm-light-theme);
 	@include custom-components-theme($odm-light-theme);
 }
 
 .black-theme {
-	@include angular-material-theme($odm-black-theme);
+	@include mat.all-component-themes($odm-black-theme);
 	@include custom-components-theme($odm-black-theme);
 }
 
 .nature-theme {
-	@include angular-material-theme($odm-nature-theme);
+	@include mat.all-component-themes($odm-nature-theme);
 	@include custom-components-theme($odm-nature-theme);
 }
 

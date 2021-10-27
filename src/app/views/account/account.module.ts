@@ -11,7 +11,6 @@ import { SecurityContainerComponent } from './security-container/security-contai
 import { TwoFactorAuthenticationComponent } from './security-container/two-factor-authentication/two-factor-authentication.component';
 import { TwoFactorAuthenticationCodesComponent } from './security-container/two-factor-authentication-codes/two-factor-authentication-codes.component';
 import { TwoFactorAuthenticationSetupWizardComponent } from './security-container/two-factor-authentication-setup-wizard/two-factor-authentication-setup-wizard.component';
-import { QRCodeModule } from 'angularx-qrcode';
 import { PersonalEmailVerificationComponent } from './general-container/personal-email-verification/personal-email-verification.component';
 import { AccountGeneralState } from './general-container/general-container.store.state';
 import { TwoFactorAuthenticationState } from './security-container/two-factor-authentication/two-factor-authentication.store.state';
@@ -22,6 +21,7 @@ import { AccountSandboxService } from './account-sandbox.service';
 import { EmailSettingsComponent } from './general-container/email-settings/email-settings.component';
 import { ChangeEmailContainerComponent } from './general-container/change-email-container/change-email-container.component';
 import { ChangeEmailComponent } from './general-container/change-email/change-email.component';
+import { QrCodeModule } from 'ng-qrcode';
 
 /**
  * User account module.
@@ -46,7 +46,7 @@ import { ChangeEmailComponent } from './general-container/change-email/change-em
 	imports: [
 		CommonModule,
 		AccountRoutingModule,
-		QRCodeModule,
+		QrCodeModule,
 		SharedModule,
 		NgxsModule.forFeature([AccountSecurityState, AccountGeneralState, TwoFactorAuthenticationState])
 	],

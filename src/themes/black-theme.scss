@@ -1,5 +1,6 @@
-$odm-black-primary: mat-palette($mat-grey, 700, 300, 900);
-$odm-black-accent: mat-palette($mat-blue-grey, 400);
-$odm-black-warn: mat-palette($mat-red, 500);
+@use '~@angular/material' as mat;
+$odm-black-primary: mat.define-palette(mat.$grey-palette, 700, 300, 900);
+$odm-black-accent: mat.define-palette(mat.$blue-grey-palette, 400);
+$odm-black-warn: mat.define-palette(mat.$red-palette, 500);
 
-$odm-black-theme: mat-dark-theme($odm-black-primary, $odm-black-accent, $odm-black-warn);
+$odm-black-theme: mat.define-dark-theme($odm-black-primary, $odm-black-accent, $odm-black-warn);

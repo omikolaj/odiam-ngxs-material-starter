@@ -44,7 +44,7 @@ export class AuthDialogComponent implements OnInit {
 	/**
 	 * Gets left hand side logo url.
 	 */
-	readonly _logo = (require('../../../../assets/logo.png') as { default: string }).default;
+	readonly _logo = new URL('../../../../assets/logo.png', import.meta.url);
 
 	/**
 	 * Creates an instance of auth dialog component.

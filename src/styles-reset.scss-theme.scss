@@ -1,3 +1,4 @@
+@use '~@angular/material' as mat;
 @import '.~@angular/material/theming';
 
 @mixin odm-styles-reset-theme($theme) {
@@ -6,19 +7,19 @@
 	$foreground: map-get($theme, foreground);
 
 	a {
-		color: mat-color($foreground, text);
+		color: mat.get-color-from-palette($foreground, text);
 
 		&:hover {
-			color: mat-color($accent);
+			color: mat.get-color-from-palette($accent);
 		}
 	}
 
 	p {
 		a {
-			color: mat-color($accent);
+			color: mat.get-color-from-palette($accent);
 
 			&:hover {
-				color: mat-color($accent, darker);
+				color: mat.get-color-from-palette($accent, darker);
 			}
 		}
 	}

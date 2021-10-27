@@ -8,12 +8,7 @@
 				</p>
 				<h3>{{ _twoFactorAuthenticationSetup?.sharedKey }}</h3>
 				<div>
-					<qrcode
-						[qrdata]="_twoFactorAuthenticationSetup?.authenticatorUri"
-						[width]="_qrBarCodeWidth"
-						[errorCorrectionLevel]="'M'"
-						[elementType]="'svg'"
-					></qrcode>
+					<qr-code [value]="_twoFactorAuthenticationSetup?.authenticatorUri" [size]="_qrBarCodeWidth" [errorCorrectionLevel]="'M'"></qr-code>
 				</div>
 				<p>
 					{{ 'odm.account.security.two-step.setup-wizard.first-step.instructions.verification-code' | translate }}

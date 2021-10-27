@@ -31,7 +31,7 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 * Image located at the bottom of this component.
 	 */
 
-	readonly _authContainerImg = (require('../../../../assets/auth_bottom.jpg') as { default: string }).default;
+	readonly _authContainerImg = new URL('../../../../assets/auth_bottom.jpg', import.meta.url);
 
 	/**
 	 * Whether specified screen width was matched.

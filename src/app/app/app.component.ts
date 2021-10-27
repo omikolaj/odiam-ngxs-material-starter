@@ -43,7 +43,7 @@ export class AppComponent implements OnInit, OnDestroy {
 	/**
 	 * Gets left hand side logo url.
 	 */
-	readonly _logo = (require('../../assets/logo.png') as { default: string }).default;
+	readonly _logo = new URL('../../assets/logo.png', import.meta.url);
 
 	/**
 	 * List of currently available languages.

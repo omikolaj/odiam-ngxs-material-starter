@@ -1,3 +1,4 @@
+@use '~@angular/material' as mat;
 @import '~@angular/material/theming';
 
 @mixin odm-personal-email-verification-component-theme($theme) {
@@ -8,15 +9,15 @@
 
 	.email-verification__short-description {
 		.email-verification__email {
-			color: mat-color($foreground, secondary-text, if($is-dark-theme, 0.7, 0.6));
+			color: mat.get-color-from-palette($foreground, secondary-text, if($is-dark-theme, 0.7, 0.6));
 		}
 
 		.email-verification__verified-icon {
-			color: mat-color($accent);
+			color: mat.get-color-from-palette($accent);
 		}
 
 		.email-verification__not-verified-icon {
-			color: mat-color($warn);
+			color: mat.get-color-from-palette($warn);
 		}
 	}
 }

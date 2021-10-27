@@ -1,3 +1,4 @@
+@use '~@angular/material' as mat;
 @import '~@angular/material/theming';
 
 @mixin odm-about-component-theme($theme) {
@@ -8,12 +9,16 @@
 
 	odm-about {
 		.background {
-			color: mat-color($foreground, text);
-			background-color: mat-color($background, background);
+			color: mat.get-color-from-palette($foreground, text);
+			background-color: mat.get-color-from-palette($background, background);
 
 			.gradient {
 				&::before {
-					background: linear-gradient(to bottom, mat-color($background, background, 0) 0%, mat-color($background, background, 1) 100%);
+					background: linear-gradient(
+						to bottom,
+						mat.get-color-from-palette($background, background, 0) 0%,
+						mat.get-color-from-palette($background, background, 1) 100%
+					);
 				}
 			}
 		}
