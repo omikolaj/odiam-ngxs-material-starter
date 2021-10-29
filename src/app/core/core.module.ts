@@ -46,7 +46,6 @@ import { SettingsState } from './settings/settings.store.state';
 
 import { AuthState } from './auth/auth.store.state';
 
-import { initStateFromLocalStorage } from './meta-reducers/init-state-from-local-storage.meta-reducer';
 import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
 import { NgxsRouterPluginModule, RouterStateSerializer } from '@ngxs/router-plugin';
 import { CustomSerializer } from './router/custom-serializer';
@@ -54,6 +53,7 @@ import { BACKEND_API_URL } from './api-url-injection-token';
 import { ServerErrorService } from './error-handler/server-error.service';
 import { HttpStatusInterceptor } from './http-interceptors/http-status.interceptor';
 import { HttpAccessTokenInterceptor } from './http-interceptors/http-access-token.interceptor';
+
 import {
 	rightLeftFadeInAnimation,
 	leftRightFadeInAnimation,
@@ -62,6 +62,7 @@ import {
 	downUpFadeInAnimation
 } from 'app/core/animations/element.animations';
 import { LogService } from './logger/log.service';
+import { LocalStorage } from './local-storage/local-storage';
 
 export {
 	TitleService,
@@ -138,12 +139,14 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
 		})
 	],
 	providers: [
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+		{ provide: LocalStorage, useValue: window.localStorage },
 		{ provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
 		{ provide: HTTP_INTERCEPTORS, useClass: HttpStatusInterceptor, multi: true, deps: [LogService, ServerErrorService] },
 		{ provide: HTTP_INTERCEPTORS, useClass: HttpAccessTokenInterceptor, multi: true },
 		{ provide: ErrorHandler, useClass: AppErrorHandler },
 		{ provide: RouterStateSerializer, useClass: CustomSerializer },
-		{ provide: NGXS_PLUGINS, useValue: initStateFromLocalStorage, multi: true },
+		{ provide: NGXS_PLUGINS, useClass: LocalStorageService, multi: true },
 		{ provide: BACKEND_API_URL, useValue: environment.backend.apiUrl }
 	],
 	exports: [

@@ -26,7 +26,7 @@ export function userSessionInitializerFactory(appInitializerService: AppInitiali
 	imports: [
 		// angular
 		BrowserAnimationsModule,
-		BrowserModule,
+		BrowserModule.withServerTransition({ appId: 'serverApp' }),
 		// Has to be added here, injector error if its added in SharedModule.
 		MatDialogModule,
 

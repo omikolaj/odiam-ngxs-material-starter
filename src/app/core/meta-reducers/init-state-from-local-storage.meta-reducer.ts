@@ -20,9 +20,9 @@ const UPDATE = '@@UPDATE_STATE';
  * @param next
  * @returns updated state.
  */
-export function initStateFromLocalStorage(state: any, action: any, next: any): any {
-	if ([INIT].includes(getActionTypeFromInstance(action))) {
-		state = { ...state, ...LocalStorageService.loadInitialState() };
-	}
-	return next(state, action);
-}
+// export function initStateFromLocalStorage(state: any, action: any, next: any): any {
+// 	if ([INIT].includes(getActionTypeFromInstance(action))) {
+// 		state = { ...state, ...LocalStorageService.loadInitialState() };
+// 	}
+// 	return next(state, action);
+// }

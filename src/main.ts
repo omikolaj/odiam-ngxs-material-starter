@@ -8,7 +8,9 @@ if (environment.production) {
 	enableProdMode();
 }
 
-const bootstrap = () => platformBrowserDynamic().bootstrapModule(AppModule);
+const bootstrap = () =>
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+	platformBrowserDynamic().bootstrapModule(AppModule);
 
 if (environment.hmr) {
 	if (module['hot']) {
@@ -18,5 +20,7 @@ if (environment.hmr) {
 		console.log('Are you using the --hmr flag for ng serve?');
 	}
 } else {
-	bootstrap().catch((err) => console.log(err));
+	document.addEventListener('DOMContentLoaded', () => {
+		bootstrap().catch((err) => console.log(err));
+	});
 }
