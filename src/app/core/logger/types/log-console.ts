@@ -1,7 +1,8 @@
-import { LogPublisher } from '../log-publisher';
-import { LogEntry } from '../log-entry';
 import { Observable, of } from 'rxjs';
+import { LogEntry } from '../log-entry';
 import { LogLevel } from '../log-level';
+import { LogPublisher } from '../log-publisher';
+import { LogData } from '../log.type';
 
 /**
  * Log class for logging messages to the console.
@@ -17,21 +18,57 @@ export class LogConsole extends LogPublisher {
 		switch (record.level) {
 			case LogLevel.Trace:
 			default:
-				console.log(log);
+				this._logInfo(log);
 				break;
 			case LogLevel.Info:
 			case LogLevel.Debug:
-				console.log(log);
+				this._logInfo(log);
 				break;
 			case LogLevel.Warn:
-				console.warn(log);
+				this._logWarn(log);
 				break;
 			case LogLevel.Error:
 			case LogLevel.Fatal:
-				console.error(log);
+				this._logError(log);
 				break;
 		}
 		return of(true);
+	}
+
+	/**
+	 * @description Logs info.
+	 * @param log
+	 */
+	private _logInfo(log: LogData): void {
+		if (log.data) {
+			console.log(log.message, log.data);
+		} else {
+			console.log(log.message);
+		}
+	}
+
+	/**
+	 * @description Logs warn.
+	 * @param log
+	 */
+	private _logWarn(log: LogData): void {
+		if (log.data) {
+			console.warn(log.message, log.data);
+		} else {
+			console.log(log.message);
+		}
+	}
+
+	/**
+	 * @description Logs error.
+	 * @param log
+	 */
+	private _logError(log: LogData): void {
+		if (log.data) {
+			console.warn(log.message, log.data);
+		} else {
+			console.log(log.message);
+		}
 	}
 
 	/**

@@ -49,3 +49,6 @@ Thumbs.db
 
 # debug
 debug.log
+
+#auto gen for translations
+src/assets/i18n/autogen/*

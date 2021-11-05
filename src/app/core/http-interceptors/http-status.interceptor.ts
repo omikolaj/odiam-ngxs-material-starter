@@ -30,12 +30,14 @@ export class HttpStatusInterceptor implements HttpInterceptor {
 	 * @returns intercept
 	 */
 	intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-		return next.handle(req.clone()).pipe(
-			catchError((e: HttpErrorResponse) => {
-				this._log.error('Error occured in HttpStatusInterceptor. Executing _handleError$ method.', this, e);
-				return this._handleError$(e);
-			})
-		);
+		return next
+			.handle(req.clone())
+			.pipe
+			// catchError((e: HttpErrorResponse) => {
+			// 	this._log.error('Error occured in HttpStatusInterceptor. Executing _handleError$ method.', this, e);
+			// 	return this._handleError$(e);
+			// })
+			();
 	}
 
 	/**
