@@ -1,6 +1,6 @@
 {
   "name": "odiam-ngxs-material-starter",
-  "version": "11.2.14",
+  "version": "12.2.12",
   "license": "MIT",
   "browser": {
     "fs": false,
@@ -8,10 +8,11 @@
   },
   "scripts": {
     "ng": "ng",
-    "start": "npm run hash:i18n && ng serve --open --configuration hmr",
-    "start:prod": "npm run build:prod && npm run server",
-    "build": "ng build",
+    "start": "npm run hash:i18n && ng serve --open --configuration hmr",    
+    "start:prod": "npm run build:prod && npm run server:prod",
+    "build": "ng build",    
     "build:prod": "ng build --configuration production --index=src/index.html",
+    "server:prod": "node ./server-prod.js",
     "lint": "ng lint",
     "test": "ng lint && ng test --configuration=test",
     "e2e": "ng e2e",
@@ -19,9 +20,11 @@
     "format:test": "prettier **/*.{ts,json,md,scss} --list-different",
     "analyze": "npm run build:prod -- --stats-json && webpack-bundle-analyzer ./dist/odiam-ngxs-material-starter/stats.json",
     "eslint": "eslint src/**/*.ts --fix",
-    "dev:ssr": "ng run odiam-ngxs-material-starter:serve-ssr",
-    "serve:ssr": "node dist/odiam-ngxs-material-starter/server/main.js",
+    "dev:ssr": "ng run odiam-ngxs-material-starter:serve-ssr",    
     "build:ssr": "npm run hash:i18n && ng build && ng run odiam-ngxs-material-starter:server",
+    "serve:ssr": "node dist/odiam-ngxs-material-starter/server/main.js",
+    "start:ssr": "npm build:ssr && npm serve:ssr",
+    "build:ssr:prod": "npm run hash:i18n && npm run build:prod && ng run odiam-ngxs-material-starter:server",
     "prerender": "ng run odiam-ngxs-material-starter:prerender",
     "hash:i18n": "node scripts/hash-translations.js"
   },
