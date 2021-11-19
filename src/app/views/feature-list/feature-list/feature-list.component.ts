@@ -1,7 +1,5 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
-
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ROUTE_ANIMATIONS_ELEMENTS } from '../../../core/core.module';
-
 import { Feature, features } from '../feature-list.data';
 
 /**
@@ -29,6 +27,6 @@ export class FeatureListComponent {
 	 * @param link
 	 */
 	openLink(link: string): void {
-		window.open(link, '_blank');
+		// window.open(link, '_blank');
 	}
 }

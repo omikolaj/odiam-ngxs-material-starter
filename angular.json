@@ -8,8 +8,7 @@
 			"schematics": {
 				"@schematics/angular:component": {
 					"changeDetection": "OnPush",
-					"style": "scss",
-					"skipTests": true
+					"style": "scss"
 				}
 			},
 			"root": "",
@@ -19,20 +18,15 @@
 				"build": {
 					"builder": "@angular-devkit/build-angular:browser",
 					"options": {
-						"outputPath": "dist/odiam-ngxs-material-starter",
+						"outputPath": "dist/odiam-ngxs-material-starter/browser",
 						"index": "src/index-dev.html",
 						"main": "src/main.ts",
 						"polyfills": "src/polyfills.ts",
 						"tsConfig": "src/tsconfig.app.json",
+						"aot": true,
 						"assets": ["src/favicon.ico", "src/assets"],
 						"styles": ["src/styles-app-loading.scss", "src/styles.scss"],
-						"scripts": [],
-						"vendorChunk": true,
-						"extractLicenses": false,
-						"buildOptimizer": false,
-						"sourceMap": true,
-						"optimization": false,
-						"namedChunks": true
+						"scripts": []
 					},
 					"configurations": {
 						"production": {
@@ -84,9 +78,9 @@
 									"with": "src/environments/environment.hmr.ts"
 								}
 							]
-						}
-					},
-					"defaultConfiguration": ""
+						},
+						"development": {}
+					}
 				},
 				"serve": {
 					"builder": "@angular-devkit/build-angular:dev-server",
@@ -101,6 +95,9 @@
 						"hmr": {
 							"hmr": true,
 							"browserTarget": "odiam-ngxs-material-starter:build:hmr"
+						},
+						"development": {
+							"browserTarget": "odiam-ngxs-material-starter:build:development"
 						}
 					}
 				},
@@ -150,6 +147,76 @@
 							"devServerTarget": "odiam-ngxs-material-starter:serve:production"
 						}
 					}
+				},
+				"server": {
+					"builder": "@angular-devkit/build-angular:server",
+					"options": {
+						"outputPath": "dist/odiam-ngxs-material-starter/server",
+						"main": "server.ts",
+						"tsConfig": "src/tsconfig.server.json"
+					},
+					"configurations": {
+						"production": {
+							"outputHashing": "media",
+							"fileReplacements": [
+								{
+									"replace": "src/environments/environment.ts",
+									"with": "src/environments/environment.prod.ts"
+								}
+							],
+							"optimization": true,
+							"sourceMap": false,
+							"extractLicenses": true
+						},
+						"hmr": {
+							"fileReplacements": [
+								{
+									"replace": "src/environments/environment.ts",
+									"with": "src/environments/environment.hmr.ts"
+								}
+							]
+						},
+						"development": {
+							"fileReplacements": [
+								{
+									"replace": "src/environments/environment.ts",
+									"with": "src/environments/environment.prod.ts"
+								}
+							]
+						}
+					},
+					"defaultConfiguration": "production"
+				},
+				"serve-ssr": {
+					"builder": "@nguniversal/builders:ssr-dev-server",
+					"configurations": {
+						"development": {
+							"browserTarget": "odiam-ngxs-material-starter:build:development",
+							"serverTarget": "odiam-ngxs-material-starter:server:development"
+						},
+						"production": {
+							"browserTarget": "odiam-ngxs-material-starter:build:production",
+							"serverTarget": "odiam-ngxs-material-starter:server:production"
+						}
+					},
+					"defaultConfiguration": "development"
+				},
+				"prerender": {
+					"builder": "@nguniversal/builders:prerender",
+					"options": {
+						"routes": ["/"]
+					},
+					"configurations": {
+						"production": {
+							"browserTarget": "odiam-ngxs-material-starter:build:production",
+							"serverTarget": "odiam-ngxs-material-starter:server:production"
+						},
+						"development": {
+							"browserTarget": "odiam-ngxs-material-starter:build:development",
+							"serverTarget": "odiam-ngxs-material-starter:server:development"
+						}
+					},
+					"defaultConfiguration": "production"
 				}
 			}
 		}

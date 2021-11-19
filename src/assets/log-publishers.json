@@ -1,5 +1,5 @@
 {
-	"level": "Error",
+	"level": "Verbose",
 	"loggers": [
 		{
 			"loggerName": "console",

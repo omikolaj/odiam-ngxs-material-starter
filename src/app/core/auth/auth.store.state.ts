@@ -1,14 +1,14 @@
-import { StateToken, StateContext, State, Selector, Action, NgxsAfterBootstrap } from '@ngxs/store';
 import { Injectable } from '@angular/core';
+import { Action, NgxsAfterBootstrap, Selector, State, StateContext, StateToken } from '@ngxs/store';
+import { add, fromUnixTime, getUnixTime, isBefore } from 'date-fns';
 import produce from 'immer';
-import * as Auth from './auth.store.actions';
-import { LocalStorageService } from '../local-storage/local-storage.service';
-import { isBefore, add, getUnixTime, fromUnixTime } from 'date-fns';
-import { LogService } from '../logger/log.service';
-import { ACTIVE_UNTIL } from '../user-session-activity/user-session-activity-key';
 import { Observable } from 'rxjs';
-import { AuthStateModel, AUTH_KEY } from './auth-state-model';
+import { LocalStorageService } from '../local-storage/local-storage.service';
+import { LogService } from '../logger/log.service';
 import { ActiveAuthType } from '../models/auth/active-auth-type.model';
+import { ACTIVE_UNTIL } from '../user-session-activity/user-session-activity-key';
+import { AuthStateModel, AUTH_KEY } from './auth-state-model';
+import * as Auth from './auth.store.actions';
 
 const AUTH_STATE_TOKEN = new StateToken<AuthStateModel>('auth');
 
@@ -70,7 +70,7 @@ export class AuthState implements NgxsAfterBootstrap {
 	 */
 	@Selector([AUTH_STATE_TOKEN])
 	static selectAccessToken(state: AuthStateModel): string {
-		return state.access_token || '';
+		return state?.access_token || '';
 	}
 
 	/**

@@ -1,10 +1,10 @@
-import { Component, OnInit, ChangeDetectionStrategy, Inject, Output, EventEmitter } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Observable, timer } from 'rxjs';
-import { take, map } from 'rxjs/operators';
 import { LogService } from 'app/core/logger/log.service';
-import { AuthDialogUserDecision } from '../../../core/models/auth/auth-dialog-user-decision.enum';
 import { AuthDialogData } from 'app/core/models/auth/auth-dialog-data.model';
+import { Observable, timer } from 'rxjs';
+import { map, take } from 'rxjs/operators';
+import { AuthDialogUserDecision } from '../../../core/models/auth/auth-dialog-user-decision.enum';
 
 /**
  * Authentication dialog component that is displayed to the user when they are inactive or session has expired.
@@ -44,7 +44,7 @@ export class AuthDialogComponent implements OnInit {
 	/**
 	 * Gets left hand side logo url.
 	 */
-	readonly _logo = new URL('../../../../assets/logo.png', import.meta.url);
+	readonly _logo = '../../../../assets/logo.png';
 
 	/**
 	 * Creates an instance of auth dialog component.

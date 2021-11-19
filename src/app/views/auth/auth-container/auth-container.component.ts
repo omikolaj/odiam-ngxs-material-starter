@@ -1,15 +1,15 @@
-import { Component, ChangeDetectionStrategy, OnInit, OnDestroy } from '@angular/core';
-import { Observable, Subscription, combineLatest, merge } from 'rxjs';
-import { BreakpointState, BreakpointObserver } from '@angular/cdk/layout';
-import { MinScreenSizeQuery } from 'app/shared/screen-size-queries';
-import { ROUTE_ANIMATIONS_ELEMENTS, routeAnimations } from 'app/core/core.module';
-import { startWith, tap } from 'rxjs/operators';
-import { UrlSegment, ActivatedRoute, NavigationEnd } from '@angular/router';
-import { ActiveAuthType } from 'app/core/models/auth/active-auth-type.model';
-import { AuthSandboxService } from '../auth-sandbox.service';
-import { ProblemDetails } from 'app/core/models/problem-details.model';
-import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
+import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, UrlSegment } from '@angular/router';
 import { ActionCompletion } from '@ngxs/store';
+import { routeAnimations, ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
+import { ActiveAuthType } from 'app/core/models/auth/active-auth-type.model';
+import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
+import { ProblemDetails } from 'app/core/models/problem-details.model';
+import { MinScreenSizeQuery } from 'app/shared/screen-size-queries';
+import { combineLatest, merge, Observable, Subscription } from 'rxjs';
+import { startWith, tap } from 'rxjs/operators';
+import { AuthSandboxService } from '../auth-sandbox.service';
 
 /**
  * Auth container component that houses all functionality responsible for displaying sign-in/sign-up/forgot-password.
@@ -26,12 +26,6 @@ export class AuthContainerComponent implements OnInit, OnDestroy {
 	 * Route animations.
 	 */
 	readonly _routeAnimationsElements = ROUTE_ANIMATIONS_ELEMENTS;
-
-	/**
-	 * Image located at the bottom of this component.
-	 */
-
-	readonly _authContainerImg = new URL('../../../../assets/auth_bottom.jpg', import.meta.url);
 
 	/**
 	 * Whether specified screen width was matched.

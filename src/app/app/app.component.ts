@@ -1,14 +1,14 @@
-import browser from 'browser-detect';
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
-import { environment as env } from '../../environments/environment';
-import { routeAnimations } from '../core/core.module';
-import { Language } from 'app/core/settings/settings-state.model';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
 import { NavigationEnd } from '@angular/router';
-import { filter, tap } from 'rxjs/operators';
-import { AppSandboxService } from '../app-sandbox.service';
 import { ActionCompletion } from '@ngxs/store';
+import { Language } from 'app/core/settings/settings-state.model';
+import browser from 'browser-detect';
+import { Observable, Subscription } from 'rxjs';
+import { filter, tap } from 'rxjs/operators';
+import { environment as env } from '../../environments/environment';
+import { AppSandboxService } from '../app-sandbox.service';
+import { routeAnimations } from '../core/core.module';
 
 /**
  * AppComponent displays navbar, footer and named router-outlet '#o=outlet'.
@@ -42,8 +42,9 @@ export class AppComponent implements OnInit, OnDestroy {
 
 	/**
 	 * Gets left hand side logo url.
+	 * For SSR this is the only way logo gets loaded correctly.
 	 */
-	readonly _logo = new URL('../../assets/logo.png', import.meta.url);
+	readonly _logo = '../../assets/logo.png';
 
 	/**
 	 * List of currently available languages.
@@ -109,8 +110,8 @@ export class AppComponent implements OnInit, OnDestroy {
 					filter((event) => event instanceof NavigationEnd),
 					tap((event: NavigationEnd) => {
 						/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
-						(<any>window).ga('set', 'page', event.urlAfterRedirects);
-						(<any>window).ga('send', 'pageview');
+						// (<any>window).ga('set', 'page', event.urlAfterRedirects);
+						// (<any>window).ga('send', 'pageview');
 					})
 				)
 				.subscribe()
