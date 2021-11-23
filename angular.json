@@ -72,6 +72,7 @@
 							]
 						},
 						"hmr": {
+							"sourceMap": true,
 							"fileReplacements": [
 								{
 									"replace": "src/environments/environment.ts",
@@ -79,7 +80,9 @@
 								}
 							]
 						},
-						"development": {}
+						"development": {
+							"sourceMap": true
+						}
 					}
 				},
 				"serve": {
