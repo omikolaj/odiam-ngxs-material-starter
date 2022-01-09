@@ -1,35 +1,34 @@
 import { Injectable } from '@angular/core';
-import { AuthAsyncService } from 'app/core/auth/auth-async.service';
-import { Observable } from 'rxjs';
-import { ProblemDetailsError } from 'app/core/error-handler/problem-details-error.decorator';
-import { ProblemDetails } from 'app/core/models/problem-details.model';
-import { InternalServerError } from 'app/core/error-handler/internal-server-error.decorator';
-import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
-import { switchMap, tap } from 'rxjs/operators';
-import { Store, Select, Actions, ofActionCompleted } from '@ngxs/store';
-import * as Auth from '../../core/auth/auth.store.actions';
-import { Router } from '@angular/router';
-import { AuthState } from 'app/core/auth/auth.store.state';
-import { SocialAuthService, SocialUser, GoogleLoginProvider, FacebookLoginProvider } from 'angularx-social-login';
-import { UsersAsyncService } from 'app/shared/services/users-async.service';
-import { TranslateValidationErrorsService } from 'app/shared/services/translate-validation-errors.service';
-import { LogService } from 'app/core/logger/log.service';
 import { FormBuilder } from '@angular/forms';
-import { AuthService } from '../../core/auth/auth.service';
-import { ActiveAuthType } from 'app/core/models/auth/active-auth-type.model';
-import { PasswordReset } from 'app/core/models/auth/password-reset.model';
-import { TwoFactorAuthenticationVerificationCode } from 'app/core/models/account/security/two-factor-authentication-verification-code.model';
-import { TwoFactorRecoveryCode } from 'app/core/models/auth/two-factor-recovery-code.model';
-import { SignupUser } from 'app/core/models/auth/signup-user.model';
-import { SigninUser } from 'app/core/models/auth/signin-user.model';
+import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
+import { Actions, ofActionCompleted, Select, Store } from '@ngxs/store';
+import { AuthAsyncService } from 'app/core/auth/auth-async.service';
+import { AuthState } from 'app/core/auth/auth.store.state';
+import { JsonWebTokenService } from 'app/core/auth/json-web-token.service';
+import { TwoFactorAuthenticationAsyncService } from 'app/core/auth/two-factor-authentication-async.service';
+import { NotificationService } from 'app/core/core.module';
+import { InternalServerError } from 'app/core/error-handler/internal-server-error.decorator';
+import { ProblemDetailsError } from 'app/core/error-handler/problem-details-error.decorator';
 import { AsyncValidatorsService } from 'app/core/form-validators/validators-async.service';
+import { LogService } from 'app/core/logger/log.service';
+import { TwoFactorAuthenticationVerificationCode } from 'app/core/models/account/security/two-factor-authentication-verification-code.model';
+import { AccessToken } from 'app/core/models/auth/access-token.model';
+import { ActiveAuthType } from 'app/core/models/auth/active-auth-type.model';
 import { ChangeEmail } from 'app/core/models/auth/change-email.model';
 import { ConfirmEmail } from 'app/core/models/auth/confirm-email.model';
-import { JsonWebTokenService } from 'app/core/auth/json-web-token.service';
-import { AccessToken } from 'app/core/models/auth/access-token.model';
-import { NotificationService } from 'app/core/core.module';
-import { TranslateService } from '@ngx-translate/core';
-import { TwoFactorAuthenticationAsyncService } from 'app/core/auth/two-factor-authentication-async.service';
+import { PasswordReset } from 'app/core/models/auth/password-reset.model';
+import { SigninUser } from 'app/core/models/auth/signin-user.model';
+import { SignupUser } from 'app/core/models/auth/signup-user.model';
+import { TwoFactorRecoveryCode } from 'app/core/models/auth/two-factor-recovery-code.model';
+import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
+import { ProblemDetails } from 'app/core/models/problem-details.model';
+import { TranslateValidationErrorsService } from 'app/shared/services/translate-validation-errors.service';
+import { UsersAsyncService } from 'app/shared/services/users-async.service';
+import { Observable } from 'rxjs';
+import { switchMap, tap } from 'rxjs/operators';
+import { AuthService } from '../../core/auth/auth.service';
+import * as Auth from '../../core/auth/auth.store.actions';
 
 /**
  * Auth sandbox service.
@@ -158,7 +157,6 @@ export class AuthSandboxService {
 		private _twoFactorAuthenticationAsync: TwoFactorAuthenticationAsyncService,
 		private _usersAsyncService: UsersAsyncService,
 		private _store: Store,
-		private _socialAuthService: SocialAuthService,
 		private _authService: AuthService,
 		private _actions$: Actions,
 		private _jwtService: JsonWebTokenService,
@@ -313,36 +311,6 @@ export class AuthSandboxService {
 				switchMap(() => this._monitorSession$())
 			)
 			.subscribe();
-	}
-
-	/**
-	 * Signs user in with google.
-	 */
-	signinUserWithGoogle(): void {
-		void this._socialAuthService.signIn(GoogleLoginProvider.PROVIDER_ID).then((model: SocialUser) => {
-			this._authAsyncService
-				.signinWithGoogle$(model)
-				.pipe(
-					tap((accessToken) => this._signUserIn(accessToken)),
-					switchMap(() => this._monitorSession$())
-				)
-				.subscribe();
-		});
-	}
-
-	/**
-	 * Signs user in with facebook.
-	 */
-	signinUserWithFacebook(): void {
-		void this._socialAuthService.signIn(FacebookLoginProvider.PROVIDER_ID).then((model: SocialUser) => {
-			this._authAsyncService
-				.signinWithFacebook$(model)
-				.pipe(
-					tap((accessToken) => this._signUserIn(accessToken)),
-					switchMap(() => this._monitorSession$())
-				)
-				.subscribe();
-		});
 	}
 
 	/**

@@ -1,22 +1,22 @@
-import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
-import { Observable, Subscription, merge } from 'rxjs';
-import { ProblemDetails } from 'app/core/models/problem-details.model';
-import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { MinScreenSizeQuery } from 'app/shared/screen-size-queries';
-import { OdmValidators, MinPasswordLength } from 'app/core/form-validators/odm-validators';
-import { rightLeftFadeInAnimation } from 'app/core/core.module';
-import { AuthSandboxService } from '../auth-sandbox.service';
-import { SignupUser } from 'app/core/models/auth/signup-user.model';
-import { ActiveAuthType } from 'app/core/models/auth/active-auth-type.model';
-import { AuthTypeRouteUrl } from 'app/core/models/auth/auth-type-route-url.model';
-import { PasswordRequirement } from 'app/core/models/auth/password-requirement.model';
-import { getPasswordRequirements } from 'app/core/utilities/password-requirements.utility';
-import { tap } from 'rxjs/operators';
-import { PasswordHelpToggleClass } from 'app/core/models/auth/password-help-toggle-class.model';
 import { ActivatedRoute } from '@angular/router';
 import { ActionCompletion } from '@ngxs/store';
+import { rightLeftFadeInAnimation } from 'app/core/core.module';
+import { MinPasswordLength, OdmValidators } from 'app/core/form-validators/odm-validators';
+import { ActiveAuthType } from 'app/core/models/auth/active-auth-type.model';
+import { AuthTypeRouteUrl } from 'app/core/models/auth/auth-type-route-url.model';
+import { PasswordHelpToggleClass } from 'app/core/models/auth/password-help-toggle-class.model';
+import { PasswordRequirement } from 'app/core/models/auth/password-requirement.model';
+import { SignupUser } from 'app/core/models/auth/signup-user.model';
+import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
+import { ProblemDetails } from 'app/core/models/problem-details.model';
+import { getPasswordRequirements } from 'app/core/utilities/password-requirements.utility';
+import { MinScreenSizeQuery } from 'app/shared/screen-size-queries';
+import { merge, Observable, Subscription } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { AuthSandboxService } from '../auth-sandbox.service';
 
 /**
  * Sign up container component.
@@ -136,22 +136,6 @@ export class SignUpContainerComponent implements OnInit, OnDestroy {
 	_onSignupSubmitted(model: SignupUser): void {
 		this._sb.log.trace('_onSignupSubmitted event handler fired.', this);
 		this._sb.signupUser(model);
-	}
-
-	/**
-	 * Event handler for when user signs in with google.
-	 */
-	_onSigninWithGoogleSubmitted(): void {
-		this._sb.log.trace('_onSigninWithGoogleSubmitted event handler fired.', this);
-		this._sb.signinUserWithGoogle();
-	}
-
-	/**
-	 * Event handler for when user signs in with facebook.
-	 */
-	_onSigninWithFacebookSubmitted(): void {
-		this._sb.log.trace('_onSigninWithFacebookSubmitted event handler fired.', this);
-		this._sb.signinUserWithFacebook();
 	}
 
 	/**

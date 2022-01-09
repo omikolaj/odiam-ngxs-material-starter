@@ -1,12 +1,11 @@
-import { Injectable, Inject } from '@angular/core';
-import { BACKEND_API_URL } from '../api-url-injection-token';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { SocialUser } from 'angularx-social-login';
-import { SignupUser } from '../models/auth/signup-user.model';
+import { BACKEND_API_URL } from '../api-url-injection-token';
 import { AccessToken } from '../models/auth/access-token.model';
-import { SigninUser } from '../models/auth/signin-user.model';
 import { AuthResponse } from '../models/auth/auth-response.model';
+import { SigninUser } from '../models/auth/signin-user.model';
+import { SignupUser } from '../models/auth/signup-user.model';
 
 /**
  * Async authentication service.
@@ -50,24 +49,6 @@ export class AuthAsyncService {
 	 */
 	signout$(): Observable<void> {
 		return this._http.delete<void>(`${this._apiUrl}/auth/signout`, { headers: this._headers });
-	}
-
-	/**
-	 * Signs user in with google.
-	 * @param model
-	 * @returns access token
-	 */
-	signinWithGoogle$(model: SocialUser): Observable<AccessToken> {
-		return this._http.post<AccessToken>(`${this._apiUrl}/auth/external-signin-google`, JSON.stringify(model), { headers: this._headers });
-	}
-
-	/**
-	 * Signs user in with facebook.
-	 * @param model
-	 * @returns access token
-	 */
-	signinWithFacebook$(model: SocialUser): Observable<AccessToken> {
-		return this._http.post<AccessToken>(`${this._apiUrl}/auth/external-signin-facebook`, JSON.stringify(model), { headers: this._headers });
 	}
 
 	/**

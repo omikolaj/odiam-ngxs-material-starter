@@ -1,19 +1,19 @@
-import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
-import { Observable, Subscription } from 'rxjs';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { ProblemDetails } from 'app/core/models/problem-details.model';
-import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
-import { MinScreenSizeQuery } from 'app/shared/screen-size-queries';
-import { OdmValidators } from 'app/core/form-validators/odm-validators';
+import { ActivatedRoute } from '@angular/router';
+import { ActionCompletion } from '@ngxs/store';
 import { leftRightFadeInAnimation } from 'app/core/core.module';
-import { AuthSandboxService } from '../auth-sandbox.service';
-import { SigninUser } from 'app/core/models/auth/signin-user.model';
+import { OdmValidators } from 'app/core/form-validators/odm-validators';
 import { ActiveAuthType } from 'app/core/models/auth/active-auth-type.model';
 import { AuthTypeRouteUrl } from 'app/core/models/auth/auth-type-route-url.model';
-import { ActionCompletion } from '@ngxs/store';
+import { SigninUser } from 'app/core/models/auth/signin-user.model';
+import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
+import { ProblemDetails } from 'app/core/models/problem-details.model';
+import { MinScreenSizeQuery } from 'app/shared/screen-size-queries';
+import { Observable, Subscription } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { AuthSandboxService } from '../auth-sandbox.service';
 
 /**
  * Sign in container component.
@@ -118,22 +118,6 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 		this._sb.log.trace('_onForgotPasswordClicked fired.', this);
 		this._sb.updateActiveAuthType({ activeAuthType: 'forgot-password-active' });
 		void this._sb.router.navigate(['forgot-password'], { relativeTo: this._route.parent });
-	}
-
-	/**
-	 * Event handler for when user signs in with facebook.
-	 */
-	_onSigninWithFacebookSubmitted(): void {
-		this._sb.log.trace('_onSigninWithFacebookSubmitted event handler fired.', this);
-		this._sb.signinUserWithFacebook();
-	}
-
-	/**
-	 * Event handler for when user signs in with google.
-	 */
-	_onSigninWithGoogleSubmitted(): void {
-		this._sb.log.trace('_onSigninWithGoogleSubmitted event handler fired.', this);
-		this._sb.signinUserWithGoogle();
 	}
 
 	/**

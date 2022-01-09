@@ -1,16 +1,16 @@
-import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, ChangeDetectorRef, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
-import { ProblemDetails } from 'app/core/models/problem-details.model';
-import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { BreakpointState } from '@angular/cdk/layout';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
-import { AuthBase } from '../auth-base';
+import { LogService } from 'app/core/logger/log.service';
 import { ActiveAuthType } from 'app/core/models/auth/active-auth-type.model';
 import { SigninUser } from 'app/core/models/auth/signin-user.model';
+import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
+import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { ODM_SMALL_SPINNER_DIAMETER, ODM_SMALL_SPINNER_STROKE_WIDTH } from 'app/shared/global-settings/mat-spinner-settings';
 import { TranslateValidationErrorsService } from 'app/shared/services/translate-validation-errors.service';
-import { LogService } from 'app/core/logger/log.service';
+import { AuthBase } from '../auth-base';
 
 /**
  * Sign in component.
@@ -82,16 +82,6 @@ export class SignInComponent extends AuthBase implements OnInit {
 	 * Event emitter for when the signin form is submitted.
 	 */
 	@Output() signinFormSubmitted = new EventEmitter<SigninUser>();
-
-	/**
-	 * Event emitter for when user signs in with google.
-	 */
-	@Output() signinWithGoogleSubmitted = new EventEmitter<void>();
-
-	/**
-	 * Event emitter for when user signs in with google.
-	 */
-	@Output() signinWithFacebookSubmitted = new EventEmitter<void>();
 
 	/**
 	 * Event emitter for when user clicks forgot password.
@@ -174,22 +164,6 @@ export class SignInComponent extends AuthBase implements OnInit {
 		this.log.trace('_onSignin event handler fired.', this);
 		const signinUserModel = this.signinForm.value as SigninUser;
 		this.signinFormSubmitted.emit(signinUserModel);
-	}
-
-	/**
-	 * Event handler for when user is attempting to sign in with google.
-	 */
-	_onSigninWithGoogle(): void {
-		this.log.trace('_onSigninWithGoogle event handler fired.', this);
-		this.signinWithGoogleSubmitted.emit();
-	}
-
-	/**
-	 * Event handler for when user is attempting to sign in with facebook.
-	 */
-	_onSigninWithFacebook(): void {
-		this.log.trace('_onSigninWithFacebook event handler fired.', this);
-		this.signinWithFacebookSubmitted.emit();
 	}
 
 	/**

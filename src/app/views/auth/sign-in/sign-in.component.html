@@ -6,10 +6,6 @@
 				<span class="auth__text--link">{{ 'odm.buttons.sign-up' | translate }}</span>
 				<mat-icon class="auth__text--link auth__text-link" (click)="_switchToSignup()" matSuffix>arrow_forward</mat-icon>
 			</div>
-			<div>
-				<img (click)="_onSigninWithFacebook()" class="auth__form-icon" [src]="_facebookLoginIcon" alt="facebook" />
-				<img (click)="_onSigninWithGoogle()" class="auth__form-icon" [src]="_googleLoginIcon" alt="google" />
-			</div>
 
 			<div class="auth__email-field">
 				<mat-form-field appearance="standard">

@@ -1,21 +1,19 @@
 /* eslint-disable @typescript-eslint/member-ordering */
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, Output, EventEmitter, Input, OnDestroy } from '@angular/core';
-
-import { Subscription } from 'rxjs';
-import { ProblemDetails } from 'app/core/models/problem-details.model';
-import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
-import { FormGroup, AbstractControl } from '@angular/forms';
 import { BreakpointState } from '@angular/cdk/layout';
-import { AuthBase } from '../auth-base';
-import { ActiveAuthType } from 'app/core/models/auth/active-auth-type.model';
-import { SignupUser } from 'app/core/models/auth/signup-user.model';
-
-import { PasswordRequirement } from 'app/core/models/auth/password-requirement.model';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { AbstractControl, FormGroup } from '@angular/forms';
 import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
-import { PasswordHelpToggleClass } from 'app/core/models/auth/password-help-toggle-class.model';
-import { ODM_SMALL_SPINNER_DIAMETER, ODM_SMALL_SPINNER_STROKE_WIDTH } from 'app/shared/global-settings/mat-spinner-settings';
 import { LogService } from 'app/core/logger/log.service';
+import { ActiveAuthType } from 'app/core/models/auth/active-auth-type.model';
+import { PasswordHelpToggleClass } from 'app/core/models/auth/password-help-toggle-class.model';
+import { PasswordRequirement } from 'app/core/models/auth/password-requirement.model';
+import { SignupUser } from 'app/core/models/auth/signup-user.model';
+import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
+import { ProblemDetails } from 'app/core/models/problem-details.model';
+import { ODM_SMALL_SPINNER_DIAMETER, ODM_SMALL_SPINNER_STROKE_WIDTH } from 'app/shared/global-settings/mat-spinner-settings';
 import { TranslateValidationErrorsService } from 'app/shared/services/translate-validation-errors.service';
+import { Subscription } from 'rxjs';
+import { AuthBase } from '../auth-base';
 
 /**
  * Sign up component.
@@ -88,16 +86,6 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	 * Event emitter for when the signup form is submitted.
 	 */
 	@Output() signupFormSubmitted = new EventEmitter<SignupUser>();
-
-	/**
-	 * Event emitter for when user signs in with google.
-	 */
-	@Output() signinWithGoogleSubmitted = new EventEmitter<{ rememberMe: boolean }>();
-
-	/**
-	 * Event emitter for when user signs in with google.
-	 */
-	@Output() signinWithFacebookSubmitted = new EventEmitter<{ rememberMe: boolean }>();
 
 	/**
 	 * Event emitter for when user toggles password help menu.
@@ -185,22 +173,6 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 		const model = this._signupForm.value as SignupUser;
 		this._signingUp = true;
 		this.signupFormSubmitted.emit(model);
-	}
-
-	/**
-	 * Event handler for when user is attempting to sign in with google.
-	 */
-	_onSigninWithGoogle(): void {
-		this.log.trace('_onSigninWithGoogle fired.', this);
-		this.signinWithGoogleSubmitted.emit();
-	}
-
-	/**
-	 * Event handler for when user is attempting to sign in with facebook.
-	 */
-	_onSigninWithFacebook(): void {
-		this.log.trace('_onSigninWithFacebook fired.', this);
-		this.signinWithFacebookSubmitted.emit();
 	}
 
 	/**

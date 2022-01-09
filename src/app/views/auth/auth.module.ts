@@ -1,25 +1,24 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AuthRoutingModule } from './auth-routing.module';
+import { NgModule } from '@angular/core';
 import { SharedModule } from 'app/shared/shared.module';
-import { SocialLoginModule, SocialAuthServiceConfig, GoogleLoginProvider, FacebookLoginProvider } from 'angularx-social-login';
-import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
-import { ResetPasswordComponent } from './reset-password/reset-password.component';
-import { SignInComponent } from './sign-in/sign-in.component';
-import { SignInContainerComponent } from './sign-in-container/sign-in-container.component';
-import { SignUpContainerComponent } from './sign-up-container/sign-up-container.component';
-import { SignUpComponent } from './sign-up/sign-up.component';
 import { AuthContainerComponent } from './auth-container/auth-container.component';
-import { ForgotPasswordContainerComponent } from './forgot-password-container/forgot-password-container.component';
 import { AuthDialogComponent } from './auth-dialog/auth-dialog.component';
-import { TwoStepVerificationComponent } from './two-step-verification/two-step-verification.component';
-import { RedeemRecoveryCodeComponent } from './redeem-recovery-code/redeem-recovery-code.component';
+import { AuthRoutingModule } from './auth-routing.module';
 import { AuthSandboxService } from './auth-sandbox.service';
-import { EmailConfirmationComponent } from './email-confirmation/email-confirmation.component';
-import { SuccessfulRegistrationComponent } from './successful-registration/successful-registration.component';
 import { ChangeEmailTokenContainerComponent } from './change-email-token-container/change-email-token-container.component';
 import { ChangeEmailTokenComponent } from './change-email-token/change-email-token.component';
 import { EmailConfirmationContainerComponent } from './email-confirmation-container/email-confirmation-container.component';
+import { EmailConfirmationComponent } from './email-confirmation/email-confirmation.component';
+import { ForgotPasswordContainerComponent } from './forgot-password-container/forgot-password-container.component';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
+import { RedeemRecoveryCodeComponent } from './redeem-recovery-code/redeem-recovery-code.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { SignInContainerComponent } from './sign-in-container/sign-in-container.component';
+import { SignInComponent } from './sign-in/sign-in.component';
+import { SignUpContainerComponent } from './sign-up-container/sign-up-container.component';
+import { SignUpComponent } from './sign-up/sign-up.component';
+import { SuccessfulRegistrationComponent } from './successful-registration/successful-registration.component';
+import { TwoStepVerificationComponent } from './two-step-verification/two-step-verification.component';
 
 /**
  * Auth module.
@@ -43,25 +42,7 @@ import { EmailConfirmationContainerComponent } from './email-confirmation-contai
 		ChangeEmailTokenContainerComponent,
 		ChangeEmailTokenComponent
 	],
-	imports: [CommonModule, AuthRoutingModule, SharedModule, SocialLoginModule],
-	providers: [
-		AuthSandboxService,
-		{
-			provide: 'SocialAuthServiceConfig',
-			useValue: {
-				autoLogin: false,
-				providers: [
-					{
-						id: GoogleLoginProvider.PROVIDER_ID,
-						provider: new GoogleLoginProvider('1017420985910-q2v7dnvoa9vscu2fup6dmuvo2sm2p1s6.apps.googleusercontent.com')
-					},
-					{
-						id: FacebookLoginProvider.PROVIDER_ID,
-						provider: new FacebookLoginProvider('1732458220252838')
-					}
-				]
-			} as SocialAuthServiceConfig
-		}
-	]
+	imports: [CommonModule, AuthRoutingModule, SharedModule],
+	providers: [AuthSandboxService]
 })
 export class AuthModule {}
