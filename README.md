@@ -1,4 +1,4 @@
-# Angular 12, Ngxs and Angular Material Starter
+# Angular 13, Ngxs and Angular Material Starter
 
 ## Getting started
 
