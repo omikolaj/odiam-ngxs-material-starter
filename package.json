@@ -29,17 +29,6 @@
     "hash:i18n": "node scripts/hash-translations.js",
     "prepare": "husky install"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged",
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-    }
-  },
-  "commitlint": {
-    "extends": [
-      "@commitlint/config-conventional"
-    ]
-  },
   "private": true,
   "dependencies": {
     "@angular/animations": "^15.0.0",
