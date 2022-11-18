@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule, NoPreloading } from '@angular/router';
+import { NoPreloading, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
 	{
@@ -41,16 +41,14 @@ const routes: Routes = [
  * App routing module.
  */
 @NgModule({
-	// useHash supports github.io demo page, remove in your app
 	imports: [
 		RouterModule.forRoot(routes, {
 			useHash: false,
 			scrollPositionRestoration: 'enabled',
 			preloadingStrategy: NoPreloading,
-			enableTracing: false,
-			relativeLinkResolution: 'legacy'
+			enableTracing: false
 		})
 	],
 	exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export default class AppRoutingModule {}

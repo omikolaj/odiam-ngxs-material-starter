@@ -1,13 +1,13 @@
+import { APP_INITIALIZER, Injector, NgModule } from '@angular/core';
+import { MatDialogModule } from '@angular/material/dialog';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgModule, Injector, APP_INITIALIZER } from '@angular/core';
 import { CoreModule } from '../app/core/core.module';
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app/app.component';
-import { setRootInjector } from './root-injector';
-import { MatDialogModule } from '@angular/material/dialog';
-import { AppInitializerService } from './core/app-initializer/app-initializer.service';
+import AppRoutingModule from './app-routing.module';
 import { AppSandboxService } from './app-sandbox.service';
+import { AppComponent } from './app/app.component';
+import { AppInitializerService } from './core/app-initializer/app-initializer.service';
+import { setRootInjector } from './root-injector';
 
 /**
  * Apps initializer factory for setting up user session.

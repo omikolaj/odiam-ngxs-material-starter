@@ -1,5 +1,5 @@
 @use '@angular/material' as mat;
-@import '~@angular/material/theming';
+@import '@angular/material/theming';
 
 @mixin odm-two-factor-authentication-component-theme($theme) {
 	$warn: map-get($theme, warn);

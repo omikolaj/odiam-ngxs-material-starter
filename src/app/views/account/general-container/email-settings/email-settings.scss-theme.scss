@@ -1,5 +1,5 @@
 @use '@angular/material' as mat;
-@import '~@angular/material/theming';
+@import '@angular/material/theming';
 
 @mixin odm-email-settings-component-theme($theme) {
 	$foreground: map-get($theme, foreground);

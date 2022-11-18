@@ -1,10 +1,10 @@
-import { Component, ChangeDetectionStrategy, OnInit, OnDestroy } from '@angular/core';
-import { Observable } from 'rxjs';
-import { ROUTE_ANIMATIONS_ELEMENTS } from '../../../core/core.module';
-import { tap } from 'rxjs/operators';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
+import { MatSlideToggle, MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { Language, SettingsStateModel } from 'app/core/settings/settings-state.model';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { ROUTE_ANIMATIONS_ELEMENTS } from '../../../core/core.module';
 import { SettingsSandboxService } from '../settings-sandbox.service';
 
 /**
@@ -104,7 +104,7 @@ export class SettingsContainerComponent implements OnInit, OnDestroy {
 	 * Event handler for sticky header toggle.
 	 * @param event
 	 */
-	_onStickyHeaderToggleChanged(event: MatSlideToggle): void {
+	_onStickyHeaderToggleChanged(event: MatSlideToggleChange): void {
 		this._sb.log.trace(`onStickyHeaderToggle handler fired with: ${String(event.checked)}.`, this);
 		const stickyHeaderToggle = { stickyHeader: event.checked };
 		this._sb.onStickyHeaderToggle(stickyHeaderToggle);

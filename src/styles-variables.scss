@@ -1,9 +1,9 @@
 @use '@angular/material' as mat;
-@import '~@angular/material/theming';
+@import '@angular/material/theming';
 
 $toolbar-breakpoint: 600px;
 
-$fa-font-path: '~@fortawesome/fontawesome-free-webfonts/webfonts';
+$fa-font-path: '@fortawesome/fontawesome-free-webfonts/webfonts';
 
 $link-hover-decoration: none;
 $label-margin-bottom: 0;
