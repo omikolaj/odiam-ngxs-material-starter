@@ -4,7 +4,7 @@ import { InternalServerErrorDetails } from 'app/core/models/internal-server-erro
 import { PasswordRequirement } from 'app/core/models/auth/password-requirement.model';
 import { PasswordHelpToggleClass } from 'app/core/models/auth/password-help-toggle-class.model';
 import { getPasswordRequirements } from 'app/core/utilities/password-requirements.utility';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, Subscription, merge, Subject } from 'rxjs';
 import { OdmValidators, MinPasswordLength } from 'app/core/form-validators/odm-validators';
@@ -41,7 +41,7 @@ export class ChangePasswordContainerComponent implements OnInit, OnDestroy {
 	/**
 	 * Change password form.
 	 */
-	_changePasswordForm: FormGroup;
+	_changePasswordForm: UntypedFormGroup;
 
 	/**
 	 * Whether there is an active request attempting to update user's password.
@@ -198,7 +198,7 @@ export class ChangePasswordContainerComponent implements OnInit, OnDestroy {
 	 * Creates FormGroup for change password form.
 	 * @returns change password form
 	 */
-	private _initChangePasswordForm(): FormGroup {
+	private _initChangePasswordForm(): UntypedFormGroup {
 		this._sb.log.trace('_initChangePasswordForm fired.', this);
 		return this._sb.fb.group(
 			{

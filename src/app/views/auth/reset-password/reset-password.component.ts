@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
-import { FormGroup, AbstractControl } from '@angular/forms';
+import { UntypedFormGroup, AbstractControl } from '@angular/forms';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { ROUTE_ANIMATIONS_ELEMENTS, downUpFadeInAnimation } from 'app/core/core.module';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
@@ -30,7 +30,7 @@ export class ResetPasswordComponent extends AuthBase implements OnInit, OnDestro
 	/**
 	 * Reset password form of reset password component.
 	 */
-	_resetPasswordForm: FormGroup;
+	_resetPasswordForm: UntypedFormGroup;
 
 	/**
 	 * Emitted when server responds with 40X error.
@@ -213,7 +213,7 @@ export class ResetPasswordComponent extends AuthBase implements OnInit, OnDestro
 	 * @param form
 	 * @returns form confirm password field
 	 */
-	private _validateFormConfirmPasswordField(form: FormGroup): Observable<any> {
+	private _validateFormConfirmPasswordField(form: UntypedFormGroup): Observable<any> {
 		return form.valueChanges.pipe(
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			tap((_) => {
@@ -237,7 +237,7 @@ export class ResetPasswordComponent extends AuthBase implements OnInit, OnDestro
 	 * Inits reset password form.
 	 * @returns reset password form
 	 */
-	private _initResetPasswordForm(): FormGroup {
+	private _initResetPasswordForm(): UntypedFormGroup {
 		return this._sb.fb.group(
 			{
 				password: this._sb.fb.control('', {

@@ -217,7 +217,6 @@
 			}
 		}
 	},
-	"defaultProject": "odiam-ngxs-material-starter",
 	"cli": {
 		"analytics": false
 	}

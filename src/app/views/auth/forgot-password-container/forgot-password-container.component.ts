@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { OdmValidators } from 'app/core/form-validators/odm-validators';
 import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
 import { AuthSandboxService } from '../auth-sandbox.service';
@@ -30,7 +30,7 @@ export class ForgotPasswordContainerComponent implements OnInit, OnDestroy {
 	/**
 	 * Forgot password form collects user entered email.
 	 */
-	_forgotPasswordForm: FormGroup;
+	_forgotPasswordForm: UntypedFormGroup;
 
 	/**
 	 * Whether user has submitted forgot-password form.
@@ -125,7 +125,7 @@ export class ForgotPasswordContainerComponent implements OnInit, OnDestroy {
 	 * Returns form group for forgot-password form.
 	 * @returns forgot password form
 	 */
-	private _initForgotPasswordForm(): FormGroup {
+	private _initForgotPasswordForm(): UntypedFormGroup {
 		return this._sb.fb.group({
 			email: this._sb.fb.control('', [OdmValidators.required, OdmValidators.email])
 		});

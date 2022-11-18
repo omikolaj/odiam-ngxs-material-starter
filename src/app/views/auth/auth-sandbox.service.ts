@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Actions, ofActionCompleted, Select, Store } from '@ngxs/store';
@@ -164,7 +164,7 @@ export class AuthSandboxService {
 		private _translationService: TranslateService,
 		public translateValidationErrorService: TranslateValidationErrorsService,
 		public log: LogService,
-		public fb: FormBuilder,
+		public fb: UntypedFormBuilder,
 		public router: Router,
 		public asyncValidators: AsyncValidatorsService
 	) {}

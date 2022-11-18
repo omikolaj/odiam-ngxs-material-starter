@@ -1,6 +1,6 @@
 import { BreakpointState } from '@angular/cdk/layout';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
 import { LogService } from 'app/core/logger/log.service';
@@ -41,7 +41,7 @@ export class SignInComponent extends AuthBase implements OnInit {
 	/**
 	 * Signin form of auth component.
 	 */
-	@Input() signinForm: FormGroup;
+	@Input() signinForm: UntypedFormGroup;
 
 	/**
 	 * Whether to show overlay. Used for desktop view

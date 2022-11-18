@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -40,7 +40,7 @@ export class VerificationCodeComponent extends AuthBase implements OnInit {
 	/**
 	 * Form responsible for containing code input field.
 	 */
-	@Input() set form(value: FormGroup) {
+	@Input() set form(value: UntypedFormGroup) {
 		if (value) {
 			this._log.debug('Setting custom form.', this);
 			this._form = this._validateForm(value);
@@ -50,7 +50,7 @@ export class VerificationCodeComponent extends AuthBase implements OnInit {
 	/**
 	 * Form responsible for containing verification code input field.
 	 */
-	_form: FormGroup;
+	_form: UntypedFormGroup;
 
 	/**
 	 * Whether there is an outgoing request to verify two factor authentication setup verification code.
@@ -114,7 +114,7 @@ export class VerificationCodeComponent extends AuthBase implements OnInit {
 	 * @param cd
 	 */
 	constructor(
-		private _fb: FormBuilder,
+		private _fb: UntypedFormBuilder,
 		private _translateService: TranslateService,
 		translateErrorValidationService: TranslateValidationErrorsService,
 		private _log: LogService,
@@ -161,7 +161,7 @@ export class VerificationCodeComponent extends AuthBase implements OnInit {
 	 * @param form
 	 * @returns form
 	 */
-	private _validateForm(form: FormGroup): FormGroup {
+	private _validateForm(form: UntypedFormGroup): UntypedFormGroup {
 		// if custom form does not contain code field throw an error
 		if (!form.get('code')) {
 			this._log.fatal("Custom form has to contain contral with the name 'code'!");

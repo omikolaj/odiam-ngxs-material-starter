@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { TwoFactorAuthenticationSetupResult } from 'app/core/models/account/security/two-factor-authentication-setup-result.model';
 import { TwoFactorAuthenticationSetup } from 'app/core/models/account/security/two-factor-authentication-setup.model';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
@@ -24,7 +24,7 @@ export class TwoFactorAuthenticationSetupWizardContainerComponent implements OnI
 	/**
 	 * Verification code form for two factor authentication setup.
 	 */
-	_verificationCodeForm: FormGroup;
+	_verificationCodeForm: UntypedFormGroup;
 
 	/**
 	 * Authenticator setup result model.
@@ -127,7 +127,7 @@ export class TwoFactorAuthenticationSetupWizardContainerComponent implements OnI
 	/**
 	 * Initializes verification code form.
 	 */
-	private _initVerificationCodeForm(): FormGroup {
+	private _initVerificationCodeForm(): UntypedFormGroup {
 		return this._sb.fb.group({
 			code: this._sb.fb.control(
 				{ value: '', disabled: true },

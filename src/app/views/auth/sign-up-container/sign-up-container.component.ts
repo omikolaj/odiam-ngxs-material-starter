@@ -1,6 +1,6 @@
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ActionCompletion } from '@ngxs/store';
 import { rightLeftFadeInAnimation } from 'app/core/core.module';
@@ -42,7 +42,7 @@ export class SignUpContainerComponent implements OnInit, OnDestroy {
 	/**
 	 * Signup form of auth component.
 	 */
-	_signupForm: FormGroup;
+	_signupForm: UntypedFormGroup;
 
 	/**
 	 * Whether user registration completed without errors.
@@ -244,7 +244,7 @@ export class SignUpContainerComponent implements OnInit, OnDestroy {
 	 * Creates FormGroup for signup form.
 	 * @returns signup form
 	 */
-	private _initSignupForm(): FormGroup {
+	private _initSignupForm(): UntypedFormGroup {
 		return this._sb.fb.group(
 			{
 				email: this._sb.fb.control('', {

@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, Input, EventEmitter, Output, ChangeDetectorRef } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { LogService } from 'app/core/logger/log.service';
 import { ROUTE_ANIMATIONS_ELEMENTS, downUpFadeInAnimation } from 'app/core/core.module';
 import { AuthBase } from '../auth-base';
@@ -34,7 +34,7 @@ export class ForgotPasswordComponent extends AuthBase {
 	/**
 	 * Forgot password form collects user entered email.
 	 */
-	@Input() forgotPasswordForm: FormGroup;
+	@Input() forgotPasswordForm: UntypedFormGroup;
 
 	/**
 	 * Whether there is an outgoing request to send forgot password instructions.

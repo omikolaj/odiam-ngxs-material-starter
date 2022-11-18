@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, ViewChild, OnDestroy } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { ODM_BIG_SPINNER_DIAMETER, ODM_BIG_SPINNER_STROKE_WIDTH } from 'app/shared/global-settings/mat-spinner-settings';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
@@ -37,7 +37,7 @@ export class TwoFactorAuthenticationSetupWizardComponent implements OnDestroy {
 	/**
 	 * Verification code form.
 	 */
-	@Input() verificationCodeForm: FormGroup;
+	@Input() verificationCodeForm: UntypedFormGroup;
 
 	/**
 	 * Two factor authentication setup result.

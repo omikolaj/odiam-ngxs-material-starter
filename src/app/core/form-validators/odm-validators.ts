@@ -1,4 +1,4 @@
-import { Validators, AbstractControl, ValidationErrors, FormGroup } from '@angular/forms';
+import { Validators, AbstractControl, ValidationErrors, UntypedFormGroup } from '@angular/forms';
 
 /**
  * Minimum password length requirement for the application user.
@@ -92,7 +92,7 @@ export class OdmValidators extends Validators {
 	 * @param group
 	 * @returns validation result
 	 */
-	static requireConfirmPassword(group: FormGroup): ValidationErrors | null {
+	static requireConfirmPassword(group: UntypedFormGroup): ValidationErrors | null {
 		const password = group.get('password').value as string;
 		const confirmPassword = group.get('confirmPassword').value as string;
 		return password === confirmPassword ? null : { notSame: true };

@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { AuthBase } from 'app/views/auth/auth-base';
 import { ODM_SMALL_SPINNER_DIAMETER, ODM_SMALL_SPINNER_STROKE_WIDTH } from 'app/shared/global-settings/mat-spinner-settings';
 import { TranslateValidationErrorsService } from 'app/shared/services/translate-validation-errors.service';
@@ -36,7 +36,7 @@ export class ChangeEmailComponent extends AuthBase {
 	/**
 	 * Change email form.
 	 */
-	@Input() changeEmailForm: FormGroup;
+	@Input() changeEmailForm: UntypedFormGroup;
 
 	/**
 	 * Whether there currently is a request to change user's email.

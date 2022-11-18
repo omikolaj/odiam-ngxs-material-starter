@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, Output, EventEmitter, Input, ChangeDetectorRef } from '@angular/core';
-import { FormGroup, AbstractControl } from '@angular/forms';
+import { UntypedFormGroup, AbstractControl } from '@angular/forms';
 import { LogService } from 'app/core/logger/log.service';
 import { AuthBase } from 'app/views/auth/auth-base';
 import { TranslateValidationErrorsService } from 'app/shared/services/translate-validation-errors.service';
@@ -39,7 +39,7 @@ export class ChangePasswordComponent extends AuthBase {
 	/**
 	 * Change password form.
 	 */
-	@Input() set changePasswordForm(value: FormGroup) {
+	@Input() set changePasswordForm(value: UntypedFormGroup) {
 		this.log.debug('Change password form emitted.', this);
 		this._changePasswordForm = value;
 		this._passwordControl = value.get('password');
@@ -88,7 +88,7 @@ export class ChangePasswordComponent extends AuthBase {
 	/**
 	 * Change password form.
 	 */
-	_changePasswordForm: FormGroup;
+	_changePasswordForm: UntypedFormGroup;
 
 	/**
 	 * Password control of change password component.

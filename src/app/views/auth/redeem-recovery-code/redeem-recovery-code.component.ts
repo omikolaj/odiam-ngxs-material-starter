@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { Observable, Subscription } from 'rxjs';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
@@ -24,7 +24,7 @@ export class RedeemRecoveryCodeComponent implements OnInit, OnDestroy {
 	/**
 	 * Recovery code form.
 	 */
-	_recoveryCodeForm: FormGroup;
+	_recoveryCodeForm: UntypedFormGroup;
 
 	/**
 	 * Whether we are in the middle of a request to verify Recovery code.

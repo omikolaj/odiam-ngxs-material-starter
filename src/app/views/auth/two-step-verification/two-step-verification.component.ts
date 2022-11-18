@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { downUpFadeInAnimation, ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { Observable, Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
@@ -26,7 +26,7 @@ export class TwoStepVerificationComponent implements OnInit, OnDestroy {
 	/**
 	 * Verification code form.
 	 */
-	_verificationCodeForm: FormGroup;
+	_verificationCodeForm: UntypedFormGroup;
 
 	/**
 	 * Whether we are in the middle of a request to verify two factor authentication verification code.

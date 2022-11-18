@@ -1,6 +1,6 @@
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ActionCompletion } from '@ngxs/store';
 import { leftRightFadeInAnimation } from 'app/core/core.module';
@@ -39,7 +39,7 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 	/**
 	 * Signin form of auth component.
 	 */
-	_signinForm: FormGroup;
+	_signinForm: UntypedFormGroup;
 
 	/**
 	 * Whether specified screen width was matched.
@@ -178,7 +178,7 @@ export class SignInContainerComponent implements OnInit, OnDestroy {
 	 * Creates FormGroup for signin form.
 	 * @returns signin form
 	 */
-	private _initSigninForm(): FormGroup {
+	private _initSigninForm(): UntypedFormGroup {
 		return this._sb.fb.group({
 			email: this._sb.fb.control('', {
 				validators: [OdmValidators.required, OdmValidators.email],

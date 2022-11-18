@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import { BreakpointState } from '@angular/cdk/layout';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { AbstractControl, FormGroup } from '@angular/forms';
+import { AbstractControl, UntypedFormGroup } from '@angular/forms';
 import { ROUTE_ANIMATIONS_ELEMENTS } from 'app/core/core.module';
 import { LogService } from 'app/core/logger/log.service';
 import { ActiveAuthType } from 'app/core/models/auth/active-auth-type.model';
@@ -46,7 +46,7 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	/**
 	 * Signup form of auth component.
 	 */
-	@Input() set signupForm(value: FormGroup) {
+	@Input() set signupForm(value: UntypedFormGroup) {
 		this.log.debug('Signup form emitted.', this);
 		this._signupForm = value;
 		this._passwordControl = value.get('password');
@@ -55,7 +55,7 @@ export class SignUpComponent extends AuthBase implements OnInit, OnDestroy {
 	/**
 	 * Signup form of auth component.
 	 */
-	_signupForm: FormGroup;
+	_signupForm: UntypedFormGroup;
 
 	/**
 	 * Password control of sign up component.

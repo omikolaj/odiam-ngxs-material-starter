@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable, Subscription, merge } from 'rxjs';
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { OdmValidators } from 'app/core/form-validators/odm-validators';
 import { tap, skip } from 'rxjs/operators';
 import { ChangeEmailRequest } from 'app/core/models/auth/change-email-request.model';
@@ -37,7 +37,7 @@ export class ChangeEmailContainerComponent implements OnInit {
 	/**
 	 * Change email form.
 	 */
-	_changeEmailForm: FormGroup;
+	_changeEmailForm: UntypedFormGroup;
 
 	/**
 	 * Whether there is an active request attempting to update user's email.
@@ -120,7 +120,7 @@ export class ChangeEmailContainerComponent implements OnInit {
 	 * Creates FormGroup for change email form.
 	 * @returns change password form
 	 */
-	private _initChangeEmailForm(): FormGroup {
+	private _initChangeEmailForm(): UntypedFormGroup {
 		this._sb.log.trace('_initChangeEmailForm fired.', this);
 		return this._sb.fb.group({
 			newEmail: this._sb.fb.control('', {

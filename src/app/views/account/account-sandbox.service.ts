@@ -16,7 +16,7 @@ import { ProblemDetailsError } from 'app/core/error-handler/problem-details-erro
 import { ProblemDetails } from 'app/core/models/problem-details.model';
 import { InternalServerErrorDetails } from 'app/core/models/internal-server-error-details.model';
 import { LogService } from 'app/core/logger/log.service';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { TranslateValidationErrorsService } from 'app/shared/services/translate-validation-errors.service';
 import { AccountGeneralState } from './general-container/general-container.store.state';
 import { AccountGeneralDetails } from 'app/core/models/account/general/account-general-details.model';
@@ -54,9 +54,8 @@ export class AccountSandboxService {
 	/**
 	 * Selects authenticator setup result model.
 	 */
-	@Select(TwoFactorAuthenticationState.selectAuthenticatorSetupResult) twoFactorAuthenticationSetupResult$: Observable<
-		TwoFactorAuthenticationSetupResult
-	>;
+	@Select(TwoFactorAuthenticationState.selectAuthenticatorSetupResult)
+	twoFactorAuthenticationSetupResult$: Observable<TwoFactorAuthenticationSetupResult>;
 
 	/**
 	 * Select users general details.
@@ -105,7 +104,7 @@ export class AccountSandboxService {
 		private _actions$: Actions,
 		public log: LogService,
 		public router: Router,
-		public fb: FormBuilder,
+		public fb: UntypedFormBuilder,
 		public translateValidationErrorService: TranslateValidationErrorsService,
 		public asyncValidators: AsyncValidatorsService
 	) {}
