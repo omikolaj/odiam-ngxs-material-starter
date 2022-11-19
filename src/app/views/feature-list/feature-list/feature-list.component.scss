@@ -9,10 +9,9 @@
 	margin: 0 0 20px 0;
 }
 
-/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
 mat-card {
 	margin: 0 0 20px 0;
-	/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
+
 	mat-card-title {
 		position: relative;
 
@@ -24,13 +23,12 @@ mat-card {
 			font-size: 10px;
 		}
 	}
-	/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
+
 	mat-card-subtitle {
 		min-height: 60px;
 	}
 
 	@media (max-width: map-get($grid-breakpoints, sm)) {
-		/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
 		mat-card-subtitle {
 			min-height: auto;
 		}
