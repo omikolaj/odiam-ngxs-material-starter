@@ -8,7 +8,7 @@
 			</div>
 
 			<div class="auth__email-field">
-				<mat-form-field appearance="standard">
+				<mat-form-field>
 					<mat-label>{{ 'odm.auth.form.label.email' | translate }}</mat-label>
 					<input matInput formControlName="email" type="email" autocomplete="email" required />
 					<mat-icon matSuffix>email</mat-icon>
@@ -17,7 +17,7 @@
 			</div>
 
 			<div class="auth__password-field">
-				<mat-form-field appearance="standard">
+				<mat-form-field>
 					<mat-label>{{ 'odm.auth.form.label.password' | translate }}</mat-label>
 					<input matInput formControlName="password" [type]="_hide ? 'password' : 'text'" type="password" autocomplete="current-password" required />
 					<mat-icon class="auth__view-password" matSuffix (click)="_hide = !_hide">{{ _hide ? 'visibility_off' : 'visibility' }}</mat-icon>

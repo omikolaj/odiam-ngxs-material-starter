@@ -1,30 +1,31 @@
 <div class="_container">
-  <div class="_row">
-    <div class="column-md-12">
-      <h1 class="main-heading">{{ 'odm.features.title' | translate }}</h1>
-    </div>
-  </div>
-  <div class="_row _align-items-end">
-    <div *ngFor="let feature of features" class="column-md-6 column-lg-4" [ngClass]="routeAnimationsElements">
-      <mat-card>
-        <mat-card-title>
-          <code *ngIf="feature.version">{{feature.version}}</code>{{feature.name | translate}}
-        </mat-card-title>
-        <mat-card-subtitle>
-          {{ feature.description | translate }}
-        </mat-card-subtitle>
-        <mat-card-actions>
-          <a *ngIf="feature.github" mat-icon-button [href]="feature.github" rel="noopener noreferrer" target="_blank">
-            <fa-icon [icon]="['fab','github']"></fa-icon>
-          </a>
-          <a mat-button [href]="feature.documentation" rel="noopener noreferrer" target="_blank">
-            <fa-icon icon="book"></fa-icon>{{ 'odm.features.documentation' | translate }}
-          </a>
-          <a *ngIf="feature.medium" mat-button [href]="feature.medium" rel="noopener noreferrer" target="_blank">
-            <fa-icon [icon]="['fab','medium-m']"></fa-icon>{{ 'odm.features.guide' | translate }}
-          </a>
-        </mat-card-actions>
-      </mat-card>
-    </div>
-  </div>
+	<div class="_row">
+		<div class="column-md-12">
+			<h1 class="main-heading">{{ 'odm.features.title' | translate }}</h1>
+		</div>
+	</div>
+	<div class="_row _align-items-end">
+		<div *ngFor="let feature of features" class="column-md-6 column-lg-4" [ngClass]="routeAnimationsElements">
+			<mat-card appearance="outlined">
+				<mat-card-title>
+					<code *ngIf="feature.version">{{ feature.version }}</code
+					>{{ feature.name | translate }}
+				</mat-card-title>
+				<mat-card-subtitle>
+					{{ feature.description | translate }}
+				</mat-card-subtitle>
+				<mat-card-actions>
+					<a *ngIf="feature.github" mat-icon-button [href]="feature.github" rel="noopener noreferrer" target="_blank">
+						<fa-icon [icon]="['fab', 'github']"></fa-icon>
+					</a>
+					<a mat-button [href]="feature.documentation" rel="noopener noreferrer" target="_blank">
+						<fa-icon icon="book"></fa-icon>{{ 'odm.features.documentation' | translate }}
+					</a>
+					<a *ngIf="feature.medium" mat-button [href]="feature.medium" rel="noopener noreferrer" target="_blank">
+						<fa-icon [icon]="['fab', 'medium-m']"></fa-icon>{{ 'odm.features.guide' | translate }}
+					</a>
+				</mat-card-actions>
+			</mat-card>
+		</div>
+	</div>
 </div>

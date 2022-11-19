@@ -8,7 +8,7 @@
 			</div>
 
 			<div class="auth__email-field">
-				<mat-form-field appearance="standard">
+				<mat-form-field>
 					<mat-label>{{ 'odm.auth.form.label.email' | translate }}</mat-label>
 					<input formControlName="email" matInput placeholder="example@gmail.com" type="email" autocomplete="email" required />
 					<mat-hint>
@@ -45,7 +45,7 @@
 			</div>
 
 			<div class="auth__password-field" [ngClass]="passwordHelpToggleClass">
-				<mat-form-field appearance="standard">
+				<mat-form-field>
 					<mat-label>{{ 'odm.auth.form.label.password' | translate }}</mat-label>
 					<input matInput formControlName="password" [type]="_hidePassword ? 'password' : 'text'" autocomplete="new-password" required />
 					<mat-icon class="auth__view-password" matSuffix (click)="_hidePassword = !_hidePassword">{{
@@ -66,7 +66,7 @@
 			</div>
 
 			<div class="auth__confirm-password-field">
-				<mat-form-field appearance="standard">
+				<mat-form-field>
 					<mat-label>{{ 'odm.auth.form.label.confirm-password' | translate }}</mat-label>
 					<input matInput formControlName="confirmPassword" [type]="_hideConfirmPassword ? 'password' : 'text'" autocomplete="new-password" />
 					<mat-icon class="auth__view-password" matSuffix (click)="_hideConfirmPassword = !_hideConfirmPassword">{{

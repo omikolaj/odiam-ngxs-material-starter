@@ -8,7 +8,7 @@
 	odm-examples {
 		.nav-responsive {
 			border-bottom: 1px solid mat.get-color-from-palette($primary);
-
+			/* TODO(mdc-migration): The following rule targets internal classes of select that may no longer apply for the MDC version. */
 			mat-select {
 				line-height: 48px;
 				margin: 0 20px;

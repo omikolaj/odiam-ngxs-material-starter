@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
-import { MatSlideToggle, MatSlideToggleChange } from '@angular/material/slide-toggle';
+import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { Language, SettingsStateModel } from 'app/core/settings/settings-state.model';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -94,7 +94,7 @@ export class SettingsContainerComponent implements OnInit, OnDestroy {
 	 * Event handler for auto night mode toggle.
 	 * @param event
 	 */
-	_onAutoNightModeToggleChanged(event: MatSlideToggle): void {
+	_onAutoNightModeToggleChanged(event: MatSlideToggleChange): void {
 		this._sb.log.trace(`onAutoNightModeToggle handler fired with: ${String(event.checked)}.`, this);
 		const autoNightModeToggle = { autoNightMode: event.checked };
 		this._sb.onAutoNightModeToggle(autoNightModeToggle);
@@ -114,7 +114,7 @@ export class SettingsContainerComponent implements OnInit, OnDestroy {
 	 * Event handler for page animations toggle.
 	 * @param event
 	 */
-	_onPageAnimationsToggleChanged(event: MatSlideToggle): void {
+	_onPageAnimationsToggleChanged(event: MatSlideToggleChange): void {
 		this._sb.log.trace(`onPageAnimationsToggle handler fired with: ${String(event.checked)}.`, this);
 		const pageAnimationsToggle = { pageAnimations: event.checked };
 		this._sb.onPageAnimationsToggle(pageAnimationsToggle);
@@ -124,7 +124,7 @@ export class SettingsContainerComponent implements OnInit, OnDestroy {
 	 * Event handler for elements animations toggle.
 	 * @param event
 	 */
-	_onElementsAnimationsToggleChanged(event: MatSlideToggle): void {
+	_onElementsAnimationsToggleChanged(event: MatSlideToggleChange): void {
 		this._sb.log.trace(`onElementsAnimationsToggle handler fired with: ${String(event.checked)}.`, this);
 		const elementsAnimationsToggle = { elementsAnimations: event.checked };
 		this._sb.onElementsAnimationsToggle(elementsAnimationsToggle);

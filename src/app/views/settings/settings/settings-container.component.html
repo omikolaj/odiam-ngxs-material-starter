@@ -37,7 +37,7 @@
 					<mat-icon color="accent">
 						<fa-icon icon="bars" color="accent"></fa-icon>
 					</mat-icon>
-					<mat-placeholder>{{ 'odm.settings.themes.sticky-header' | translate }} </mat-placeholder>
+					<mat-label>{{ 'odm.settings.themes.sticky-header' | translate }} </mat-label>
 					<mat-slide-toggle [checked]="settings.stickyHeader" (change)="_onStickyHeaderToggleChanged($event)"> </mat-slide-toggle>
 				</div>
 			</div>
@@ -66,7 +66,7 @@
 					<mat-icon color="accent">
 						<fa-icon icon="lightbulb" color="accent"></fa-icon>
 					</mat-icon>
-					<mat-placeholder>{{ 'odm.settings.themes.night-mode' | translate }} </mat-placeholder>
+					<mat-label>{{ 'odm.settings.themes.night-mode' | translate }} </mat-label>
 					<mat-slide-toggle [checked]="settings.autoNightMode" (change)="_onAutoNightModeToggleChanged($event)"> </mat-slide-toggle>
 				</div>
 			</div>
@@ -78,7 +78,7 @@
 							<fa-icon icon="window-maximize"></fa-icon>
 						</mat-icon>
 					</mat-icon>
-					<mat-placeholder>{{ 'odm.settings.animations.page' | translate }} </mat-placeholder>
+					<mat-label>{{ 'odm.settings.animations.page' | translate }} </mat-label>
 					<mat-slide-toggle
 						matTooltip="Sorry, this feature is disabled in IE, EDGE and Safari"
 						matTooltipPosition="before"
@@ -97,7 +97,7 @@
 					<mat-icon color="accent">
 						<fa-icon icon="stream" color="accent"></fa-icon>
 					</mat-icon>
-					<mat-placeholder>{{ 'odm.settings.animations.elements' | translate }} </mat-placeholder>
+					<mat-label>{{ 'odm.settings.animations.elements' | translate }} </mat-label>
 					<mat-slide-toggle [checked]="settings.elementsAnimations" (change)="_onElementsAnimationsToggleChanged($event)"> </mat-slide-toggle>
 				</div>
 			</div>

@@ -21,7 +21,7 @@
 		}
 
 		mat-sidenav {
-			.mat-list-item {
+			.mat-mdc-list-item {
 				&.active {
 					color: mat.get-color-from-palette($accent, default-contrast);
 					background-color: mat.get-color-from-palette($accent) !important;
