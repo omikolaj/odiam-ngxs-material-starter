@@ -3,6 +3,10 @@
 nav {
 	margin-bottom: 20px;
 
+	a {
+		text-decoration: none;
+	}
+
 	.mat-mdc-tab-link {
 		min-width: 120px;
 		padding: 0 15px;

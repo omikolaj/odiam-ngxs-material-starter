@@ -17,6 +17,7 @@ mat-sidenav-container {
 
 		.nav-button {
 			margin: 0 10px 0 0;
+			color: inherit;
 		}
 
 		fa-icon {
@@ -53,6 +54,16 @@ mat-sidenav-container {
 			margin: 0 0 0 20px;
 			width: 40px;
 			font-size: 14px;
+
+			::ng-deep {
+				.mat-mdc-select-value {
+					color: inherit;
+				}
+
+				.mat-mdc-select-arrow {
+					color: inherit;
+				}
+			}
 		}
 
 		@media (max-width: map-get($grid-breakpoints, lg)) {
